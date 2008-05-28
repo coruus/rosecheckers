@@ -1,0 +1,2208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><title>C Rules Implemented in Rose - CERT Secure Coding Standards</title>
+
+
+    
+                
+    <script language="javascript">
+        var contextPath = '/confluence';
+        var i18n = [];
+    </script>
+
+                            <link rel="stylesheet" href="C+Rules+Implemented+in+Rose_files/main-action.css" type="text/css">
+                    
+            <script type="text/javascript" src="C+Rules+Implemented+in+Rose_files/effects.js"></script>
+    
+            
+
+    <script type="text/javascript">
+
+    function toggleMenu(menuId)
+    {
+        var visible = toggleVisibility(menuId);
+        if (visible)
+            setCookie("confluence.leftnav." + menuId, true);
+        else
+            setCookie("confluence.leftnav.", false);
+    }
+
+    function isMenuExpanded(menuId)
+    {
+        return getCookie("confluence.leftnav." + menuId);
+    }
+
+    function initMenuItem(menuId)
+    {
+        if (document.getElementById(menuId))
+        {
+            if (isMenuExpanded(menuId) == 'true')
+            {
+                document.getElementById(menuId).style.display = "block";
+            }
+            else
+            {
+                document.getElementById(menuId).style.display = "none";
+            }
+        }
+    }
+</script>
+
+<style>
+    .imageLink{
+        margin:2px;
+        vertical-align: bottom;
+        float:left;
+    }
+
+        /*Overwritten styles in the main.css*/
+        .greybox {
+            border: 0px;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: #F0F0F0;
+	        padding: 3px;
+	        margin: 0;
+        }
+</style><style type="text/css">
+div.auto_complete {
+    width: 350px;
+    background: #fff;
+}
+
+div.auto_complete ul {
+    border: 1px solid #888;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    list-style-type: none;
+}
+
+div.auto_complete ul li {
+    margin: 0;
+    padding: 3px;
+}
+
+div.auto_complete ul li.selected {
+    background-color: #ffb;
+}
+
+div.auto_complete ul strong.highlight {
+    color: #800;
+    margin: 0;
+    padding: 0;
+}
+</style></head><body onload="placeFocus()">
+    <!--BEGIN HEADER -->
+
+<table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr>
+<td valign="middle"><img style="width: 3.75px; height: 70.5px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="94" width="5"></td><td valign="middle"><a href="http://www.cert.org/"><img style="width: 75.75px; height: 55.5px;" src="C+Rules+Implemented+in+Rose_files/cert_logo.gif" alt="CERT" border="0"></a></td><td align="right" valign="bottom" width="100%">
+
+<!--NAVIGATION TABLE-->
+<a href="http://www.cert.org/work/software_assurance.html"><img style="width: 99px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/1off.jpg" alt="Software Assurance" border="0" height="21" width="132"></a><img style="width: 0.75px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="21" width="1"><a href="http://www.cert.org/work/secure_systems.html"><img style="width: 81.75px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/2off.jpg" alt="Secure Systems" border="0" height="21" width="109"></a><img style="width: 0.75px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="21" width="1"><a href="http://www.cert.org/work/organizational_security.html"><img style="width: 105px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/3off.jpg" alt="Organizational Security" border="0" height="21" width="140"></a><img style="width: 0.75px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="21" width="1"><a href="http://www.cert.org/work/coordinating_response.html"><img style="width: 105px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/4off.jpg" alt="Coordinating Response" border="0" height="21" width="140"></a><img style="width: 0.75px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="21" width="1"><a href="http://www.cert.org/work/training.html"><img style="width: 56.25px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/5off.jpg" alt="Training" border="0" height="21" width="75"></a><table border="0" cellpadding="0" cellspacing="0" width="600"></table>
+
+<!--END NAVIGATION TABLE -->
+
+</td></tr></tbody></table>
+
+<table bgcolor="#666666" border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td><img style="width: 0.75px; height: 2.25px;" src="C+Rules+Implemented+in+Rose_files/1pxinv.gif" height="3" width="1"></td></tr></tbody></table>
+
+<!--END HEADER -->
+
+
+    <script type="text/javascript">
+        function hideMessage(messageId)
+        {
+            var message = document.getElementById(messageId)
+            message.style.display = "none";
+            setCookie(messageId, true);
+        }
+    </script>
+
+        
+
+<div id="PageContent">
+    <table cellpadding="0" cellspacing="0" width="100%">
+        <tbody><tr class="topBar">
+            <td align="left">
+                &nbsp;
+                <span class="topBarDiv fontSizeSmaller">             
+    <script language="JavaScript">
+        function showBreadcrumbsEllipsis()
+        {
+            document.getElementById('breadcrumbsEllipsis').style.display = 'none';
+            document.getElementById('breadcrumbsExpansion').style.display = 'inline';
+        }
+    </script>
+                                                    <a href="https://www.securecoding.cert.org/confluence/dashboard.action">Dashboard</a>
+                                     &gt;                         <a href="https://www.securecoding.cert.org/confluence/display/seccode">Secure Coding</a>
+                                                    <span id="breadcrumbs">
+                    &gt;
+                    <span id="breadcrumbsEllipsis">
+                        <a href="#" onclick="showBreadcrumbsEllipsis();return false;" title="                    CERT Secure Coding Standards    ">...</a>
+                    </span>
+                    <span id="breadcrumbsExpansion" style="display: none;">
+                                <a href="https://www.securecoding.cert.org/confluence/display/seccode/CERT+Secure+Coding+Standards">CERT Secure Coding Standards</a>
+        </span>
+                </span>
+                                                             &gt;                         <a href="https://www.securecoding.cert.org/confluence/display/seccode/CERT+C+Secure+Coding+Standard">CERT C Secure Coding Standard</a>
+                                     &gt;                         <a href="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose">C Rules Implemented in Rose</a>
+                
+     </span>
+            </td>
+
+            <td style="white-space: nowrap;" align="right" valign="middle">
+                    <form id="quickSearch" method="post" action="/confluence/dosearchsite.action" name="searchForm">
+        <input name="quickSearch" value="true" type="hidden">
+        
+        <input name="searchQuery.spaceKey" value="conf_global" type="hidden">
+        <input accesskey="s" name="searchQuery.queryString" size="25" type="text">
+        <input value="Search" type="submit">
+    </form>
+            </td>
+        </tr>
+    </tbody></table>
+    <table cellpadding="0" cellspacing="0" width="100%">
+        <tbody><tr>
+                    <td class="sidebar" nowrap="nowrap" valign="top" width="150">
+                <div class="leftnav">
+                     <div id="logodiv">
+                        					        					                          </div>
+                      <div id="menu">
+                        <table class="sectionMacro" border="0" cellpadding="5" cellspacing="0" width="100%"><tbody><tr>
+<td class="confluenceTd" valign="top" width="100%">
+<div class="panelMacro"><table class="infoMacro"><tbody><tr><td>
+
+<p><b>Standards</b><br>
+<a href="https://www.securecoding.cert.org/confluence/display/seccode/CERT+Secure+Coding+Standards" title="CERT Secure Coding Standards">Overview</a><br>
+<a href="https://www.securecoding.cert.org/confluence/display/seccode/CERT+C+Secure+Coding+Standard" title="CERT C Secure Coding Standard">C Language</a><br>
+<a href="https://www.securecoding.cert.org/confluence/pages/viewpage.action?pageId=637" title="CERT C++ Secure Coding Standard">C++</a></p>
+
+<p><b>CERT Websites</b><br>
+<a href="http://www.cert.org/" rel="nofollow">CERT</a><br>
+<a href="http://www.cert.org/secure-coding" rel="nofollow">Secure Coding</a><br>
+<a href="http://www.cert.org/tech_tips/" rel="nofollow">Tech Tips</a></p>
+
+<p><b>CERT Employment</b> <br>
+<a href="http://www.cert.org/jobs/" rel="nofollow"><b>Opportunities</b></a></p>
+
+<p><a href="http://www.cert.org/books/secure-coding/" rel="nofollow"><img style="width: 75px; height: 96px;" src="C+Rules+Implemented+in+Rose_files/securec.jpg" align="absmiddle" border="0" width="100"></a></p>
+
+<p><b>Related Sites</b><br>
+<a href="http://www.us-cert.gov/" rel="nofollow"><img style="width: 75px; height: 37.5px;" src="C+Rules+Implemented+in+Rose_files/uscert_4g_sm.jpg" align="absmiddle" border="0"></a><br>
+<a href="http://www.cylab.cmu.edu/" title="http://www.cylab.cmu.edu/" rel="nofollow"><img style="width: 75px; height: 37.5px;" src="C+Rules+Implemented+in+Rose_files/cylab_alt.jpg" align="absmiddle" border="0"></a></p></td></tr></tbody></table></div></td></tr></tbody></table>
+                        
+<h5><a href="#" onclick="toggleMenu('pagenav'); return false;"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/docs_16.gif" align="absmiddle" border="0" height="16" width="16"> Page Operations</a></h5>
+<div id="pagenav" class="subnav" style="display: none;">
+   <ul>
+	   		   <li><a id="viewPageLink" href="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose" class="current" accesskey="v"><u>V</u>iew</a></li>
+	   		   <li><a id="editPageLink" href="https://www.securecoding.cert.org/confluence/pages/editpage.action?pageId=9502724" accesskey="e"><u>E</u>dit</a></li>
+	   		   <li><a id="viewAttachmentsLink" href="https://www.securecoding.cert.org/confluence/pages/viewpageattachments.action?pageId=9502724" accesskey="a"><u>A</u>ttachments (0)</a></li>
+	   		   <li><a id="viewPageInfoLink" href="https://www.securecoding.cert.org/confluence/pages/viewinfo.action?pageId=9502724" accesskey="i"><u>I</u>nfo</a></li>
+	      </ul>
+</div>
+
+                        
+                        
+<h5><a href="#" onclick="toggleMenu('browsenav'); return false;"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/browse_space.gif" title="Find Content" align="absmiddle" border="0" height="16" width="16"> Browse Space</a></h5>
+<div id="browsenav" class="subnav" style="display: none;">
+	<ul>
+					<li><a href="https://www.securecoding.cert.org/confluence/pages/listpages.action?key=seccode">Pages</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/labels/listlabels-heatmap.action?key=seccode">Labels</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/spaces/listattachmentsforspace.action?key=seccode">Attachments</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/spaces/viewmailarchive.action?key=seccode">Mail</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/pages/viewrecentblogposts.action?key=seccode">News</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/spaces/usage/report.action?key=seccode">Activity</a></li>
+					<li><a href="https://www.securecoding.cert.org/confluence/spaces/viewspacesummary.action?key=seccode">Advanced</a></li>
+			</ul>
+</div>
+
+<h5><a href="#" onclick="toggleMenu('addcontent'); return false;"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/add_16.gif" title="Find Content" align="absmiddle" border="0" height="16" width="16"> Add Content</a></h5>
+<div id="addcontent" class="subnav" style="display: none;">
+    <ul>
+										
+									<li><a href="https://www.securecoding.cert.org/confluence/pages/createpage.action?spaceKey=seccode&amp;fromPageId=9502724"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/add_page_16.gif" title="Add Page" align="absmiddle" border="0" height="16" width="16">&nbsp;Add Page</a></li>
+						    					
+									<li><a href="https://www.securecoding.cert.org/confluence/pages/createblogpost.action?spaceKey=seccode"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/add_blogentry_16.gif" title="Add News" align="absmiddle" border="0" height="16" width="16">&nbsp;Add News</a></li>
+						    			</ul>
+</div>
+
+                      </div>
+                    <script type="text/javascript">
+                        initMenuItem("browsenav");
+                        initMenuItem("pagenav");
+                        initMenuItem("addcontent");
+                    </script>
+                </div>
+            </td>
+                    <td valign="top" width="100%">
+                <!-- Inner content table -->
+                <table cellpadding="2" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td colspan="2" style="background-color: rgb(240, 240, 240);" align="right" valign="middle">
+                            <div style="margin-right: 3px;">
+<span class="smalltext" id="userNavBar">
+                    Welcome <a href="https://www.securecoding.cert.org/confluence/display/%7Esvoboda">David Svoboda</a> |
+
+                            <a href="https://www.securecoding.cert.org/confluence/users/viewuserhistory.action" onclick="window.open(this.href,'user_history', 'width=620, height=250, resizable'); return false;" title="View History">History</a> |
+            
+            <a href="https://www.securecoding.cert.org/confluence/users/viewuserprofile.action?username=svoboda">Preferences</a> |
+
+            
+            <a href="https://www.securecoding.cert.org/confluence/logout.action" id="logout">Log Out</a>&nbsp;
+            </span>
+                                            <a href="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose?decorator=printable" rel="nofollow"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/print_16.gif" alt="View a printable version of the current page." title="View a printable version of the current page." align="absmiddle" border="0" height="16" hspace="1" vspace="1" width="16"></a>
+
+                                                                        
+                                                                        
+                                                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="mainViewPane">
+                            <div>
+                                <table class="fullWidthBorderless">
+                                    <tbody><tr><td><span id="spaceFullNameLink">            <a href="https://www.securecoding.cert.org/confluence/display/seccode">Secure Coding</a>    </span></td>
+                                    <td align="right">
+    <a id="pageFavourite" href="https://www.securecoding.cert.org/confluence/labels/addfavourite.action?entityId=9502724"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/star_grey.gif" title="Add this page to your favourites list" alt="Add this page to your favourites list" align="absmiddle" border="0" height="16" width="16"></a>
+    <a id="pageWatch" href="https://www.securecoding.cert.org/confluence/pages/addpagenotification.action?pageId=9502724"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/watch_16.gif" title="Watch this page" alt="Watch this page" align="absmiddle" border="0" height="16" width="16"></a>
+</td>
+                                </tr></tbody></table>
+                                <div class="pagetitle" style="padding: 0px; margin-bottom: 5px; margin-top: 2px;">
+                                                                            C Rules Implemented in Rose
+                                    </div>
+                            </div>
+                                                        <div id="content">
+                                <!--
+    Root decorator: all decisions about how a page is to be decorated via the
+                    inline decoration begins here.
+-->
+
+
+
+<!--
+    Switch based upon the context. However, for now, just delegate to a decorator
+    identified directly by the context.
+-->
+
+
+    
+    <!--[if gte IE 5.5000]>
+<script language="JavaScript">
+function correctPNG() // correctly handle PNG transparency in Win IE 5.5 or higher.
+   {
+   for(var i=0; i<document.images.length; i++)
+      {
+	  var img = document.images[i]
+	  var imgName = img.src.toUpperCase()
+	  if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+	     {
+		 var imgID = (img.id) ? "id='" + img.id + "' " : ""
+		 var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+		 var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+		 var imgStyle = "display:inline-block;" + img.style.cssText
+		 if (img.align == "left") imgStyle = "float:left;" + imgStyle
+		 if (img.align == "right") imgStyle = "float:right;" + imgStyle
+		 if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
+		 var strNewHTML = "<span " + imgID + imgClass + imgTitle
+		 + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+	     + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+		 + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>"
+		 img.outerHTML = strNewHTML
+		 i = i-1
+	     }
+      }
+   }
+window.attachEvent("onload", correctPNG);
+</script>
+<![endif]-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<div class="smalltext">
+                Added by             <a href="https://www.securecoding.cert.org/confluence/display/%7Esvoboda">David Svoboda</a>    , last edited by             <a href="https://www.securecoding.cert.org/confluence/display/%7Esvoboda">David Svoboda</a>     on Mar 13, 2008
+                      &nbsp;(<a href="https://www.securecoding.cert.org/confluence/pages/diffpages.action?pageId=9502724&amp;originalId=13107221">view change</a>)
+              
+    
+ 
+
+
+
+<!-- Delay the loading of the external javascript file needed for labels (as it takes too long to load and visibly holds loading of the page body) -->
+<!-- To do this without javascript errors over undefined functions, we need to declare stubs here (that are overrided later by the proper implementations) -->
+<script language="JavaScript" type="text/javascript">
+    function doAddLabel(hideTextfieldAfterAddParam)
+    {
+        // stub
+    }
+
+    function onAddLabel()
+    {
+        // stub
+    }
+
+    function showLabelsInput()
+    {
+        // stub
+    }
+</script>
+
+<!-- This is a hack to work around an apparent SiteMesh bug - http://jira.opensymphony.com/browse/SIM-198 -->
+
+
+<span class="error"><span class="errorMessage" id="errorSpan"></span></span>
+<form name="addLabelForm" method="" action="" onsubmit="doAddLabel(false); return false;" style="margin: 0px; padding: 0px;">
+    <div style="float: left;">Labels:&nbsp;</div>
+    <div id="labelsInfo" style="float: left; width: 90%;">
+        <span id="labelsList">
+                    (None)
+                </span>
+                    <span id="editLabelsLink" class="inline-control-link fontSizeTiny" style="display: inline;">
+            <a href="" onclick="onAddLabel(); showLabelsInput(); return false;">EDIT</a>
+        </span>
+            </div>
+    <br clear="all"><!-- Do not remove this line-break. You will make Safari cry. -->
+    <div id="labelInputSpan" style="display: none; clear: both;">
+        <div style="border: 1px solid rgb(204, 204, 204); padding: 8px; background-color: rgb(240, 240, 240);">
+
+        <div id="labelOperationErrorContainer" style="display: none;"><span class="error"><span class="errorMessage" id="labelOperationErrorMessage"></span></span></div>
+
+        <table width="100%">
+            <tbody><tr>
+                <td>
+                    <div class="formtitle" style="padding-bottom: 3px; font-size: 13px;">Add Labels</div>
+                </td>
+                <td align="right"><div id="waitImageAndStatus" style="display: none; height: 16px;"><img style="width: 12px; height: 12px;" alt="Wait Image" src="C+Rules+Implemented+in+Rose_files/wait.gif" align="absmiddle" border="0">&nbsp;<span id="labelOperationStatus" class="smalltext" style="vertical-align: middle;"></span></div></td>
+            </tr>
+            <tr><td width="50%">
+                    Enter labels to add to this page:<br>
+        <input autocomplete="off" id="labelName" name="labelsString" value="" class="monospaceInput" size="40" type="text">
+        <input onclick="doAddLabel(false); return false;" value="Add" type="submit"><input onclick="doAddLabel(true); return false;" value="Done" type="button">
+        <div style="display: none;" class="auto_complete" id="labelsAutocompleteList"></div>
+        <div class="smalltext">
+            <em>Tip:</em> Looking for a label? Just start typing.
+        </div>
+        </td>
+            <td valign="top" width="50%">
+                <div id="suggestedLabelsSpan"></div>
+            </td>
+        </tr></tbody></table>
+        </div>
+    </div>
+</form>
+    <script type="text/javascript">
+        // if there is javascript support, enable the [Edit] link that enables AJAX label adding/removing functionality
+        if (document.getElementById('editLabelsLink'))
+        {
+            document.getElementById('editLabelsLink').style.display = 'inline';
+        }
+    </script>
+</div>
+
+
+<div class="wiki-content" style="margin-right: 10px;">
+   <!-- wiki content -->
+            <h1><a name="CRulesImplementedinRose-CRulesImplementedinCompassRose"></a>C Rules Implemented in Compass Rose</h1>
+
+
+<h1><a name="CRulesImplementedinRose-"></a></h1>
+
+
+<h2><a name="CRulesImplementedinRose-Currentprogress:"></a>Current progress:</h2>
+
+<p><font color="magenta">N/A</font> - 4</p>
+
+<p><font color="red">NO</font> - 156</p>
+
+<p><font color="orange">PARTIAL</font> - 10</p>
+
+<p><font color="green">DONE</font> - 12</p>
+
+<p>Complete : 22 of 181</p>
+<table class="confluenceTable"><tbody>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>01. PRE</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Prefer inline functions to macros </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE01-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use parentheses within macros around variable names </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE02-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Macro expansion should always be parenthesized for function-like macros </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE03-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Avoid invoking a macro when trying to invoke a function </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE04-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not reuse a standard header file name </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use parenthesis around any macro definition containing operators </td>
+<td class="confluenceTd"> Fortify can not detect this, code is analyzed after preprocessing. -Taschner 10/12 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE06-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Enclose header file in an inclusion sandwich </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not create a universal character name through concatenation </td>
+<td class="confluenceTd"> Fortify analyzes code after preprocessing is done. </td>
+</tr>
+<tr>
+<td class="confluenceTd"> PRE31-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Never invoke an unsafe macro with arguments containing assignment, increment, decrement, or function call </td>
+<td class="confluenceTd"> Fortify analyzes code after preprocessing is done. </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>02. DCL</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Declare immutable values using const or enum </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL01-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not reuse variable names in sub-scopes </td>
+<td class="confluenceTd"> Fortify can not compair contents of two different scopes. -Taschner 10/12 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL02-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use visually distinct identifiers </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL03-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Place const as the rightmost declaration specifier </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL04-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Take care when declaring more than one variable per declaration </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use typedefs to improve code readability </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL06-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use meaningful symbolic constants to represent literal values in program logic </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL07-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Include type information in function declarators </td>
+<td class="confluenceTd"> I can't get any of these code examples to
+compile - these recommendations look like they're already taken care of
+by compiler?? -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL08-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Declare function pointers using compatible types </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL09-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Declare functions that return an errno with a return type of errno_t </td>
+<td class="confluenceTd"> Fortify can not detect the return value of a function. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL10-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Take care when using variadic functions </td>
+<td class="confluenceTd"> Having trouble writing structural rule, requested help. -Taschner 10/16 <br clear="all">
+It's not possible as "insert (loc+<ins>, ..)" is translated to two sequence points "loc_0 = loc</ins>+; insert(loc_0, ...)". -Ning 10/22 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL11-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Understand the type issues associated with variadic functions </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL12-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Create and use abstract data types </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Declare objects with appropriate storage durations </td>
+<td class="confluenceTd"> <em>Rose automatically complains about
+returning pointer to local variable. Rose could also catch other
+specific examples, such as assigning an automatic variable to a static
+pointer. No clue how to handle 'general' case.</em> svoboda 2007-12-7 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL31-C </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> RESERVED </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL32-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Guarantee identifiers are unique </td>
+<td class="confluenceTd"> Fortify does not have a mechanism to deal with this issue properly. -Taschner 11/8 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL33-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that source and destination pointers
+in function arguments do not point to overlapping objects if they are
+restrict qualified </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL34-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use volatile for data that cannot be cached </td>
+<td class="confluenceTd"> Not sure how to check for this - I don't think Fortify can do this.  Asked Chad for help. -Taschner 11/5 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL35-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not convert a function pointer to a function of an incompatible type </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> DCL36-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not use identifiers with different linked classifications </td>
+<td class="confluenceTd"> You wont be able to find this kind of thing
+with the structural analyzer. Currently, our frontend tries to resolve
+multiple definitions as well as it can and then presents a consistent
+view to the analyzers, so a structural rule doesn't even see the
+multiple definitions. -Kannan Goundan </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>03. EXP</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use parentheses for precedence of operation </td>
+<td class="confluenceTd"> This can be done with a simple "grep", Fortify doesn't seem to have anything built in to do this. -Taschner 10/15 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP01-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Do not take the sizeof a pointer to determine the size of a type </td>
+<td class="confluenceTd"> <em>Rose flags template code:</em>* T1* x = malloc(sizeof(T2) * y)
+<ul>
+	<li>(T1*) malloc(sizeof(T2) * y) <br clear="all">
+<em>where</em> T1 != T2 -svoboda 2007-12-10 </li>
+</ul>
+</td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP02-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> The second operands of the logical AND and OR operators should not contain side effects </td>
+<td class="confluenceTd"> Can not flag on "&amp;&amp;" - need to request help from Fortify. -Taschner 10/18 <br clear="all">
+Because our front-end translate the <br clear="all">
+if ( a &amp;&amp; b) ... to  if (a) <br clear="all">
+<div class="error"><span class="error">Unknown macro: {   if (b) ... }</span> </div><br clear="all">
+and '(i++) == max' is translated to  'tmp = i; i = i + 1; tmp == max' <br clear="all">
+In order to handle this case, we need to reverse the translation which we cannot now. -Ning 10/24 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP03-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not assume the size of a structure is the sum of the of the sizes of its members </td>
+<td class="confluenceTd"> "sizeof" is pre-proccessed out before Fortify can analyze the code. -Taschner 10/24 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP04-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not perform byte-by-byte comparisons between structures </td>
+<td class="confluenceTd"> Can create a semantic rule to flag on memcmp, but can't flag structs being passed that fn. -Taschner 10/25 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not cast away a const qualification </td>
+<td class="confluenceTd"> Can not flag on "const". -Taschner 10/25 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP06-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Operands to the sizeof operator should not contain side effects </td>
+<td class="confluenceTd"> "sizeof" is pre-processed out before Fortify can analyze the code. -Taschner 10/18 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP07-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Use caution with NULL and 0, especially concerning pointers </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP08-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure pointer arithmetic is used correctly </td>
+<td class="confluenceTd"> <em>What should we search for to identify bad code usage here? The only pattern I recognize is the sizeof() operator.</em> -svoboda 2007-12-10 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP09-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Use sizeof to determine the size of a type or variable </td>
+<td class="confluenceTd"> <em>I think we need to identify the following:</em>* Malloc() without a sizeof() operator in its argument, and w/o a typecast to char*
+<ul>
+	<li>Usage of calloc() to allocate something typecast to non-char <br clear="all">
+-svoboda 2008-02-07 <br clear="all">
+Throws a false positive for allocating character arrays. -jp 1/31 <br clear="all">
+Amended requirements to handle that, thanks. -svoboda 2007-12/10 <br clear="all">
+Rule now ignores mallocs assigned to char*. -svoboda 2008-03-07 </li>
+</ul>
+</td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP10-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not diminish the benefits of constants by assuming their values in expressions </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP30-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not depend on order of evaluation between sequence points </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP31-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not modify constant values </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP32-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not access a volatile object through a non-volatile reference </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP33-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Do not reference uninitialized variables </td>
+<td class="confluenceTd"> <em>This catches the example code, but
+doesn't always recognize initialization. If initialization is done in
+another function it is not recognized. Weirdness occurs when pointers
+used as well. Lots of false positives.</em> <em>Rose already catches
+most obvious cases of unitialized variable usage, including the 2nd
+non-compliant code example. The first could be identified with some
+very sophisticated code-coverage analysis...not sure its worth the
+effort. No clue how to make it catch more generalized cases</em>-svoboda 2007-12-10 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP34-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Ensure a pointer is valid before dereferencing it </td>
+<td class="confluenceTd"> <em>Rose now ensures that, after receiving a malloc() result, a pointer is next used in == or != operation (eg</em>if (ptr == NULL)<em>...), or a cast-bool operation (eg</em>if (ptr)...<em>)</em> -svoboda 2007-12-11 <em>Rose
+doesn't handle cases where ptr is assigned to soemthing besides a
+simple variable (eg struct member, array member, dereference ptr, etc.</em> -svoboda 2007-12-17 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP35-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not access or modify the result of a function call after a subsequent sequence point </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP36-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not cast between pointers to objects or types with differing alignments </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> EXP37-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Call functions with the correct arguments </td>
+<td class="confluenceTd"> Structural Rule language does not support the
+predicate required to detect the function call violation because it
+requires the universal quantifier "forall" which we don't support at
+this moment. -Ning Wang (Fortify) </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>04. INT</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Understand the data model used by your implementation(s) </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT01-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use size_t for all integer values representing the size of an object </td>
+<td class="confluenceTd"> This is partially covered by the rule for
+INT32-C - but Fortify can't flag on type size_t, Fortify sees size_t as
+unsigned long. -Taschner 10/26 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT02-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Understand integer conversion rules </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT03-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Use a secure integer library </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT04-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Enforce limits on integer values originating from untrusted sources </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT05-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not use functions that input character data and convert the data if these functions cannot handle all possible inputs </td>
+<td class="confluenceTd"> This is covered by FIO33-C. -Taschner 10/26 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT06-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use strtol() to convert a string token to an integer </td>
+<td class="confluenceTd"> Created a structural rule to flag atoi, atol, and atoll when they're passed strings. -Taschner 10/26 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT07-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Explicitly specify signed or unsigned for character types </td>
+<td class="confluenceTd"> Created structural rule to check if int is
+assigned a char (not unsigned or signed char) or if an operation is
+done with a char. -Taschner 10/26 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT08-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Verify that all integer values are in range </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT09-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure enumeration constants map to unique values </td>
+<td class="confluenceTd"> Can't flag on enum. -Taschner 10/29 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT10-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not make assumptions about the sign of the resulting value from the remainder % operator </td>
+<td class="confluenceTd"> Created a structural rule that flags on %. -Taschner 10/29 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT11-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not depend upon the allocation order of bit-fields within a word </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT12-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not make assumptions about the type of a bit-field when used in an expression </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT13-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not assume that a right shift operation is implemented as a logical or an arithmetic shift </td>
+<td class="confluenceTd"> <em>Able to create a structural rule to flag when a right shift operation is performed.</em> -Taschner 10/30<em>Could
+do the same in Rose, but a &gt;&gt; op per se is not bad. No clue how
+to check for assumptions about a &gt;&gt; ops' results.</em> -svoboda 12/11 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT14-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Distinguish bitmaps from numeric types </td>
+<td class="confluenceTd"> Able to create a structural rule to match
+when an arithmetic operation is preformed in the same line as a bit
+manipulation operation. Not able to distiguish between operations on
+positive numbers and operations on negative numbers. -Taschner 10/30 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT15-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when converting from pointer to integer or integer to pointer </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not perform certain operations on questionably signed results </td>
+<td class="confluenceTd"> There is a lot involved in finding these
+types of issues, but I believe your specific question involved
+determining the size of a type. Currently, there's no way to do that,
+but in SCA 5.0 the structural analyzer's "Type" objects will have a
+"storageSize" property that gives you the number of bytes the type
+occupies. One deficiency is that, if you have the Type object for
+"MyStruct*" you'll be able to determine the size of "MyStruct*", but
+you can't just "remove the pointer" and then get the size of
+"MyStruct". To do that, we'd have to enhance our "Type" object to be a
+tree structure -Kannan Goundan </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT31-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Ensure that integer conversions do not result in lost or misinterpreted data </td>
+<td class="confluenceTd"> <em>Able to create a structural rule that
+looks for type conversion without checking the variable on the left
+hand side of the assignment.</em> -Taschner 10/8<em>Rose already throws
+warnings about sign conversion and integer types. Don't entirely trust
+it, because these warnings appear whenever</em>limits.h <em>is included.</em> -svoboda 2007-12-11 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT32-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that integer operations do not result in an overflow </td>
+<td class="confluenceTd"> <em>Able to create a structural rule that
+tests to see if the affected operations are being preformed and there
+is no "if" statement.</em> -Taschner 10/10<em>Probably doable in Rose,
+but there will be many 'uncheckable' instances where addition can not
+result in overflow. How to limit check to 'reasonable' usage?</em> -svoboda 2007-12-11 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that division and modulo operations do not result in divide-by-zero errors </td>
+<td class="confluenceTd"> Created rule similar to INT32-C. -Taschner 10/10 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT34-C </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> RESERVED </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT35-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Upcast integers before comparing or assigning to a larger integer size </td>
+<td class="confluenceTd"> While AFAICT ROSE does not distinguish
+between explicit typecasts and implicit typecasts (eg promotions done
+by the compiler). Still, I think this rule can be enforced. If we can
+limit our scope to equations of the form &lt;exp&gt; &lt;op&gt;
+(&lt;exp&gt; &lt;op&gt; &lt;exp&gt;), where the outer operation is
+assignment or comparison, and the inner operator(s) isn't. We just do
+overflow checking on the inner operator...which should normally be
+mitigated by judicious typecasting on the inner expressions. -svoboda
+2008-02-07 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT36-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not shift a negative number of bits or more bits than exist in the operand </td>
+<td class="confluenceTd"> We could ensure that any variables used for a
+&lt;&lt; or &gt;&gt; operator are previously appear in comparison
+expressions, I suppose. This is one rule where dynamic analysis will
+always fare better than static. -svoboda 2008-02-07 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> INT37-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Arguments to character handling functions must be representable as an unsigned char </td>
+<td class="confluenceTd"> Wrote a structural rule to flag when a char handling fn from ctype.h is passed anything but an unsigned char. -Taschner 11/5 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>05. FLP</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Consider avoiding floating point numbers when precise computation is needed </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP01-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care in rearranging floating point expressions </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Take granularity into account when comparing floating point values </td>
+<td class="confluenceTd"> Created a structural rule to flag when an if
+statement consists of two floats being compaired in the form "f == g".
+-Taschner 11/6 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP31-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not call functions expecting real values with complex values </td>
+<td class="confluenceTd"> 2 Structural rules written, one to catch
+floats being passed to the list of functions detailed in this rule and
+one to catch any time a function is passed a variable with a type
+different than what the function expects. -Taschner 9/18 <br clear="all">
+<br clear="all">
+Take a look at C99 Section 7.22 Type-generic math tgmath.h I think the
+issue is that the math.h and complex.h functions define type-generic
+macros. Use of the macro invokes a function whose corresponding real
+type and type domain are determined by the arguments for the generic
+parameters. If the type of the argument is not compatible with the type
+of the parameter for the selected function, the behavior is undefined.
+I think you are going to need to delve into this deeper, as there are a
+bunch of rules about what gets called. -RCS 9/18 <br clear="all">
+<br clear="all">
+Upon closer inspection, Fortify won't flag on any of these functions - possibly they're processed out before Fortify sees them<img style="width: 12px; height: 12px;" class="emoticon" src="C+Rules+Implemented+in+Rose_files/help_16.gif" alt="" align="absmiddle" border="0" height="16" width="16"><br clear="all">
+. There is still no example code with the rule, and that should be remedied. -Taschner 11/9 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP32-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Prevent domain errors in math functions </td>
+<td class="confluenceTd"> Created a control flow rule to handle this. -Taschner 10/11 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Convert integers to floating point for floating point operations </td>
+<td class="confluenceTd"> Created a structural rule to flag when an
+assignment statement for a variable of type double or float that
+contains an operation that does not result in either a double or a
+float. Fortify incorrectly flags the first compliant code solution with
+the rule written. I think this is a bug in fortify, but may be a
+problem with my code, requested help from Ning. -Taschner 11/6 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FLP34-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that demoted floating point values are within range </td>
+<td class="confluenceTd"> Created a structural rule to flag when a
+double or long double is demoted to float or when a long double is
+demoted to float and there is not if block to check to make sure the
+larger variable doesn't contain a value that the smaller can't contain.
+-Taschner 11/6 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>06. ARR</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR01-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="yellow">PARTIAL</font> </td>
+<td class="confluenceTd"> Be careful using the sizeof operator to determine the size of an array </td>
+<td class="confluenceTd"> <em>Rose does distinguish between complete
+array declarations and incomplete array decls, but it does not
+distinguish between incomplete array decls and pointer decls. So we
+check both that a sizeof's operand type is a pointer (or incomplete
+array), and that a sizeof is the divisor in a divides expr. We don't
+flag sizeof(p) if p is an incomplete array or pointer that doesn't live
+in a divided-by expression...is there a way to do this?</em> -svoboda 2007-12-18 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Guarantee that array indices are within the valid range </td>
+<td class="confluenceTd"> The general problem of array bounds checking
+lends itself to dynamic analysis much better than static analysis.
+-svoboda 2008-02-07 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR31-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use consistent array notation across all source files </td>
+<td class="confluenceTd"> I think this is doable in ROSE, assuming ROSE
+distinguishes between pointer types and incomplete array types (ROSE's
+behavior on this changed recently). Building this for one file is easy,
+but we will need to apply this to whole projects, to catch inter-file
+inconsistencies. -svoboda 2008-02-07 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR32-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure size arguments for variable length arrays are in a valid range </td>
+<td class="confluenceTd"> Created a structural rule to flag when an
+array is dynamically allocated and the value is not properly checked.
+This will flag on the example compliant code as Fortify can't see
+outside of a single function's scope. -Taschner 11/8 I suppose we can
+ensure that a variable used in an array ref was last used in a
+comparison operator, but that doesn't strike me as very comprehensive.
+Also we would need to view multiple files, as a variable could be
+modified in one file, then sent to another file's function to declrea
+the array. -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR33-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Guarantee that copies are made into storage of sufficient size </td>
+<td class="confluenceTd"> At least catches the code in the NCCE. -crd
+2007-09-24 Hm. Another case of ensuring a variable has a reasonable
+size...prob better done dynamically. In this case, we want to ensure
+the size of memory allotted to arg1 of memcpy is large enough to
+accomodate the size of data (specified in arg3 of memcpy). This might
+be doable statically, but we need an infrastructure to determine if one
+value is greater than other at compile time, which we currently lack.
+-svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ARR34-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">PARTIAL</font> </td>
+<td class="confluenceTd"> Ensure that array types in expressions are compatible </td>
+<td class="confluenceTd"> Rose's default rules already flag
+incompatible array copies. So does gcc. Flagging variable-length arrays
+is not done, prob doable but not easy. -svoboda 2008-02-19 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>07. STR</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR00-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="magenta">N/A</font> </td>
+<td class="confluenceTd"> Use TR 24731 for remediation of existing string manipulation code </td>
+<td class="confluenceTd"> <em>Involves functions not currently defined on my platform</em> -svoboda 2007-12-18 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR01-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="magenta">N/A</font> </td>
+<td class="confluenceTd"> Use managed strings for development of new string manipulation code </td>
+<td class="confluenceTd"> <em>Involves functions not currently defined on my platform</em> -svoboda 2007-12-18 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR02-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Sanitize data passed to complex subsystems </td>
+<td class="confluenceTd"> Fortify flags the example code as -
+"[1E605754626A177B9721905D023B495E : medium : Command Injection :
+semantic ]". -Taschner 10/31 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR03-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not inadvertently truncate a null terminated byte string </td>
+<td class="confluenceTd"> Created a control flow rule to flag when
+strncpy, strncat, fgets, or snprintf are called and the result is used
+without a test. -Taschner 10/31 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Prefer making string literals const-qualified </td>
+<td class="confluenceTd"> Fortify can not distinguish between "char" and "char const". -Taschner 11/1 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR06-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Don't assume that strtok() leaves its string argument unchanged </td>
+<td class="confluenceTd"> Fortify catches this with
+[CDFD0C4C211178014C47940B7C19EA30 : medium : Missing Check against Null
+: controlflow ] and [2F6C99890155DBEB91367CA22A5D7E74 : low : Obsolete
+: semantic ]. -Taschner 10/30 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR07-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use plain char for character data </td>
+<td class="confluenceTd"> Attempted to write a structural rule to flag
+when a signed char contains something other than something with double
+qoutes - got errors from Fortify. Requested help. -Taschner 11/1 <br clear="all">
+Ning suggested I try using StringLiteral - this worked - Created a
+structural rule to flag when an unsigned char is assigned a
+StringLiteral. Only a partial fix - as Fortify can't tell the
+difference between char and signed char. -Taschner 11/2 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not attempt to modify string literals </td>
+<td class="confluenceTd"> Not currently possible in Fortify. </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR31-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="yellow">PARTIAL</font> </td>
+<td class="confluenceTd"> Guarantee that storage for strings has sufficient space for character data and the null terminator </td>
+<td class="confluenceTd"> <em>Rose now hollers if the first arg in
+strcpy is declared a fixed-length array. Don't currently support
+strcpy_s. No clue how to identify the first example (which does a
+manual strcpy).</em> -svoboda 2007-12-19 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR32-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Guarantee that all byte strings are null-terminated </td>
+<td class="confluenceTd"> Complex but doable. Search for those
+functions that may rob a string of its null-termination status (eg
+strcpy, strncpy, realloc, memcpy, others?). For any such function, make
+sure that it is either inside an if statment based on string length (it
+has strlen( string)). Or make sure that the next usage of our string
+serves to add a null termination char. That should catch all example
+code. -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR33-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Size wide character strings correctly </td>
+<td class="confluenceTd"> This rule is covered by EXP-09-A, and by ROSE itself <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR34-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> STR34-C. Cast characters to unsigned types before converting to larger integer sizes </td>
+<td class="confluenceTd"> We can look for &lt;int&gt; = &lt;char&gt;
+and holler if &lt;char&gt; is not first typecast to &lt;unsigned
+char&gt; -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> STR35-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not copy data from an unbounded source to a fixed-length array. </td>
+<td class="confluenceTd"> Holler on any usage of gets(). Also catch any "%s" in scanf(). No clue how to catch the getc() example.   -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>08. MEM</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM00-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Allocate and free memory in the same module, at the same level of abstraction </td>
+<td class="confluenceTd"> Easy to create a rule to catch fns that have
+just malloc or just free. But that will catch lots of false positives.
+What we need is a 'free-containing' function associated with each
+'malloc-containing' function. (Sigh...this is one area where C++ &amp;
+RAII wins over C) -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM01-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Set pointers to dynamically allocated memory to NULL after they are released </td>
+<td class="confluenceTd"> Add rule to ROSE to ensure that the usage of
+any pointer, after 'free' is on the left-hand-side of an assignment
+operator (eg it is being set to another value, or NULL) -svoboda
+2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM02-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="magenta">N/A</font> </td>
+<td class="confluenceTd"> Do not cast the return value from malloc() </td>
+<td class="confluenceTd"> <em>RCS sez this rule will soon be rendered obsolete, b/c C &amp; C++ decree opposite behavior.</em> -svoboda 2007-12-07 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM03-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Clear sensitive information stored in dynamic memory prior to deallocation </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM04-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not make assumptions about the result of allocating 0 bytes </td>
+<td class="confluenceTd"> Would have to ensure that the value in malloc
+arg, or realloc arg is nonzero, which would (prob) require some
+variable value assertions (see ARR33-C for a similar problem) -svoboda
+2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Avoid large stack allocations </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM06-A </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> RESERVED </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM07-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that size arguments to calloc() do not result in an integer overflow </td>
+<td class="confluenceTd"> Identifying a potential integer overflow in
+the calloc arguments is moderately hard. But the hard part would be
+recognizing leading code that would prevent such overflow. Suggestions?
+-svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="yellow">PARTIAL</font> </td>
+<td class="confluenceTd"> Do not access freed memory </td>
+<td class="confluenceTd"> <em>Rose now flags any variable used in any
+function (other than an assignment) after being freed. Does not catch
+first example; that requires more sophisitcated analysis; not sure it's
+worthwhile; dynamic analysis is necessary for more comprehensive
+coverage anyway</em> -svoboda 2007-12-19 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM31-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Free dynamically allocated memory exactly once </td>
+<td class="confluenceTd"> I think the ROSE code for MEM30-C will flag
+double frees, but it should be a simple matter to copy that rule to
+specifically identify double frees. -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM32-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Detect and handle critical memory allocation errors </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use flexible array members for dynamically sized structures </td>
+<td class="confluenceTd"> Fortify can't flag on array declarations inside a struct. -Taschner 11/9 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM34-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Only free memory allocated dynamically </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MEM35-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Allocate sufficient memory for an object </td>
+<td class="confluenceTd"> Would need to create some tricky math rules
+to ensure that a multiplication inside a malloc arg does not result in
+overflow. More difficult rules in place to recognize preceding code
+that prevents overflow -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>09. FIO</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when creating format strings </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO01-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Prefer functions that do not rely on file names for identification </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO02-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Canonicalize file names originating from untrusted sources </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO03-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not make assumptions about fopen() and file creation </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO04-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Detect and handle input and output errors </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO05-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Identify files using multiple file attributes </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO06-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Create files with appropriate access permissions </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO07-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Prefer fseek() to rewind() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO08-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when calling remove() on an open file </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO09-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> fflush() should be called after writing to an output stream if data integrity is important </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO10-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when using the rename() function </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO11-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when specifying the mode parameter of fopen() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO12-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Prefer setvbuf() to setbuf() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO13-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Take care when using ungetc() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO14-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Understand the difference between text mode and binary mode with file streams </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Exclude user input from format strings </td>
+<td class="confluenceTd"> It's probably too difficult to ascertain the
+origin the contents of a variable used as a format string. Probably a
+sufficient strategy is to holler on usage of a variable format string
+in printf (&amp; other format functions), UNLESS that variable's
+previous usage is to be initialized to a constant string. Yes, this
+hampers i18n, but i18n is pretty vulnerable to format string
+insecurities already. Nichevo -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO31-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not simultaneously open the same file multiple times </td>
+<td class="confluenceTd"> Fortify can not detect this. -Taschner 11/7 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO32-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Detect and handle file operation errors </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Detect and handle input output errors resulting in undefined behavior </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO34-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use int to capture the return value of character IO functions </td>
+<td class="confluenceTd"> Going by the examples, the proper rule here
+would be to flag any implicit typecast of EOF to an unsigned int. Or,
+ignoring typecasts, any comparison of EOF to an unsigned int. or char
+should be flagged -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO35-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use feof() and ferror() to detect end-of-file and file errors </td>
+<td class="confluenceTd"> Here, we should flag any comparison of EOF
+with the result of getchar() (or a similar function). Or with a
+variable that was last assigned the result of getchar() (or a similar
+function). Very similar, but not quite the same rule as FIO34-C
+-svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO36-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not assume a newline character is read when using fgets() </td>
+<td class="confluenceTd"> Don't know any way to know if code is assuming the last character of a fgets() invocation is a newline.  -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO37-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Don't assume character data has been read </td>
+<td class="confluenceTd"> Like FIO36-C, a Rose rule would need to know what implicit assumptions the programmar made.  -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO38-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not use a copy of a FILE object for input and output </td>
+<td class="confluenceTd"> Pointer weirdness leads to false negatives.  Requested more help. -Taschner 9/17 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO39-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not read in from a stream directly following output to that stream </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO40-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Reset strings on fgets() failure </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO41-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not call getc() or putc() with parameters that have side effects </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO42-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure files are properly closed when they are no longer needed </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO43-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not copy data from an unbounded source to a fixed-length array </td>
+<td class="confluenceTd"> Looks like a duplicate of STR35-C  -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO44-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Only use values for fsetpos() that are returned from fgetpos() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> FIO45-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not reopen a file stream </td>
+<td class="confluenceTd"> Attempted a control flow rule, but this can't be done because it requires a larger scope than Fortify can deal with. -Taschner </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>10. TMP</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> TMP00-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not create temporary files in shared directories </td>
+<td class="confluenceTd"> Lots of easy cases to flag; we can look for
+mktemp() and related functions. We can also look for const strings with
+"/tmp" or "c:/TMP", or other similar patterns. But what would be a
+compliant code example for this rule? AFAICT there is no Right Way to
+do this currently available. -svoboda 2008-02-08 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> TMP30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Temporary files must be created with unique and unpredictable file names </td>
+<td class="confluenceTd"> The rule should be fairly easy to enforce,
+but I'm not confident about the compliant solution. This rule also
+overlaps a lot with TMP00-A. -svoboda 2008-02-12 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> TMP31-C </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> RESERVED </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> TMP32-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> _Temporary files must be opened with exclusive access </td>
+<td class="confluenceTd"> Rose now flags every instance of tmpfile().
+It also flags any usage of tmpnam() after fopen(), tmpnam_s() after
+fopen_s(), and mktemp() after open() (assuming they use the same
+variable._ -svoboda 2007-12-20 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> TMP33-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Temporary files must be removed before the program exits </td>
+<td class="confluenceTd"> Created a control flow rule to flag when
+tmpfile, fopen, mktemp, etc are called rather than tmpfile_s or
+mkstemp. -Taschner 11/7 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>11. ENV</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV00-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not store the pointer to the string returned by getenv() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV01-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not make assumptions about the size of an environment variable </td>
+<td class="confluenceTd"> A solution here would be to scan all usage
+for a string (char[] or char*) that receives a result of getenv(). Do
+not allow this string to be strcpy'd into another string, unless the
+2nd string was allocated with a malloc that involved strlen(string1)
+-svoboda 2008-02-12 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV02-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Beware of multiple environment variables with the same name </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV03-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Sanitize the environment before invoking external programs </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV04-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Do not call system() if you do not need a command interpreter </td>
+<td class="confluenceTd"> <em>Rose flags all calls to system(), can't tell if user needs a command interpreter</em> - svoboda 2007-12-06 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not modify the string returned by getenv() </td>
+<td class="confluenceTd"> Check for completion.  -crd 2007-09-25 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV31-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not rely on an environment pointer following an operation that may invalidate it </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV32-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not call the exit() function more than once </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> ENV33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not call the longjmp function to terminate a call to a function registered by atexit() </td>
+<td class="confluenceTd"> Fortify can't flag this - it's a scope issue (Fortify can't compair the contents of two different scopes. -Taschner </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>12. SIG</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG00-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Avoid using the same handler for multiple signals </td>
+<td class="confluenceTd"> Done for single-file programs. For
+completeness we would want to be able to do this for an entire project,
+as multiple signal() calls could be distributed among multiple files.
+-svoboda 2008-02-12 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG01-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Understand implementation-specific details regarding signal handler persistence </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG30-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Only call async-safe functions within signal handlers </td>
+<td class="confluenceTd"> Done for single-file programs. We can implement it fully when Rose can handle multiple files. </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG31-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Do not access or modify shared objects in signal handlers </td>
+<td class="confluenceTd"> Done for single-file programs. We can implement it fully when Rose can handle multiple files. </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG32-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="orange">PARTIAL</font> </td>
+<td class="confluenceTd"> Do not call longjmp() from inside a signal handler </td>
+<td class="confluenceTd"> Done for single-file programs. We can implement it fully when Rose can handle multiple files. </td>
+</tr>
+<tr>
+<td class="confluenceTd"> SIG33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not recursively invoke the raise() function </td>
+<td class="confluenceTd"> Can't detect signal handlers in Fortify </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>13. MSC</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC00-A </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="magenta">N/A</font> </td>
+<td class="confluenceTd"> Compile cleanly at high warning levels </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC01-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Strive for logical completeness </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC02-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Avoid errors of omission </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC03-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Avoid errors of addition </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC04-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Use comments consistently and in a readable fashion </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC05-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Do not manipulate time_t typed values directly </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC06-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Be aware of insecure compiler optimization when dealing with sensitive data </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC07-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Detect and remove dead code </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC08-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Library functions should validate their parameters </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC09-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Character Encoding - Use Subset of ASCII for Safety </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC10-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Character Encoding - UTF8 Related Issues </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC11-A </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> <font color="black">RESERVED</font> </td>
+<td class="confluenceTd"> RESERVED </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC12-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Detect and remove code that has no effect </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC13-A </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Detect and remove unused values </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Do not use the rand function </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> MSC31-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Ensure that return values are compared against the proper type </td>
+<td class="confluenceTd"> Fortify can't distiguish between time_t and long or size_t and unsigned long. -Taschner 11/8 </td>
+</tr>
+<tr>
+<th class="confluenceTh"> Rule </th>
+<th class="confluenceTh"> Severity </th>
+<th class="confluenceTh"> Progress </th>
+<th class="confluenceTh"> Description </th>
+<th class="confluenceTh"> Notes </th>
+</tr>
+<tr>
+<td class="confluenceTd"> <b>50. POS</b> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS00-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Avoid race conditions with multiple threads </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS01-A </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+<td class="confluenceTd"> Check for the existence of links </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS30-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Use the readlink() function properly </td>
+<td class="confluenceTd"> "sizeof" is pre-proccessed out before Fortify can analyze the code. -Taschner 11/8 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS31-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Do not unlock or destroy another thread's mutex </td>
+<td class="confluenceTd"> Created a control flow rule to flag when a function destroys a lock before acquiring that lock. -Taschner 11/8 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS32-C </td>
+<td class="confluenceTd"> <font color="orange">medium</font> </td>
+<td class="confluenceTd"> <font color="red">NO</font> </td>
+<td class="confluenceTd"> Include a mutex when using bit-fields in a multi-threaded environment </td>
+<td class="confluenceTd"> Fortify can't flag on this - there's a scope issue and a preprocessing issue here. -Taschner 11/8 </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS33-C </td>
+<td class="confluenceTd"> <font color="gold">low</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Do not use vfork() </td>
+<td class="confluenceTd"> <br clear="all"> </td>
+</tr>
+<tr>
+<td class="confluenceTd"> POS34-C </td>
+<td class="confluenceTd"> <font color="red">high</font> </td>
+<td class="confluenceTd"> <font color="green">DONE</font> </td>
+<td class="confluenceTd"> Do not call putenv() with an automatic variable as the argument </td>
+<td class="confluenceTd"> <em>Rose flags putenv() with array arg. (ptr
+arg is not flagged.) Incorrectly flags static arrays. Incorrectly
+misses improper ptr usage (but MEM00-a should catch those.)</em> -svoboda 2007-12-07 </td>
+</tr>
+</tbody></table>
+</div>
+
+<!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+<rdf:Description
+    rdf:about="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose"
+    dc:identifier="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose"
+    dc:title="C Rules Implemented in Rose"
+    trackback:ping="https://www.securecoding.cert.org/confluence/rpc/trackback/9502724"/>
+</rdf:RDF>
+-->
+        <!--
+    Root decorator: all decisions about how a page is to be decorated via the
+                    inline decoration begins here.
+-->
+
+
+
+<!--
+    Switch based upon the context. However, for now, just delegate to a decorator
+    identified directly by the context.
+-->
+
+
+    
+    
+
+<div class="wiki-content" style="margin-right: 10px;">
+    <p style="clear: both;"><!-- comments should always display underneath the content. we should have a 'clear:both' here just in case there are floats or aligned images in the content -->
+
+    
+    
+    
+    
+                                        </p><div style="margin-top: 30px;">
+                <a href="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose?showComments=true&amp;showCommentArea=true#addcomment"><img style="width: 12px; height: 12px;" src="C+Rules+Implemented+in+Rose_files/add_comment_16.gif" align="absmiddle" border="0" height="16" width="16"></a>
+                <a href="https://www.securecoding.cert.org/confluence/display/seccode/C+Rules+Implemented+in+Rose?showComments=true&amp;showCommentArea=true#addcomment">Add Comment</a>
+                </div>
+                        </div>
+                            </div>
+                        </td>
+                            
+    
+        
+    
+                                                </tr>
+                </tbody></table>
+                <!-- End inner content table -->
+            </td>
+        </tr>
+    </tbody></table>
+</div>
+  	                                                            <div class="bottomshadow"></div>
+<!--   	<div id="poweredby" class="smalltext">
+		Powered by <a href="http://www.atlassian.com/software/confluence" class="smalltext">Atlassian Confluence</a> 2.7.3, the <a href="http://www.atlassian.com/software/confluence" class="smalltext">Enterprise Wiki</a>.
+		<a href="http://jira.atlassian.com/secure/BrowseProject.jspa?id=10470" class="smalltext">Bug/feature request</a>
+		-
+		<a href="http://www.atlassian.com/about/connected.jsp?s_kwcid=Confluence-stayintouch" class="smalltext">Atlassian news</a>
+		-
+		<a href="/confluence/administrators.action">Contact administrators</a>
+        <br/>
+	</div>
+ -->
+
+<!-- delay the loading of large javascript files to the end so that they don't interfere with the loading of page content -->
+<span style="display: none;">
+    <script type="text/javascript" language="JavaScript">var domainName = 'https://www.securecoding.cert.org/confluence'; var entityId = '9502724'; var spaceKey = 'seccode'</script>
+    <script type="text/javascript" language="JavaScript" src="C+Rules+Implemented+in+Rose_files/labels-javascript"></script>
+    <script>new Ajax.Autocompleter('labelName', 'labelsAutocompleteList', '9502724', { tokens: new Array(',', ' '), dwrFunction: GenerateAutocompleteLabelsListForEntity.autocompleteLabels});</script>
+</span>
+
+<!--BEGIN FOOTER -->
+
+
+<table bgcolor="#666666" border="0" cellpadding="8" cellspacing="0" width="100%"><tbody><tr>
+<td width="50%"><img style="width: 254.25px; height: 15.75px;" src="C+Rules+Implemented+in+Rose_files/sei_cmu_logo2.gif" alt="Software Engineering Institute | Carnegie Mellon University" usemap="#footermap" border="0">
+	<map name="footermap" id="footermap"><area shape="rect" coords="2,2,233,19" href="http://www.sei.cmu.edu/" alt="Software Engineering Institute"><area shape="rect" coords="241,3,341,19" href="http://www.cmu.edu/" alt="Carnegie Mellon University">
+		
+		
+	</map>
+</td>
+<td align="right" width="50%">
+	<span style="font-size: 11px; color: rgb(255, 255, 255); font-family: Verdana;">
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/">Home</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/meet_cert/meetcertcc.html">About</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/contact_cert/">Contact</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/faq/cert_faq.html">FAQ</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/stats/">Statistics</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/jobs/">Jobs</a> | 
+	<a style="color: rgb(255, 255, 255);" href="http://www.cert.org/legal_stuff/">Legal</a> | 
+	<a style="color: rgb(255, 255, 255);" href="https://www.securecoding.cert.org/confluence/display/seccode/Terms+and+Conditions">Legal</a>
+	<br>
+	Copyright © 1995-2008 Carnegie Mellon University 
+</span></td>
+</tr>
+</tbody></table>
+
+
+<!--END FOOTER -->
+</body></html>
