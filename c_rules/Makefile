@@ -16,7 +16,7 @@ QT_LDFLAGS          =
 LIB_QT              = 
 
 # DQ (8/14/2005): Updated from $(top_srcdir)/config/Makefile.for.ROSE.includes.and.libs
-ROSE_LIBS = -lrose -lm -lrt $(MYSQL_DATABASE_LIBS) $(LIB_QT)
+ROSE_LIBS = -lrose -lfl -lm -lrt $(MYSQL_DATABASE_LIBS) $(LIB_QT)
 
 
 # Default make rule to use
@@ -29,7 +29,6 @@ diagnose: diagnose.o \
 		STR.o \
 		MEM.o \
 		FIO.o \
-		TMP.o \
 		ENV.o \
 		SIG.o \
 		MSC.o \

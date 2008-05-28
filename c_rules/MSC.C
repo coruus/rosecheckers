@@ -25,7 +25,7 @@
 
 // Note:  As written, these tests catch template declarations only if instantiated.
 
-bool MSC30_c( const SgNode *node ) { // Do not use rand()
+bool MSC30_C( const SgNode *node ) { // Do not use rand()
   if (!isCallOfFunctionNamed( node, "rand")) return false;
   print_error( node, "MSC33-C", "Do not use rand()");
   return true;
@@ -34,6 +34,6 @@ bool MSC30_c( const SgNode *node ) { // Do not use rand()
 
 bool MSC(const SgNode *node) {
   bool violation = false;
-  violation |= MSC30_c(node);
+  violation |= MSC30_C(node);
   return violation;
 }

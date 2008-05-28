@@ -40,7 +40,6 @@ public :
     STR(node);
     MEM(node);
     FIO(node);
-    TMP(node);
     ENV(node);
     SIG(node);
     MSC(node);

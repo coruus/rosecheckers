@@ -4,7 +4,7 @@
 int dis[12];
 
 void clear(int array[]) {
-  char* tmp = (char*) malloc(sizeof(*&array));
+  char* tmp = (char*) malloc(sizeof( array));
   if (tmp == NULL) {
     /* handle error */
   }

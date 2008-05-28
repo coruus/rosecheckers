@@ -11,7 +11,7 @@ void clear(int array[], size_t size) {
 }
 
 int main() {
-  clear(dis, sizeof(*&dis) / sizeof(dis[0]));
+  clear(dis, sizeof(dis) / sizeof(dis[0]));
   return 0;
 }
 

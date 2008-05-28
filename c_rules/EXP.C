@@ -103,6 +103,9 @@ bool EXP09_A( const SgNode *node ) { // Use sizeof to determine the size of a ty
 }
 
 bool EXP34_C( const SgNode *node ) { // Ensure pointer is valid before dereferencing it
+  // We only check the output of malloc, calloc, and realloc. Don't check other
+  // potential null ptrs.
+
   const SgExpression* exp = getAllocFunctionExpr( node);
   if (exp == NULL) return false;
 

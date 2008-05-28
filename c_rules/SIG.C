@@ -26,7 +26,8 @@
 
 using namespace std;
 
-
+#ifdef UNDEFINED
+// obsolete
 bool SIG00_a( const SgNode *node ) { // Avoid using the same handler for multiple signals
   static set<const SgFunctionSymbol*> All_Handlers;
 
@@ -54,6 +55,7 @@ bool SIG00_a( const SgNode *node ) { // Avoid using the same handler for multipl
   print_error( node, "SIG00-A", "Avoid using the same handler for multiple signals");
   return true;
 }
+#endif
 
 
 set<SgName> load_async_fns() {
@@ -221,7 +223,7 @@ bool SIG32_c( const SgNode *node ) { // Do not call longjmp() from within a sign
 
 bool SIG(const SgNode *node) {
   bool violation = false;
-  violation |= SIG00_a(node);
+  //  violation |= SIG00_a(node);
   violation |= SIG30_c(node);
   violation |= SIG31_c(node);
   violation |= SIG32_c(node);

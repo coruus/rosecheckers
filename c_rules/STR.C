@@ -21,6 +21,7 @@
 
 
 bool STR31_C(const SgNode *node ) { // Ensure that string storage is sufficient for chars & terminator
+  // This just ensures that strcpy is copying into a pointer
   if (!isCallOfFunctionNamed( node, "strcpy")) return false;
 
   const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
