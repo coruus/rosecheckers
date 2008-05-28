@@ -1,0 +1,230 @@
+/*
+ *
+ * Copyright (c) 2007 Carnegie Mellon University.
+ * All rights reserved.
+
+ * Permission to use this software and its documentation for any purpose is hereby granted,
+ * provided that the above copyright notice appear and that both that copyright notice and
+ * this permission notice appear in supporting documentation, and that the name of CMU not
+ * be used in advertising or publicity pertaining to distribution of the software without
+ * specific, written prior permission.
+ *
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+#include <list>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include "rose.h"
+#include "utilities.h"
+
+using namespace std;
+
+
+bool SIG00_a( const SgNode *node ) { // Avoid using the same handler for multiple signals
+  static set<const SgFunctionSymbol*> All_Handlers;
+
+  if (!isCallOfFunctionNamed( node, "signal")) return false;
+  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+  assert(sig_fn != NULL);
+  const SgExpression* ref = getFnArg( sig_fn, 1);
+  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+  if (handler == NULL) return false; // no signal handler
+  const SgFunctionSymbol* symbol = handler->get_symbol();
+
+  // We can excuse any 1-arg function assigning itself as a handler
+  const SgNode* encloser = findParentNodeOfType( node, V_SgFunctionDefinition).first;
+  if (encloser == handler->get_symbol()->get_declaration()->get_definition()) {
+    const SgVarRefExp* signal_var = isSgVarRefExp( getFnArg( sig_fn, 0));
+    const SgFunctionParameterList *plist = handler->get_symbol()->get_declaration()->get_parameterList();
+    if (plist->get_args().size() >= 1) {
+      const SgInitializedName* arg0 = *(plist->get_args().begin());
+      if (signal_var->get_symbol()->get_declaration() == arg0)
+	return false;
+    }
+  }
+
+  if (All_Handlers.insert( symbol).second) return false;
+  print_error( node, "SIG00-A", "Avoid using the same handler for multiple signals");
+  return true;
+}
+
+
+set<SgName> load_async_fns() {
+  // should really go into a file somewhere
+  static const string posix_async_safe_fns =
+    "_Exit _exit abort accept access aio_error aio_return aio_suspend"
+    "alarm bind cfgetispeed cfgetospeed cfsetispeed cfsetospeed chdir chmod"
+    "chown clock_gettime close connect creat dup dup2 execle"
+    "execve fchmod fchown fcntl fdatasync fork fpathconf fstat"
+    "fsync ftruncate getegid geteuid getgid getgroups getpeername getpgrp"
+    "getpid getppid getsockname getsockopt getuid kill link listen"
+    "lseek lstat mkdir mkfifo open pathconf pause pipe"
+    "poll posix_trace_event pselect raise read readlink recv recvfrom"
+    "recvmsg rename rmdir select sem_post send sendmsg sendto"
+    "setgid setpgid setsid setsockopt setuid shutdown sigaction sigaddset"
+    "sigdelset sigemptyset sigfillset sigismember sleep signal sigpause sigpending"
+    "sigprocmask sigqueue sigset sigsuspend sockatmark socket socketpair stat"
+    "symlink sysconf tcdrain tcflow tcflush tcgetattr tcgetpgrp tcsendbreak"
+    "tcsetattr tcsetpgrp time timer_getoverrun timer_gettime timer_settime times umask"
+    "uname unlink utime wait waitpid write";
+
+  set<SgName> functions;
+  istringstream i( posix_async_safe_fns);
+  string name;
+  while (!i.eof()) {
+    i >> name;
+    functions.insert(name);
+  }
+  return functions;
+}
+// Set of async-safe functions we know about
+set<SgName> Async_Fns = load_async_fns();
+
+// Current stack of functions examined by non_async_fn
+vector<SgName> Async_Stack;
+
+// Returns node of a non-async fn in the definition of handler
+// or NULL if none. Descends recursively through function calls.
+const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
+  const SgName name = handler->get_symbol()->get_name();
+
+  if (Async_Fns.find( name) != Async_Fns.end())
+    return NULL; // this fn is async-save
+
+  // Recursive functions are assumed async-safe
+  if (find( Async_Stack.begin(), Async_Stack.end(), name) != Async_Stack.end())
+    return NULL;
+
+  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+  // if handler not defined or in async list, we assume it is not
+  // async-safe
+  if (def == NULL) return handler;
+
+  // Walk through definition ensuring that all function calls are async-safe
+  Async_Stack.push_back( name);
+  const SgNode* result = NULL;
+  Rose_STL_Container<SgNode *> nodes
+    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp);
+  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
+    const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
+    assert( fn_ref != NULL);
+    if (non_async_fn( fn_ref)) {
+      result = fn_ref;
+      break;
+    }
+  }
+  Async_Stack.pop_back();
+
+  // If no unsafe functions called, add to async-safe set
+  if (result == NULL)
+    Async_Fns.insert( name);
+  return result;
+}
+
+
+bool SIG30_c( const SgNode *node ) { // Call only async-safe functions in a signal handler
+  if (!isCallOfFunctionNamed( node, "signal")) return false;
+  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+  assert(sig_fn != NULL);
+  const SgExpression* ref = getFnArg( sig_fn, 1);
+  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+  if (handler == NULL) return false; // no signal handler
+  const SgNode* bad_node = non_async_fn( handler);
+  if (bad_node == NULL)
+    return false;
+  print_error( bad_node, "SIG30-C", "Call only asynchronous-safe functions within signal handlers");
+  return true;
+}
+
+
+bool SIG31_c( const SgNode *node ) { // Do not access or modify shared objects in a signal handler
+  // Specifically, this rule only ensures that any variable referenced is either local
+  // or is static volatile sig_atomic_t
+  if (!isCallOfFunctionNamed( node, "signal")) return false;
+  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+  assert(sig_fn != NULL);
+  const SgExpression* ref = getFnArg( sig_fn, 1);
+  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+  if (handler == NULL) return false; // no signal handler
+  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+
+  Rose_STL_Container<SgNode *> nodes
+    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgVarRefExp);
+  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
+    const SgVarRefExp* var_ref = isSgVarRefExp(*i);
+    assert( var_ref != NULL);
+    SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
+    assert( var_decl != NULL);
+
+    const SgNode* encloser = findParentNodeOfType( var_decl, V_SgFunctionParameterList).first;
+    if (encloser != NULL)
+      continue; // variable is function arg
+
+    const SgType* var_type = var_ref->get_type();
+
+    // We assume that sig_atomic_t is a typedef (not a macro)
+    static const string sig_atomic_typename = "sig_atomic_t";
+    const SgNamedType* named_type = isSgNamedType( var_type->stripType( SgType::STRIP_MODIFIER_TYPE));
+
+    bool compliant = true;
+    if (!Type( var_type).isVolatile())
+      compliant = false;
+    if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
+      compliant = false;
+    const SgInitializedName* decl = var_ref->get_symbol()->get_declaration();
+    if (!isSgGlobal( decl->get_parent()->get_parent()) && 
+	!(decl->get_declaration()->get_declarationModifier().get_storageModifier().isStatic()))
+      compliant = false;
+#if 0
+    const SgAssignOp* assignment = isSgAssignOp( var_ref->get_parent());
+    if (assignment == NULL)
+      compliant = false;
+    else if (assignment->get_lhs_operand() != var_ref)
+      compliant = false;
+#endif
+    if (compliant) continue;
+
+    print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
+    std::cerr << "\tobject: " << var_ref->unparseToString() << std::endl;
+    return true;
+  }
+  return false;
+}
+
+
+bool SIG32_c( const SgNode *node ) { // Do not call longjmp() from within a signal handler
+  if (!isCallOfFunctionNamed( node, "signal")) return false;
+  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+  assert(sig_fn != NULL);
+  const SgExpression* ref = getFnArg( sig_fn, 1);
+  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+  if (handler == NULL) return false; // no signal handler
+  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+
+  Rose_STL_Container<SgNode *> nodes
+    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp );
+  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i )
+    if (isCallOfFunctionNamed( *i, "longjmp")) {
+      print_error( *i, "SIG32-A", "Do not call longjmp() from within a signal handler");
+      return true;
+    }
+  return false;
+}
+
+
+bool SIG(const SgNode *node) {
+  bool violation = false;
+  violation |= SIG00_a(node);
+  violation |= SIG30_c(node);
+  violation |= SIG31_c(node);
+  violation |= SIG32_c(node);
+  return violation;
+}
+
