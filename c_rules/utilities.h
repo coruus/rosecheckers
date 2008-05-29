@@ -91,6 +91,7 @@ bool isTestForNullOp(const SgNode* node);
 // Returns reference to ith argument of function reference. Dives
 // through typecasts. Returns NULL if no such parm
 const SgExpression* getFnArg(const SgFunctionRefExp* node, int i);
+const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i);
 
 
 // Fills list with all nodes in enclosing function

@@ -286,6 +286,22 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
   return (castArg != NULL) ? castArg->get_operand() : fnArg;
 }
 
+// Returns reference to ith argument of function call. Dives
+// through typecasts. Returns NULL if no such parm
+const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
+  if (fnCall == NULL) return NULL;
+
+  const SgExprListExp* fnArgs = fnCall->get_args();
+  assert( fnArgs != NULL);
+  Rose_STL_Container<SgExpression*>::const_iterator iterator = fnArgs->get_expressions().begin();
+  for (int j = 0; j < i; j++) iterator++;
+  const SgExpression* fnArg = *iterator;
+  assert( fnArg != NULL);
+  const SgCastExp* castArg = isSgCastExp( fnArg);
+  return (castArg != NULL) ? castArg->get_operand() : fnArg;
+}
+
+
 
 // Fills list with all nodes in enclosing function
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
