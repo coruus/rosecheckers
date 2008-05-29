@@ -20,6 +20,40 @@
 #include "utilities.h"
 #include <algorithm>
 
+bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediately after free()
+	if (!isCallOfFunctionNamed(node, "free")) return false;
+
+	const SgExpression *argExp = getFnArg(isSgFunctionRefExp(node), 0);
+	assert(argExp);
+	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
+	assert(argVar);
+
+	const SgFunctionCallExp *freeExp = isSgFunctionCallExp(node->get_parent());
+	assert(freeExp);
+	const SgExprStatement *freeExpr = isSgExprStatement(freeExp->get_parent());
+	assert(freeExpr);
+	const SgBasicBlock *freeBlock = isSgBasicBlock(freeExpr->get_parent());
+	assert(freeBlock);
+
+	const SgStatementPtrList &stats = freeBlock->get_statements();
+	for ( SgStatementPtrList::const_iterator i = stats.begin(); i != stats.end(); ++i ) {
+		if (*i != freeExpr) continue;
+		++i;
+		if (i == stats.end()) break;
+		const SgExprStatement *nextExpr = isSgExprStatement(*i);
+		assert(nextExpr);
+		const SgAssignOp *assignOp = isSgAssignOp(nextExpr->get_expression());
+		if (!assignOp) break;
+		const SgVarRefExp *assignVar = isSgVarRefExp(assignOp->get_lhs_operand());
+		assert(assignVar);
+		if (argVar->get_symbol()->get_name() != assignVar->get_symbol()->get_name()) break;
+		return false;
+	}
+
+	print_error(node, "MEM01_A", "Store a new value in pointers immediately after free()");
+
+	return true;
+}
 
 bool hasAssignToVar(const SgNode* node,
 		    const SgVarRefExp* ref, /* ignore if NULL */
@@ -145,6 +179,7 @@ bool MEM30_C( const SgNode *node ) { // Ensure that freed pointers are not reuse
 
 bool MEM(const SgNode *node) {
   bool violation = false;
+  violation |= MEM01_A(node);
   violation |= MEM30_C(node);
   return violation;
 }
