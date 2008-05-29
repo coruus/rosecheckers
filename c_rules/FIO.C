@@ -32,6 +32,34 @@ bool FIO12_A( const SgNode *node ) { // Prefer setvbuf() to setbuf()
   return true;
 }
 
+bool FIO34_C( const SgNode *node) { //Use int to capture the return value of character IO functions
+
+	if(!isSgFunctionRefExp(node))
+		return false;
+
+	if(!isCallOfFunctionNamed( node, "fputc") && !isCallOfFunctionNamed( node, "putc") &&
+		!isCallOfFunctionNamed( node, "putchar") && !isCallOfFunctionNamed( node, "ungetc") &&
+		!isCallOfFunctionNamed( node, "fgetc") && !isCallOfFunctionNamed( node, "getc") &&
+		!isCallOfFunctionNamed( node, "getchar"))
+		return false;
+
+	assert(node->get_parent());
+	assert(node->get_parent()->get_parent());
+
+	SgNode const *parent = node->get_parent()->get_parent();
+
+	SgCastExp const *cast;
+	if(!(cast = isSgCastExp(parent)))
+		return false;
+
+	Type t = Type(cast->get_type());
+	if(t.isPlainInt() || t.isSignedInt() || t.isPlainLong() ||
+		t.isSignedLong() || (t.isLongLong() && !t.isUnsignedLongLong()))
+		return false;
+
+	print_error( node, "FIO43-C", "Use int to capture the return value of character I/O functions");
+	return true;
+}
 
 bool FIO43_C( const SgNode *node ) { // Do not use tmpfile()
   if (!isCallOfFunctionNamed( node, "tmpfile")) return false;
@@ -69,11 +97,11 @@ bool FIO43_C_4( const SgNode *node ) { // Do not use fopen_s() on the results of
   return true;
 }
 
-
 bool FIO(const SgNode *node) {
   bool violation = false;
   violation |= FIO07_A(node);
   violation |= FIO12_A(node);
+  violation |= FIO34_C(node);
   violation |= FIO43_C(node);
   violation |= FIO43_C_2(node);
   violation |= FIO43_C_3(node);
