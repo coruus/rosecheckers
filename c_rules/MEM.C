@@ -71,6 +71,7 @@ bool hasAssignToVar(const SgNode* node,
       if (i == end) return false;
     } else end = find( i, end, ref);
   }
+  if (i == nodes.end()) return false;
 
   // if i does not point to our var ref, move it to next one.
   const SgVarRefExp* i_ref = isSgVarRefExp(*i);
