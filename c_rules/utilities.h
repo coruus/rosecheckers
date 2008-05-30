@@ -109,4 +109,7 @@ Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container
 // Returns true if function( ref) appears in code somewhere after ref
 bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref);
 
+// Return true if the variable has global scope
+bool isGlobalVar(const SgVarRefExp *varRef);
+
 #endif

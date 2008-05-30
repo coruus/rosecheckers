@@ -18,5 +18,6 @@ int main(void) {
   strcpy(foo, "Hello World.");
   puts(foo);
   free(foo);
+  foo = NULL;
   return 0;
 }

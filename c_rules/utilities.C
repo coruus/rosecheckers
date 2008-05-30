@@ -364,3 +364,19 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
 
   return false;
 }
+
+/**
+ * Checks the scope of the variable to see if it is global or not
+ */
+bool isGlobalVar(const SgVarRefExp *varRef) {
+	const SgVariableSymbol *varSym = varRef->get_symbol();
+	assert(varSym);
+	const SgInitializedName *varName = varSym->get_declaration();
+	assert(varName);
+	const SgScopeStatement *varScope = varName->get_scope();
+	assert(varScope);
+	if (isSgGlobal(varScope))
+		return true;
+	else
+		return false;
+}
