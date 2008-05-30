@@ -39,9 +39,16 @@ bool ARR01_A( const SgNode *node ) { // Do not use sizeof() on an incomplete arr
   return true;
 }
 
+bool ARR34_C( const SgNode *node ) { // Ensure that array types in expressions are compatible
+	// Since GCC produces a warning during compilation for this, Rose already
+	// catches violations of this rule
+
+	return false;
+}
 
 bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_A(node);
+  violation |= ARR34_C(node);
   return violation;
 }
