@@ -4,6 +4,7 @@ int main() {
   int number = 3;
   int error_condition = 1;
   int *x = (int *)malloc (number * sizeof(int));
+
   if (x == NULL) {
     /* Handle Allocation Error */
   }
@@ -12,6 +13,7 @@ int main() {
     /* Handle Error Condition*/
     free(x);
   }
+
   /* ... */
   free(x);
 }

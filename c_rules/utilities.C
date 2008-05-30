@@ -303,7 +303,7 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
 
 
 
-// Fills list with all nodes in enclosing function
+// Fills list with all nodes OF TYPE <SgVarRefExp> in enclosing function
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
   const SgFunctionDefinition* block
     = isSgFunctionDefinition( findParentNodeOfType( node,

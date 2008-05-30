@@ -209,11 +209,21 @@ bool MEM30_C( const SgNode *node ) { // Ensure that freed pointers are not reuse
 }
 
 bool MEM31_C( const SgNode *node ) { //Free dynamically allocated memory exactly once
+
+  //If the variable is passed by reference to a function which allocates memory this could throw a false positive.
+  //If the variable is freed multiple times by a single loop this could throw a false negative.
+
   if (!isCallOfFunctionNamed( node, "free")) return false;
+  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
+    
+  const SgVarRefExp* ref2 = NULL;
 
-  const SgNode *top = findParentNodeOfType(node, V_SgGlobal).first;
+  if (ref == NULL) return false;
+  const SgInitializedName* ref_var = getRefDecl( ref);
+  const SgInitializedName* ref2_var = NULL;
 
-  const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast<SgNode*>(top), V_SgNode);
+  const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
+  const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);
 
   Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
   Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
@@ -223,13 +233,22 @@ bool MEM31_C( const SgNode *node ) { //Free dynamically allocated memory exactly
 
   while(i != end) {
     if(isCallOfFunctionNamed(*i, "free")) {
-      print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
-      return true;
+      const SgVarRefExp* ref2 = isSgVarRefExp( getFnArg( isSgFunctionRefExp( *i), 0));
+      const SgInitializedName* ref2_var = getRefDecl( ref2);
+  
+      if (ref_var == ref2_var) {
+	print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
+	return true;
+      }
     }
 
-    if(isSgAssignOp(*i) != NULL)
-      return false;
+    if(isSgAssignOp(*i) != NULL) {
+      const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
+      const SgInitializedName* ref2_var = getRefDecl( ref2);
 
+      if (ref_var == ref2_var) 	return false;
+    }
+     
     i++;
   }
 
