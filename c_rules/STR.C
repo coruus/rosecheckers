@@ -33,9 +33,48 @@ bool STR31_C(const SgNode *node ) { // Ensure that string storage is sufficient 
   return true;
 }
 
+//Check if there is a gets
+//Check if sscanf/scanf has a "%s"
+
+bool STR35_C(const SgNode *node) {
+
+	if(isCallOfFunctionNamed(node, "gets")) {
+		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
+		return true;
+	}
+
+	if(isCallOfFunctionNamed(node, "scanf")) {
+		SgFunctionCallExp const *fn = isSgFunctionCallExp(node->get_parent());
+		assert(fn);
+
+		SgExprListExp const *expr = fn->get_args();
+		assert(expr);
+
+		SgExpressionPtrList const &list = expr->get_expressions();
+		SgExpressionPtrList::const_iterator i = list.begin();
+		//How do I asserted iterator?
+
+		SgCastExp const *cast = isSgCastExp(*i);
+		assert(cast);
+		
+		std::vector< SgNode * > t = const_cast<SgCastExp *>(cast)->get_traversalSuccessorContainer ();
+		SgStringVal const *val = isSgStringVal(t[0]);
+		assert(val);
+
+		std::string s = val->get_value();
+
+		if(strstr(s.c_str(), "%s") != NULL) {
+			print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
+			return true;
+		}
+	}
+
+	return false;
+}
 
 bool STR(const SgNode *node) {
   bool violation = false;
   violation |= STR31_C(node);
+  violation |= STR35_C(node);
   return violation;
 }
