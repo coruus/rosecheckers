@@ -208,10 +208,39 @@ bool MEM30_C( const SgNode *node ) { // Ensure that freed pointers are not reuse
 	return violation;
 }
 
+bool MEM31_C( const SgNode *node ) { //Free dynamically allocated memory exactly once
+  if (!isCallOfFunctionNamed( node, "free")) return false;
+
+  const SgNode *top = findParentNodeOfType(node, V_SgGlobal).first;
+
+  const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast<SgNode*>(top), V_SgNode);
+
+  Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
+  Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
+
+  while(*i != node) i++;
+  i++;
+
+  while(i != end) {
+    if(isCallOfFunctionNamed(*i, "free")) {
+      print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
+      return true;
+    }
+
+    if(isSgAssignOp(*i) != NULL)
+      return false;
+
+    i++;
+  }
+
+  return false;
+}
+
 
 bool MEM(const SgNode *node) {
   bool violation = false;
-  violation |= MEM01_A(node);
-  violation |= MEM30_C(node);
+  //  violation |= MEM01_A(node);
+  //  violation |= MEM30_C(node);
+  violation |= MEM31_C(node);
   return violation;
 }
