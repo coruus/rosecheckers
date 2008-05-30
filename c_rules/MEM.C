@@ -20,6 +20,33 @@
 #include "utilities.h"
 #include <algorithm>
 
+// Checks to see if node is an assignment with var as the lhs and not in the
+// rhs
+bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
+	const SgAssignOp *assignOp = isSgAssignOp(node);
+	if (!assignOp)
+		return false;
+
+	// Ensure that we are assigning to the variable in the LHS
+	const SgVarRefExp *lhsVar = isSgVarRefExp(assignOp->get_lhs_operand());
+	assert(lhsVar);
+	if (getRefDecl(var) != getRefDecl(lhsVar))
+		return false;
+
+	// Ensure variable does not appear in RHS
+	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgVarRefExp);
+	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
+	Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
+	SgVarRefExp *rhsVar;
+	for (++i; i < end; i++) {
+		rhsVar = isSgVarRefExp(*i);
+		assert(rhsVar);
+		if (getRefDecl(var) == getRefDecl(rhsVar))
+			return false;
+	}
+	return true;
+}
+
 bool hasAssignToVar(const SgNode* node,
 	const SgVarRefExp* ref, /* ignore if NULL */
 	bool after, /* if true, only items after ref, else before */
@@ -46,34 +73,18 @@ bool hasAssignToVar(const SgNode* node,
 	for (; i != end && i != nodes.end(); i = nextVarRef(nodes, i, var)) {
 		const SgVarRefExp* i_ref = isSgVarRefExp(*i);
 		assert(i_ref != NULL);
-		// if (i != nodes.end()) std::cerr << "i: " << (*i)->get_parent()->unparseToString() << std::endl;
 
 		if (isTestForNullOp(i_ref))
 			continue;
-		const SgAssignOp* next_assignment = isSgAssignOp(findParentNodeOfType(i_ref, V_SgAssignOp).first);
-		if (next_assignment != NULL && isSgVarRefExp(next_assignment->get_lhs_operand()) && next_assignment->get_lhs_operand() == i_ref) {
-			// we have an assignment to var, but must ensure var does
-			// not appear on the RHS
-		}
 
-		//	if (next_assignment) std::cerr << "ass: " << next_assignment->unparseToString() << std::endl;
-		//		std::cerr << "ref: " << i_ref->unparseToString() << std::endl;
-		//		std::cerr << "var: " << var->unparseToString() << std::endl;
-		(*violation) = true;
-		return false;
+		if (isAssignToVar(findParentNodeOfType(i_ref, V_SgAssignOp).first, i_ref)) {
+			return true;
+		} else {
+			(*violation) = true;
+			return false;
+		}
 	}
 	return false;
-}
-
-// Checks to see if node is an assignment with var as the lhs
-bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
-	const SgAssignOp *assignOp = isSgAssignOp(node);
-	if (!assignOp) return false;
-	const SgVarRefExp *lhsVar = isSgVarRefExp(assignOp->get_lhs_operand());
-	assert(lhsVar);
-
-	// Ensure that we are assigning to the pointer and not some other variable
-	return (var->get_symbol()->get_name() == lhsVar->get_symbol()->get_name());
 }
 
 bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediately after free()

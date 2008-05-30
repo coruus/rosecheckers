@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
   strncpy(buff, argv[1], BUFSIZE-1);
   /* ... */
   free(buff);
-  /* ... */
   buff = (char*) malloc(BUFSIZE);
   if (!buff) {
      /* handle error condition */
