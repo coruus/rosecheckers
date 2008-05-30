@@ -20,14 +20,30 @@
 #include "utilities.h"
 #include <algorithm>
 
+bool isGlobalVar(const SgVarRefExp *varRef) {
+	const SgVariableSymbol *varSym = varRef->get_symbol();
+	assert(varSym);
+	const SgInitializedName *varName = varSym->get_declaration();
+	assert(varName);
+	const SgScopeStatement *varScope = varName->get_scope();
+	assert(varScope);
+	if (isSgGlobal(varScope))
+		return true;
+	else
+		return false;
+}
+
 bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediately after free()
 	if (!isCallOfFunctionNamed(node, "free")) return false;
 
+	// Figure out which variable is being freed
 	const SgExpression *argExp = getFnArg(isSgFunctionRefExp(node), 0);
 	assert(argExp);
 	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
 	assert(argVar);
+	bool global = isGlobalVar(argVar);
 
+	// Pop up to the BasicBlock so that we can find the next line of code
 	const SgFunctionCallExp *freeExp = isSgFunctionCallExp(node->get_parent());
 	assert(freeExp);
 	const SgExprStatement *freeExpr = isSgExprStatement(freeExp->get_parent());
@@ -35,18 +51,44 @@ bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediatel
 	const SgBasicBlock *freeBlock = isSgBasicBlock(freeExpr->get_parent());
 	assert(freeBlock);
 
+	// Iterate over the basic block until we find the position of the free
+	// statement
 	const SgStatementPtrList &stats = freeBlock->get_statements();
 	for ( SgStatementPtrList::const_iterator i = stats.begin(); i != stats.end(); ++i ) {
 		if (*i != freeExpr) continue;
+		// Now go to the next statement and see what it is
 		++i;
-		if (i == stats.end()) break;
+		// XXX Check for global variable since they are always in scope
+		if (i == stats.end()) {
+			// The free is allowed to be the last statement in a block only if
+			// that block is a function definition and the variable is local
+			if (isSgFunctionDefinition(freeBlock->get_parent()) && !global) {
+				return false;
+			}
+			// Otherwise we have a dangling pointer that is still in scope
+			break;
+		}
+		// Return Statements are OK
+		if(isSgReturnStmt(*i)) {
+			if(global)
+				break;
+			else
+				return false;
+		}
+		// Assignments to the pointer are OK
 		const SgExprStatement *nextExpr = isSgExprStatement(*i);
-		assert(nextExpr);
+		if(!nextExpr)
+			break;
 		const SgAssignOp *assignOp = isSgAssignOp(nextExpr->get_expression());
-		if (!assignOp) break;
+		// Anything else is NOT ok
+		if (!assignOp)
+			break;
 		const SgVarRefExp *assignVar = isSgVarRefExp(assignOp->get_lhs_operand());
 		assert(assignVar);
-		if (argVar->get_symbol()->get_name() != assignVar->get_symbol()->get_name()) break;
+		// Ensure that we are assigning to the pointer and not some other variable
+		if (argVar->get_symbol()->get_name() != assignVar->get_symbol()->get_name())
+			break;
+		// If we made it this far, we comply with the recommendation
 		return false;
 	}
 
