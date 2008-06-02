@@ -40,6 +40,7 @@ MEM01_A.c:13: error: MEM01_A: Store a new value in pointers immediately after fr
 MEM01_A.c:13: error: MEM30-C: Do not access freed memory
 MEM01_A.c:13: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM01_A.c:18: error: MEM01_A: Store a new value in pointers immediately after free()
+MEM01_A_2.c:9: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C.c:15: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C.c:15: error: MEM30-C: Do not access freed memory
 MEM30_C_2.c:16: error: MEM01_A: Store a new value in pointers immediately after free()

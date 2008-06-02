@@ -96,7 +96,7 @@ bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediatel
 	assert(argExp);
 	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
 	assert(argVar);
-	bool global = isGlobalVar(argVar);
+	bool longlifetime = isGlobalVar(argVar) || isStaticVar(argVar);
 
 	// Pop up to the BasicBlock so that we can find the next line of code
 	const SgFunctionCallExp *freeExp = isSgFunctionCallExp(node->get_parent());
@@ -121,7 +121,7 @@ bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediatel
 		// that block is a function definition and the variable is local
 		// or if the increment of a for loop is an assignment to the variable
 		if (i == stats.end()) {
-			if (isSgFunctionDefinition(freeBlock->get_parent()) && !global)
+			if (isSgFunctionDefinition(freeBlock->get_parent()) && !longlifetime)
 				return false;
 			const SgForStatement *forLoop = isSgForStatement(freeBlock->get_parent());
 			if (forLoop && isAssignToVar(forLoop->get_increment(), argVar))
@@ -131,7 +131,7 @@ bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediatel
 
 		// Return Statements are also OK, but only for local vars
 		if (isSgReturnStmt(*i)) {
-			if (!global)
+			if (!longlifetime)
 				return false;
 			break;
 		}
