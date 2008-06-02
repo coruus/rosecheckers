@@ -33,6 +33,17 @@ bool STR31_C(const SgNode *node ) { // Ensure that string storage is sufficient 
   return true;
 }
 
+bool getSizetVal(const SgNode *node, size_t *value) {
+	if (isSgUnsignedIntVal(node)) {
+		*value = isSgUnsignedIntVal(node)->get_value();
+	} else if (isSgUnsignedLongVal(node)) {
+		*value = isSgUnsignedLongVal(node)->get_value();
+	} else {
+		return false;
+	}
+	return true;
+}
+
 bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
 	if (!isCallOfFunctionNamed(node, "strncpy")) return false;
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
@@ -53,9 +64,12 @@ bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
 	}
 
 	const SgArrayType *arrT = isSgArrayType(srcExp->get_type());
-	const SgUnsignedIntVal *lenVal= isSgUnsignedIntVal(lenExp);
 	const SgVarRefExp *dstRef = isSgVarRefExp(dstExp);
-	if (!arrT || !lenVal || !dstRef)
+	if (!arrT || !dstRef)
+		return false;
+	size_t len;
+	/* Some machines evaluate to unsigned int, others to unsigned long */
+	if (!getSizetVal(lenExp,&len))
 		return false;
 	const SgValueExp *srcVal = isSgValueExp(arrT->get_index());
 	if (!srcVal) // VLA or some such...
@@ -64,7 +78,6 @@ bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
 	if (!srcValInt)
 		return  false;
 	size_t src_size = srcValInt->get_value();
-	size_t len = lenVal->get_value();
 
 	if (src_size >= len) {
 		do {
@@ -104,11 +117,10 @@ bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
 			if (getRefDecl(varRef) != getRefDecl(dstRef))
 				break;
 			// ... and must have an index ...
-			const SgUnsignedIntVal *dstIdx = isSgUnsignedIntVal(arrRef->get_rhs_operand());
-			if (!dstIdx)
+			size_t dst_idx;
+			if (!getSizetVal(arrRef->get_rhs_operand(), &dst_idx))
 				break;
 			// ... that is equal to len - 1
-			size_t dst_idx = dstIdx->get_value();
 			if (len > 0 && dst_idx == len - 1) {
 				return false;
 			}
