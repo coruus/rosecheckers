@@ -1,9 +1,3 @@
-#include <list>
-#include <algorithm>
-#include <iostream>
-#include "rose.h"
-#include "utilities.h"
-
 /*
  *
  * Copyright (c) 2007 Carnegie Mellon University.
@@ -21,6 +15,12 @@
  * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+#include <list>
+#include <algorithm>
+#include <iostream>
+#include "rose.h"
+#include "utilities.h"
 
 extern bool EXP( SgProject *project );
 extern bool OBJ( SgProject *project );
