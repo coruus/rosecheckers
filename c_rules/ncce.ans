@@ -40,7 +40,6 @@ MEM01_A.c:13: error: MEM01_A: Store a new value in pointers immediately after fr
 MEM01_A.c:13: error: MEM30-C: Do not access freed memory
 MEM01_A.c:13: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM01_A.c:18: error: MEM01_A: Store a new value in pointers immediately after free()
-MEM01_A_2.c:9: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C.c:15: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C.c:15: error: MEM30-C: Do not access freed memory
 MEM30_C_2.c:16: error: MEM01_A: Store a new value in pointers immediately after free()
@@ -74,13 +73,13 @@ SIG32_C.c:10: error: SIG32-A: Do not call longjmp() from within a signal handler
 STR31_C_getenv.c:7: error: STR31-C: String copy destination must contain sufficient storage
 STR31_C_strcpy.c:6: error: STR31-C: String copy destination must contain sufficient storage
 STR32_C.c:10: error: STR32-C: Null-terminate byte strings as required
-"./ncce/STR33_C.c", line 9: warning: 
+"./ncce/STR33_C.c", line 13: warning: 
           argument of type "wchar_t *" is incompatible with parameter of type
           "const char *"
     wchar_t *wide_str2 = malloc(strlen(wide_str1) + 1);
                                        ^
 
-STR33_C.c:9: warning: EXP09-A: malloc called using something other than sizeof()
+STR33_C.c:13: warning: EXP09-A: malloc called using something other than sizeof()
 Frontend Warnings only: errorCode = 2 
 STR33_C_2.c:11: warning: EXP09-A: malloc called using something other than sizeof()
 STR35_C.c:5: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
