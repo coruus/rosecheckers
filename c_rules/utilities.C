@@ -280,16 +280,18 @@ bool isTestForNullOp(const SgNode* node) {
 // through typecasts. Returns NULL if no such parm
 const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
 	// XXX TODO: introduce proper bounds checking so we don't segfault :/
-  if (fnCall == NULL) return NULL;
+	if (fnCall == NULL) return NULL;
 
-  const SgExprListExp* fnArgs = fnCall->get_args();
-  assert( fnArgs != NULL);
-  Rose_STL_Container<SgExpression*>::const_iterator iterator = fnArgs->get_expressions().begin();
-  for (int j = 0; j < i; j++) iterator++;
-  const SgExpression* fnArg = *iterator;
-  assert( fnArg != NULL);
-  const SgCastExp* castArg = isSgCastExp( fnArg);
-  return (castArg != NULL) ? castArg->get_operand() : fnArg;
+	const SgExprListExp* fnArgs = fnCall->get_args();
+	assert( fnArgs != NULL);
+	Rose_STL_Container<SgExpression*>::const_iterator iterator = fnArgs->get_expressions().begin();
+	for (int j = 0; j < i; j++) iterator++;
+	if(iterator == fnArgs->get_expressions().end())
+		return NULL;
+	const SgExpression* fnArg = *iterator;
+	assert( fnArg != NULL);
+	const SgCastExp* castArg = isSgCastExp( fnArg);
+	return (castArg != NULL) ? castArg->get_operand() : fnArg;
 }
 
 // Returns reference to ith argument of function reference. Dives

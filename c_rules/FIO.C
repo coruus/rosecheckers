@@ -57,7 +57,7 @@ bool FIO34_C( const SgNode *node) { //Use int to capture the return value of cha
 		t.isSignedLong() || (t.isLongLong() && !t.isUnsignedLongLong()))
 		return false;
 
-	print_error( node, "FIO43-C", "Use int to capture the return value of character I/O functions");
+	print_error( node, "FIO34-C", "Use int to capture the return value of character I/O functions");
 	return true;
 }
 

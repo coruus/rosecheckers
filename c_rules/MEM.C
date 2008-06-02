@@ -258,8 +258,8 @@ bool MEM31_C( const SgNode *node ) { //Free dynamically allocated memory exactly
 
 bool MEM(const SgNode *node) {
   bool violation = false;
-  //  violation |= MEM01_A(node);
-  //  violation |= MEM30_C(node);
+  violation |= MEM01_A(node);
+  violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   return violation;
 }

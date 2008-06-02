@@ -194,7 +194,7 @@ bool SIG31_c( const SgNode *node ) { // Do not access or modify shared objects i
     if (compliant) continue;
 
     print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
-    std::cerr << "\tobject: " << var_ref->unparseToString() << std::endl;
+//    std::cerr << "\tobject: " << var_ref->unparseToString() << std::endl;
     return true;
   }
   return false;

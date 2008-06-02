@@ -9,11 +9,14 @@ ARR01_A_4.c:5: warning: ARR01-A: Do not use sizeof() on an incomplete array
     arr2 = arr1; /* Not compatible, because a != b */
          ^
 
+Frontend Warnings only: errorCode = 2 
 "./ncce/DCL30_A_2.c", line 4: warning: 
           returning pointer to local variable
      return array;
             ^
 
+Frontend Warnings only: errorCode = 2 
+ENV01_A.c:10: error: STR31-C: String copy destination must contain sufficient storage
 ENV04_A.c:8: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 EXP01_A.c:8: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
 	__Pb__d__Pe__ vs d
@@ -29,58 +32,48 @@ EXP34_C.c:13: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP34_C_2.c:14: error: EXP34-C: Ensure pointer is valid before dereferencing it
 FIO07_A.c:11: warning: FIO07-A: Prefer fseek() to rewind()
 FIO12_A.c:7: warning: FIO12-A: Prefer setvbuf() to setbuf()
+FIO34_C.c:4: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO43_C.c:5: error: FIO43-C: Do not use tmpfile()
 FIO43_C_2.c:7: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO43_C_3.c:10: error: FIO43-C: Do not use open() on the results of mktemp()
+MEM01_A.c:13: error: MEM01_A: Store a new value in pointers immediately after free()
+MEM01_A.c:13: error: MEM30-C: Do not access freed memory
+MEM01_A.c:13: error: MEM31-C: Free dynamically allocated memory exactly once.
+MEM01_A.c:18: error: MEM01_A: Store a new value in pointers immediately after free()
+MEM01_A_2.c:9: error: MEM01_A: Store a new value in pointers immediately after free()
+MEM30_C.c:15: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C.c:15: error: MEM30-C: Do not access freed memory
+MEM30_C_2.c:16: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C_2.c:16: error: MEM30-C: Do not access freed memory
+MEM30_C_3.c:11: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C_3.c:11: error: MEM30-C: Do not access freed memory
+MEM31_C.c:14: error: MEM01_A: Store a new value in pointers immediately after free()
+MEM31_C.c:14: error: MEM30-C: Do not access freed memory
+MEM31_C.c:14: error: MEM31-C: Free dynamically allocated memory exactly once.
 MSC30_C.c:11: error: MSC33-C: Do not use rand()
 POS33_C.c:5: error: POS33-C: Do not use vfork()
 POS34_C.c:13: error: POS34-C: Do not call putenv() with an automatic variable
+SIG30_C.c:9: error: MEM01_A: Store a new value in pointers immediately after free()
 SIG30_C.c:9: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG30_C.c:9: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: foo
+SIG30_C.c:21: error: MEM01_A: Store a new value in pointers immediately after free()
 SIG31_C.c:9: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG31_C.c:9: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: err_msg
 SIG31_C.c:9: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG31_C.c:9: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: err_msg
 SIG31_C_2.c:12: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: e_flag
 SIG31_C_2.c:12: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: e_flag
 SIG31_C_3.c:13: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: e_flag
 SIG31_C_3.c:13: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: e_flag
 SIG32_C.c:10: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG32_C.c:6: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: env
 SIG32_C.c:10: error: SIG32-A: Do not call longjmp() from within a signal handler
 SIG32_C.c:10: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG32_C.c:6: error: SIG31-C: Do not access or modify shared objects in a signal handler
-	object: env
 SIG32_C.c:10: error: SIG32-A: Do not call longjmp() from within a signal handler
 STR31_C_getenv.c:7: error: STR31-C: String copy destination must contain sufficient storage
 STR31_C_strcpy.c:6: error: STR31-C: String copy destination must contain sufficient storage
-"./ncce/STR33_C.c", line 8: warning: 
-          initialization with "{...}" expected for aggregate object
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./ncce/STR33_C.c", line 8: warning: 
-          a value of type "long *" cannot be used to initialize an entity of
-          type "wchar_t"
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./ncce/STR33_C.c", line 8: warning: 
-          integer conversion resulted in truncation
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
+STR32_C.c:10: error: STR32-C: Null-terminate byte strings as required
 "./ncce/STR33_C.c", line 9: warning: 
           argument of type "wchar_t *" is incompatible with parameter of type
           "const char *"
@@ -88,20 +81,7 @@ STR31_C_strcpy.c:6: error: STR31-C: String copy destination must contain suffici
                                        ^
 
 STR33_C.c:9: warning: EXP09-A: malloc called using something other than sizeof()
-"./ncce/STR33_C_2.c", line 10: warning: 
-          initialization with "{...}" expected for aggregate object
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./ncce/STR33_C_2.c", line 10: warning: 
-          a value of type "long *" cannot be used to initialize an entity of
-          type "wchar_t"
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./ncce/STR33_C_2.c", line 10: warning: 
-          integer conversion resulted in truncation
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
+Frontend Warnings only: errorCode = 2 
 STR33_C_2.c:11: warning: EXP09-A: malloc called using something other than sizeof()
+STR35_C.c:5: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
+STR35_C_gets.c:6: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array

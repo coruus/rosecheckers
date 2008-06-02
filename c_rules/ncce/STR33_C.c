@@ -1,7 +1,11 @@
-
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+
+/* This should be caught by the compiler since strlen expects a const char *
+ * and not a wchar_t *
+ * Moreover, EXP09 will also catch this because we are not using a sizeof() in
+ * a call to malloc */
 
 void STR33_C() {
   /* ... */
