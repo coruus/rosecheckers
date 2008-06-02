@@ -1,6 +1,3 @@
-#include "type.h"
-#include "utilities.h"
-
 /*
  *
  * Copyright (c) 2007 Carnegie Mellon University.
@@ -18,6 +15,10 @@
  * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+#include "type.h"
+#include "utilities.h"
+
 
 Type::Type( const SgType *t )
 	: orig_(t), t_(t), isConst_(false), isVolatile_(false) {

@@ -1,7 +1,3 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
-
-
 /*
  *
  * Copyright (c) 2007 Carnegie Mellon University.
@@ -19,6 +15,9 @@
  * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+#ifndef UTILITIES_H
+#define UTILITIES_H
 
 #include <list>
 #include <string>
