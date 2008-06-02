@@ -98,6 +98,15 @@ bool isMemberStatement( const SgNode *node ) { //XXXXXXXXXXXXXX This doesn't wor
 	return false;
 }
 
+const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
+	if( const SgCastExp *cast = isSgCastExp( e ) ) {
+		if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
+			e = cast->get_operand();
+		}
+	}
+	return e;
+}
+
 const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
 	Type t( e->get_type() );
 	if( t.isInt() || t.isUnsignedInt() ) {
@@ -267,28 +276,10 @@ bool isTestForNullOp(const SgNode* node) {
 }
 
 
-// Returns reference to ith argument of function reference. Dives
-// through typecasts. Returns NULL if no such parm
-const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
-  if (node == NULL) return NULL;
-
-  const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-  assert( fnRef != NULL);
-  const SgFunctionCallExp *fnCall = isSgFunctionCallExp( fnRef->get_parent());
-  assert( fnCall != NULL);
-  const SgExprListExp* fnArgs = fnCall->get_args();
-  assert( fnArgs != NULL);
-  Rose_STL_Container<SgExpression*>::const_iterator iterator = fnArgs->get_expressions().begin();
-  for (int j = 0; j < i; j++) iterator++;
-  const SgExpression* fnArg = *iterator;
-  assert( fnArg != NULL);
-  const SgCastExp* castArg = isSgCastExp( fnArg);
-  return (castArg != NULL) ? castArg->get_operand() : fnArg;
-}
-
 // Returns reference to ith argument of function call. Dives
 // through typecasts. Returns NULL if no such parm
 const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
+	// XXX TODO: introduce proper bounds checking so we don't segfault :/
   if (fnCall == NULL) return NULL;
 
   const SgExprListExp* fnArgs = fnCall->get_args();
@@ -301,7 +292,15 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
   return (castArg != NULL) ? castArg->get_operand() : fnArg;
 }
 
+// Returns reference to ith argument of function reference. Dives
+// through typecasts. Returns NULL if no such parm
+const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
+  if (node == NULL) return NULL;
 
+  const SgFunctionCallExp *fnCall = isSgFunctionCallExp( node->get_parent());
+  assert( fnCall != NULL);
+  return getFnArg(fnCall, i);
+}
 
 // Fills list with all nodes OF TYPE <SgVarRefExp> in enclosing function
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {

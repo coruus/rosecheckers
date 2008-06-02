@@ -33,9 +33,95 @@ bool STR31_C(const SgNode *node ) { // Ensure that string storage is sufficient 
   return true;
 }
 
+bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
+	if (!isCallOfFunctionNamed(node, "strncpy")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef,0));
+	const SgExpression *srcExp = removeImplicitPromotions(getFnArg(fnRef,1));
+	const SgExpression *lenExp = getFnArg(fnRef,2);
+	assert(dstExp && srcExp && lenExp);
+
+	const SgVarRefExp *srcRef = isSgVarRefExp(srcExp);
+	if(!srcRef) {
+		const SgCastExp *srcCast = isSgCastExp(srcExp);
+		if(!srcCast)
+			return false;
+		srcRef = isSgVarRefExp(srcCast->get_operand());
+		if(!srcRef)
+			return false;
+	}
+
+	const SgArrayType *arrT = isSgArrayType(srcExp->get_type());
+	const SgUnsignedIntVal *lenVal= isSgUnsignedIntVal(lenExp);
+	const SgVarRefExp *dstRef = isSgVarRefExp(dstExp);
+	if (!arrT || !lenVal || !dstRef)
+		return false;
+	const SgValueExp *srcVal = isSgValueExp(arrT->get_index());
+	if (!srcVal) // VLA or some such...
+		return false;
+	const SgUnsignedLongVal *srcValInt = isSgUnsignedLongVal(srcVal);
+	if (!srcValInt)
+		return  false;
+	size_t src_size = srcValInt->get_value();
+	size_t len = lenVal->get_value();
+
+	if (src_size >= len) {
+		do {
+			// check for null termination, violation if not present
+			// first, find the parent block
+			const SgNode *parent = node;
+			const SgNode *block = node->get_parent();
+			assert(block);
+			while(!isSgBasicBlock(block)) {
+				parent = block;
+				block = parent->get_parent();
+				assert(block);
+			}
+			// second, find the next expression after the strncpy()
+			const SgStatementPtrList &nodes = isSgBasicBlock(block)->get_statements();
+			Rose_STL_Container<SgStatement *>::const_iterator i = find(nodes.begin(), nodes.end(), parent);
+			if (i == nodes.end())
+				break;
+			i++;
+			if (i == nodes.end())
+				break;
+			// if all went well, it should be an expression
+			const SgExprStatement *nextExpr = isSgExprStatement(*i);
+			if(!nextExpr)
+				break;
+			// To comply with the rule, it must be an assignment...
+			const SgAssignOp *assignOp = isSgAssignOp(nextExpr->get_expression());
+			if (!assignOp)
+				break;
+			// ... to an array ...
+			const SgPntrArrRefExp *arrRef = isSgPntrArrRefExp(assignOp->get_lhs_operand());
+			if (!arrRef)
+				break;
+			// ... that is the same as dstRef ...
+			const SgVarRefExp *varRef = isSgVarRefExp(arrRef->get_lhs_operand());
+			assert(varRef);
+			if (getRefDecl(varRef) != getRefDecl(dstRef))
+				break;
+			// ... and must have an index ...
+			const SgUnsignedIntVal *dstIdx = isSgUnsignedIntVal(arrRef->get_rhs_operand());
+			if (!dstIdx)
+				break;
+			// ... that is equal to len - 1
+			size_t dst_idx = dstIdx->get_value();
+			if (len > 0 && dst_idx == len - 1) {
+				return false;
+			}
+		} while(0);
+		print_error(node, "STR32-C", "Null-terminate byte strings as required");
+		return true;
+	} else {
+		return false;
+	}
+}
+
 //Check if there is a gets
 //Check if sscanf/scanf has a "%s"
-
 bool STR35_C(const SgNode *node) {
 
 	if(isCallOfFunctionNamed(node, "gets")) {
@@ -75,6 +161,7 @@ bool STR35_C(const SgNode *node) {
 bool STR(const SgNode *node) {
   bool violation = false;
   violation |= STR31_C(node);
+  violation |= STR32_C(node);
   violation |= STR35_C(node);
   return violation;
 }

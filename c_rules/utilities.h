@@ -59,6 +59,7 @@ const SgFunctionSymbol *isCallOfFunctionNamedAnyOf( const SgNode *node, In b, In
 //
 bool isCompilerGeneratedNode( const SgNode *node );
 bool isLocalDeclaration( const SgNode *node );
+const SgExpression *removeImplicitPromotions( const SgExpression *e );
 const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e );
 const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpression *e );
 
