@@ -6,7 +6,7 @@
 
 /* putenv with static array */
 
-char array[20] = "TEST=foo";
+char array[] = "TEST=foo";
 
 int POS34_c(char *var) {
   return putenv( array);

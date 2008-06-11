@@ -170,10 +170,36 @@ bool STR35_C(const SgNode *node) {
 	return false;
 }
 
+#define FOREACH_INITNAME(nodes,i) \
+	for(SgInitializedNamePtrList::const_iterator (i) = (nodes).begin(); (i) < (nodes).end(); (i)++)
+
+bool STR36_C(const SgNode *node) { // Do not specify the dimension of a character array initialized with a string literal
+	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
+	if (!varDecl)
+		return false;
+
+	FOREACH_INITNAME(varDecl->get_variables(), i) {
+		assert(*i);
+		const SgArrayType *varType = isSgArrayType((*i)->get_type());
+		if (!varType)
+			continue;
+		const SgAssignInitializer *varInitializer = isSgAssignInitializer((*i)->get_initializer());
+		if (!varInitializer)
+			continue;
+		if (varType->get_index()) {
+			print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal", true);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool STR(const SgNode *node) {
   bool violation = false;
   violation |= STR31_C(node);
   violation |= STR32_C(node);
   violation |= STR35_C(node);
+  violation |= STR36_C(node);
   return violation;
 }

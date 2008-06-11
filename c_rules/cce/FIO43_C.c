@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 void TMP32_C() {
-  char sfn[15] = "/tmp/ed.XXXXXX";
+  char sfn[] = "/tmp/ed.XXXXXX";
   FILE *sfp;
   int fd = -1;
 

@@ -86,3 +86,4 @@ Frontend Warnings only: errorCode = 2
 STR33_C_2.c:11: warning: EXP09-A: malloc called using something other than sizeof()
 STR35_C.c:5: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
 STR35_C_gets.c:6: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
+STR36_C.c:5: warning: STR36-C: Do not specify the dimension of a character array initialized with a string literal
