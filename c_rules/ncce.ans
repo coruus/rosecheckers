@@ -18,6 +18,7 @@ Frontend Warnings only: errorCode = 2
 Frontend Warnings only: errorCode = 2 
 ENV01_A.c:10: error: STR31-C: String copy destination must contain sufficient storage
 ENV04_A.c:8: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+ENV32_C.c:9: warning: ENV32-C: No atexit handler should terminate in any way other than by returning
 EXP01_A.c:8: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
 	__Pb__d__Pe__ vs d
 EXP09_A.c:6: warning: EXP09-A: malloc called using something other than sizeof()

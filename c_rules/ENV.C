@@ -28,9 +28,41 @@ bool ENV04_A( const SgNode *node ) { // Do not use system()
   return true;
 }
 
+#define FOREACH_SUBNODE(node, nodes, i, type) \
+	Rose_STL_Container<SgNode *> (nodes) = NodeQuery::querySubTree( const_cast<SgExpression*>(node), (type) ); \
+	for (Rose_STL_Container<SgNode *>::iterator (i) = (nodes).begin(); (i) != (nodes).end(); ++(i) )
+
+bool ENV32_C( const SgNode *node ) { // No atexit handler should terminate in any way other than by returning
+	if (!isCallOfFunctionNamed( node, "atexit")) {
+		return false;
+	}
+	const SgFunctionRefExp* ref = isSgFunctionRefExp( getFnArg ( isSgFunctionRefExp(node), 0));
+	assert(ref);
+
+	const SgFunctionDeclaration *fnDecl = ref->get_symbol()->get_declaration();
+	assert(fnDecl);
+
+	const SgExpression *fnCall;
+	FOREACH_SUBNODE((SgExpression *) fnDecl,nodes,i,V_SgFunctionCallExp) {
+		assert(*i);
+		fnCall = isSgFunctionCallExp(*i)->get_function();
+		if(isCallOfFunctionNamed( fnCall, "exit")
+		|| isCallOfFunctionNamed( fnCall, "_exit")
+		|| isCallOfFunctionNamed( fnCall, "abort")
+		|| isCallOfFunctionNamed( fnCall, "_Exit")
+		|| isCallOfFunctionNamed( fnCall, "longjmp")
+		|| isCallOfFunctionNamed( fnCall, "siglongjmp")) {
+			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning", true);
+			return true;
+		}
+	}
+
+	return false;
+}
 
 bool ENV(const SgNode *node) {
   bool violation = false;
   violation |= ENV04_A(node);
+  violation |= ENV32_C(node);
   return violation;
 }
