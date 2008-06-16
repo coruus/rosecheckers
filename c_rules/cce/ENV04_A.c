@@ -4,8 +4,8 @@
 
 void ENV04_A(char* input) {
    pid_t pid;
-   char *const args[] = {"", input, NULL};
-   char *const envs[] = {NULL};
+   char *const args[3] = {"", input, NULL};
+   char *const envs[1] = {NULL};
 
    if ((pid = fork()) == -1) {
       puts("fork error");

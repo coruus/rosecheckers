@@ -39,6 +39,31 @@ bool ARR01_A( const SgNode *node ) { // Do not use sizeof() on an incomplete arr
   return true;
 }
 
+bool ARR02_A( const SgNode *node ) { // Explicitly specify array dimensions, even if implicitly defined by an initializer
+	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
+	if (!varDecl)
+		return false;
+
+	FOREACH_INITNAME(varDecl->get_variables(), i) {
+		assert(*i);
+		const SgArrayType *varType = isSgArrayType((*i)->get_type());
+		if (!varType)
+			continue;
+		// Ignore chars as per STR36
+		if (isAnyCharType(varType->get_base_type()))
+			continue;
+		if (!(*i)->get_initializer())
+			continue;
+		if (!varType->get_index()) {
+			print_error(*i, "ARR02-A", "Explicitly specify array dimensions, even if implicitly defined by an initializer", true);
+		return true;
+		}
+	}
+
+	return false;
+}
+
+
 bool ARR34_C( const SgNode *node ) { // Ensure that array types in expressions are compatible
 	// Since GCC produces a warning during compilation for this, Rose already
 	// catches violations of this rule
@@ -49,6 +74,7 @@ bool ARR34_C( const SgNode *node ) { // Ensure that array types in expressions a
 bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_A(node);
+  violation |= ARR02_A(node);
   violation |= ARR34_C(node);
   return violation;
 }

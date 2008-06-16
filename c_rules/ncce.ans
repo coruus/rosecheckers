@@ -3,6 +3,7 @@ ARR01_A.c:5: warning: ARR01-A: Do not use sizeof() on an incomplete array
 ARR01_A_2.c:7: warning: ARR01-A: Do not use sizeof() on an incomplete array
 ARR01_A_3.c:6: warning: ARR01-A: Do not use sizeof() on an incomplete array
 ARR01_A_4.c:5: warning: ARR01-A: Do not use sizeof() on an incomplete array
+ARR02_A.c:4: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
 "./ncce/ARR34_C.c", line 9: warning: 
           a value of type "int (*)[b]" cannot be assigned to an entity of type
           "int (*)[a]"

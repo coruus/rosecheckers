@@ -392,3 +392,15 @@ bool isGlobalVar(const SgVarRefExp *varRef) {
 	else
 		return false;
 }
+
+bool isAnyCharType(const SgType *type) {
+	const SgType *innerType = type->stripTypedefsAndModifiers();
+	// Don't check for signed/unsigned because those are technically int types
+
+	/**
+	 * XXX: "wchar_t" is typedefed to a long
+	 */
+	if (type->unparseToString() == "wchar_t")
+		return true;
+	return isSgTypeChar(innerType) || isSgTypeWchar(innerType);
+}

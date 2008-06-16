@@ -24,6 +24,13 @@
 #include "rose.h"
 #include "type.h"
 
+/**
+ * Iterate over all initializers "i" in a list of variables
+ * nodes should be something like SgVariableDeclaration->get_variables()
+ */
+#define FOREACH_INITNAME(nodes,i) \
+	for(SgInitializedNamePtrList::const_iterator (i) = (nodes).begin(); (i) < (nodes).end(); (i)++)
+
 //
 // Questions about switch statements
 //
@@ -112,5 +119,7 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref);
 // Return true if the variable has global scope
 bool isGlobalVar(const SgVarRefExp *varRef);
 bool isStaticVar(const SgVarRefExp *varRef);
+
+bool isAnyCharType(const SgType *type);
 
 #endif
