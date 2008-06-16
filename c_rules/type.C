@@ -1,20 +1,24 @@
-/*
+/**
+ * \file type.C
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
 
- * Permission to use this software and its documentation for any purpose is hereby granted,
- * provided that the above copyright notice appear and that both that copyright notice and
- * this permission notice appear in supporting documentation, and that the name of CMU not
- * be used in advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.
+ * Permission to use this software and its documentation for any purpose is
+ * hereby granted, provided that the above copyright notice appear and that
+ * both that copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of CMU not be used in advertising or
+ * publicity pertaining to distribution of the software without specific,
+ * written prior permission.
  *
- * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+ * IMPLIED WSTRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 
 #include "type.h"
 #include "utilities.h"
@@ -45,6 +49,9 @@ bool Type::operator==(const Type& that) const {
   return mangledName() == that.mangledName();
 }
 
+/**
+ * \bug why do we have this dead code?
+ */
 #if 0
 Type::operator bool Type::*() const { // tests if type is valid (non-null, basically)
   //  return  (bool Type::*) orig_;
@@ -172,17 +179,22 @@ bool Type::isArray() const {
 	return isSgArrayType(t_) != 0;
 }
 
+/**
+ * \note ROSE identifies ptr to member as ptr!
+ */
 bool Type::isPointer() const {
-	return (isSgPointerType(t_) != 0)
-		&& !isMemberPointer(); //XXX ROSE identifies ptr to member as ptr!
+	return (isSgPointerType(t_) != 0) && !isMemberPointer();
 }
 
 bool Type::isReference() const {
 	return isSgReferenceType(t_) != 0;
 }
 
+/** 
+ * \todo make sure a member pointer is not also considered a pointer!
+ */
 bool Type::isMemberPointer() const {
-	return isSgPointerMemberType( t_ ) != 0; //XXX make sure a member pointer is not also considered a pointer!
+	return isSgPointerMemberType( t_ ) != 0;
 }
 
 bool Type::isMemberObjectPointer() const {
@@ -223,7 +235,7 @@ const SgEnumDeclaration *Type::getEnumDeclaration() const {
  * \bug Always returns false
  */
 bool Type::isUnion() const {
-	return false; //XXXXXXXXXXXXX???
+	return false;
 }
 
 
@@ -274,9 +286,15 @@ bool Type::isCompound() const {
 	return !isFundamental();
 }
 
-Type Type::dereference() const { // will deref pointer, reference, or array, else same type
-	SgType *t = const_cast<SgType *>(t_); // SgType::dereference should be const
-	return Type(t->dereference()); //XXX dereference may infinite loop for pointer to member!
+/**
+ * Will deref pointer, reference, or array, else same type
+ *
+ * \bug dereference may infinite loop for pointer to member!
+ */
+Type Type::dereference() const {
+	// SgType::dereference should be const
+	SgType *t = const_cast<SgType *>(t_);
+	return Type(t->dereference());
 }
 
 Type Type::stripInitialTypedefs() const {
@@ -287,8 +305,11 @@ Type Type::stripTypedefsAndModifiers() const {
 	return Type( orig_->stripTypedefsAndModifiers() );
 }
 
+/**
+ * \note same as striptype()
+ */
 Type Type::baseType() const {
-	return Type( orig_->findBaseType() ); // same as striptype()
+	return Type( orig_->findBaseType() );
 }
 
 Type Type::stripInitialPointers() const {

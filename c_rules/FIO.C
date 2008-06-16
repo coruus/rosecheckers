@@ -1,39 +1,50 @@
-/*
+/**
+ * \file FIO.C
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
 
- * Permission to use this software and its documentation for any purpose is hereby granted,
- * provided that the above copyright notice appear and that both that copyright notice and
- * this permission notice appear in supporting documentation, and that the name of CMU not
- * be used in advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.
+ * Permission to use this software and its documentation for any purpose is
+ * hereby granted, provided that the above copyright notice appear and that
+ * both that copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of CMU not be used in advertising or
+ * publicity pertaining to distribution of the software without specific,
+ * written prior permission.
  *
- * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+ * IMPLIED WSTRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 
 #include "rose.h"
 #include "utilities.h"
 
-
-bool FIO07_A( const SgNode *node ) { // Prefer fseek() to rewind()
+/**
+ * Prefer fseek() to rewind()
+ */
+bool FIO07_A( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "rewind")) return false;
   print_error( node, "FIO07-A", "Prefer fseek() to rewind()", true);
   return true;
 }
 
-bool FIO12_A( const SgNode *node ) { // Prefer setvbuf() to setbuf()
+/**
+ * Prefer setvbuf() to setbuf()
+ */
+bool FIO12_A( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "setbuf")) return false;
   print_error( node, "FIO12-A", "Prefer setvbuf() to setbuf()", true);
   return true;
 }
 
-bool FIO34_C( const SgNode *node) { //Use int to capture the return value of character IO functions
-
+/**
+ * Use int to capture the return value of character IO functions
+ */
+bool FIO34_C( const SgNode *node) {
 	if(!isSgFunctionRefExp(node))
 		return false;
 
@@ -61,13 +72,19 @@ bool FIO34_C( const SgNode *node) { //Use int to capture the return value of cha
 	return true;
 }
 
-bool FIO43_C( const SgNode *node ) { // Do not use tmpfile()
+/**
+ * Do not use tmpfile()
+ */
+bool FIO43_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "tmpfile")) return false;
   print_error( node, "FIO43-C", "Do not use tmpfile()");
   return true;
 }
 
-bool FIO43_C_2( const SgNode *node ) { // Do not use fopen() on the results of tmpnam()
+/**
+ * Do not use fopen() on the results of tmpnam()
+ */
+bool FIO43_C_2( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "tmpnam")) return false;
 
   if (!isVarUsedByFunction("fopen", isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0))))
@@ -77,7 +94,10 @@ bool FIO43_C_2( const SgNode *node ) { // Do not use fopen() on the results of t
   return true;
 }
 
-bool FIO43_C_3( const SgNode *node ) { // Do not use open() on the results of mktemp()
+/**
+ * Do not use open() on the results of mktemp()
+ */
+bool FIO43_C_3( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "mktemp")) return false;
 
   if (!isVarUsedByFunction("open", isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0))))
@@ -87,7 +107,10 @@ bool FIO43_C_3( const SgNode *node ) { // Do not use open() on the results of mk
   return true;
 }
 
-bool FIO43_C_4( const SgNode *node ) { // Do not use fopen_s() on the results of tmpnam_s()
+/**
+ * Do not use fopen_s() on the results of tmpnam_s()
+ */
+bool FIO43_C_4( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "tmpnam_s")) return false;
 
   if (!isVarUsedByFunction("fopen_s", isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 1))))

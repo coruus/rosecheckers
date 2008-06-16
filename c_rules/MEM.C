@@ -1,27 +1,32 @@
-/*
+/**
+ * \file MEM.C
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
 
- * Permission to use this software and its documentation for any purpose is hereby granted,
- * provided that the above copyright notice appear and that both that copyright notice and
- * this permission notice appear in supporting documentation, and that the name of CMU not
- * be used in advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.
+ * Permission to use this software and its documentation for any purpose is
+ * hereby granted, provided that the above copyright notice appear and that
+ * both that copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of CMU not be used in advertising or
+ * publicity pertaining to distribution of the software without specific,
+ * written prior permission.
  *
- * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WSTRANTIES
- * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+ * IMPLIED WSTRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #include "rose.h"
 #include "utilities.h"
 #include <algorithm>
 
-// Checks to see if node is an assignment with var as the lhs and not in the
-// rhs
+/**
+ * Checks to see if node is an assignment with var as the lhs and not in
+ * the rhs
+ */
 bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
 	const SgAssignOp *assignOp = isSgAssignOp(node);
 	if (!assignOp)
@@ -47,9 +52,16 @@ bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
 	return true;
 }
 
+/**
+ * \param node
+ * \param ref ignored if NULL
+ * \param after if true, only items afte ref, else before
+ * \param var
+ * \param violation
+ */
 bool hasAssignToVar(const SgNode* node,
-	const SgVarRefExp* ref, /* ignore if NULL */
-	bool after, /* if true, only items after ref, else before */
+	const SgVarRefExp* ref,
+	bool after,
 	const SgInitializedName* var,
 	bool* violation) {
 
@@ -87,7 +99,10 @@ bool hasAssignToVar(const SgNode* node,
 	return false;
 }
 
-bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediately after free()
+/**
+ * Store a new value in pointers immediately after free()
+ */
+bool MEM01_A( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "free")) return false;
 	bool violation = false;
 
@@ -147,7 +162,10 @@ bool MEM01_A( const SgNode *node ) { // Store a new value in pointers immediatel
 	return true;
 }
 
-bool MEM30_C( const SgNode *node ) { // Ensure that freed pointers are not reused
+/**
+ * Ensure that freed pointers are not reused
+ */
+bool MEM30_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed( node, "free")) return false;
 
 	// Get variable as first arg
@@ -208,53 +226,54 @@ bool MEM30_C( const SgNode *node ) { // Ensure that freed pointers are not reuse
 	return violation;
 }
 
-bool MEM31_C( const SgNode *node ) { //Free dynamically allocated memory exactly once
+/**
+ * Free dynamically allocated memory exactly once
+ *
+ * If the variable is passed by reference to a function which allocates memory this could throw a false positive.
+ * If the variable is freed multiple times by a single loop this could throw a false negative.
+ */
+bool MEM31_C( const SgNode *node ) {
+	if (!isCallOfFunctionNamed( node, "free")) return false;
+	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
+		
+	const SgVarRefExp* ref2 = NULL;
 
-  //If the variable is passed by reference to a function which allocates memory this could throw a false positive.
-  //If the variable is freed multiple times by a single loop this could throw a false negative.
+	if (ref == NULL) return false;
+	const SgInitializedName* ref_var = getRefDecl( ref);
+	const SgInitializedName* ref2_var = NULL;
 
-  if (!isCallOfFunctionNamed( node, "free")) return false;
-  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
-    
-  const SgVarRefExp* ref2 = NULL;
+	const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
+	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);
 
-  if (ref == NULL) return false;
-  const SgInitializedName* ref_var = getRefDecl( ref);
-  const SgInitializedName* ref2_var = NULL;
+	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
+	Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
 
-  const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
-  const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);
+	while(*i != node) i++;
+	i++;
 
-  Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
-  Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
+	while(i != end) {
+		if(isCallOfFunctionNamed(*i, "free")) {
+			const SgVarRefExp* ref2 = isSgVarRefExp( getFnArg( isSgFunctionRefExp( *i), 0));
+			const SgInitializedName* ref2_var = getRefDecl( ref2);
 
-  while(*i != node) i++;
-  i++;
-
-  while(i != end) {
-    if(isCallOfFunctionNamed(*i, "free")) {
-      const SgVarRefExp* ref2 = isSgVarRefExp( getFnArg( isSgFunctionRefExp( *i), 0));
-      const SgInitializedName* ref2_var = getRefDecl( ref2);
-  
-      if (ref_var == ref2_var) {
+			if (ref_var == ref2_var) {
 	print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
 	return true;
-      }
-    }
+			}
+		}
 
-    if(isSgAssignOp(*i) != NULL) {
-      const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
-      const SgInitializedName* ref2_var = getRefDecl( ref2);
+		if(isSgAssignOp(*i) != NULL) {
+			const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
+			const SgInitializedName* ref2_var = getRefDecl( ref2);
 
-      if (ref_var == ref2_var) 	return false;
-    }
-     
-    i++;
-  }
+			if (ref_var == ref2_var) 	return false;
+		}
 
-  return false;
+		i++;
+	}
+
+	return false;
 }
-
 
 bool MEM(const SgNode *node) {
   bool violation = false;
