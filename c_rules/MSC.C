@@ -1,6 +1,9 @@
 /**
  * \file MSC.C
  *
+ * \note As written, these tests catch template declarations only if
+ * instantiated.
+ *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
 
@@ -19,7 +22,6 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 #include <list>
 #include <string>
 #include <vector>
@@ -27,14 +29,14 @@
 #include "rose.h"
 #include "utilities.h"
 
-// Note:  As written, these tests catch template declarations only if instantiated.
-
-bool MSC30_C( const SgNode *node ) { // Do not use rand()
+/**
+ * Do not use rand()
+ */
+bool MSC30_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "rand")) return false;
   print_error( node, "MSC33-C", "Do not use rand()");
   return true;
 }
-
 
 bool MSC(const SgNode *node) {
   bool violation = false;

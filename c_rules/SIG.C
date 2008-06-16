@@ -30,9 +30,14 @@
 
 using namespace std;
 
+
 #ifdef UNDEFINED
-// obsolete
-bool SIG00_a( const SgNode *node ) { // Avoid using the same handler for multiple signals
+/**
+ * Avoid using the same handler for multiple signals
+ *
+ * \note obsolete
+ */
+bool SIG00_a( const SgNode *node ) {
   static set<const SgFunctionSymbol*> All_Handlers;
 
   if (!isCallOfFunctionNamed( node, "signal")) return false;
@@ -61,9 +66,10 @@ bool SIG00_a( const SgNode *node ) { // Avoid using the same handler for multipl
 }
 #endif
 
-
+/**
+ * \note should really go into a file somewhere
+ */
 set<SgName> load_async_fns() {
-  // should really go into a file somewhere
   static const string posix_async_safe_fns =
     "_Exit _exit abort accept access aio_error aio_return aio_suspend"
     "alarm bind cfgetispeed cfgetospeed cfsetispeed cfsetospeed chdir chmod"
@@ -90,48 +96,50 @@ set<SgName> load_async_fns() {
   }
   return functions;
 }
-// Set of async-safe functions we know about
+
+/// Set of async-safe functions we know about
 set<SgName> Async_Fns = load_async_fns();
 
-// Current stack of functions examined by non_async_fn
+/// Current stack of functions examined by non_async_fn
 vector<SgName> Async_Stack;
 
-// Returns node of a non-async fn in the definition of handler
-// or NULL if none. Descends recursively through function calls.
+/**
+ * Returns node of a non-async fn in the definition of handler or NULL if
+ * none. Descends recursively through function calls.
+ */
 const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
-  const SgName name = handler->get_symbol()->get_name();
+	const SgName name = handler->get_symbol()->get_name();
 
-  if (Async_Fns.find( name) != Async_Fns.end())
-    return NULL; // this fn is async-save
+	if (Async_Fns.find( name) != Async_Fns.end())
+		return NULL; // this fn is async-save
 
-  // Recursive functions are assumed async-safe
-  if (find( Async_Stack.begin(), Async_Stack.end(), name) != Async_Stack.end())
-    return NULL;
+	/// Recursive functions are assumed async-safe
+	if (find( Async_Stack.begin(), Async_Stack.end(), name) != Async_Stack.end())
+		return NULL;
 
-  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
-  // if handler not defined or in async list, we assume it is not
-  // async-safe
-  if (def == NULL) return handler;
+	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+	/// if handler not defined or in async list, we assume it is not async-safe
+	if (def == NULL) return handler;
 
-  // Walk through definition ensuring that all function calls are async-safe
-  Async_Stack.push_back( name);
-  const SgNode* result = NULL;
-  Rose_STL_Container<SgNode *> nodes
-    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp);
-  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
-    const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
-    assert( fn_ref != NULL);
-    if (non_async_fn( fn_ref)) {
-      result = fn_ref;
-      break;
-    }
-  }
-  Async_Stack.pop_back();
+	/// Walk through definition ensuring that all function calls are async-safe
+	Async_Stack.push_back( name);
+	const SgNode* result = NULL;
+	Rose_STL_Container<SgNode *> nodes
+		= NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp);
+	for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
+		const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
+		assert( fn_ref != NULL);
+		if (non_async_fn( fn_ref)) {
+			result = fn_ref;
+			break;
+		}
+	}
+	Async_Stack.pop_back();
 
-  // If no unsafe functions called, add to async-safe set
-  if (result == NULL)
-    Async_Fns.insert( name);
-  return result;
+	/// If no unsafe functions called, add to async-safe set
+	if (result == NULL)
+		Async_Fns.insert( name);
+	return result;
 }
 
 
@@ -149,10 +157,13 @@ bool SIG30_c( const SgNode *node ) { // Call only async-safe functions in a sign
   return true;
 }
 
-
-bool SIG31_c( const SgNode *node ) { // Do not access or modify shared objects in a signal handler
-  // Specifically, this rule only ensures that any variable referenced is either local
-  // or is static volatile sig_atomic_t
+/**
+ * Do not access or modify shared objects in a signal handler
+ *
+ * Specifically, this rule only ensures that any variable referenced is either
+ * local or is static volatile sig_atomic_t
+ */
+bool SIG31_c( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
   assert(sig_fn != NULL);
@@ -198,14 +209,15 @@ bool SIG31_c( const SgNode *node ) { // Do not access or modify shared objects i
     if (compliant) continue;
 
     print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
-//    std::cerr << "\tobject: " << var_ref->unparseToString() << std::endl;
     return true;
   }
   return false;
 }
 
-
-bool SIG32_c( const SgNode *node ) { // Do not call longjmp() from within a signal handler
+/**
+ * Do not call longjmp() from within a signal handler
+ */
+bool SIG32_c( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
   assert(sig_fn != NULL);
@@ -224,7 +236,6 @@ bool SIG32_c( const SgNode *node ) { // Do not call longjmp() from within a sign
   return false;
 }
 
-
 bool SIG(const SgNode *node) {
   bool violation = false;
   //  violation |= SIG00_a(node);
@@ -233,4 +244,3 @@ bool SIG(const SgNode *node) {
   violation |= SIG32_c(node);
   return violation;
 }
-

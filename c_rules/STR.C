@@ -19,22 +19,24 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
 #include "rose.h"
 #include "utilities.h"
 
+/**
+ * Ensure that string storage is sufficient for chars & terminator
+ *
+ * This just ensures that strcpy is copying into a pointer
+ */
+bool STR31_C(const SgNode *node ) {
+	if (!isCallOfFunctionNamed( node, "strcpy")) return false;
 
-bool STR31_C(const SgNode *node ) { // Ensure that string storage is sufficient for chars & terminator
-  // This just ensures that strcpy is copying into a pointer
-  if (!isCallOfFunctionNamed( node, "strcpy")) return false;
+	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
+	if (ref == NULL) return false; // strcpy() not copying into simple var
+	if (!Type( getRefDecl( ref)->get_type()).isArray()) return false;
+	if (Type( getFnArg( isSgFunctionRefExp(node), 1)->get_type()).isArray()) return false;
 
-  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
-  if (ref == NULL) return false; // strcpy() not copying into simple var
-  if (!Type( getRefDecl( ref)->get_type()).isArray()) return false;
-  if (Type( getFnArg( isSgFunctionRefExp(node), 1)->get_type()).isArray()) return false;
-
-  print_error( node, "STR31-C", "String copy destination must contain sufficient storage");
-  return true;
+	print_error( node, "STR31-C", "String copy destination must contain sufficient storage");
+	return true;
 }
 
 bool getSizetVal(const SgNode *node, size_t *value) {
@@ -48,7 +50,10 @@ bool getSizetVal(const SgNode *node, size_t *value) {
 	return true;
 }
 
-bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
+/**
+ * Null-terminate byte strings as required
+ */
+bool STR32_C(const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "strncpy")) return false;
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	assert(fnRef);
@@ -136,10 +141,10 @@ bool STR32_C(const SgNode *node ) { // Null-terminate byte strings as required
 	}
 }
 
-//Check if there is a gets
-//Check if sscanf/scanf has a "%s"
+/**
+ * Check if there is a gets or if sscanf/scanf has a "%s"
+ */
 bool STR35_C(const SgNode *node) {
-
 	if(isCallOfFunctionNamed(node, "gets")) {
 		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
 		return true;
@@ -174,7 +179,11 @@ bool STR35_C(const SgNode *node) {
 	return false;
 }
 
-bool STR36_C(const SgNode *node) { // Do not specify the dimension of a character array initialized with a string literal
+/**
+ * Do not specify the dimension of a character array initialized with a string
+ * literal
+ */
+bool STR36_C(const SgNode *node) {
 	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
 	if (!varDecl)
 		return false;
