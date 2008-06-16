@@ -1,5 +1,4 @@
-/*
- *
+/**
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
 
@@ -16,6 +15,12 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+/**
+ * \file utilities.C
+ *
+ * Provides many helpful utilities for use by the ROSE rules
+ */
+
 #include <list>
 #include <string>
 #include <map>
@@ -24,7 +29,14 @@
 #include "rose.h"
 #include "utilities.h"
 
-const SgType *getArgType( const SgFunctionDeclaration *fdec, int n ) { // note: fisrt arg is arg 1, not arg 0
+/**
+ * Return the type of the n-th argument to fdec
+ *
+ * \param[in] fdec Function Declaration to check
+ * \param[in] n Index of argument, first arg is 1 (not 0)
+ * \return SgType of the n-th argument to fdec
+ */
+const SgType *getArgType( const SgFunctionDeclaration *fdec, int n ) {
 	const SgFunctionParameterList *plist = fdec->get_parameterList();
 	const SgInitializedNamePtrList &parms = plist->get_args();
 	if( parms.size() < n || n <= 0 )
@@ -76,7 +88,9 @@ bool isZeroArgFunctionDeclaration( const SgNode *node ) {
 	return false;
 }
 
-
+/**
+ * Returns true if \c node is declared inside a \c SgFunctionDefinition
+ */
 bool isLocalDeclaration( const SgNode *node ) {
 	if( node )
 		do {
@@ -86,7 +100,10 @@ bool isLocalDeclaration( const SgNode *node ) {
 	return false;
 }
 
-bool isMemberStatement( const SgNode *node ) { //XXXXXXXXXXXXXX This doesn't work yet...
+/**
+ * \bug DOESN'T WORK
+ */
+bool isMemberStatement( const SgNode *node ) {
 	if( const SgStatement *stat = isSgStatement( node ) ) {
 		if( const SgScopeStatement *scope = stat->get_scope() ) {
 			std::cout << "\tSCOPE:  " << scope->get_qualified_name().getString();
@@ -243,21 +260,29 @@ bool switchHasDefault( const SgSwitchStatement *theSwitch ) {
 	return false;
 }
 
-
+/**
+ * \param[in] node Node at which to genererate the error
+ * \param[in] rule Abbreviation of the violated rule (ie. ARR01-A)
+ * \param[in] desc Short description of the error
+ * \param[in] warning If true than generate a warning, else an error
+ */
 void print_error(const SgNode* node, const char* rule, const char* desc, bool warning) {
   const Sg_File_Info* fi = node->get_file_info();
   std::string filename = fi->get_filename();
   size_t found = filename.rfind("/");
   if( found != std::string::npos)
     filename.erase( 0, found+1);
-  std::cerr << filename << ':' << fi->get_line() // don't use << ':' << fi->get_col(), not flymake-compliant 
+  /// don't use << ':' << fi->get_col(), not flymake-compliant 
+  std::cerr << filename << ':' << fi->get_line()
 	    << ": " << (warning ? "warning" : "error")
 	    << ": " << rule << ": " << desc << std::endl;
 }
 
 
-// Returns True if node is inside an expression that tests its value
-// to see if it is NULL
+/**
+ * Returns True if node is inside an expression that tests its value to see if
+ * it is NULL
+ */
 bool isTestForNullOp(const SgNode* node) {
   if (node == NULL) return false;
   const SgNode* parent = node->get_parent();
@@ -276,10 +301,14 @@ bool isTestForNullOp(const SgNode* node) {
 }
 
 
-// Returns reference to ith argument of function call. Dives
-// through typecasts. Returns NULL if no such parm
+/**
+ * Returns reference to ith argument of function call. Dives through
+ * typecasts. Returns NULL if no such parm
+ *
+ * \bug segfaults if \c i is too big
+ * \todo introduce proper bounds checks
+ */
 const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
-	// XXX TODO: introduce proper bounds checking so we don't segfault :/
 	if (fnCall == NULL) return NULL;
 
 	const SgExprListExp* fnArgs = fnCall->get_args();
@@ -294,8 +323,10 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
 	return (castArg != NULL) ? castArg->get_operand() : fnArg;
 }
 
-// Returns reference to ith argument of function reference. Dives
-// through typecasts. Returns NULL if no such parm
+/**
+ * Returns reference to ith argument of function reference. Dives through
+ * typecasts. Returns NULL if no such parm
+ */
 const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
   if (node == NULL) return NULL;
 
@@ -304,7 +335,9 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
   return getFnArg(fnCall, i);
 }
 
-// Fills list with all nodes OF TYPE <SgVarRefExp> in enclosing function
+/**
+ * Fills list with all nodes of type \c SgVarRefExp in enclosing function
+ */
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
   const SgFunctionDefinition* block
     = isSgFunctionDefinition( findParentNodeOfType( node,
@@ -315,7 +348,9 @@ const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
 }
 
 
-// Returns a variable's declaration, given a reference to that var
+/**
+ * Returns a variable's declaration, given a reference to that var
+ */
 const SgInitializedName* getRefDecl(const SgVarRefExp* ref) {
   if (ref == NULL) return NULL;
   const SgVariableSymbol* sym = ref->get_symbol();
@@ -324,8 +359,11 @@ const SgInitializedName* getRefDecl(const SgVarRefExp* ref) {
 }
 
 
-// Returns iterator of next node that refers to same variable as ref.
-// Returns nodes.end() if unsuccessful
+/**
+ * Returns iterator of next node that refers to same variable as ref.
+ *
+ * \return nodes.end() if unsuccessful
+ */
 Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container<SgNode *>& nodes,
 					       Rose_STL_Container<SgNode *>::const_iterator i,
 					       const SgInitializedName* var) {
@@ -338,7 +376,9 @@ Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container
   return nodes.end();
 }
 
-// Returns true if function( ref) appears in code somewhere after ref
+/**
+ * Returns true if function( ref) appears in code somewhere after ref
+ */
 bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
   if (ref == NULL) return false;
   const SgInitializedName* var = getRefDecl( ref);
@@ -393,13 +433,16 @@ bool isGlobalVar(const SgVarRefExp *varRef) {
 		return false;
 }
 
+/**
+ * Checks to see if the type is some kind of char or wchar_t
+ *
+ * \bug doesn't catch wchar_t + modifiers
+ * \note since wchar_t is actually a long, we check for it explicitly
+ * \note we return false on [un]signed chars since they are numbers not
+ * characters
+ */
 bool isAnyCharType(const SgType *type) {
 	const SgType *innerType = type->stripTypedefsAndModifiers();
-	// Don't check for signed/unsigned because those are technically int types
-
-	/**
-	 * XXX: "wchar_t" is typedefed to a long
-	 */
 	if (type->unparseToString() == "wchar_t")
 		return true;
 	return isSgTypeChar(innerType) || isSgTypeWchar(innerType);

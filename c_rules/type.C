@@ -38,8 +38,10 @@ Type::Type( const SgType *t )
 	}
 }
 
+/**
+ * \todo find a better way to check for equality
+ */
 bool Type::operator==(const Type& that) const {
-  // prob not the best way to check type equality...but what is???
   return mangledName() == that.mangledName();
 }
 
@@ -159,8 +161,11 @@ bool Type::isWchar() const {
 	return isSgTypeWchar( t_ ) != 0;
 }
 
+/**
+ * \bug not correct! fix...
+ */
 bool Type::isSize_t() const {
-	return isUnsignedInt(); //XXX not correct!  fix...
+	return isUnsignedInt();
 }
 
 bool Type::isArray() const {
@@ -214,6 +219,9 @@ const SgEnumDeclaration *Type::getEnumDeclaration() const {
 	return 0;
 }
 
+/**
+ * \bug Always returns false
+ */
 bool Type::isUnion() const {
 	return false; //XXXXXXXXXXXXX???
 }
@@ -223,11 +231,17 @@ bool Type::isFunction() const {
 	return isSgFunctionType(t_) != 0;
 }
 
-bool Type::isSigned() const { //XXX what about plain char?
+/**
+ * \bug What about plain char?
+ */
+bool Type::isSigned() const {
 	return isSignedChar() || isShort() || isInt() || isLong() || isLongLong();
 }
 
-bool Type::isUnsigned() const { //XXX what about plain char?
+/**
+ * \bug What about plain char?
+ */
+bool Type::isUnsigned() const {
 	return isUnsignedChar() || isUnsignedShort() || isUnsignedInt() || isUnsignedLong() || isUnsignedLongLong();
 }
 

@@ -84,6 +84,9 @@ cce.output:	diagnose
 clean:
 	-libtool --mode=clean rm diagnose a.out *flymake.ti *flymake.C *.o *.output *~ *# */*.o *.lo .libs nul */*~ */*#
 
+doc:
+	@echo "bulding documentation..."
+	doxygen Doxyfile
 
 # support for flymake.el
 check-syntax:
