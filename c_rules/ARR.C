@@ -154,11 +154,23 @@ bool ARR34_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Do not add or subtract an integer to a pointer if the resulting value does
+ * not refer to a valid array element
+ *
+ * \note GCC catches violations of this rule where subscripts to static arrays
+ * are out of range.
+ */
+bool ARR38_C( const SgNode *node ) {
+	return false;
+}
+
 bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_A(node);
   violation |= ARR02_A(node);
   violation |= ARR33_C(node);
   violation |= ARR34_C(node);
+  violation |= ARR38_C(node);
   return violation;
 }

@@ -12,6 +12,12 @@ ARR33_C.c:10: warning: ARR33-C: Guarantee that copies are made into storage of s
          ^
 
 Frontend Warnings only: errorCode = 2 
+"./ncce/ARR38_C.c", line 5: warning: 
+          subscript out of range
+  	for (ip = &ar[0]; ip < &ar[21]; ip++) {
+  	                          ^
+
+Frontend Warnings only: errorCode = 2 
 DCL01_C.c:7: warning: DCL01-A: Do not reuse variable names in subscopes
 "./ncce/DCL30_A_2.c", line 4: warning: 
           returning pointer to local variable
