@@ -112,8 +112,6 @@ size_t sizeOfType(const SgType *type) {
  * We make sure that the length argument to memcpy is at most the size of the
  * first argument.  We can only do this this if the first argument is a static
  * array.
- *
- * \todo NOT DONE
  */
 bool ARR33_C( const SgNode *node ) {
 	if(!isCallOfFunctionNamed(node, "memcpy"))
@@ -127,33 +125,21 @@ bool ARR33_C( const SgNode *node ) {
 	const SgArrayType *arrT = isSgArrayType(dstExp->get_type());
 	if (!arrT)
 		return false;
-	std::cerr << "5 " << (const_cast<SgArrayType *>(arrT))->unparseToCompleteString() << std::endl;
 	size_t len;
 	if (!getSizetVal(lenExp,&len))
 		return false;
-	std::cerr << "6" << std::endl;
 	const SgValueExp *dstVal = isSgValueExp(arrT->get_index());
 	if (!dstVal) // VLA or some such...
-	std::cerr << "7" << std::endl;
 		return false;
 	size_t dst_size;
-	std::cerr << "8" << std::endl;
 	if (!getSizetVal(dstVal, &dst_size))
-	std::cerr << "9" << std::endl;
 		return false;
-	std::cerr << "10" << std::endl;
 	dst_size *= sizeOfType(arrT->findBaseType());
-	std::cerr << "11" << std::endl;
 	if (dst_size == 0)
-	std::cerr << "12" << std::endl;
 		return false;
-	std::cerr << "13" << std::endl;
 	if (dst_size > len) {
-	std::cerr << "14" << std::endl;
 		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size", true);
-	std::cerr << "15" << std::endl;
 		return true;
-	std::cerr << "16" << std::endl;
 	}
 	return false;
 }
@@ -172,7 +158,7 @@ bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_A(node);
   violation |= ARR02_A(node);
-//  violation |= ARR33_C(node);
+  violation |= ARR33_C(node);
   violation |= ARR34_C(node);
   return violation;
 }
