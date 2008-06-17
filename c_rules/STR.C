@@ -39,17 +39,6 @@ bool STR31_C(const SgNode *node ) {
 	return true;
 }
 
-bool getSizetVal(const SgNode *node, size_t *value) {
-	if (isSgUnsignedIntVal(node)) {
-		*value = isSgUnsignedIntVal(node)->get_value();
-	} else if (isSgUnsignedLongVal(node)) {
-		*value = isSgUnsignedLongVal(node)->get_value();
-	} else {
-		return false;
-	}
-	return true;
-}
-
 /**
  * Null-terminate byte strings as required
  */

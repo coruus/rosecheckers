@@ -33,6 +33,7 @@ EXP34_C.c:13: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP34_C_2.c:14: error: EXP34-C: Ensure pointer is valid before dereferencing it
 FIO07_A.c:11: warning: FIO07-A: Prefer fseek() to rewind()
 FIO12_A.c:7: warning: FIO12-A: Prefer setvbuf() to setbuf()
+FIO30_C.c:15: warning: FIO30-C: Exclude user input from format strings
 FIO34_C.c:4: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO43_C.c:5: error: FIO43-C: Do not use tmpfile()
 FIO43_C_2.c:7: error: FIO43-C: Do not use fopen() on the results of tmpnam()

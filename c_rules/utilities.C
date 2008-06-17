@@ -487,3 +487,19 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 	return *i;
 }
 
+/**
+ * Takes a Value node and tries to extract the numeric value from it.  The
+ * need for this exists because size_t are expressed as both UnsignedIntVal's
+ * and UnsignedLongVal's.
+ */
+bool getSizetVal(const SgNode *node, size_t *value) {
+	if (isSgUnsignedIntVal(node)) {
+		*value = isSgUnsignedIntVal(node)->get_value();
+	} else if (isSgUnsignedLongVal(node)) {
+		*value = isSgUnsignedLongVal(node)->get_value();
+	} else {
+		return false;
+	}
+	return true;
+}
+

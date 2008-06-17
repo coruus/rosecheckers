@@ -42,6 +42,51 @@ bool FIO12_A( const SgNode *node ) {
 }
 
 /**
+ * Exclude user input from format strings
+ *
+ * We make sure that the format argument to *printf family of functions is
+ * either const or a string
+ */
+bool FIO30_C( const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if(!fnRef)
+		return false;
+
+	unsigned int argNum;
+	if(isCallOfFunctionNamed(fnRef, "printf")
+	|| isCallOfFunctionNamed(fnRef, "scanf")
+	|| isCallOfFunctionNamed(fnRef, "vprintf")
+	|| isCallOfFunctionNamed(fnRef, "vscanf")) { argNum = 0; }
+	else if(isCallOfFunctionNamed(fnRef, "fprintf")
+	|| isCallOfFunctionNamed(fnRef, "fscanf")
+	|| isCallOfFunctionNamed(fnRef, "sprintf")
+	|| isCallOfFunctionNamed(fnRef, "sscanf")
+	|| isCallOfFunctionNamed(fnRef, "vfprintf")
+	|| isCallOfFunctionNamed(fnRef, "vfscanf")
+	|| isCallOfFunctionNamed(fnRef, "vsprintf")
+	|| isCallOfFunctionNamed(fnRef, "vsscanf")) { argNum = 1; }
+	else if(isCallOfFunctionNamed(fnRef, "snprintf")
+	|| isCallOfFunctionNamed(fnRef, "vsnprintf")) {argNum = 2; }
+	else return false;
+
+	const SgExpression *frmt = removeImplicitPromotions(getFnArg(fnRef,argNum));
+	assert(frmt);
+	const SgType *frmtType = frmt->get_type();
+	assert(frmtType);
+
+	/**
+	 * for some reason we can't find the const version of dereference
+	 */
+	bool isConst = Type((const_cast<SgType *>(frmtType))->dereference()).isConst();
+	if(!(isConst || isSgTypeString(frmtType))) {
+		print_error(node, "FIO30-C", "Exclude user input from format strings", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Use int to capture the return value of character IO functions
  */
 bool FIO34_C( const SgNode *node) {
@@ -124,6 +169,7 @@ bool FIO(const SgNode *node) {
   bool violation = false;
   violation |= FIO07_A(node);
   violation |= FIO12_A(node);
+  violation |= FIO30_C(node);
   violation |= FIO34_C(node);
   violation |= FIO43_C(node);
   violation |= FIO43_C_2(node);

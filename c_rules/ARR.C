@@ -77,6 +77,88 @@ bool ARR02_A( const SgNode *node ) {
 }
 
 /**
+ * Tries to find sizeof(type)
+ *
+ * \note this function only works on the basic types, nothing fancy
+ *
+ * \return 0 on error
+ */
+size_t sizeOfType(const SgType *type) {
+	const SgType *t = type->stripTypedefsAndModifiers();
+	if (isSgTypeBool(t)) return sizeof(bool);
+	else if (isSgTypeChar(t)) return sizeof(char);
+	else if (isSgTypeDouble(t)) return sizeof(double);
+	else if (isSgTypeFloat(t)) return sizeof(float);
+	else if (isSgTypeInt(t)) return sizeof(int);
+	else if (isSgTypeLong(t)) return sizeof(long);
+	else if (isSgTypeLongDouble(t)) return sizeof(long double);
+	else if (isSgTypeLongLong(t)) return sizeof(long long);
+	else if (isSgTypeShort(t)) return sizeof(short);
+	else if (isSgTypeSignedChar(t)) return sizeof(signed char);
+	else if (isSgTypeSignedInt(t)) return sizeof(signed int);
+	else if (isSgTypeSignedLong(t)) return sizeof(signed long);
+	else if (isSgTypeSignedShort(t)) return sizeof(signed short);
+	else if (isSgTypeUnsignedChar(t)) return sizeof(unsigned char);
+	else if (isSgTypeUnsignedInt(t)) return sizeof(unsigned int);
+	else if (isSgTypeUnsignedLong(t)) return sizeof(unsigned long);
+	else if (isSgTypeUnsignedShort(t)) return sizeof(unsigned short);
+	else if (isSgTypeWchar(t)) return sizeof(wchar_t);
+	else return 0;
+}
+
+/**
+ * Guarantee that copies are made into storage of sufficient size
+ *
+ * We make sure that the length argument to memcpy is at most the size of the
+ * first argument.  We can only do this this if the first argument is a static
+ * array.
+ *
+ * \todo NOT DONE
+ */
+bool ARR33_C( const SgNode *node ) {
+	if(!isCallOfFunctionNamed(node, "memcpy"))
+		return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef,0));
+	const SgExpression *lenExp = getFnArg(fnRef,2);
+	assert(dstExp && lenExp);
+
+	const SgArrayType *arrT = isSgArrayType(dstExp->get_type());
+	if (!arrT)
+		return false;
+	std::cerr << "5 " << (const_cast<SgArrayType *>(arrT))->unparseToCompleteString() << std::endl;
+	size_t len;
+	if (!getSizetVal(lenExp,&len))
+		return false;
+	std::cerr << "6" << std::endl;
+	const SgValueExp *dstVal = isSgValueExp(arrT->get_index());
+	if (!dstVal) // VLA or some such...
+	std::cerr << "7" << std::endl;
+		return false;
+	size_t dst_size;
+	std::cerr << "8" << std::endl;
+	if (!getSizetVal(dstVal, &dst_size))
+	std::cerr << "9" << std::endl;
+		return false;
+	std::cerr << "10" << std::endl;
+	dst_size *= sizeOfType(arrT->findBaseType());
+	std::cerr << "11" << std::endl;
+	if (dst_size == 0)
+	std::cerr << "12" << std::endl;
+		return false;
+	std::cerr << "13" << std::endl;
+	if (dst_size > len) {
+	std::cerr << "14" << std::endl;
+		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size", true);
+	std::cerr << "15" << std::endl;
+		return true;
+	std::cerr << "16" << std::endl;
+	}
+	return false;
+}
+
+/**
  * Ensure that array types in expressions are compatible
  *
  * \note Since GCC produces a warning during compilation for this, Rose
@@ -90,6 +172,7 @@ bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_A(node);
   violation |= ARR02_A(node);
+//  violation |= ARR33_C(node);
   violation |= ARR34_C(node);
   return violation;
 }
