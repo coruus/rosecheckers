@@ -35,10 +35,6 @@ bool ENV04_A( const SgNode *node ) {
   return true;
 }
 
-#define FOREACH_SUBNODE(node, nodes, i, type) \
-	Rose_STL_Container<SgNode *> (nodes) = NodeQuery::querySubTree( const_cast<SgExpression*>(node), (type) ); \
-	for (Rose_STL_Container<SgNode *>::iterator (i) = (nodes).begin(); (i) != (nodes).end(); ++(i) )
-
 /**
  * No atexit handler should terminate in any way other than by returning
  * \note This catches calls to exit, _exit, _abort, _Exit, longjmp and

@@ -91,25 +91,14 @@ bool STR32_C(const SgNode *node ) {
 	if (src_size >= len) {
 		do {
 			// check for null termination, violation if not present
-			// first, find the parent block
-			const SgNode *parent = node;
-			const SgNode *block = node->get_parent();
-			assert(block);
-			while(!isSgBasicBlock(block)) {
-				parent = block;
-				block = parent->get_parent();
-				assert(block);
-			}
-			// second, find the next expression after the strncpy()
-			const SgStatementPtrList &nodes = isSgBasicBlock(block)->get_statements();
-			Rose_STL_Container<SgStatement *>::const_iterator i = find(nodes.begin(), nodes.end(), parent);
-			if (i == nodes.end())
-				break;
-			i++;
-			if (i == nodes.end())
-				break;
+
+			// first, find the parent block and the next expression after the
+			// strncpy()
+			const SgStatement * nextStat = findInBlockByOffset(node, 1);
 			// if all went well, it should be an expression
-			const SgExprStatement *nextExpr = isSgExprStatement(*i);
+			if(!nextStat)
+				break;
+			const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
 			if(!nextExpr)
 				break;
 			// To comply with the rule, it must be an assignment...

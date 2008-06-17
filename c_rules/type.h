@@ -1,35 +1,34 @@
-/*
+/**
+ * \file type.h
+ *
+ * Type is a thin layer over SgType, intended to
+ * 	a) simplify use of SgType, and
+ * 	b) provide additional functionality to ask questions about and manipulate types
+ *
+ * This layer ordinarily strips away initial typedefs from a type so that, for
+ * instance, typedef int INT; both int and INT will return true for isInt(),
+ * but INT will return true for isTypedef() as well.
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
-
- * Permission to use this software and its documentation for any purpose is hereby granted,
- * provided that the above copyright notice appear and that both that copyright notice and
- * this permission notice appear in supporting documentation, and that the name of CMU not
- * be used in advertising or publicity pertaining to distribution of the software without
- * specific, written prior permission.
+ * 
+ * Permission to use this software and its documentation for any purpose is
+ * hereby granted, provided that the above copyright notice appear and that
+ * both that copyright notice and this permission notice appear in supporting
+ * documentation, and that the name of CMU not be used in advertising or
+ * publicity pertaining to distribution of the software without specific,
+ * written prior permission.
  *
- * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+ * IMPLIED WSTRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #ifndef TYPE_H
 #define TYPE_H
-
-//
-// Type is a thin layer over SgType, intended to
-//	a) simplify use of SgType, and
-//	b) provide additional functionality to ask questions about and manipulate types
-//
-// This layer ordinarily strips away initial typedefs from a type so that, for instance,
-//
-//	typedef int INT;
-//
-// both int and INT will return true for isInt(), but INT will return true for isTypedef() as well.
-//
 
 #include "rose.h"
 
@@ -40,16 +39,20 @@ class Type {
 	const SgType* sgType() const {return t_;}
 	bool operator==(const Type& that) const;
 
-	// We'll let the compiler write these for us:
-	// ~Type();
-	// Type( const Type & );
-	// Type &operator =( const Type & );
+	/**
+	 *  We'll let the compiler write these for us:
+	 * - ~Type();
+	 * - Type( const Type & );
+	 * - Type &operator =( const Type & );
+	 */
 
 	std::string mangledName() const;
 
-	Type dereference() const; // will deref pointer, reference, or array, else same type
+	/// will deref pointer, reference, or array, else same type
+	Type dereference() const;
 	Type stripInitialTypedefs() const;
-	Type stripInitialPointers() const; // strip sequence of typedefs and pointers, but leave trailing typedefs
+	/// strip sequence of typedefs and pointers, but leave trailing typedefs
+	Type stripInitialPointers() const;
 	Type stripInitialReferences() const;
 	Type stripInitialPointersAndReferences() const;
 	Type stripInitialArrays() const;
@@ -79,7 +82,9 @@ class Type {
 	bool isLong() const;
 	bool isLongLong() const;
 	bool isUnsignedLongLong() const;
-	// no signed long long?
+	/**
+	 * \note no signed long long?
+	 */
 	bool isFloat() const;
 	bool isDouble() const;
 	bool isLongDouble() const;
@@ -87,10 +92,11 @@ class Type {
 
 	bool isSize_t() const;
 
-	//
-	// These follow the structure of the TR1 <type_traits> library
-	//
-	// primary type categories, 11.3
+	/*
+	 * These follow the structure of the TR1 <type_traits> library
+	 *
+	 * primary type categories, 11.3
+	 */
 	bool isVoid() const;
 	bool isIntegral() const;
 	bool isFloatingPoint() const;
@@ -107,7 +113,7 @@ class Type {
 	const SgClassDefinition *getClassDefinition() const;
 	bool isFunction() const;
 
-	// composite type categories, 11.4
+	/// composite type categories, 11.4
 	bool isArithmetic() const;
 	bool isFundamental() const; //XXX what is the status of bool?
 	bool isObject() const;
@@ -115,7 +121,7 @@ class Type {
 	bool isCompound() const;
 	bool isMemberPointer() const;
 
-	// type properties, 11.5
+	/// type properties, 11.5
 	bool isConst() const;
 	bool isVolatile() const;
 	bool isEmpty() const;
@@ -125,12 +131,12 @@ class Type {
 	size_t rank() const; // array dimension, 0 if not array
 	size_t extent( unsigned n ) const; // bound of nth array modifier
 
-	// type relationsips, 11.6
+	/// type relationsips, 11.6
 	bool isSame( Type ) const;
 	bool isConvertible( Type ) const;
 	bool isBaseOf( Type ) const;
 
-	// type transformations, 11.7
+	/// type transformations, 11.7
 	Type removeConst() const;
 	Type removeVolatile() const;
 	Type removeCV() const;
@@ -144,13 +150,13 @@ class Type {
 	Type removeExtent () const;
 	Type removeAllExtents() const; // same as stripInitialArrays
 
-	// alignment, 11.8
+	/// alignment, 11.8
 	//size_t alignmentOf() const;
 	//Type alignedStorage( ) const;
 
   private:
-	const SgType *orig_; // SgType used to initialize
-	const SgType *t_; // orig_ stripped of initial sequence of typedefs (note uses of orig_ vs. t_ in implementations)
+	const SgType *orig_; /// SgType used to initialize
+	const SgType *t_; /// orig_ stripped of initial sequence of typedefs (note uses of orig_ vs. t_ in implementations)
 	bool isConst_;
 	bool isVolatile_;
 };

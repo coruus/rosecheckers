@@ -21,7 +21,6 @@ ENV01_A.c:10: error: STR31-C: String copy destination must contain sufficient st
 ENV04_A.c:8: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 ENV32_C.c:9: warning: ENV32-C: No atexit handler should terminate in any way other than by returning
 EXP01_A.c:8: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
-	__Pb__d__Pe__ vs d
 EXP09_A.c:6: warning: EXP09-A: malloc called using something other than sizeof()
 EXP09_A.c:12: warning: EXP09-A: malloc called using something other than sizeof()
 "./ncce/EXP33_C_2.c", line 26: warning: 
@@ -55,6 +54,7 @@ MEM31_C.c:14: error: MEM31-C: Free dynamically allocated memory exactly once.
 MSC30_C.c:11: error: MSC33-C: Do not use rand()
 POS33_C.c:5: error: POS33-C: Do not use vfork()
 POS34_C.c:13: error: POS34-C: Do not call putenv() with an automatic variable
+POS36_C.c:10: warning: POS36_C: Observe correct revocation order while relinquishing privileges
 SIG30_C.c:9: error: MEM01_A: Store a new value in pointers immediately after free()
 SIG30_C.c:9: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG30_C.c:9: error: SIG31-C: Do not access or modify shared objects in a signal handler

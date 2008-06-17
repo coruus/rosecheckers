@@ -66,9 +66,35 @@ bool POS34_C( const SgNode *node ) {
 	return true;
 }
 
+/**
+ * Observe correct revocation order while relinquishing privileges
+ *
+ * \note Since there's really no clean way to do this, we'll just traverse up
+ * to the first SgBasicBlock above a setgid(), then find the previous
+ * statement, and see if it contains a call to setuid()
+ */
+bool POS36_C( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "setgid"))
+		return false;
+
+	const SgStatement *prevStat = findInBlockByOffset(node, -1);
+	if (!prevStat)
+		return false;
+
+	FOREACH_SUBNODE(prevStat, nodes, i, V_SgFunctionRefExp) {
+		assert(*i);
+		if (isCallOfFunctionNamed(*i, "setuid")) {
+			print_error(node, "POS36_C", "Observe correct revocation order while relinquishing privileges", true);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool POS(const SgNode *node) {
   bool violation = false;
   violation |= POS33_C(node);
   violation |= POS34_C(node);
+  violation |= POS36_C(node);
   return violation;
 }

@@ -446,3 +446,44 @@ bool isAnyCharType(const SgType *type) {
 		return true;
 	return isSgTypeChar(innerType) || isSgTypeWchar(innerType);
 }
+
+/**
+ * Searches inside of the parent block, then returns the statement that's
+ * delta lines before or after node (usually -1 or +1 for previous and next
+ * statement)
+ * 
+ * \param[in] node Find the BasicBlock above this node
+ * \param[in] delta Number of lines to search before or after node
+ * \return NULL on failure
+ */
+const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
+	// first, find the parent block
+	const SgNode *parent = node;
+	const SgNode *block = node->get_parent();
+	assert(block);
+
+	while(!isSgBasicBlock(block)) {
+		parent = block;
+		block = parent->get_parent();
+		assert(block);
+	}
+	// second, find the expression offset by delta from node
+	const SgStatementPtrList &nodes = isSgBasicBlock(block)->get_statements();
+	Rose_STL_Container<SgStatement *>::const_iterator i = find(nodes.begin(), nodes.end(), parent);
+	if (i == nodes.end())
+		return NULL;
+	while (delta > 0) {
+		delta--;
+		if ((++i) == nodes.end())
+			return NULL;
+	}
+	while (delta < 0) {
+		if ((i--) == nodes.begin())
+			return NULL;
+		delta++;
+	}
+
+	assert(*i);
+	return *i;
+}
+
