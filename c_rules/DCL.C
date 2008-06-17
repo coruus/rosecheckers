@@ -1,5 +1,8 @@
 /**
- * \file diagnose.C
+ * \file DCL.C
+ *
+ * \note As written, these tests catch template declarations only if
+ * instantiated.
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
@@ -19,45 +22,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-#include <iostream>
 #include "rose.h"
 #include "utilities.h"
 
-extern bool DCL(const SgNode *node);
-extern bool EXP(const SgNode *node);
-extern bool ARR(const SgNode *node);
-extern bool STR(const SgNode *node);
-extern bool MEM(const SgNode *node);
-extern bool FIO(const SgNode *node);
-extern bool TMP(const SgNode *node);
-extern bool ENV(const SgNode *node);
-extern bool SIG(const SgNode *node);
-extern bool MSC(const SgNode *node);
-extern bool POS(const SgNode *node);
+/**
+ * Do not reuse variable names in subscopes
+ */
+bool DCL01_A( const SgNode *node ) {
+	const SgInitializedName *varInitName = isSgInitializedName(node);
+	if (!varInitName)
+		return false;
+	const SgName varName = varInitName->get_name();
+	const SgScopeStatement *varScope = varInitName->get_scope();
+	assert(varScope);
+	while(!isSgGlobal(varScope)) {
+		varScope = varScope->get_scope();
+		if(varScope->symbol_exists(varName)) {
+			print_error(node, "DCL01-A", "Do not reuse variable names in subscopes", true);
+			return true;
+		}
+	}
 
-class visitorTraversal : public AstSimpleProcessing {
-public :
-  visitorTraversal () {}
-  virtual void visit(SgNode* node) {
-    DCL(node);
-    EXP(node);
-    ARR(node);
-    STR(node);
-    MEM(node);
-    FIO(node);
-    ENV(node);
-    SIG(node);
-    MSC(node);
-    POS(node);
-  }
-};
+	return false;
+}
 
-
-int main( int argc, char* argv[]) {
-  SgProject* project = frontend(argc,argv);
-  ROSE_ASSERT( project );
-  visitorTraversal exampleTraversal;
-  exampleTraversal.traverseInputFiles( project, preorder);
-  return 0;
+bool DCL(const SgNode *node) {
+  bool violation = false;
+  violation |= DCL01_A(node);
+  return violation;
 }

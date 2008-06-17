@@ -42,6 +42,7 @@ all: pgms tests
 
 pgms: diagnose 
 diagnose: diagnose.o \
+		DCL.o \
 		EXP.o \
 		ARR.o \
 		STR.o \
