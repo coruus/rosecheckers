@@ -176,7 +176,7 @@ bool EXP32_C( const SgNode *node ) {
 }
 
 /**
- * Ensure pointer is valid before dereferencing it
+ * Ensure a null pointer is not dereferenced
  * We only check the output of malloc, calloc, and realloc. Don't check other
  * potential null ptrs.
  *

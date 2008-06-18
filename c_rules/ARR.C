@@ -23,27 +23,45 @@
 #include "utilities.h"
 
 /**
- * Do not use sizeof() on an incomplete array
+ * Do not apply the sizeof operator to a pointer when taking the size of an
+ * array
  *
- * \todo Why are we using both SgType and Type? We should find a way to
- * implement get_index() in Type
+ * We find cases of sizeof(var) where var is an array and is also a function
+ * parameter
  */
 bool ARR01_A( const SgNode *node ) {
-  const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( node);
-  if (sizeOfOp == NULL) return false;
+	const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( node);
+	if(!sizeOfOp)
+		return false;
 
-  const SgExpression* sizeOfExpr = sizeOfOp->get_operand_expr();
-  if (sizeOfExpr == NULL) return false; // ignore sizeof( type);
+	const SgExpression *expr = removeImplicitPromotions(sizeOfOp->get_operand_expr());
+	if(!expr)
+		return false;
 
-  const Type ref_type(sizeOfExpr->get_type());
-  const Type type = ref_type.dereference();
-  if (!type.isArray()) return false;
-  const SgArrayType* aType = isSgArrayType( type.sgType());
-  if (aType == NULL) return false;
-  if (aType->get_index()) return false; // we know the size of the array
+	if(isSgUnaryOp(expr)) expr = isSgUnaryOp(expr)->get_operand();
 
-  print_error( node, "ARR01-A", "Do not use sizeof() on an incomplete array", true);
-  return true;
+	const SgVarRefExp* var = isSgVarRefExp(removeImplicitPromotions(expr));
+	if(!var)
+		return false;
+
+	const SgArrayType *arrT = isSgArrayType(var->get_type());
+	if(!arrT)
+		return false;
+
+	const SgFunctionDeclaration *fnRef = isSgFunctionDeclaration(findParentNodeOfType( node,V_SgFunctionDeclaration).first);
+	if (!fnRef)
+		return false;
+
+	const SgName &varName = var->get_symbol()->get_name();
+
+	FOREACH_INITNAME(fnRef->get_args(), i) {
+		if((*i)->get_name() == varName) {
+			print_error( node, "ARR01-A", "Do not apply the sizeof operator to a pointer when taking the size of an array", true);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

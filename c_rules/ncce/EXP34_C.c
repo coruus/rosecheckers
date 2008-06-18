@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-const int SIZE_MAX = 50;
+const size_t SIZE_MAX = 50;
 
 void EXP34_C() {
   char* input_str = "Hi, there!";

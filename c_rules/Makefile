@@ -46,6 +46,7 @@ diagnose: diagnose.o \
 		DCL.o \
 		EXP.o \
 		ARR.o \
+		INT.o \
 		STR.o \
 		MEM.o \
 		FIO.o \

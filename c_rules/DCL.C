@@ -46,6 +46,15 @@ bool DCL01_A( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Do not declare an identifier with conflicting linkage classifications
+ *
+ * \note GCC catches this
+ */
+bool DCL36_C( const SgNode *node ) {
+	return false;
+}
+
 bool DCL(const SgNode *node) {
   bool violation = false;
   violation |= DCL01_A(node);

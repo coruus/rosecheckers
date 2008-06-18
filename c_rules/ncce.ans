@@ -1,8 +1,8 @@
 
-ARR01_A.c:5: warning: ARR01-A: Do not use sizeof() on an incomplete array
-ARR01_A_2.c:7: warning: ARR01-A: Do not use sizeof() on an incomplete array
-ARR01_A_3.c:6: warning: ARR01-A: Do not use sizeof() on an incomplete array
-ARR01_A_4.c:5: warning: ARR01-A: Do not use sizeof() on an incomplete array
+ARR01_A.c:5: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR01_A_2.c:7: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR01_A_3.c:6: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR01_A_4.c:5: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
 ARR02_A.c:4: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
 ARR33_C.c:10: warning: ARR33-C: Guarantee that copies are made into storage of sufficient size
 "./ncce/ARR34_C.c", line 9: warning: 
@@ -68,6 +68,7 @@ FIO34_C.c:4: error: FIO34-C: Use int to capture the return value of character I/
 FIO43_C.c:5: error: FIO43-C: Do not use tmpfile()
 FIO43_C_2.c:7: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO43_C_3.c:10: error: FIO43-C: Do not use open() on the results of mktemp()
+INT01_A.c:9: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object
 MEM01_A.c:13: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM01_A.c:13: error: MEM30-C: Do not access freed memory
 MEM01_A.c:13: error: MEM31-C: Free dynamically allocated memory exactly once.

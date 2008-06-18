@@ -28,6 +28,7 @@ extern bool PREPRO(const SgNode *node);
 extern bool DCL(const SgNode *node);
 extern bool EXP(const SgNode *node);
 extern bool ARR(const SgNode *node);
+extern bool INT(const SgNode *node);
 extern bool STR(const SgNode *node);
 extern bool MEM(const SgNode *node);
 extern bool FIO(const SgNode *node);
@@ -45,6 +46,7 @@ public :
     DCL(node);
     EXP(node);
     ARR(node);
+    INT(node);
     STR(node);
     MEM(node);
     FIO(node);
