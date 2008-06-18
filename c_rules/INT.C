@@ -96,9 +96,50 @@ bool INT06_A( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Use bitwise operators only on unsigned operands
+ */
+bool INT13_A( const SgNode *node ) {
+	bool violation = false;
+	if(isSgBitComplementOp(node)) {
+		const SgBitComplementOp *bitOp = isSgBitComplementOp(node);
+		if(!Type(bitOp->get_operand()->get_type()).isUnsigned()) {
+			violation = true;
+		}
+	} else if(isSgBinaryOp(node)) {
+		const SgBinaryOp *binOp = isSgBinaryOp(node);
+		if(isSgBitAndOp(binOp)
+		|| isSgAndAssignOp(binOp)
+		|| isSgBitXorOp(binOp)
+		|| isSgIorAssignOp(binOp)
+		|| isSgXorAssignOp(binOp)
+		|| isSgBitOrOp(binOp)) {
+			if((!Type(binOp->get_lhs_operand()->get_type()).isUnsigned())
+			|| (!Type(binOp->get_rhs_operand()->get_type()).isUnsigned())) {
+				violation = true;
+			}
+		} else if(isSgLshiftOp(binOp)
+		|| isSgLshiftAssignOp(binOp)
+		|| isSgRshiftOp(binOp)
+		|| isSgRshiftAssignOp(binOp)) {
+			if(!Type(binOp->get_lhs_operand()->get_type()).isUnsigned()) {
+				violation = true;
+			}
+		}
+	}
+
+	if(violation) {
+		print_error(node, "INT13-A", "Use bitwise operators only on unsigned operands", true);
+		return true;
+	}
+
+	return false;
+}
+
 bool INT(const SgNode *node) {
   bool violation = false;
   violation |= INT01_A(node);
   violation |= INT06_A(node);
+  violation |= INT13_A(node);
   return violation;
 }

@@ -67,9 +67,10 @@ FIO30_C.c:15: warning: FIO30-C: Exclude user input from format strings
 FIO34_C.c:4: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO43_C.c:5: error: FIO43-C: Do not use tmpfile()
 FIO43_C_2.c:7: error: FIO43-C: Do not use fopen() on the results of tmpnam()
-FIO43_C_3.c:10: error: FIO43-C: Do not use open() on the results of mktemp()
+FIO43_C_3.c:20: error: FIO43-C: Do not use open() on the results of mktemp()
 INT01_A.c:9: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object
 INT06_A.c:8: warning: INT01-A: Use strtol() or a related function to convert a string token to an integer
+INT13_A.c:8: warning: INT13-A: Use bitwise operators only on unsigned operands
 MEM01_A.c:13: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM01_A.c:13: error: MEM30-C: Do not access freed memory
 MEM01_A.c:13: error: MEM31-C: Free dynamically allocated memory exactly once.
