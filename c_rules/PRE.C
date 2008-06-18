@@ -43,6 +43,9 @@ bool PRE04_A( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * \note we have to call this PREPRO because of a namespace clash with PRE
+ */
 bool PREPRO(const SgNode *node) {
   bool violation = false;
 //  violation |= PRE04_A(node);

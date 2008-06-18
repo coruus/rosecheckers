@@ -53,8 +53,10 @@ int argCount( const SgFunctionDeclaration *fdec ) {
 	return parms.size();
 }
 
+/**
+ * \note result is single arg function or function that has defaults for trailing arguments
+ */
 bool isSingleArgFunctionDeclaration( const SgNode *node ) {
-	// Note: result is single arg function or function that has defaults for trailing arguments
 	if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
 		const SgFunctionParameterList *plist = fdec->get_parameterList();
 		const SgInitializedNamePtrList &parms = plist->get_args();
@@ -71,8 +73,10 @@ bool isSingleArgFunctionDeclaration( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * \note result is single arg function or function that has defaults for trailing arguments
+ */
 bool isZeroArgFunctionDeclaration( const SgNode *node ) {
-	// Note: result is single arg function or function that has defaults for trailing arguments
 	if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
 		const SgFunctionParameterList *plist = fdec->get_parameterList();
 		const SgInitializedNamePtrList &parms = plist->get_args();
@@ -165,7 +169,9 @@ void getEnumeratorValues( const SgEnumDeclaration *edecl, std::vector<int> &valu
 	}
 }
 
-// Note that return value indicates whether there was a default case.
+/**
+ * \return value indicates whether there was a default case.
+ */
 bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	bool sawDefault = false;
 	values.clear();
@@ -202,7 +208,10 @@ const SgFunctionSymbol *isCallOfFunctionNamed( const SgNode *node, const std::st
 	return 0;
 }
 
-std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int nodeType ) { //XXX and do a version with a vector of nodeTypes, or just overload
+/**
+ * \todo and do a version with a vector of nodeTypes, or just overload
+ */
+std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int nodeType ) {
 	size_t depth = 0;
 	const SgNode *parent = start->get_parent();
 	for( ; parent; parent = parent->get_parent() ) {
@@ -492,7 +501,9 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
  * need for this exists because size_t are expressed as both UnsignedIntVal's
  * and UnsignedLongVal's.
  */
-bool getSizetVal(const SgNode *node, size_t *value) {
+bool getSizetVal(const SgExpression *node, size_t *value) {
+	if(!node)
+		return false;
 	if (isSgUnsignedIntVal(node)) {
 		*value = isSgUnsignedIntVal(node)->get_value();
 	} else if (isSgUnsignedLongVal(node)) {

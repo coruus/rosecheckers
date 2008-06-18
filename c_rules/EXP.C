@@ -92,6 +92,8 @@ bool EXP01_A( const SgNode *node ) {
  *
  * \note GCC catches implicit casts, we just focus on explicit ones because
  * GCC assumes the programmer is right in those cases
+ *
+ * \see EXP32_C
  */
 bool EXP05_A( const SgNode *node ) {
 	const SgCastExp * cast = isSgCastExp(node);
@@ -155,6 +157,8 @@ bool EXP09_A( const SgNode *node ) {
  *
  * \note GCC catches implicit casts, we just focus on explicit ones because
  * GCC assumes the programmer is right in those cases
+ *
+ * \see EXP05_A
  */
 bool EXP32_C( const SgNode *node ) {
 	const SgCastExp * cast = isSgCastExp(node);

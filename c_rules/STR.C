@@ -41,6 +41,8 @@ bool STR31_C(const SgNode *node ) {
 
 /**
  * Null-terminate byte strings as required
+ *
+ * \note This only works on character arrays that don't get initialized
  */
 bool STR32_C(const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "strncpy")) return false;

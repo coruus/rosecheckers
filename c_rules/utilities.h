@@ -160,6 +160,6 @@ bool isStaticVar(const SgVarRefExp *varRef);
 bool isAnyCharType(const SgType *type);
 
 const SgStatement * findInBlockByOffset(const SgNode *node, int delta);
-bool getSizetVal(const SgNode *node, size_t *value);
+bool getSizetVal(const SgExpression *node, size_t *value);
 
 #endif

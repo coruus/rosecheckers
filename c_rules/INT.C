@@ -31,6 +31,8 @@
 
 /**
  * Remove all modifiers such as const or volatile, but leave the typedefs
+ *
+ * \todo port this into type.C
  */
 const SgType *stripModifiers(const SgType *type) {
 	const SgModifierType *mt;
@@ -43,6 +45,8 @@ const SgType *stripModifiers(const SgType *type) {
 /**
  * Use rsize_t or size_t for all integer values representing the size of an
  * object
+ *
+ * \todo check for pointers, if found, allow pointer arithmetic
  */
 bool INT01_A( const SgNode *node ) {
 	const SgBinaryOp *op = isSgBinaryOp(node);
