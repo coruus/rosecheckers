@@ -42,6 +42,7 @@ all: pgms tests
 
 pgms: diagnose 
 diagnose: diagnose.o \
+		PRE.o \
 		DCL.o \
 		EXP.o \
 		ARR.o \
@@ -57,7 +58,7 @@ diagnose: diagnose.o \
 	libtool --mode=link g++ -Wall -g -o diagnose -L$(ROSE)/lib $(ROSE_LIBS) $^
 
 %.o: %.C
-	libtool --mode=compile g++ -c -g -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) -o $@ $<
+	libtool --mode=compile g++ -Wall -c -g -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) -o $@ $<
 
 tests:	cce.test ncce.test
 

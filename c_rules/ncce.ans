@@ -31,6 +31,20 @@ ENV32_C.c:9: warning: ENV32-C: No atexit handler should terminate in any way oth
 EXP01_A.c:8: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
 EXP09_A.c:6: warning: EXP09-A: malloc called using something other than sizeof()
 EXP09_A.c:12: warning: EXP09-A: malloc called using something other than sizeof()
+"./ncce/EXP32_C.c", line 11: warning: 
+          a value of type "int **" cannot be assigned to an entity of type
+          "volatile int **"
+  	ipp = &ip; /* produces warnings in modern compilers */
+  	    ^
+
+"./ncce/EXP32_C.c", line 12: warning: 
+          a value of type "int **" cannot be assigned to an entity of type
+          "volatile int **"
+  	ipp = (int**) &ip; /* constraint violation */
+  	    ^
+
+Frontend Warnings only: errorCode = 2 
+EXP32_C_2.c:5: warning: EXP32-C: Do not cast away a volatile qualification
 "./ncce/EXP33_C_2.c", line 26: warning: 
           variable "log" is used before its value is set
     sprintf(buffer, "Error: %s", log);

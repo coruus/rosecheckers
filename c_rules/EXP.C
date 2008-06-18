@@ -115,6 +115,34 @@ bool EXP09_A( const SgNode *node ) {
 }
 
 /**
+ * Do not cast away a volatile qualification
+ *
+ * We check cast expressions to make sure that if the don't posses a volatile
+ * tag, then neither does the operand.
+ *
+ * \note GCC catches implicit casts, we just focus on explicit ones because
+ * GCC assumes the programmer is right in those cases
+ */
+bool EXP32_C( const SgNode *node ) {
+	const SgCastExp * cast = isSgCastExp(node);
+	if(!cast)
+		return false;
+
+	const SgExpression *expr = cast->get_operand();
+	assert(expr);
+
+	bool castIsVolatile = Type(cast->get_type()).isVolatile();
+	bool exprIsVolatile = Type(expr->get_type()->dereference()).isVolatile();
+
+	if(exprIsVolatile && !castIsVolatile) {
+		print_error(node, "EXP32-C", "Do not cast away a volatile qualification", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Ensure pointer is valid before dereferencing it
  * We only check the output of malloc, calloc, and realloc. Don't check other
  * potential null ptrs.
@@ -174,7 +202,7 @@ bool EXP34_C( const SgNode *node ) {
 		}
 	}
 
-	// var never referneced again. (bad, but not caught by us)
+	// var never referenced again. (bad, but not caught by us)
 	return false;
 }
 
@@ -183,6 +211,7 @@ bool EXP(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_A(node);
   violation |= EXP09_A(node);
+  violation |= EXP32_C(node);
   violation |= EXP34_C(node);
   return violation;
 }

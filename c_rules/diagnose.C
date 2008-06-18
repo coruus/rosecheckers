@@ -24,6 +24,7 @@
 #include "rose.h"
 #include "utilities.h"
 
+extern bool PREPRO(const SgNode *node);
 extern bool DCL(const SgNode *node);
 extern bool EXP(const SgNode *node);
 extern bool ARR(const SgNode *node);
@@ -40,6 +41,7 @@ class visitorTraversal : public AstSimpleProcessing {
 public :
   visitorTraversal () {}
   virtual void visit(SgNode* node) {
+    PREPRO(node);
     DCL(node);
     EXP(node);
     ARR(node);
