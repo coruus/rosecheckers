@@ -97,6 +97,52 @@ bool INT06_A( const SgNode *node ) {
 }
 
 /**
+ * Strips casts, preferering to take the originalExpressionTree branch when
+ * possible
+ */
+const SgExpression* removeCasts(const SgExpression * expr) {
+	const SgCastExp * cast;
+	while(cast = isSgCastExp(expr)) {
+		if (expr = cast->get_originalExpressionTree())
+			continue;
+		else
+			expr = cast->get_operand();
+		assert(expr);
+	}
+	return expr;
+}
+
+/**
+ * Use only explicitly signed or unsigned char type for numeric values
+ */
+bool INT07_A( const SgNode *node ) {
+	const SgBinaryOp *binOp = isSgBinaryOp(node);
+	const SgInitializedName *var = isSgInitializedName(node);
+	const SgType *lhsSgType;
+	const SgType *rhsSgType;
+
+	if(binOp) {
+		lhsSgType = binOp->get_lhs_operand()->get_type();
+		rhsSgType = binOp->get_rhs_operand()->get_type();
+	} else if(var) {
+		lhsSgType = var->get_type();
+		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
+		if(!init)
+			return false;
+		rhsSgType = removeCasts(init->get_operand())->get_type();
+	} else return false;
+
+	const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
+	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
+
+	if(lhsType.isPlainChar() && (rhsType.isSigned() || rhsType.isUnsigned())) {
+		print_error(node, "INT07-A", "Use only explicitly signed or unsigned char type for numeric values", true);
+		return true;
+	}
+	return false;
+}
+
+/**
  * Use bitwise operators only on unsigned operands
  */
 bool INT13_A( const SgNode *node ) {
@@ -140,6 +186,7 @@ bool INT(const SgNode *node) {
   bool violation = false;
   violation |= INT01_A(node);
   violation |= INT06_A(node);
+  violation |= INT07_A(node);
   violation |= INT13_A(node);
   return violation;
 }
