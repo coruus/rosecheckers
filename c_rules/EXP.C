@@ -85,6 +85,39 @@ bool EXP01_A( const SgNode *node ) {
 }
 
 /**
+ * Do not cast away a const qualification
+ *
+ * We check cast expressions to make sure that if they don't posses a const
+ * tag, then neither does the operand.
+ *
+ * \note GCC catches implicit casts, we just focus on explicit ones because
+ * GCC assumes the programmer is right in those cases
+ */
+bool EXP05_A( const SgNode *node ) {
+	const SgCastExp * cast = isSgCastExp(node);
+	if(!cast)
+		return false;
+	/**
+	 * Ignore compiler generated casts
+	 */
+	if(cast->get_file_info()->isCompilerGenerated())
+		return false;
+
+	const SgExpression *expr = cast->get_operand();
+	assert(expr);
+
+	bool castIsConst = Type(cast->get_type()).isConst();
+	bool exprIsConst = Type(expr->get_type()->dereference()).isConst();
+
+	if(exprIsConst && !castIsConst) {
+		print_error(node, "EXP05-A", "Do not cast away a const qualification", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Use sizeof to determine the size of a type or variable -jp
  *
  * If this alloc expr is being cast to a type char* or char[], bail, it's OK
@@ -117,7 +150,7 @@ bool EXP09_A( const SgNode *node ) {
 /**
  * Do not cast away a volatile qualification
  *
- * We check cast expressions to make sure that if the don't posses a volatile
+ * We check cast expressions to make sure that if they don't posses a volatile
  * tag, then neither does the operand.
  *
  * \note GCC catches implicit casts, we just focus on explicit ones because
@@ -210,6 +243,7 @@ bool EXP34_C( const SgNode *node ) {
 bool EXP(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_A(node);
+  violation |= EXP05_A(node);
   violation |= EXP09_A(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);

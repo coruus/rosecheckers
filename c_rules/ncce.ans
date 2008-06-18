@@ -29,6 +29,14 @@ ENV01_A.c:10: error: STR31-C: String copy destination must contain sufficient st
 ENV04_A.c:8: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 ENV32_C.c:9: warning: ENV32-C: No atexit handler should terminate in any way other than by returning
 EXP01_A.c:8: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
+EXP05_A.c:4: warning: EXP05-A: Do not cast away a const qualification
+"./ncce/EXP05_A_2.c", line 5: warning: 
+          argument of type "const int *" is incompatible with parameter of
+          type "void *"
+  	memset(vals, 0, sizeof(vals));
+  	       ^
+
+Frontend Warnings only: errorCode = 2 
 EXP09_A.c:6: warning: EXP09-A: malloc called using something other than sizeof()
 EXP09_A.c:12: warning: EXP09-A: malloc called using something other than sizeof()
 "./ncce/EXP32_C.c", line 11: warning: 
