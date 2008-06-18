@@ -114,6 +114,9 @@ const SgExpression* removeCasts(const SgExpression * expr) {
 
 /**
  * Use only explicitly signed or unsigned char type for numeric values
+ *
+ * \bug (char c = 'a') will trigger a false positive, work around by
+ * using (char c; c = 'a')
  */
 bool INT07_A( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
@@ -123,7 +126,7 @@ bool INT07_A( const SgNode *node ) {
 
 	if(binOp) {
 		lhsSgType = binOp->get_lhs_operand()->get_type();
-		rhsSgType = binOp->get_rhs_operand()->get_type();
+		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
 	} else if(var) {
 		lhsSgType = var->get_type();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
