@@ -79,8 +79,26 @@ bool INT01_A( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Use strtol() or a related function to convert a string token to an integer
+ *
+ * \todo catch sscanf conversions
+ */
+bool INT06_A( const SgNode *node ) {
+	if(isCallOfFunctionNamed(node,"atoi")
+	|| isCallOfFunctionNamed(node,"atol")
+	|| isCallOfFunctionNamed(node,"atoll")
+	|| isCallOfFunctionNamed(node,"atoq")) {
+		print_error(node,"INT01-A", "Use strtol() or a related function to convert a string token to an integer", true);
+		return true;
+	}
+
+	return false;
+}
+
 bool INT(const SgNode *node) {
   bool violation = false;
   violation |= INT01_A(node);
+  violation |= INT06_A(node);
   return violation;
 }
