@@ -185,11 +185,54 @@ bool INT13_A( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Ensure that division and modulo operations do not result in divide-by-zero
+ * errors
+ *
+ * \note INT07 sets off false positives, buts that's OK
+ */
+bool INT33_C( const SgNode *node ) {
+	const SgBinaryOp *binOp = isSgBinaryOp(node);
+	if (!(isSgModOp(binOp) || isSgDivideOp(binOp))) {
+		return false;
+	}
+
+	const SgVarRefExp *varRef = isSgVarRefExp(removeCasts(binOp->get_rhs_operand()));
+	if (!varRef)
+		return false;
+
+	const SgStatement *prevStat = findInBlockByOffset(node, -1);
+	if (prevStat) {
+		const SgVarRefExp *compareVar;
+		const SgExpression *lhs;
+		const SgExpression *rhs;
+		FOREACH_SUBNODE(prevStat, nodes, i, V_SgBinaryOp) {
+			assert(*i);
+			if(!(isSgEqualityOp(*i) || isSgNotEqualOp(*i)))
+				continue;
+			lhs = removeImplicitPromotions(isSgBinaryOp(*i)->get_lhs_operand());
+			rhs = removeImplicitPromotions(isSgBinaryOp(*i)->get_rhs_operand());
+			if ((compareVar = isSgVarRefExp(lhs))
+			&&  (compareVar->get_symbol()->get_name() == varRef->get_symbol()->get_name())
+			&& isZeroVal(rhs))
+				return false;
+			if ((compareVar = isSgVarRefExp(rhs))
+			&&  (compareVar->get_symbol()->get_name() == varRef->get_symbol()->get_name())
+			&& isZeroVal(lhs))
+				return false;
+		}
+	}
+
+	print_error(node,"INT33-C", "Ensure that division and modulo operations do not result in divide-by-zero errors", true);
+	return true;
+}
+
 bool INT(const SgNode *node) {
   bool violation = false;
   violation |= INT01_A(node);
   violation |= INT06_A(node);
   violation |= INT07_A(node);
   violation |= INT13_A(node);
+  violation |= INT33_C(node);
   return violation;
 }

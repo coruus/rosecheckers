@@ -514,3 +514,30 @@ bool getSizetVal(const SgExpression *node, size_t *value) {
 	return true;
 }
 
+/**
+ * Takes a Value node and tries to make sure it is .
+ */
+bool isZeroVal(const SgExpression *node) {
+	if(!node)
+		return false;
+	if (isSgUnsignedIntVal(node)) {
+		return 0 == isSgUnsignedIntVal(node)->get_value();
+	} else if (isSgIntVal(node)) {
+		return 0 == isSgIntVal(node)->get_value();
+	} else if (isSgUnsignedLongVal(node)) {
+		return 0 == isSgUnsignedLongVal(node)->get_value();
+	} else if (isSgLongIntVal(node)) {
+		return 0 == isSgLongIntVal(node)->get_value();
+	} else if (isSgUnsignedLongLongIntVal(node)) {
+		return 0 == isSgUnsignedLongLongIntVal(node)->get_value();
+	} else if (isSgLongLongIntVal(node)) {
+		return 0 == isSgLongLongIntVal(node)->get_value();
+	} else if (isSgUnsignedShortVal(node)) {
+		return 0 == isSgUnsignedShortVal(node)->get_value();
+	} else if (isSgShortVal(node)) {
+		return 0 == isSgShortVal(node)->get_value();
+	} else {
+		return false;
+	}
+}
+
