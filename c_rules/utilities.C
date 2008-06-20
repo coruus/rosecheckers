@@ -35,10 +35,10 @@
  * \param[in] n Index of argument, first arg is 1 (not 0)
  * \return SgType of the n-th argument to fdec
  */
-const SgType *getArgType( const SgFunctionDeclaration *fdec, int n ) {
+const SgType *getArgType( const SgFunctionDeclaration *fdec, unsigned int n ) {
 	const SgFunctionParameterList *plist = fdec->get_parameterList();
 	const SgInitializedNamePtrList &parms = plist->get_args();
-	if( parms.size() < n || n <= 0 )
+	if( n == 0 || parms.size() < n )
 		return 0;
 	SgInitializedNamePtrList::const_iterator i = parms.begin();
 	std::advance( i, n-1 );
@@ -107,14 +107,14 @@ bool isLocalDeclaration( const SgNode *node ) {
  * \bug DOESN'T WORK
  */
 bool isMemberStatement( const SgNode *node ) {
-	if( const SgStatement *stat = isSgStatement( node ) ) {
+/*	if( const SgStatement *stat = isSgStatement( node ) ) {
 		if( const SgScopeStatement *scope = stat->get_scope() ) {
 			std::cout << "\tSCOPE:  " << scope->get_qualified_name().getString();
 			if( const SgSymbolTable *tab = scope->get_symbol_table() ) {
 			//	std::cout << "\ttable name: " << tab->get_name().getString();
 			}
 		}
-	}
+	}*/
 	return false;
 }
 
@@ -182,7 +182,7 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 			const SgIntVal *keyval = isSgIntVal( key );
 			values.push_back( keyval->get_value() );
 		}
-		else if( const SgDefaultOptionStmt *defaultopt = isSgDefaultOptionStmt( *i ) ) {
+		else if(isSgDefaultOptionStmt( *i ) ) {
 			sawDefault = true;
 		}
 	}
@@ -539,5 +539,21 @@ bool isZeroVal(const SgExpression *node) {
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Strips casts, preferering to take the originalExpressionTree branch when
+ * possible
+ */
+const SgExpression* removeCasts(const SgExpression * expr) {
+	const SgCastExp * cast;
+	while(cast = isSgCastExp(expr)) {
+		if (expr = cast->get_originalExpressionTree())
+			continue;
+		else
+			expr = cast->get_operand();
+		assert(expr);
+	}
+	return expr;
 }
 

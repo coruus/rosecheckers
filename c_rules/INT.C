@@ -97,22 +97,6 @@ bool INT06_A( const SgNode *node ) {
 }
 
 /**
- * Strips casts, preferering to take the originalExpressionTree branch when
- * possible
- */
-const SgExpression* removeCasts(const SgExpression * expr) {
-	const SgCastExp * cast;
-	while(cast = isSgCastExp(expr)) {
-		if (expr = cast->get_originalExpressionTree())
-			continue;
-		else
-			expr = cast->get_operand();
-		assert(expr);
-	}
-	return expr;
-}
-
-/**
  * Use only explicitly signed or unsigned char type for numeric values
  *
  * \bug (char c = 'a') will trigger a false positive, work around by

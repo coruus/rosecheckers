@@ -162,5 +162,6 @@ bool isAnyCharType(const SgType *type);
 const SgStatement * findInBlockByOffset(const SgNode *node, int delta);
 bool getSizetVal(const SgExpression *node, size_t *value);
 bool isZeroVal(const SgExpression *node);
+const SgExpression* removeCasts(const SgExpression * expr);
 
 #endif
