@@ -560,3 +560,16 @@ const SgExpression* removeCasts(const SgExpression * expr) {
 	return expr;
 }
 
+/**
+ * Remove all modifiers such as const or volatile, but leave the typedefs
+ *
+ * \todo port this into type.C
+ */
+const SgType *stripModifiers(const SgType *type) {
+	const SgModifierType *mt;
+	while(mt = isSgModifierType(type)) {
+		type = mt->get_base_type();
+	}
+	return type;
+}
+

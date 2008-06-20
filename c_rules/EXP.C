@@ -32,10 +32,11 @@
  *
  * \note This code is ugly :(
  */
-const SgExpression* getAllocFunctionExpr(const SgNode *node) {
-	return isCallOfFunctionNamed( node, "malloc") ? getFnArg( isSgFunctionRefExp( node), 0)
-		: isCallOfFunctionNamed( node, "calloc") ? getFnArg( isSgFunctionRefExp( node), 1)
-		: isCallOfFunctionNamed( node, "realloc") ? getFnArg( isSgFunctionRefExp( node), 1)
+const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
+	if (!node) return NULL;
+	return isCallOfFunctionNamed(node, "malloc") ? getFnArg(node, 0)
+		: isCallOfFunctionNamed(node, "calloc") ? getFnArg(node, 1)
+		: isCallOfFunctionNamed(node, "realloc") ? getFnArg(node, 1)
 		: NULL;
 }
 
@@ -48,7 +49,7 @@ const SgExpression* getAllocFunctionExpr(const SgNode *node) {
  * Rule fails if T1 != T2 (usually because T1 == *T2)
  */
 bool EXP01_A( const SgNode *node ) {
-	const SgExpression* arg0 = getAllocFunctionExpr( node);
+	const SgExpression* arg0 = getAllocFunctionExpr(isSgFunctionRefExp(node));
 	if (arg0 == NULL)
 		return false;
 
@@ -125,7 +126,7 @@ bool EXP05_A( const SgNode *node ) {
  * If this alloc expr is being cast to a type char* or char[], bail, it's OK
  */
 bool EXP09_A( const SgNode *node ) {
-	const SgExpression* exp = getAllocFunctionExpr( node);
+	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
 	if (exp == NULL) return false;
 
 	const SgNode* parent = node->get_parent();
@@ -147,6 +148,64 @@ bool EXP09_A( const SgNode *node ) {
 
 	print_error(node, "EXP09-A", "malloc called using something other than sizeof()", true);
 	return true;
+}
+
+/**
+ * Do not apply operators expecting one type to data of an incompatible type
+ *
+ * \see FLP33_C
+ * \see INT07_A
+ */
+bool EXP11_A( const SgNode *node ) {
+	const SgBinaryOp *binOp = isSgBinaryOp(node);
+	const SgInitializedName *var = isSgInitializedName(node);
+	const SgType *lhsSgType;
+	const SgExpression *rhs;
+
+	if(binOp) {
+		lhsSgType = binOp->get_lhs_operand()->get_type();
+		rhs = removeImplicitPromotions(binOp->get_rhs_operand());
+	} else if(var) {
+		lhsSgType = var->get_type();
+		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
+		if(!init)
+			return false;
+		rhs = removeImplicitPromotions(init->get_operand());
+	} else return false;
+
+	const SgCastExp *cast = isSgCastExp(rhs);
+	if (!(isSgPointerType(lhsSgType->stripTypedefsAndModifiers()) && cast))
+		return false;
+
+	const std::string lhsBase = stripModifiers(lhsSgType->findBaseType())->unparseToString();
+
+	const SgExpression* castExpr = cast->get_operand();
+
+	/**
+	 * XXX all this hackery would be a lot simpler if we could just check for
+	 * void *
+	 */
+
+	/// Exception b/c MEM02_A
+	const SgFunctionRefExp *fnRef = isSgFunctionCallExp(castExpr) ? isSgFunctionRefExp(isSgFunctionCallExp(castExpr)->get_function()) : NULL;
+	const bool castIsAlloc = fnRef
+		&& (isCallOfFunctionNamed(fnRef, "malloc")
+		|| isCallOfFunctionNamed(fnRef, "calloc")
+		|| isCallOfFunctionNamed(fnRef, "realloc"));
+
+	/// Exception b/c NULL is an int *
+	const bool castIsZero = isZeroVal(castExpr);
+	std::string castBase = stripModifiers(castExpr->get_type()->findBaseType())->unparseToString();
+
+	/// Exception b/c strings are not pointers but can be assigned to them
+	if(castBase == "char*") castBase = "char";
+
+	if(!castIsZero && !castIsAlloc && (lhsBase != castBase)) {
+		print_error(cast, "EXP11-A", "Do not apply operators expecting one type to data of an incompatible type", true);
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -189,7 +248,7 @@ bool EXP32_C( const SgNode *node ) {
  * x = malloc(...), or a decl initializer, eg char* x = malloc(...);
  */
 bool EXP34_C( const SgNode *node ) {
-	const SgExpression* exp = getAllocFunctionExpr( node);
+	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
 	if (exp == NULL) return false;
 
 	const SgInitializedName* var = NULL;
@@ -249,6 +308,7 @@ bool EXP(const SgNode *node) {
   violation |= EXP01_A(node);
   violation |= EXP05_A(node);
   violation |= EXP09_A(node);
+  violation |= EXP11_A(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
   return violation;

@@ -30,19 +30,6 @@
 #include "utilities.h"
 
 /**
- * Remove all modifiers such as const or volatile, but leave the typedefs
- *
- * \todo port this into type.C
- */
-const SgType *stripModifiers(const SgType *type) {
-	const SgModifierType *mt;
-	while ((mt = isSgModifierType(type)) != NULL) {
-		type = mt->get_base_type();
-	}
-	return type;
-}
-
-/**
  * Use rsize_t or size_t for all integer values representing the size of an
  * object
  *
