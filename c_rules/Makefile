@@ -16,11 +16,12 @@
 #
 
 
-# You should have ROSE predefined
-
+# You should have ROSE predefined to point to ROSE
+# and you should have BOOST defined to point to BOOST
+# To run 'diagnose' you should set LD_LIBRARY_PATH as shown below.
 
 # Change this to your own installation of ROSE
-DIAGNOSE_CMD = env LD_LIBRARY_PATH=${ROSE}/lib ./diagnose
+DIAGNOSE_CMD = env LD_LIBRARY_PATH=${ROSE}/lib:${BOOST}/lib ./diagnose
 
 # Location of include directory after "make install"
 ROSE_INCLUDE_DIR = $(ROSE)/include

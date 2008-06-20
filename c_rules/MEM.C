@@ -104,7 +104,7 @@ bool hasAssignToVar(const SgNode* node,
  */
 bool MEM01_A( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "free")) return false;
-	bool violation = false;
+	//	bool violation = false;
 
 	// Figure out which variable is being freed
 	const SgExpression *argExp = getFnArg(isSgFunctionRefExp(node), 0);
@@ -236,11 +236,11 @@ bool MEM31_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed( node, "free")) return false;
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
 		
-	const SgVarRefExp* ref2 = NULL;
+	//	const SgVarRefExp* ref2 = NULL;
 
 	if (ref == NULL) return false;
 	const SgInitializedName* ref_var = getRefDecl( ref);
-	const SgInitializedName* ref2_var = NULL;
+	//	const SgInitializedName* ref2_var = NULL;
 
 	const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
 	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);

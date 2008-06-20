@@ -99,7 +99,7 @@ bool isLocalDeclaration( const SgNode *node ) {
 		do {
 			if( isSgFunctionDefinition( node ) )
 				return true;
-		} while( node = node->get_parent() );
+		} while ((node = node->get_parent()) != NULL);
 	return false;
 }
 
@@ -110,9 +110,11 @@ bool isMemberStatement( const SgNode *node ) {
 /*	if( const SgStatement *stat = isSgStatement( node ) ) {
 		if( const SgScopeStatement *scope = stat->get_scope() ) {
 			std::cout << "\tSCOPE:  " << scope->get_qualified_name().getString();
-			if( const SgSymbolTable *tab = scope->get_symbol_table() ) {
-			//	std::cout << "\ttable name: " << tab->get_name().getString();
+#if 0
+			if ((const SgSymbolTable *tab = scope->get_symbol_table()) != NULL) {
+				std::cout << "\ttable name: " << tab->get_name().getString();
 			}
+#endif
 		}
 	}*/
 	return false;
@@ -176,6 +178,7 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	bool sawDefault = false;
 	values.clear();
 	const SgStatementPtrList &stats = body->get_statements();
+	// const SgDefaultOptionStmt *defaultopt;
 	for( SgStatementPtrList::const_iterator i = stats.begin(); i != stats.end(); ++i ) {
 		if( const SgCaseOptionStmt *caseopt = isSgCaseOptionStmt( *i ) ) {
 			const SgExpression *key = caseopt->get_key();
@@ -547,8 +550,8 @@ bool isZeroVal(const SgExpression *node) {
  */
 const SgExpression* removeCasts(const SgExpression * expr) {
 	const SgCastExp * cast;
-	while(cast = isSgCastExp(expr)) {
-		if (expr = cast->get_originalExpressionTree())
+	while ((cast = isSgCastExp(expr)) != NULL) {
+	  if ((expr = cast->get_originalExpressionTree()) != NULL)
 			continue;
 		else
 			expr = cast->get_operand();
