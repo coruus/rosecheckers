@@ -54,8 +54,6 @@ bool FLP33_C( const SgNode *node ) {
 	const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
 	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
 
-	std::cerr << lhsSgType->unparseToString() << " " << rhsSgType->unparseToString() << std::endl;
-
 	if(lhsType.isFloatingPoint() && rhsType.isIntegral()) {
 		print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations", true);
 		return true;
