@@ -1,17 +1,1 @@
 
-"./cce/STR33_C.c", line 7: warning: 
-          initialization with "{...}" expected for aggregate object
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./cce/STR33_C.c", line 7: warning: a value
-          of type "long *" cannot be used to initialize an entity of type
-          "wchar_t"
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
-"./cce/STR33_C.c", line 7: warning: integer
-          conversion resulted in truncation
-    wchar_t wide_str1[] = L"0123456789";
-                          ^
-
