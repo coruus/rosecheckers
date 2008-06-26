@@ -84,7 +84,6 @@ MEM30_C.c:15: error: MEM01_A: Store a new value in pointers immediately after fr
 MEM30_C.c:15: error: MEM30-C: Do not access freed memory
 MEM30_C_2.c:16: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C_2.c:16: error: MEM30-C: Do not access freed memory
-MEM30_C_3.c:11: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM30_C_3.c:11: error: MEM30-C: Do not access freed memory
 MEM31_C.c:14: error: MEM01_A: Store a new value in pointers immediately after free()
 MEM31_C.c:14: error: MEM30-C: Do not access freed memory

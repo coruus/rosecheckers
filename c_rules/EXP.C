@@ -54,20 +54,25 @@ bool EXP01_A( const SgNode *node ) {
 		return false;
 
 	const SgType* sg_t1 = NULL;
-	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgExpression*>( arg0), V_SgSizeOfOp );
-	for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
+	FOREACH_SUBNODE(arg0, nodes, i, V_SgSizeOfOp) {
 		const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( *i);
 		assert(sizeOfOp != NULL);
 		const SgExpression* sizeOfExpr = sizeOfOp->get_operand_expr();
-		sg_t1 = (sizeOfExpr == NULL) ? sizeOfOp->get_operand_type() : sizeOfExpr->get_type();
+		/* We only care if there's a pointer inside the sizeof */
+		if (!sizeOfExpr)
+			continue;
+		const SgVarRefExp* sizeOfVar = isSgVarRefExp(sizeOfExpr);
+		if (!sizeOfVar)
+			continue;
+		sg_t1 = sizeOfVar->get_type();
 		assert(sg_t1 != NULL);
 		break;
 	}
 	if (sg_t1 == NULL)
 		return false; // no sizeof() op in malloc call
-	Type t1( Type( sg_t1).dereference());
-	if (t1.isArray())
+	if (isSgArrayType(sg_t1))
 		return false; // explicit arrays are OK
+	Type t1(sg_t1);
 
 	const SgNode* parent = node->get_parent();
 	assert( parent != NULL);
@@ -79,8 +84,9 @@ bool EXP01_A( const SgNode *node ) {
 		return false; // memory not allocated for array
 	Type t2( t2_ptr_type.dereference().dereference());
 
-	if (t1 == t2)
+	if (t1 == t2) {
 		return false;
+	}
 	print_error( node, "EXP01-A", "Do not take the sizeof a pointer to determine the sizeof a type", true);
 	return true;
 }
@@ -127,7 +133,8 @@ bool EXP05_A( const SgNode *node ) {
  */
 bool EXP09_A( const SgNode *node ) {
 	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
-	if (exp == NULL) return false;
+	if (exp == NULL)
+		return false;
 
 	const SgNode* parent = node->get_parent();
 	assert( parent != NULL);
@@ -139,11 +146,10 @@ bool EXP09_A( const SgNode *node ) {
 	}
 
 	// Find a sizeof operator inside argument
-	if (isSgSizeOfOp(exp)) return false;
-	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast<SgExpression*>( exp ), V_SgNode );
-	for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
-		if (isSgSizeOfOp(*i))
-			return false;
+	if (isSgSizeOfOp(exp))
+		return false;
+	FOREACH_SUBNODE(exp, nodes, i, V_SgSizeOfOp) {
+		return false;
 	}
 
 	print_error(node, "EXP09-A", "malloc called using something other than sizeof()", true);

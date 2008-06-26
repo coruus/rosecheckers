@@ -114,28 +114,15 @@ bool MEM01_A( const SgNode *node ) {
 	bool longlifetime = isGlobalVar(argVar) || isStaticVar(argVar);
 
 	// Pop up to the BasicBlock so that we can find the next line of code
-	const SgFunctionCallExp *freeExp = isSgFunctionCallExp(node->get_parent());
-	assert(freeExp);
-	const SgExprStatement *freeExpr = isSgExprStatement(freeExp->get_parent());
-	assert(freeExpr);
-	const SgBasicBlock *freeBlock = isSgBasicBlock(freeExpr->get_parent());
-	assert(freeBlock);
-
-	// Iterate over the basic block until we find the position of the free
-	// statement
-	const SgStatementPtrList &stats = freeBlock->get_statements();
-	SgStatementPtrList::const_iterator i = find(stats.begin(), stats.end(), freeExpr);
-	// We should always find the free
-	assert(i != stats.end());
+	const SgStatement* nextStat = findInBlockByOffset(node,1);
 
 	do {
-		// Now go to the next statement and see what it is
-		++i;
-
 		// The free is allowed to be the last statement in a block only if
 		// that block is a function definition and the variable is local
 		// or if the increment of a for loop is an assignment to the variable
-		if (i == stats.end()) {
+		if (nextStat == NULL) {
+			const SgBasicBlock* freeBlock = isSgBasicBlock(findParentNodeOfType(node,V_SgBasicBlock).first);
+			assert(freeBlock);
 			if (isSgFunctionDefinition(freeBlock->get_parent()) && !longlifetime)
 				return false;
 			const SgForStatement *forLoop = isSgForStatement(freeBlock->get_parent());
@@ -145,14 +132,14 @@ bool MEM01_A( const SgNode *node ) {
 		}
 
 		// Return Statements are also OK, but only for local vars
-		if (isSgReturnStmt(*i)) {
+		if (isSgReturnStmt(nextStat)) {
 			if (!longlifetime)
 				return false;
 			break;
 		}
 
 		// Assignments to the pointer are OK
-		const SgExprStatement *nextExpr = isSgExprStatement(*i);
+		const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
 		if(nextExpr && isAssignToVar(nextExpr->get_expression(), argVar))
 			return false;
 	} while (false);

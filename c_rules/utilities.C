@@ -353,6 +353,7 @@ const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
   const SgFunctionDefinition* block
     = isSgFunctionDefinition( findParentNodeOfType( node,
 						    V_SgFunctionDefinition).first);
+
   assert( block != NULL);
   return NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( block),
 				  V_SgVarRefExp);

@@ -1,1 +1,2 @@
 
+INT07_A.c:7: warning: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
