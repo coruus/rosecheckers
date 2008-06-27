@@ -339,9 +339,9 @@ void INT33() {
 /* INT34_C v.43 */
 
 void INT34() {
-	unuigned int ui1 = 0, ui2 = 0, sresult;
+	unsigned int ui1 = 0, ui2 = 0, sresult;
 
-	if ((ui2 >= uizeof(int)*CHAR_BIT) 
+	if ((ui2 >= sizeof(int)*CHAR_BIT) 
 	  || (ui1 > (INT_MAX >> ui2)) ) 
 	{
 	  /* handle error condition */
