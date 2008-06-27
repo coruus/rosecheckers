@@ -1,0 +1,4 @@
+
+ENV_CS.c:155: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+FIO_CS.c:824: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+INT_CS.c:197: warning: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors

@@ -1,0 +1,28 @@
+
+"./ncce/ARR_NCCE.c", line 183: warning: 
+          subscript out of range
+  	for (ip = &ar[0]; ip < &ar[21]; ip++) {
+  	                          ^
+
+ARR_NCCE.c:50: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+DCL_NCCE.c:68: warning: DCL01-A: Do not reuse variable names in subscopes
+ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
+ENV_NCCE.c:97: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:121: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:155: warning: ENV32-C: No atexit handler should terminate in any way other than by returning
+ENV_NCCE.c:176: warning: ENV32-C: No atexit handler should terminate in any way other than by returning
+ERR_NCCE.c:114: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+"./ncce/EXP_NCCE.c", line 272: warning: 
+          a value of type "int **" cannot be assigned to an entity of type
+          "volatile int **"
+    ipp = &ip; /* produces warnings in modern compilers */
+        ^
+
+"./ncce/EXP_NCCE.c", line 274: warning: 
+          a value of type "int **" cannot be assigned to an entity of type
+          "volatile int **"
+    ipp = (int**) &ip; /* constraint violation */
+        ^
+
+EXP_NCCE.c:75: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
+EXP_NCCE.c:115: warning: EXP09-A: malloc called using something other than sizeof()

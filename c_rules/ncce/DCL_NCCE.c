@@ -68,7 +68,7 @@ void DCL01_report_error(char const *error_msg) {
   char DCL01_msg[80];
 
   /* Assume error_msg isn't too long */
-  strcpy(DCL01_msg, error_msg);
+  strncpy(DCL01_msg, error_msg, sizeof(DCL01_msg));
   return;
 }
 
@@ -100,9 +100,9 @@ void DCL03(void) {
 /* DCL04_A v.37 */
 
 void DCL04() {
-  char *src = 0, c = 0;
+  char *src, c;
 
-	printf("DCL04 %p %c\n", src, c);
+	printf("DCL04 %p %p\n", &src, &c);
 }
 
 
