@@ -187,11 +187,49 @@ bool STR36_C(const SgNode *node) {
 	return false;
 }
 
+/**
+ * STR37-C. Arguments to character handling functions must be representable as
+ * an unsigned char
+ */
+bool STR37_C(const SgNode *node) {
+	const SgFunctionRefExp *fn = isSgFunctionRefExp(node);
+	if (!fn)
+		return false;
+
+	if (!(isCallOfFunctionNamed(fn, "isalnum")
+		||isCallOfFunctionNamed(fn, "isalpha")
+		||isCallOfFunctionNamed(fn, "isascii")
+		||isCallOfFunctionNamed(fn, "isblank")
+		||isCallOfFunctionNamed(fn, "iscntrl")
+		||isCallOfFunctionNamed(fn, "isdigit")
+		||isCallOfFunctionNamed(fn, "isgraph")
+		||isCallOfFunctionNamed(fn, "islower")
+		||isCallOfFunctionNamed(fn, "isprint")
+		||isCallOfFunctionNamed(fn, "ispunct")
+		||isCallOfFunctionNamed(fn, "isspace")
+		||isCallOfFunctionNamed(fn, "isupper")
+		||isCallOfFunctionNamed(fn, "isxdigit")
+		||isCallOfFunctionNamed(fn, "toascii")
+		||isCallOfFunctionNamed(fn, "toupper")
+		||isCallOfFunctionNamed(fn, "tolower"))) {
+		return false;
+	}
+
+	const SgExpression *arg = removeImplicitPromotions(getFnArg(fn,0));
+
+	if (isSgTypeUnsignedChar(arg->get_type()))
+		return false;
+
+	print_error(node,"STR37-C", "Arguments to character handling functions must be representable as an unsigned char", true);
+	return true;
+}
+
 bool STR(const SgNode *node) {
   bool violation = false;
   violation |= STR31_C(node);
   violation |= STR32_C(node);
   violation |= STR35_C(node);
   violation |= STR36_C(node);
+  violation |= STR37_C(node);
   return violation;
 }

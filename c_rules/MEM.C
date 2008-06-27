@@ -110,39 +110,44 @@ bool MEM01_A( const SgNode *node ) {
 	const SgExpression *argExp = getFnArg(isSgFunctionRefExp(node), 0);
 	assert(argExp);
 	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
-	assert(argVar);
+	if (!argVar)
+		return false;
 	bool longlifetime = isGlobalVar(argVar) || isStaticVar(argVar);
+	/* Block where the variable is defined */
+	const SgBasicBlock* defBlock = isSgBasicBlock(findParentNodeOfType(
+		argVar->get_symbol()->get_declaration(),V_SgBasicBlock).first);
 
 	// Pop up to the BasicBlock so that we can find the next line of code
 	const SgStatement* nextStat = findInBlockByOffset(node,1);
+	// block in which the free statement is enclosed
+	const SgBasicBlock* block = isSgBasicBlock(findParentNodeOfType(node,V_SgBasicBlock).first);
+	assert(block);
 
-	do {
-		// The free is allowed to be the last statement in a block only if
-		// that block is a function definition and the variable is local
-		// or if the increment of a for loop is an assignment to the variable
-		if (nextStat == NULL) {
-			const SgBasicBlock* freeBlock = isSgBasicBlock(findParentNodeOfType(node,V_SgBasicBlock).first);
-			assert(freeBlock);
-			if (isSgFunctionDefinition(freeBlock->get_parent()) && !longlifetime)
-				return false;
-			const SgForStatement *forLoop = isSgForStatement(freeBlock->get_parent());
-			if (forLoop && isAssignToVar(forLoop->get_increment(), argVar))
-				return false;
-			break;
-		}
+	while (nextStat == NULL) {
+		// If the we're in a for-loop and imediately assign in the increment,
+		// that is OK
+		const SgForStatement *forLoop = isSgForStatement(block->get_parent());
+		if (forLoop && isAssignToVar(forLoop->get_increment(), argVar))
+			return false;
+		// If this block is the one in which the variable is defined, that is
+		// OK
+		if ((block == defBlock) && !longlifetime)
+			return false;
+		// Pop up to the next block
+		nextStat = findInBlockByOffset(block,1);
+		block = isSgBasicBlock(findParentNodeOfType(block,V_SgBasicBlock).first);
+		assert(block);
+	}
 
-		// Return Statements are also OK, but only for local vars
-		if (isSgReturnStmt(nextStat)) {
-			if (!longlifetime)
-				return false;
-			break;
-		}
-
+	// Return Statements are also OK, but only for local vars
+	if (isSgReturnStmt(nextStat) && (!longlifetime)) {
+		return false;
+	} else {
 		// Assignments to the pointer are OK
 		const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
 		if(nextExpr && isAssignToVar(nextExpr->get_expression(), argVar))
 			return false;
-	} while (false);
+	}
 
 	print_error(node, "MEM01_A", "Store a new value in pointers immediately after free()");
 

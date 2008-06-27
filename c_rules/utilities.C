@@ -480,6 +480,7 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 		block = parent->get_parent();
 		assert(block);
 	}
+
 	// second, find the expression offset by delta from node
 	const SgStatementPtrList &nodes = isSgBasicBlock(block)->get_statements();
 	Rose_STL_Container<SgStatement *>::const_iterator i = find(nodes.begin(), nodes.end(), parent);

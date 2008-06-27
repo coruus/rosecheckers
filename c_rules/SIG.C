@@ -164,54 +164,59 @@ bool SIG30_c( const SgNode *node ) { // Call only async-safe functions in a sign
  * local or is static volatile sig_atomic_t
  */
 bool SIG31_c( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "signal")) return false;
-  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-  assert(sig_fn != NULL);
-  const SgExpression* ref = getFnArg( sig_fn, 1);
-  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
-  if (handler == NULL) return false; // no signal handler
-  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+	if (!isCallOfFunctionNamed( node, "signal"))
+		return false;
+	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+	assert(sig_fn != NULL);
+	const SgFunctionRefExp* handler = isSgFunctionRefExp(getFnArg(sig_fn,1));
+	if (handler == NULL)
+		return false; // no signal handler
+	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
 
-  Rose_STL_Container<SgNode *> nodes
-    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgVarRefExp);
-  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
-    const SgVarRefExp* var_ref = isSgVarRefExp(*i);
-    assert( var_ref != NULL);
-    SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
-    assert( var_decl != NULL);
+	FOREACH_SUBNODE(def, nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp* var_ref = isSgVarRefExp(*i);
+		assert( var_ref != NULL);
 
-    const SgNode* encloser = findParentNodeOfType( var_decl, V_SgFunctionParameterList).first;
-    if (encloser != NULL)
-      continue; // variable is function arg
+		SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
+		assert( var_decl != NULL);
 
-    const SgType* var_type = var_ref->get_type();
+		const SgNode* encloser = findParentNodeOfType( var_decl, V_SgFunctionParameterList).first;
+		if (encloser != NULL)
+			continue; // variable is function arg
 
-    // We assume that sig_atomic_t is a typedef (not a macro)
-    static const string sig_atomic_typename = "sig_atomic_t";
-    const SgNamedType* named_type = isSgNamedType( var_type->stripType( SgType::STRIP_MODIFIER_TYPE));
+		// We only care about global variables really
+		if (!isGlobalVar(var_ref))
+			continue;
 
-    bool compliant = true;
-    if (!Type( var_type).isVolatile())
-      compliant = false;
-    if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
-      compliant = false;
-    const SgInitializedName* decl = var_ref->get_symbol()->get_declaration();
-    if (!isSgGlobal( decl->get_parent()->get_parent()) && 
+		const SgType* var_type = var_ref->get_type();
+
+		// We assume that sig_atomic_t is a typedef (not a macro)
+		static const string sig_atomic_typename = "sig_atomic_t";
+		const SgNamedType* named_type = isSgNamedType( var_type->stripType( SgType::STRIP_MODIFIER_TYPE));
+
+		bool compliant = true;
+		if (!Type(var_type).isVolatile())
+			compliant = false;
+		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
+			compliant = false;
+		const SgInitializedName* decl = var_ref->get_symbol()->get_declaration();
+		if (!isSgGlobal( decl->get_parent()->get_parent()) && 
 	!(decl->get_declaration()->get_declarationModifier().get_storageModifier().isStatic()))
-      compliant = false;
+			compliant = false;
 #if 0
-    const SgAssignOp* assignment = isSgAssignOp( var_ref->get_parent());
-    if (assignment == NULL)
-      compliant = false;
-    else if (assignment->get_lhs_operand() != var_ref)
-      compliant = false;
+		const SgAssignOp* assignment = isSgAssignOp( var_ref->get_parent());
+		if (assignment == NULL)
+			compliant = false;
+		else if (assignment->get_lhs_operand() != var_ref)
+			compliant = false;
 #endif
-    if (compliant) continue;
+		if (compliant)
+			continue;
 
-    print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
-    return true;
-  }
-  return false;
+		print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
+		return true;
+	}
+	return false;
 }
 
 /**

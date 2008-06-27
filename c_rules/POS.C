@@ -49,8 +49,13 @@ bool POS34_C( const SgNode *node ) {
 	const SgExpression *arg0 = getFnArg( isSgFunctionRefExp( node), 0);
 	assert( arg0 != NULL);
 	Type t( arg0->get_type());
-	if (t.isPointer()) return false;
-	assert( t.isArray());
+	if (t.isPointer())
+		return false;
+	/**
+	 * \todo We only know how to deal with arrays for now
+	 */
+	if (!t.isArray())
+		return false;
 
 	// bail iff putenv's arg is a static variable
 	const SgVarRefExp* var = isSgVarRefExp( arg0);
