@@ -67,14 +67,14 @@ tests:	cce.test ncce.test
 
 ncce.output:	diagnose
 	@echo > $@
-	@for file in ncce/*.c ; do ${DIAGNOSE_CMD} $$file >> $@ 2>&1 ; echo Ran $$file; done
+	@for file in ncce/*_NCCE.c ; do ${DIAGNOSE_CMD} $$file >> $@ 2>&1 ; echo Ran $$file; done
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 
 cce.output:	diagnose
 	@echo > $@
-	@for file in cce/*.c ; do ${DIAGNOSE_CMD} $$file >> $@ 2>&1 ; echo Ran $$file; done
+	@for file in cce/*_CS.c ; do ${DIAGNOSE_CMD} $$file >> $@ 2>&1 ; echo Ran $$file; done
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
