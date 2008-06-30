@@ -34,7 +34,7 @@
  */
 bool MSC30_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "rand")) return false;
-  print_error( node, "MSC33-C", "Do not use rand()");
+  print_error( node, "MSC30-C", "Do not use rand()");
   return true;
 }
 

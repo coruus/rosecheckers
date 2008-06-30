@@ -7,7 +7,7 @@
 ENV_CS.c:155: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 FIO_CS.c:678: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
 FIO_CS.c:824: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
-INT_CS.c:197: warning: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
+INT_CS.c:197: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 MEM_CS.c:77: error: MEM30-C: Do not access freed memory
 POS_CS.c:83: error: MEM30-C: Do not access freed memory
 STR_CS.c:62: error: STR31-C: String copy destination must contain sufficient storage

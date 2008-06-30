@@ -73,7 +73,7 @@ void PRE00_B_B(void) {
 }
 
 void PRE00_B_A(void) {
-  size_t PRE00_B_count = 0;
+  PRE00_B_count = 0;
   while (PRE00_B_count++ < 10) {
     PRE00_B_EXEC_BUMP(PRE00_B_B);
   }

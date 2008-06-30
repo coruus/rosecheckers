@@ -481,11 +481,11 @@ void FIO33(void) {
 
 	fgets(buf, sizeof(buf), stdin);
 	buf[strlen(buf) - 1] = '\0'; /* Overwrite newline */
-	}
+}
 
-	/* FIO34 v.78 */
+/* FIO34 v.78 */
 
-	void FIO34(void) {
+void FIO34(void) {
 	char buf[BUFSIZ];
 	char c;
 	int i = 0;

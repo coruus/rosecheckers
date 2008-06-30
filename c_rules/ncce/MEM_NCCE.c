@@ -86,21 +86,22 @@ void MEM00() {
 /* MEM01 v.47 */
 void MEM01(void) {
 char *message = (char *)malloc(10);
-if(message == NULL) {
-	return;
+	if(message == NULL) {
+		return;
+	}
+	int message_type = 1;
+	if (message_type == 1) {
+	  /* Process message type 1 */
+	  free(message);
+	}
+	message_type = 2;
+	/* ...*/
+	if (message_type == 2) {
+	   /* Process message type 2 */
+	  free(message);
+	}
 }
-int message_type = 1;
-if (message_type == 1) {
-  /* Process message type 1 */
-  free(message);
-}
-message_type = 2;
-/* ...*/
-if (message_type == 2) {
-   /* Process message type 2 */
-  free(message);
-}
-}
+
 /* MEM02 v.51 */
 /* TODO */
 /* MEM03 v.95 */
@@ -248,6 +249,9 @@ void MEM08(void) {
 	/* ... */
 
 	wp = (widget *)realloc(gp, sizeof(widget));
+	if (wp == NULL) {
+		/* Handle Error */
+	}
 	printf("MEM08 %p\n", wp);
 }
 
@@ -315,26 +319,26 @@ free(x);
 
 /* MEM32 v.63 */
 void MEM32(void) {
-char *input_string = "Awefajgae";
-void *p = NULL;
-size_t new_size = 10;
+	char *input_string = "Awefajgae";
+	void *p = NULL;
+	size_t new_size = 10;
 
-/* initialize input_string */
+	/* initialize input_string */
 
-size_t size = strlen(input_string) + 1;
-char *str = (char *)malloc(size);
-strcpy(str, input_string);
-/* ... */
-free(str);
-str = NULL;
+	size_t size = strlen(input_string) + 1;
+	char *str = (char *)malloc(size);
+	strcpy(str, input_string);
+	/* ... */
+	free(str);
+	str = NULL;
 
-/* initialize new_size */
+	/* initialize new_size */
 
-p = realloc(p, new_size);
-if (p == NULL)   {
- /* handle error */
-}
-
+	p = realloc(p, new_size);
+	if (p == NULL)   {
+	 /* handle error */
+	}
+	free(p);
 }
 
 /* MEM33 v.28 */
@@ -396,7 +400,7 @@ static int MEM34_A(int argc, char const *argv[]) {
 }
 
 void MEM34(void) {
-  char const * argv[] = {"lol", "huh"};
+  char const * argv[2] = {"lol", "huh"};
   MEM34_A(2, argv);
 }
 

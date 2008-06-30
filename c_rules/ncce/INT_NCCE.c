@@ -153,11 +153,11 @@ void INT09() {
 
 /* INT10_A v.30 */
 
-int INT10_insert(int index, int *list, int size, int value) {
+int INT10_insert(int INT10_index, int *list, int size, int value) {
   if (size != 0) {
-    index = (index + 1) % size;
-    list[index] = value;
-    return index;
+    INT10_index = (INT10_index + 1) % size;
+    list[INT10_index] = value;
+    return INT10_index;
   }
   else {
     return -1;
@@ -245,9 +245,9 @@ void INT32() {
 /* INT33_C v.41 */
 
 void INT33() {
-  signed long sl1 = 0, sl2 = 0, result;
+	signed long sl1 = 0, sl2 = 0, result;
 
-  result = sl1/sl2;
+	result = sl1/sl2;
 	printf("INT33 %d\n", result);
 }
 
@@ -255,9 +255,9 @@ void INT33() {
 /* INT34_C v.43 */
 
 void INT34() {
-  int si1 = 0, si2 = 0, sresult;
+	int si1 = 0, si2 = 0, sresult;
 
-  sresult = si1 << si2;
+	sresult = si1 << si2;
 	printf("INT33 %d\n", sresult);
 }
 
