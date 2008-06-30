@@ -79,7 +79,7 @@ bool FIO30_C( const SgNode *node) {
 	 */
 	bool isConst = Type((const_cast<SgType *>(frmtType))->dereference()).isConst();
 	if(!(isConst || isSgTypeString(frmtType))) {
-		print_error(node, "FIO30-C", "Exclude user input from format strings", true);
+		print_error(node, "FIO30-C", "Exclude user input from format strings");
 		return true;
 	}
 

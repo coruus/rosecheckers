@@ -156,7 +156,7 @@ bool ARR33_C( const SgNode *node ) {
 	if (dst_size == 0)
 		return false;
 	if (dst_size > len) {
-		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size", true);
+		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size");
 		return true;
 	}
 	return false;

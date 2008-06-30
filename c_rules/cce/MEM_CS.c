@@ -84,7 +84,7 @@ void MEM00() {
 }
 /* MEM01 v.47 */
 void MEM01(void) {
-char *message = (char *)malloc(10);
+char *message = NULL;
 int message_type = 1;
 
 if (message_type == 1) {
@@ -170,6 +170,11 @@ void MEM04(void) {
 size_t nsize = 0;
 char *p2;
 char *p = (char *)malloc(100);
+
+if (p == NULL) {
+  /* Handle Error */
+}
+
 /* ... */
 if ( (nsize == 0) 
   || (p2 = (char *)realloc(p, nsize)) == NULL) 
@@ -425,7 +430,7 @@ static int MEM34_A(int argc, char const *argv[]) {
 }
 
 void MEM34(void) {
-  char const * argv[] = {"lol", "huh"};
+  char const * argv[2] = {"lol", "huh"};
   MEM34_A(2, argv);
 }
 

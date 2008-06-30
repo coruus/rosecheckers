@@ -89,7 +89,7 @@ bool POS36_C( const SgNode *node ) {
 	FOREACH_SUBNODE(prevStat, nodes, i, V_SgFunctionRefExp) {
 		assert(*i);
 		if (isCallOfFunctionNamed(*i, "setuid")) {
-			print_error(node, "POS36_C", "Observe correct revocation order while relinquishing privileges", true);
+			print_error(node, "POS36-C", "Observe correct revocation order while relinquishing privileges");
 			return true;
 		}
 	}

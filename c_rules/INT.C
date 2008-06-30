@@ -41,8 +41,10 @@ bool INT01_A( const SgNode *node ) {
 	if(isSgPntrArrRefExp(op))
 		return false;
 
-	const SgType *lhsType = stripModifiers(op->get_lhs_operand()->get_type());
-	const SgType *rhsType = stripModifiers(op->get_rhs_operand()->get_type());
+	const SgExpression *lhs = op->get_lhs_operand();
+	const SgExpression *rhs = op->get_rhs_operand();
+	const SgType *lhsType = stripModifiers(lhs->get_type());
+	const SgType *rhsType = stripModifiers(rhs->get_type());
 
 	/**
 	 * We should allow pointer arithmetic, and a special exception for
@@ -62,13 +64,38 @@ bool INT01_A( const SgNode *node ) {
 	 * scalars are ok
 	 */
 	if(isSgValueExp(op->get_lhs_operand())
-			|| isSgValueExp(op->get_rhs_operand()))
+	|| isSgValueExp(op->get_rhs_operand()))
 		return false;
 
-	const bool lhsIsSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "size_t");
-	const bool lhsIsRSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "rsize_t");
-	const bool rhsIsSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "size_t");
-	const bool rhsIsRSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "rsize_t");
+	bool lhsIsSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "size_t");
+	bool lhsIsRSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "rsize_t");
+	bool rhsIsSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "size_t");
+	bool rhsIsRSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "rsize_t");
+
+	// Treat SizeOfOp as having type size_t even though compiler will assign
+	// some kind of unsigned integer type to it
+	if (isSgSizeOfOp(lhs))
+		lhsIsSize = true;
+	if (isSgSizeOfOp(rhs))
+		rhsIsSize = true;
+
+	// Common idiom is to do something like (sizeof(foo) - 1)
+	const SgBinaryOp *lhsOp = isSgBinaryOp(lhs);
+	if(lhsOp) {
+		if ((isSgSizeOfOp(lhsOp->get_lhs_operand())
+			&& isSgValueExp(lhsOp->get_rhs_operand()))
+		|| ((isSgSizeOfOp(lhsOp->get_rhs_operand())
+			&& isSgValueExp(lhsOp->get_lhs_operand()))))
+			lhsIsSize = true;
+	}
+	const SgBinaryOp *rhsOp = isSgBinaryOp(rhs);
+	if(rhsOp) {
+		if ((isSgSizeOfOp(rhsOp->get_rhs_operand())
+			&& isSgValueExp(rhsOp->get_lhs_operand()))
+		|| ((isSgSizeOfOp(rhsOp->get_lhs_operand())
+			&& isSgValueExp(rhsOp->get_rhs_operand()))))
+			rhsIsSize = true;
+	}
 
 	if((lhsIsSize ^ rhsIsSize) || (lhsIsRSize ^ rhsIsRSize)) {
 		print_error(node,"INT01-A", "Use rsize_t or size_t for all integer values representing the size of an object", true);
@@ -197,8 +224,9 @@ bool INT13_A( const SgNode *node ) {
 		|| isSgLshiftAssignOp(binOp)
 		|| isSgRshiftOp(binOp)
 		|| isSgRshiftAssignOp(binOp)) {
-			/** Allow compile time constants on the right side of a shift */
-			if(isSgValueExp(binOp->get_rhs_operand())) {
+			/** Allow compile time constants in a shift */
+			if(isSgValueExp(binOp->get_lhs_operand())
+			|| isSgValueExp(binOp->get_rhs_operand())) {
 				return false;
 			}
 			if(!Type(binOp->get_lhs_operand()->get_type()).isUnsigned()) {
@@ -272,8 +300,7 @@ bool INT33_C( const SgNode *node ) {
 	if (stat && isCheckForZero(stat, varRef))
 		return false;
 
-
-	print_error(node,"INT33-C", "Ensure that division and modulo operations do not result in divide-by-zero errors", true);
+	print_error(node,"INT33-C", "Ensure that division and modulo operations do not result in divide-by-zero errors");
 	return true;
 }
 

@@ -149,13 +149,15 @@ bool MEM01_A( const SgNode *node ) {
 			return false;
 	}
 
-	print_error(node, "MEM01_A", "Store a new value in pointers immediately after free()");
+	print_error(node, "MEM01-A", "Store a new value in pointers immediately after free()", true);
 
 	return true;
 }
 
 /**
  * Ensure that freed pointers are not reused
+ *
+ * \bug Need to check for conditional return statements
  */
 bool MEM30_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed( node, "free")) return false;
@@ -244,13 +246,19 @@ bool MEM31_C( const SgNode *node ) {
 	i++;
 
 	while(i != end) {
+		/**
+		 * Checking for return statements lowers the false positive rate by
+		 * allowing conditional frees followed by returns
+		 */
+		if(isSgReturnStmt(*i))
+			return false;
 		if(isCallOfFunctionNamed(*i, "free")) {
 			const SgVarRefExp* ref2 = isSgVarRefExp( getFnArg( isSgFunctionRefExp( *i), 0));
 			const SgInitializedName* ref2_var = getRefDecl( ref2);
 
 			if (ref_var == ref2_var) {
-	print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
-	return true;
+				print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
+				return true;
 			}
 		}
 
@@ -258,7 +266,8 @@ bool MEM31_C( const SgNode *node ) {
 			const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
 			const SgInitializedName* ref2_var = getRefDecl( ref2);
 
-			if (ref_var == ref2_var) 	return false;
+			if (ref_var == ref2_var)
+				return false;
 		}
 
 		i++;

@@ -43,7 +43,11 @@ int FLP02_mean(int array[], int size) {
     total += array[i];
     printf("array[%d] = %f and total is %f\n", i, array[i] / 100.0, total / 100.0);
   }
-  return total / size;
+  if (size != 0) {
+    return total / size;
+  } else {
+    return 0.0;
+  }
 }
 
 enum {array_size = 10};
@@ -67,40 +71,43 @@ void FLP02(void) {
 }
 
 /* FLP03_A v.40 */
-
-#pragma STDC FENV_ACCESS ON
-
-void FLP03(void) {
-  double a = 1e-40, b, c = 0.1;
-  float x = 0, y;
-  int fpeRaised;
-  /* ... */
-
-  feclearexcept(FE_ALL_EXCEPT);
-  /* Store a into y is inexact and underflows: */
-  y = a;
-  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
-  /* fpeRaised  has FE_INEXACT and FE_UNDERFLOW */
-
-  feclearexcept(FE_ALL_EXCEPT);
-
-  /* divide by zero operation */
-  b = y / x;
-  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
-  /* fpeRaised has FE_DIVBYZERO */
-
-  feclearexcept(FE_ALL_EXCEPT);
-
-  c = sin(30) * a;
-  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
-  /* fpeRaised has FE_INEXACT */
-
-  feclearexcept(FE_ALL_EXCEPT);
-  /* ... */
-
-  printf("FLP03 %f %f %d\n", b, c, fpeRaised);
-}
-
+/**
+ * Due to a bug in rose we can't use the pragma
+ */
+//
+//#pragma STDC FENV_ACCESS ON
+//
+//void FLP03(void) {
+//  double a = 1e-40, b, c = 0.1;
+//  float x = 0, y;
+//  int fpeRaised;
+//  /* ... */
+//
+//  feclearexcept(FE_ALL_EXCEPT);
+//  /* Store a into y is inexact and underflows: */
+//  y = a;
+//  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
+//  /* fpeRaised  has FE_INEXACT and FE_UNDERFLOW */
+//
+//  feclearexcept(FE_ALL_EXCEPT);
+//
+//  /* divide by zero operation */
+//  b = y / x;
+//  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
+//  /* fpeRaised has FE_DIVBYZERO */
+//
+//  feclearexcept(FE_ALL_EXCEPT);
+//
+//  c = sin(30) * a;
+//  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
+//  /* fpeRaised has FE_INEXACT */
+//
+//  feclearexcept(FE_ALL_EXCEPT);
+//  /* ... */
+//
+//  printf("FLP03 %f %f %d\n", b, c, fpeRaised);
+//}
+//
 /* FLP30_A v.25 */
 
 void FLP30(void) {

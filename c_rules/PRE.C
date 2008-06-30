@@ -35,7 +35,7 @@ bool PRE04_A( const SgNode *node ) {
 	std::cerr << " boo " << std::endl;
 	if(isSgC_PreprocessorDirectiveStatement(node))
 		std::cerr << "yay!" << std::endl;
-	print_error(node,"PRE04","debug", true);
+	print_error(node,"PRE04","debug");
 	if(!inc)
 		return false;
 	std::cerr << "1 " << (const_cast<SgIncludeDirectiveStatement*>(inc))->unparseToCompleteString() << std::endl;*/

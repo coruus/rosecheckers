@@ -26,3 +26,6 @@ ERR_NCCE.c:114: error: SIG30-C: Call only asynchronous-safe functions within sig
 
 EXP_NCCE.c:75: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
 EXP_NCCE.c:115: warning: EXP09-A: malloc called using something other than sizeof()
+STR_NCCE.c:186: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+STR_NCCE.c:186: warning: EXP05-A: Do not cast away a const qualification
+STR_NCCE.c:186: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object

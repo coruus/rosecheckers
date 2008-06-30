@@ -41,8 +41,18 @@ bool FLP33_C( const SgNode *node ) {
 	const SgType *rhsSgType;
 
 	if(binOp) {
+		/**
+		 * This should allow macros like isnan
+		 */
+		if (isCompilerGeneratedNode(binOp))
+			return false;
+
 		lhsSgType = binOp->get_lhs_operand()->get_type();
-		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
+		/**
+		 * Let's leave those casts in place to allow for macros like isnan
+		 */
+		rhsSgType = binOp->get_rhs_operand()->get_type();
+//		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
 	} else if(var) {
 		lhsSgType = var->get_type();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
@@ -55,7 +65,8 @@ bool FLP33_C( const SgNode *node ) {
 	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
 
 	if(lhsType.isFloatingPoint() && rhsType.isIntegral()) {
-		print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations", true);
+		std::cerr << binOp->unparseToString() << std::endl;
+		print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations");
 		return true;
 	}
 	return false;

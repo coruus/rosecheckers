@@ -179,7 +179,7 @@ bool STR36_C(const SgNode *node) {
 		if (!varInitializer)
 			continue;
 		if (varType->get_index()) {
-			print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal", true);
+			print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal");
 		return true;
 		}
 	}
@@ -220,7 +220,7 @@ bool STR37_C(const SgNode *node) {
 	if (isSgTypeUnsignedChar(arg->get_type()))
 		return false;
 
-	print_error(node,"STR37-C", "Arguments to character handling functions must be representable as an unsigned char", true);
+	print_error(node,"STR37-C", "Arguments to character handling functions must be representable as an unsigned char");
 	return true;
 }
 

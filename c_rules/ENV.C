@@ -60,7 +60,7 @@ bool ENV32_C( const SgNode *node ) {
 		|| isCallOfFunctionNamed( fnCall, "_Exit")
 		|| isCallOfFunctionNamed( fnCall, "longjmp")
 		|| isCallOfFunctionNamed( fnCall, "siglongjmp")) {
-			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning", true);
+			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning");
 			return true;
 		}
 	}

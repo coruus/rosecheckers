@@ -154,6 +154,11 @@ free(list);
 void MEM04(void) {
 char *p2;
 char *p = (char *)malloc(100);
+
+if (p == NULL) {
+  /* Handle Error */
+}
+
 /* ... */
 int nsize = 0;
 

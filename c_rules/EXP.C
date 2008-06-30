@@ -29,8 +29,6 @@
  *
  * \note As written, these tests catch template declarations only if
  * instantiated.
- *
- * \note This code is ugly :(
  */
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
 	if (!node) return NULL;
@@ -109,7 +107,7 @@ bool EXP05_A( const SgNode *node ) {
 	/**
 	 * Ignore compiler generated casts
 	 */
-	if(cast->get_file_info()->isCompilerGenerated())
+	if(isCompilerGeneratedNode(node))
 		return false;
 
 	const SgExpression *expr = cast->get_operand();
@@ -138,6 +136,7 @@ bool EXP09_A( const SgNode *node ) {
 
 	const SgNode* parent = node->get_parent();
 	assert( parent != NULL);
+
 	const SgCastExp* typecast = isSgCastExp( parent->get_parent());
 	if (typecast != NULL) {
 		Type alloc_type = Type( typecast->get_type()).stripInitialPointersReferencesAndArrays();
@@ -145,9 +144,19 @@ bool EXP09_A( const SgNode *node ) {
 			return false;
 	}
 
+	/**
+	 * We should allow size_t or rsize_t arguments
+	 */
+	const SgType *t = stripModifiers(exp->get_type());
+	if (isSgTypedefType(t)
+	&& ((t->unparseToString() == "size_t")
+	 || (t->unparseToString() == "rsize_t")))
+		return false;
+
 	// Find a sizeof operator inside argument
 	if (isSgSizeOfOp(exp))
 		return false;
+
 	FOREACH_SUBNODE(exp, nodes, i, V_SgSizeOfOp) {
 		return false;
 	}
@@ -240,7 +249,7 @@ bool EXP32_C( const SgNode *node ) {
 	bool exprIsVolatile = Type(expr->get_type()->dereference()).isVolatile();
 
 	if(exprIsVolatile && !castIsVolatile) {
-		print_error(node, "EXP32-C", "Do not cast away a volatile qualification", true);
+		print_error(node, "EXP32-C", "Do not cast away a volatile qualification");
 		return true;
 	}
 

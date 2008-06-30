@@ -94,6 +94,9 @@ void SIG30_handler(int signum) {
 void SIG30(void) {
   signal(SIGINT, SIG30_handler);
   SIG30_info = (char*)malloc(SIG30_MAXLINE);
+  if (SIG30_info == NULL) {
+    /* Handle Error */
+  }
 
   while (1) {
     /* main loop program code */

@@ -43,7 +43,11 @@ float FLP02_mean(float array[], int size) {
     total += array[i];
     printf("array[%d] = %f and total is %f\n", i, array[i], total);
   }
-  return total / size;
+  if (size != 0) {
+    return total / size;
+  } else {
+    return 0.0;
+  }
 }
 
 enum {array_size = 10};
@@ -66,20 +70,24 @@ void FLP02(void) {
   }
 }
 
-void FLP03(void) {
-  /* ... */
-  double a = 1e-40, b, c = 0.1;
-  float x = 0, y;
-  /* inexact and underflows */
-  y = a;
-  /* divide by zero operation */
-  b = y / x;
-  /* inexact (loss of precision) */
-  c = sin(30) * a;
-  /* ... */
-  printf("FLP03 %f %f\n", b, c);
-}
-
+/**
+ * Due to a bug in rose we can't use the pragma in the CCE
+ */
+//
+//void FLP03(void) {
+//  /* ... */
+//  double a = 1e-40, b, c = 0.1;
+//  float x = 0, y;
+//  /* inexact and underflows */
+//  y = a;
+//  /* divide by zero operation */
+//  b = y / x;
+//  /* inexact (loss of precision) */
+//  c = sin(30) * a;
+//  /* ... */
+//  printf("FLP03 %f %f\n", b, c);
+//}
+//
 void FLP30(void) {
 	float x;
 	for (x = 0.1f; x <= 1.0f; x += 0.1f) {

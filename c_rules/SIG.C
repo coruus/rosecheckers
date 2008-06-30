@@ -61,7 +61,7 @@ bool SIG00_a( const SgNode *node ) {
   }
 
   if (All_Handlers.insert( symbol).second) return false;
-  print_error( node, "SIG00-A", "Avoid using the same handler for multiple signals");
+  print_error( node, "SIG00-A", "Avoid using the same handler for multiple signals", true);
   return true;
 }
 #endif
