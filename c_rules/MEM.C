@@ -154,6 +154,31 @@ bool MEM01_A( const SgNode *node ) {
 	return true;
 }
 
+
+/**
+ * Use realloc() only to resize dynamically allocated arrays
+ */
+bool MEM08_A( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "realloc"))
+		return false;
+
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+
+	const SgExpression *arg = removeImplicitPromotions(getFnArg(fnRef, 0));
+	assert(arg);
+
+	const SgCastExp* cast = isSgCastExp(node->get_parent()->get_parent());
+	if (!cast)
+		return false;
+
+	if (cast->get_type() != arg->get_type()) {
+		print_error(node, "MEM08-A", "Use realloc() only to resize dynamically allocated arrays", true);
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Ensure that freed pointers are not reused
  *
@@ -279,6 +304,7 @@ bool MEM31_C( const SgNode *node ) {
 bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_A(node);
+  violation |= MEM08_A(node);
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   return violation;
