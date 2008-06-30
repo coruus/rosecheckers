@@ -254,8 +254,8 @@ void EXP30() {
 /* EXP31_C v.14 */
 
 void EXP31() {
-  unsigned int index = 0;
-  assert(index++ > 0);
+  unsigned int EXP31_index = 0;
+  assert(EXP31_index++ > 0);
 }
 
 

@@ -31,6 +31,17 @@ ERR_NCCE.c:114: error: SIG30-C: Call only asynchronous-safe functions within sig
 
 EXP_NCCE.c:75: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
 EXP_NCCE.c:115: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:164: warning: EXP05-A: Do not cast away a const qualification
+EXP_NCCE.c:199: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:205: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:236: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:237: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:309: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:311: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:339: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+FIO_NCCE.c:270: warning: FIO07-A: Prefer fseek() to rewind()
+FIO_NCCE.c:330: warning: FIO12-A: Prefer setvbuf() to setbuf()
+FIO_NCCE.c:421: error: FIO30-C: Exclude user input from format strings
 FIO_NCCE.c:493: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
 FIO_NCCE.c:493: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO_NCCE.c:620: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
