@@ -59,13 +59,16 @@ bool FLP33_C( const SgNode *node ) {
 		if(!init)
 			return false;
 		rhsSgType = removeImplicitPromotions(init->get_operand())->get_type();
-	} else return false;
+	} else
+		return false;
+
+	assert(lhsSgType);
+	assert(rhsSgType);
 
 	const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
 	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
 
 	if(lhsType.isFloatingPoint() && rhsType.isIntegral()) {
-		std::cerr << binOp->unparseToString() << std::endl;
 		print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations");
 		return true;
 	}

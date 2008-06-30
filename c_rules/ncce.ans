@@ -48,6 +48,9 @@ FIO_NCCE.c:620: warning: ENV04-A: Do not use system() or popen() unless you need
 FIO_NCCE.c:638: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO_NCCE.c:664: error: FIO43-C: Do not use open() on the results of mktemp()
 FIO_NCCE.c:676: error: FIO43-C: Do not use tmpfile()
+FLP_NCCE.c:124: error: FLP33-C: Convert integers to floating point for floating point operations
+FLP_NCCE.c:125: error: FLP33-C: Convert integers to floating point for floating point operations
+FLP_NCCE.c:126: error: FLP33-C: Convert integers to floating point for floating point operations
 "./ncce/INT_NCCE.c", line 133: warning: 
           integer conversion resulted in a change of sign
     char c = 200;

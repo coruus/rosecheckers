@@ -267,7 +267,8 @@ bool EXP32_C( const SgNode *node ) {
  */
 bool EXP34_C( const SgNode *node ) {
 	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
-	if (exp == NULL) return false;
+	if (exp == NULL)
+		return false;
 
 	const SgInitializedName* var = NULL;
 	// The node in the function where the variable first gets referred to
@@ -277,12 +278,14 @@ bool EXP34_C( const SgNode *node ) {
 		= isSgAssignOp( findParentNodeOfType( node, V_SgAssignOp).first);
 	if (assignment != NULL) {
 		ref = isSgVarRefExp( assignment->get_lhs_operand());
-		if (ref == NULL) return false; 
+		if (ref == NULL)
+			return false; 
 		// LHS is more complex than variable, it might be array ref
 		// or struct member or pointer; we're only handling variables (for now)!!!
 		var = getRefDecl( ref);
 		assert( var != NULL);
-		if (isTestForNullOp( ref)) return false;
+		if (isTestForNullOp( ref))
+			return false;
 	} else {
 		const SgAssignInitializer* ass_init = isSgAssignInitializer( findParentNodeOfType( node, V_SgAssignInitializer).first);
 		if (ass_init == NULL)
@@ -292,20 +295,34 @@ bool EXP34_C( const SgNode *node ) {
 		assert( var != NULL);
 	}
 
+	assert(var);
+
 	// Find all var references in function after malloc
 	Rose_STL_Container<SgNode *> nodes = getNodesInFn( node);
 	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
-	for (; i != nodes.end(); ++i ) {
-		if (ref == NULL) break; // was initializer, all refs valid
-		else if (ref == *i) {i++; break;} // var ref was malloc, start with next one
+	if (ref) {
+		for (; i != nodes.end(); ++i ) {
+			if (ref == *i) {
+				i++; break;
+			} // var ref was malloc, start with next one
+		}
 	}
-	if (i == nodes.end()) return false;
+	if (i == nodes.end())
+		return false;
 
 	// Now to future variable references, find one with bad usage
 	for (; i != nodes.end(); i = nextVarRef( nodes, i, var)) {
 		const SgVarRefExp* i_ref = isSgVarRefExp(*i);
 		assert( i_ref != NULL);
-		if (var != getRefDecl( i_ref)) continue;
+		if (var != getRefDecl( i_ref))
+			continue;
+
+		/**
+		 * Allow references inside sizeof() since no actual memory derefencing
+		 * happens
+		 */
+		if (findParentNodeOfType(i_ref, V_SgSizeOfOp).first)
+			continue;
 
 		if (isTestForNullOp( i_ref)) return false;
 		const SgAssignOp* next_assignment
