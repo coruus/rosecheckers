@@ -83,7 +83,9 @@ enum { TABLESIZE = 100 };
 }
 
 void ARR30(void) {
-	ARR30_CS_insert_in_table(0, 1);
+	if (ARR30_CS_insert_in_table(0, 1) != 0) {
+		/* Handle Error */
+	}
 }
 
 /*ARR31_C v.53 */
@@ -183,10 +185,8 @@ int sum_numbers(int const *numb, size_t dim) {
 
 void ARR37(void) {
   int my_numbers[3] = { 1, 2, 3 };
-  sum_numbers(
-    my_numbers, 
-    sizeof(my_numbers)/sizeof(my_numbers[0])
-  );
+	int sum = sum_numbers(my_numbers, sizeof(my_numbers)/sizeof(my_numbers[0]));
+	printf("%d\n", sum);
 }
 
 /*ARR38_C v.28 */

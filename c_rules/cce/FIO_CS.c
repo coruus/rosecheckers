@@ -124,7 +124,6 @@ void FIO01(void) {
 void FIO02(void) {
 	char *realpath_res = NULL;
 	char t[30];
-	fgets(t, 29, stdin);
 
 	/* Verify argv[1] is supplied */
 

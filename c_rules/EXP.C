@@ -222,6 +222,7 @@ bool EXP12_A( const SgNode *node ) {
 	|| isCallOfFunctionNamed(ref, "fprintf")
 	|| isCallOfFunctionNamed(ref, "close")
 	|| isCallOfFunctionNamed(ref, "fclose")
+	|| isCallOfFunctionNamed(ref, "free")
 	|| isCallOfFunctionNamed(ref, "memcpy")
 	|| isCallOfFunctionNamed(ref, "memmove")
 	|| isCallOfFunctionNamed(ref, "strcpy")

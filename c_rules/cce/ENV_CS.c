@@ -143,15 +143,21 @@ void ENV03() {
     /* Handle Error */
   }
 
-  n = confstr(_CS_PATH, NULL, 0);
-  if ((pathbuf = (char *)malloc(n)) == NULL) {
-    /* Handle Error */
-  }
-  confstr(_CS_PATH, pathbuf, n);
+	n = confstr(_CS_PATH, NULL, 0);
+	if (n == 0) {
+		/* Handle Error */
+	}
+	if ((pathbuf = (char *)malloc(n)) == NULL) {
+		/* Handle Error */
+	}
+	if (confstr(_CS_PATH, pathbuf, n) == 0) {
+		/* Handle Error */
+	}
 
-  if (setenv("PATH", pathbuf, 1) == -1) {
-    /* Handle Error */
-  }
+	if (setenv("PATH", pathbuf, 1) == -1) {
+		/* Handle Error */
+	}
+	
   if (setenv("IFS", " \t\n", 1) == -1) {
     /* Handle Error */
   }

@@ -156,7 +156,9 @@ unsigned int EXP04_buf_compare(
 }
 
 void EXP04() {
-  (void) EXP04_buf_compare(NULL, NULL);
+	if (EXP04_buf_compare(NULL, NULL) != 0) {
+		/* Handle Error */
+	}
 }
 
 
@@ -263,6 +265,7 @@ void EXP12() {
 		/* Handle Error */
 	}
 
+	/* Due to a problem in ROSE this will still flag the rule */
 	(void) rename(src, dst);
 
 	strcpy(dst, src);
