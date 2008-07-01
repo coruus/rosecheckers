@@ -51,8 +51,12 @@ void SIG00_handler(int signum) {
 }
 
 void SIG00() {
-  signal(SIGUSR1, SIG00_handler);
-  signal(SIGUSR2, SIG00_handler);
+  if (signal(SIGUSR1, SIG00_handler) == SIG_ERR) {
+    /* handle error */
+  }
+  if (signal(SIGUSR2, SIG00_handler) == SIG_ERR) {
+    /* handler error */
+  }
 
   while (SIG00_sig2 == 0) {
     /* do nothing or give up CPU for a while */
@@ -67,12 +71,14 @@ void SIG00() {
 /* SIG01_A v.51 */
 
 void SIG01_handler(int signum) {
-  signal(signum, SIG01_handler);
+ if (signal(signum, SIG01_handler) == SIG_ERR) {
+
+}
   /* handle signal */
 }
 
 void SIG01() {
-  signal(SIGUSR1, SIG01_handler);
+  if (signal(SIGUSR1, SIG01_handler) == SIG_ERR) {}
 }
 
 
@@ -92,7 +98,7 @@ void SIG30_handler(int signum) {
 }
 
 void SIG30(void) {
-  signal(SIGINT, SIG30_handler);
+  if (signal(SIGINT, SIG30_handler) == SIG_ERR) {}
   SIG30_info = (char*)malloc(SIG30_MAXLINE);
   if (SIG30_info == NULL) {
     /* Handle Error */
@@ -118,7 +124,7 @@ void SIG31_handler(int signum) {
 }
 
 void SIG31() {
-  signal(SIGINT, SIG31_handler);
+  if (signal(SIGINT, SIG31_handler) == SIG_ERR) {}
 
   SIG31_err_msg = (char *)malloc(SIG31_MAX_MSG_SIZE);
   if (SIG31_err_msg == NULL) {
@@ -165,7 +171,7 @@ void SIG32_log_message(char *info1, char *info2) {
 }
 
 void SIG32() {
-  signal(SIGINT, SIG32_handler);
+  if (signal(SIGINT, SIG32_handler) == SIG_ERR) {}
   char *info1;
   char *info2;
 
@@ -194,15 +200,15 @@ void SIG33_log_msg(int signum) {
 
 void SIG33_handler(int signum) {
   /* do some handling specific to SIGINT */
-  raise(SIGUSR1);
+  if (raise(SIGUSR1)!=0) {}
 }
 
 void SIG33() {
-  signal(SIGUSR1, SIG33_log_msg);
-  signal(SIGINT, SIG33_handler);
+  if (signal(SIGUSR1, SIG33_log_msg) != SIG_ERR) {}
+  if (signal(SIGINT, SIG33_handler) != SIG_ERR) {}
 
   /* program code */
-  raise(SIGINT);
+  if (raise(SIGINT) != 0) {}
   /* more code */
 
   return;
@@ -212,12 +218,12 @@ void SIG33() {
 /* SIG34_C v.19 */
 
 void SIG34_handler(int signum) {
-  signal(signum, SIG34_handler);
+  if (signal(signum, SIG34_handler) == SIG_ERR) {}
   /* handle signal */
 }
 
 void SIG34() {
-  signal(SIGUSR1, SIG34_handler);
+  if (signal(SIGUSR1, SIG34_handler) == SIG_ERR) {}
 }
 
 
