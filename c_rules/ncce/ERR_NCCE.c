@@ -70,7 +70,9 @@ void ERR06_cleanup(void) {
 }
 
 void ERR06() {
-  atexit(ERR06_cleanup);
+  if (atexit(ERR06_cleanup) != 0) {
+    /* Handle Error */
+  }
 
   assert(1);
 }

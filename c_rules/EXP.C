@@ -212,6 +212,49 @@ bool EXP11_A( const SgNode *node ) {
 }
 
 /**
+ * Do not ignore values returned by functions
+ */
+bool EXP12_A( const SgNode *node ) {
+	const SgFunctionRefExp *ref = isSgFunctionRefExp(node);
+	/** WHITE LIST */
+	if ((ref == NULL)
+	|| isCallOfFunctionNamed(ref, "printf")
+	|| isCallOfFunctionNamed(ref, "fprintf")
+	|| isCallOfFunctionNamed(ref, "close")
+	|| isCallOfFunctionNamed(ref, "fclose")
+	|| isCallOfFunctionNamed(ref, "memcpy")
+	|| isCallOfFunctionNamed(ref, "memmove")
+	|| isCallOfFunctionNamed(ref, "strcpy")
+	|| isCallOfFunctionNamed(ref, "strncpy"))
+		return false;
+	const SgFunctionCallExp *fn = isSgFunctionCallExp(ref->get_parent());
+	if (!fn)
+		return false;
+
+	if (fn->get_type()->unparseToString() == "void")
+		return false;
+
+	const SgNode *parent = fn;
+	while(1) {
+		parent = parent->get_parent();
+		assert(parent);
+		if (isSgCastExp(parent)) {
+			/**
+			 * \bug Due to a bug in ROSE which ignores these casts, this
+			 * condition will always be false :(
+			 */
+			if (isSgCastExp(parent)->get_type()->unparseToString() == "void")
+				return false;
+		} else if (isSgExprStatement(parent)) {
+			print_error(node, "EXP12-A", "Do not ignore values returned by functions", true);
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+/**
  * Do not cast away a volatile qualification
  *
  * We check cast expressions to make sure that if they don't posses a volatile
@@ -312,6 +355,7 @@ bool EXP(const SgNode *node) {
   violation |= EXP05_A(node);
   violation |= EXP09_A(node);
   violation |= EXP11_A(node);
+  violation |= EXP12_A(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
   return violation;

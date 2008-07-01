@@ -29,6 +29,7 @@ void EXP07();
 void EXP09();
 void EXP10();
 void EXP11();
+void EXP12();
 void EXP31();
 void EXP32();
 void EXP33();
@@ -48,6 +49,7 @@ void EXP() {
   EXP09();
   EXP10();
   EXP11();
+  EXP12();
   EXP31();
   EXP32();
   EXP33();
@@ -154,7 +156,7 @@ unsigned int EXP04_buf_compare(
 }
 
 void EXP04() {
-  EXP04_buf_compare(NULL, NULL);
+  (void) EXP04_buf_compare(NULL, NULL);
 }
 
 
@@ -251,6 +253,20 @@ void EXP11() {
   printf("int is %d, float is %f\n", i, f);
 }
 
+/* EXP12_A v.12 */
+
+void EXP12() {
+	char dst[] = "foo";
+	char src[] = "bar";
+
+	if (puts("foo") == EOF) {
+		/* Handle Error */
+	}
+
+	(void) rename(src, dst);
+
+	strcpy(dst, src);
+}
 
 /* EXP31_C v.14 */
 

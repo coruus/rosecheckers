@@ -80,7 +80,7 @@ void DCL01(void) {
   if (strlen(error_msg) >= sizeof(DCL01_system_msg)) {
     error_msg[sizeof(DCL01_system_msg) - 1] = '\0';
   }
-  DCL01_report_error(error_msg); /* oops! */
+  DCL01_report_error(error_msg);
 }
 
 

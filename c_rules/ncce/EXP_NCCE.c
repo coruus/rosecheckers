@@ -28,6 +28,7 @@ void EXP07();
 void EXP09();
 void EXP10();
 void EXP11();
+void EXP12();
 void EXP31();
 void EXP32();
 void EXP33();
@@ -47,6 +48,7 @@ void EXP() {
   EXP09();
   EXP10();
   EXP11();
+  EXP12();
   EXP31();
   EXP32();
   EXP33();
@@ -242,6 +244,11 @@ void EXP11() {
   printf("int is %d, float is %f\n", i, f);
 }
 
+/* EXP12_A v.12 */
+
+void EXP12() {
+	puts("foo");
+}
 
 /* EXP30_C v.58 */
 

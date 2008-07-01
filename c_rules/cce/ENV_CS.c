@@ -79,10 +79,14 @@ void ENV00() {
   }
 
   if (strcmp(tmpvar, tempvar) == 0) {
-    puts("TMP and TEMP are the same.\n");
+    if (puts("TMP and TEMP are the same.\n") == EOF) {
+      /* Handle Error */
+    }
   }
   else {
-    puts("TMP and TEMP are NOT the same.\n");
+    if (puts("TMP and TEMP are NOT the same.\n") == EOF) {
+      /* Handle Error */
+    }
   }
   free(tmpvar);
   tmpvar = NULL;
@@ -222,13 +226,17 @@ void ENV30() {
 /* ENV31_C v.43 */
 
 void ENV31(char const *envp[]) {
-   size_t i;
-   setenv("MY_NEW_VAR", "new_value", 1);
-   if (environ != NULL) {
-      for (i = 0; environ[i] != NULL; i++) {
-         puts(environ[i]);
-      }
-   }
+	size_t i;
+	if (!setenv("MY_NEW_VAR", "new_value", 1)) {
+		/* Handle Error */
+	}
+	if (environ != NULL) {
+		for (i = 0; environ[i] != NULL; i++) {
+			if (puts(environ[i]) == EOF) {
+				/* Handle Error */
+			}
+		}
+	}
 }
 
 
@@ -247,8 +255,12 @@ void ENV32_exit2(void) {
 }
 
 void ENV32(void) {
-  atexit(ENV32_exit1);
-  atexit(ENV32_exit2);
+  if (atexit(ENV32_exit1) != 0) {
+    /* Handle Error */
+  }
+  if (atexit(ENV32_exit2) != 0) {
+    /* Handle Error */
+  }
   /* ...program code... */
   exit(0);
 }
