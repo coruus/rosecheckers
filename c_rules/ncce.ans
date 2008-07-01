@@ -15,30 +15,30 @@ ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient s
 ENV_NCCE.c:97: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:121: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
-ENV_NCCE.c:176: error: ENV32-C: No atexit handler should terminate in any way other than by returning
-ERR_NCCE.c:114: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
-"./ncce/EXP_NCCE.c", line 272: warning: 
+ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
+ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+"./ncce/EXP_NCCE.c", line 279: warning: 
           a value of type "int **" cannot be assigned to an entity of type
           "volatile int **"
     ipp = &ip; /* produces warnings in modern compilers */
         ^
 
-"./ncce/EXP_NCCE.c", line 274: warning: 
+"./ncce/EXP_NCCE.c", line 281: warning: 
           a value of type "int **" cannot be assigned to an entity of type
           "volatile int **"
     ipp = (int**) &ip; /* constraint violation */
         ^
 
-EXP_NCCE.c:75: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
-EXP_NCCE.c:115: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:164: warning: EXP05-A: Do not cast away a const qualification
-EXP_NCCE.c:199: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:205: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:236: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:237: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:309: error: EXP34-C: Ensure pointer is valid before dereferencing it
-EXP_NCCE.c:311: error: EXP34-C: Ensure pointer is valid before dereferencing it
-EXP_NCCE.c:339: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:77: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
+EXP_NCCE.c:117: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:166: warning: EXP05-A: Do not cast away a const qualification
+EXP_NCCE.c:201: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:207: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:238: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:239: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:316: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:318: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:346: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:270: warning: FIO07-A: Prefer fseek() to rewind()
 FIO_NCCE.c:330: warning: FIO12-A: Prefer setvbuf() to setbuf()
 FIO_NCCE.c:421: error: FIO30-C: Exclude user input from format strings
@@ -100,13 +100,13 @@ POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:68: error: POS34-C: Do not call putenv() with an automatic variable
 POS_NCCE.c:108: error: POS36-C: Observe correct revocation order while relinquishing privileges
 PRE_NCCE.c:114: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-SIG_NCCE.c:90: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
-SIG_NCCE.c:90: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:117: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
-SIG_NCCE.c:117: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:141: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
-SIG_NCCE.c:138: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:141: error: SIG32-A: Do not call longjmp() from within a signal handler
+SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:96: error: SIG31-C: Do not access or modify shared objects in a signal handler
+SIG_NCCE.c:123: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:123: error: SIG31-C: Do not access or modify shared objects in a signal handler
+SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:144: error: SIG31-C: Do not access or modify shared objects in a signal handler
+SIG_NCCE.c:147: error: SIG32-A: Do not call longjmp() from within a signal handler
 "./ncce/STR_NCCE.c", line 67: warning: 
           argument of type "signed char *" is incompatible with parameter of
           type "const char *"

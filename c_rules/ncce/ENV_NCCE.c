@@ -161,10 +161,10 @@ void ENV32_exit2(void) {
 }
 
 void ENV32() {
-  if (atexit(exit1) != 0) {
+  if (atexit(ENV32_exit1) != 0) {
     /* Handle Error */
   }
-  if (atexit(exit2) != 0) {
+  if (atexit(ENV32_exit2) != 0) {
     /* Handle Error */
   }
   /* ...program code... */
