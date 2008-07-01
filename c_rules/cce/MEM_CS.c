@@ -199,7 +199,9 @@ static int copy_file(FILE *src, FILE *dst, size_t bufsize) {
   }
 
   while (fgets(buf, bufsize, src)) {
-    fputs(buf, dst);
+    if (fputs(buf, dst) == EOF) {
+      /* Handle Error */
+    }
   }
   /* ... */
   free(buf);
@@ -229,8 +231,10 @@ unsigned long fib2(unsigned int n) {
 }
 
 void MEM05(void) {
-  copy_file(NULL, NULL, 256);
-  fib2(5);
+  if (copy_file(NULL, NULL, 256) != 0) {
+    /* Handle Error */
+  }
+  printf("fib : %d\n",fib2(5));
 }
 
 /* MEM06 v.22 */
@@ -246,7 +250,9 @@ void MEM06(void) {
 	}
 
 	/* Create or otherwise obtain some sensitive data */
-	fgets(secret, sizeof(secret), stdin);
+	if (fgets(secret, sizeof(secret), stdin) == NULL) { 
+		/* Handle Error */
+	}
 }
 
 /* MEM07 v.55 */
@@ -434,7 +440,9 @@ static int MEM34_A(int argc, char const *argv[]) {
 
 void MEM34(void) {
   char const * argv[2] = {"lol", "huh"};
-  MEM34_A(2, argv);
+  if (MEM34_A(2, argv) != 0) {
+    /* Handle Error */
+  }
 }
 
 /* MEM35 v.73 */
@@ -448,5 +456,7 @@ static void *alloc_blocks(size_t num_blocks) {
 }
 
 void MEM35(void) {
-  alloc_blocks(10);
+  if (alloc_blocks(10) == NULL) {
+    /* Handle Error */
+  }
 }

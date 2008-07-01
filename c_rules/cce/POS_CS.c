@@ -59,7 +59,9 @@ void POS33() {
 
   pid_t pid = fork();
   if ( pid == 0 )  /* child */ {
-    execve(filename, NULL, NULL);
+    if (execve(filename, NULL, NULL) == -1) {
+      /* Handle Error */
+    }
     _exit(1);  /* in case execve() fails */
   }
 }
@@ -90,7 +92,9 @@ int POS34_func(char const *var) {
 }
 
 void POS34() {
-  POS34_func("hello");
+  if (POS34_func("hello") != 0) {
+    /* Handle Error */
+  }
 }
 
 
@@ -117,7 +121,9 @@ void POS35() {
   if (lstat_info.st_mode == fstat_info.st_mode &&
       lstat_info.st_ino == fstat_info.st_ino  &&
       lstat_info.st_dev == fstat_info.st_dev) {
-    write(fd, userbuf, userlen);
+    if (write(fd, userbuf, userlen) < userlen) {
+      /* Handle Error */
+    }
   }
 }
 

@@ -187,7 +187,9 @@ void PRE07() {
   /* assignment of i */
   i = random();
   if (i > 9000) {
-    puts("Over 9000!?""?!");
+    if (puts("Over 9000!?""?!") == EOF) {
+      /* Handle Error */
+    }
   }
 }
 

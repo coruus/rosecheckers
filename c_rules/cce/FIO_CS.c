@@ -134,7 +134,9 @@ void FIO02(void) {
 
 	/* Verify file name */
 
-	fopen(realpath_res, "w");
+	if (fopen(realpath_res, "w") == NULL) {
+		/* Handle Error */
+	}
 
 	/* ... */
 
@@ -417,7 +419,9 @@ void FIO16_A(char *argv[]) {
 	x[sizeof(x) - 1] = '\0';
 
 	/* Write operation safe is safe within jail */
-	fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp);
+	if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) < sizeof(x)/sizeof(x[0])) {
+		/* Handle Error */
+	}
 }
 
 void FIO16(void) {
@@ -545,7 +549,9 @@ void incorrect_password(char const *user) {
     /* handle error condition */
   }
   snprintf(msg, len, msg_format, user);
-  fputs(msg, stderr);
+	if (fputs(msg, stderr) == EOF) {
+		/* Handle Error */
+	}
   free(msg);
   msg = NULL;
 }
@@ -735,7 +741,9 @@ else {
 
 void FIO38(void) {
   FILE *my_stdout = stdout;
-  fputs("Hello, World!\n", my_stdout);
+  if (fputs("Hello, World!\n", my_stdout) == EOF) {
+    /* Handle Error */
+  }
 }
 
 /* FIO39 v.24 */
@@ -820,7 +828,9 @@ void FIO42(void) {
 	  /* Handle getenv() error */
 	}
 	/* Sanitize environment before calling system()! */
-	system(editor);
+	if (system(editor) == -1) {
+		/* Handle Error */
+	}
 }
 
 /* FIO43 v.110*/
@@ -839,7 +849,9 @@ if (fd == -1) {
  *    * is created with exclusive permissions (glibc >= 2.0.7) 
  *     */
 
-unlink(sfn);
+if (unlink(sfn) == -1) {
+  /* Handle Error */
+}
 
 sfp = fdopen(fd, "w+");
 if (sfp == NULL) {
@@ -887,5 +899,7 @@ int opener(
 }
 
 void FIO44(void) {
-opener(NULL, NULL, NULL, NULL);
+	if (opener(NULL, NULL, NULL, NULL) != 0) {
+		/* Handle Error */
+	}
 }

@@ -127,7 +127,9 @@ int MSC05_do_work(int seconds_to_work) {
 }
 
 void MSC05() {
-  MSC05_do_work(1);
+  if (MSC05_do_work(1) != 0) {
+    /* Handle Error */
+  }
 }
 
 
@@ -146,7 +148,9 @@ void MSC06() {
   
   /* assign */
 
-  MSC06_memset_s(pwd, 0, sizeof(pwd));
+  if (MSC06_memset_s(pwd, 0, sizeof(pwd)) == NULL) {
+    /* Handle Error */
+  }
 }
 
 
@@ -218,8 +222,12 @@ int MSC15_foo(int a) {
 }
 
 void MSC15() {
-  MSC15_foo(100);
-  MSC15_foo(INT_MAX);
+  if (MSC15_foo(100) == 0) {
+    /* Handle Error */
+  }
+  if (MSC15_foo(INT_MAX) == 0) {
+    /* Handle Error */
+  }
 }
 
 

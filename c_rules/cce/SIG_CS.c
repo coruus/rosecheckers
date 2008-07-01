@@ -115,7 +115,9 @@ void SIG30_handler(int signum) {
 }
 
 void SIG30() {
-  signal(SIGINT, SIG30_handler);
+  if (signal(SIGINT, SIG30_handler) == SIG_ERR) {
+    /* Handle Error */
+  }
   SIG30_info = (char*)malloc(SIG30_MAXLINE);
   if (SIG30_info == NULL) {
     /* Handle Error */
@@ -150,7 +152,9 @@ void SIG31_handler(int signum) {
 void SIG31() {
   char *SIG31_err_msg;
   enum { SIG31_MAX_MSG_SIZE = 24 };
-  signal(SIGINT, SIG31_handler);
+  if (signal(SIGINT, SIG31_handler) == SIG_ERR) {
+    /* Handle Error */
+  }
 
   SIG31_err_msg = (char *)malloc(SIG31_MAX_MSG_SIZE);
   if (SIG31_err_msg == NULL) {
@@ -199,7 +203,9 @@ void SIG32_log_message(char *info1, char *info2) {
 }
 
 void SIG32() {
-  signal(SIGINT, SIG32_handler);
+  if (signal(SIGINT, SIG32_handler) == SIG_ERR) {
+    /* Handle Error */
+  }
   char *info1;
   char *info2;
 
@@ -229,11 +235,17 @@ void SIG33_handler(int signum) {
 }
 
 void SIG33() {
-  signal(SIGUSR1, SIG33_log_msg);
-  signal(SIGINT, SIG33_handler);
+  if (signal(SIGUSR1, SIG33_log_msg) == SIG_ERR) {
+    /* Handle Error */
+  }
+  if (signal(SIGINT, SIG33_handler) == SIG_ERR) {
+    /* Handle Error */
+  }
 
   /* program code */
-  raise(SIGINT);
+  if (raise(SIGINT) != 0) {
+    /* Handle Error */
+  }
   /* more code */
 
   return;

@@ -120,7 +120,9 @@ int INT04_create_table(size_t length) {
 }
 
 void INT04() {
-  INT04_create_table(5);
+	if (INT04_create_table(5) != 0) {
+		/* Handle Error */
+	}
 }
 
 
@@ -132,20 +134,28 @@ void INT05() {
   long sl;
 
   if (fgets(buff, sizeof(buff), stdin) == NULL) {
-    puts("EOF or read error\n");
+    if (puts("EOF or read error\n") == EOF) {
+		/* Handle Error */
+	}
   } else {
     errno = 0;
 
     sl = strtol(buff, &end_ptr, 10);
 
     if (ERANGE == errno) {
-      puts("number out of range\n");
+      if (puts("number out of range\n") == EOF) {
+        /* Handle Error */
+      }
     }
     else if (end_ptr == buff) {
-      puts("not valid numeric input\n");
+      if (puts("not valid numeric input\n") == EOF) {
+        /* Handle Error */
+      }
     }
     else if ('\n' != *end_ptr && '\0' != *end_ptr) {
-      puts("extra characters on input line\n");
+      if (puts("extra characters on input line\n") == EOF) {
+        /* Handle Error */
+      }
     }
     printf("INT05 %ld\n", sl);
   }
@@ -169,7 +179,9 @@ void INT06() {
 	/* perror(errno) */
       }
       else {
-	puts("error encountered during conversion");
+	if (puts("error encountered during conversion") == EOF) {
+      /* Handle Error */
+    }
       }
     }
   else if (sl > INT_MAX) {
@@ -179,7 +191,9 @@ void INT06() {
     printf("%ld too small!\n", sl);
   }
   else if ('\0' != *end_ptr) {
-    puts("extra characters on input line\n");
+    if (puts("extra characters on input line\n") == EOF) {
+      /* Handle Error */
+    }
   }
   else {
     si = (int)sl;
@@ -229,7 +243,9 @@ int INT10_insert(size_t INT10_index, int *list, size_t size, int value) {
 void INT10() {
   int list[10];
 
-  INT10_insert(0, list, SIZE_MAX, 4);
+  if (INT10_insert(0, list, SIZE_MAX, 4) != 0) {
+    /* Handle Error */
+  }
 }
 
 

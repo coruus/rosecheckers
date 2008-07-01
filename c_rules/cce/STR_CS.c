@@ -225,7 +225,9 @@ size_t STR37_count_whitespace(
 }
 
 void STR37() {
-  STR37_count_whitespace("sdf sdf", 6);
+  if (STR37_count_whitespace("sdf sdf", 6) == 0) {
+   /* Handle Error */
+  }
 }
 
 
