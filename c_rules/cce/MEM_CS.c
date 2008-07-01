@@ -157,7 +157,7 @@ void MEM03(void) {
 }
 /* MEM04 v.70 */
 void MEM04_list(size_t size) {
-if (size <= 0) {
+if (size == 0) {
   /* Handle Error */
 }
 int *list = (int *)malloc(size);
@@ -190,6 +190,9 @@ MEM04_list(0);
 
 /* MEM05 v.47 */
 static int copy_file(FILE *src, FILE *dst, size_t bufsize) {
+  if (bufsize == 0) {
+    /* Handle Error */
+  }
   char *buf = (char *)malloc(bufsize);
   if (!buf) {
     return -1;

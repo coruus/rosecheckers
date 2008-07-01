@@ -24,21 +24,6 @@
 #include "utilities.h"
 
 /**
- * Returns size argument to malloc, calloc, or realloc, if node is appropriate
- * function call, otherwise returns NULL
- *
- * \note As written, these tests catch template declarations only if
- * instantiated.
- */
-const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
-	if (!node) return NULL;
-	return isCallOfFunctionNamed(node, "malloc") ? getFnArg(node, 0)
-		: isCallOfFunctionNamed(node, "calloc") ? getFnArg(node, 1)
-		: isCallOfFunctionNamed(node, "realloc") ? getFnArg(node, 1)
-		: NULL;
-}
-
-/**
  * Do not mistake sizeof( type*) for sizeof( type)
  *
  * We compare two types, one is inside the malloc, which prob looks like
@@ -274,28 +259,11 @@ bool EXP34_C( const SgNode *node ) {
 	// The node in the function where the variable first gets referred to
 	const SgVarRefExp* ref = NULL;
 
-	const SgAssignOp* assignment
-		= isSgAssignOp( findParentNodeOfType( node, V_SgAssignOp).first);
-	if (assignment != NULL) {
-		ref = isSgVarRefExp( assignment->get_lhs_operand());
-		if (ref == NULL)
-			return false; 
-		// LHS is more complex than variable, it might be array ref
-		// or struct member or pointer; we're only handling variables (for now)!!!
-		var = getRefDecl( ref);
-		assert( var != NULL);
-		if (isTestForNullOp( ref))
-			return false;
-	} else {
-		const SgAssignInitializer* ass_init = isSgAssignInitializer( findParentNodeOfType( node, V_SgAssignInitializer).first);
-		if (ass_init == NULL)
-			return false; // malloc ptr not assigned.
-
-		var = isSgInitializedName( ass_init->get_parent());
-		assert( var != NULL);
-	}
-
-	assert(var);
+	var = getVarAssignedTo(isSgFunctionRefExp(node), &ref);
+	if (!var)
+		return false;
+	if (ref && isTestForNullOp( ref))
+		return false;
 
 	// Find all var references in function after malloc
 	Rose_STL_Container<SgNode *> nodes = getNodesInFn( node);

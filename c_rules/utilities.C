@@ -342,6 +342,10 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
   if (node == NULL) return NULL;
 
   const SgFunctionCallExp *fnCall = isSgFunctionCallExp( node->get_parent());
+	if (!fnCall) {
+		std::cerr << node->unparseToString() << std::endl;
+		std::cerr << node->get_parent()->unparseToString() << std::endl;
+	}
   assert( fnCall != NULL);
   return getFnArg(fnCall, i);
 }
@@ -574,4 +578,58 @@ const SgType *stripModifiers(const SgType *type) {
 	}
 	return type;
 }
+
+/**
+ * Takes a function reference and tries to find the variable that the return
+ * value is stored into
+ *
+ * \param[out] varRef_p If this is an assignment not just an initializer, we
+ * store the varref here
+ */
+const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p) {
+
+	assert(fnRef);
+
+	const SgInitializedName* var = NULL;
+	// The node in the function where the variable first gets referred to
+	const SgVarRefExp* ref = NULL;
+
+	const SgAssignOp* assignment
+		= isSgAssignOp( findParentNodeOfType(fnRef, V_SgAssignOp).first);
+	if (assignment != NULL) {
+		ref = isSgVarRefExp( assignment->get_lhs_operand());
+		if (ref == NULL)
+			return NULL; 
+		// LHS is more complex than variable, it might be array ref
+		// or struct member or pointer; we're only handling variables (for now)!!!
+		var = getRefDecl( ref);
+	} else {
+		const SgAssignInitializer* ass_init = isSgAssignInitializer( findParentNodeOfType(fnRef, V_SgAssignInitializer).first);
+		if (ass_init == NULL)
+			return NULL; // malloc ptr not assigned.
+
+		var = isSgInitializedName( ass_init->get_parent());
+	}
+
+	if (ref && varRef_p) *varRef_p = ref;
+
+	assert(var);
+	return var;
+}
+
+/**
+ * Returns size argument to malloc, calloc, or realloc, if node is appropriate
+ * function call, otherwise returns NULL
+ *
+ * \note As written, these tests catch template declarations only if
+ * instantiated.
+ */
+const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
+	if (!node) return NULL;
+	return isCallOfFunctionNamed(node, "malloc") ? getFnArg(node, 0)
+		: isCallOfFunctionNamed(node, "calloc") ? getFnArg(node, 1)
+		: isCallOfFunctionNamed(node, "realloc") ? getFnArg(node, 1)
+		: NULL;
+}
+
 

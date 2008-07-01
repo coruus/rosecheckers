@@ -145,31 +145,31 @@ void MEM03(void) {
 }
 /* MEM04 v.70 */
 void MEM04_list2(size_t size) {
-int *list = (int *)malloc(size);
-if (list == NULL) {
-  /* Handle Allocation Error */
-}
-free(list);
+	int *list = (int *)malloc(size);
+	if (list == NULL) {
+	  /* Handle Allocation Error */
+	}
+	free(list);
 }
 
 void MEM04(void) {
-char *p2;
-char *p = (char *)malloc(100);
+	char *p2;
+	char *p = (char *)malloc(100);
 
-if (p == NULL) {
-  /* Handle Error */
-}
+	if (p == NULL) {
+	  /* Handle Error */
+	}
 
-/* ... */
-int nsize = 0;
+	/* ... */
+	int nsize = 0;
 
-if ((p2 = (char *)realloc(p, nsize)) == NULL) {
-  free(p);
-  p = NULL;
-  return;
-}
-p = p2;
-MEM04_list2(0);
+	if ((p2 = (char *)realloc(p, nsize)) == NULL) {
+	  free(p);
+	  p = NULL;
+	  return;
+	}
+	p = p2;
+	MEM04_list2(0);
 }
 
 /* MEM05 v.47 */

@@ -190,6 +190,9 @@ bool STR36_C(const SgNode *node) {
 /**
  * STR37-C. Arguments to character handling functions must be representable as
  * an unsigned char
+ *
+ * \note The code here should work if these functions were not implemented as
+ * macros :(
  */
 bool STR37_C(const SgNode *node) {
 	const SgFunctionRefExp *fn = isSgFunctionRefExp(node);
@@ -230,6 +233,6 @@ bool STR(const SgNode *node) {
   violation |= STR32_C(node);
   violation |= STR35_C(node);
   violation |= STR36_C(node);
-  violation |= STR37_C(node);
+//  violation |= STR37_C(node);
   return violation;
 }

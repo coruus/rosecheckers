@@ -288,7 +288,7 @@ char *file_name = "foo";
 /* initialize file_name */
 
 file = fopen(file_name, "w+");
-if (fopen == NULL) {
+if (file == NULL) {
   /* handle error condition */
 }
 

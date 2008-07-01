@@ -66,6 +66,8 @@ INT_NCCE.c:260: warning: INT13-A: Use bitwise operators only on unsigned operand
 MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.
+MEM_NCCE.c:148: warning: MEM04-A: Do not perform zero length allocations
+MEM_NCCE.c:166: warning: MEM04-A: Do not perform zero length allocations
 MEM_NCCE.c:251: warning: MEM08-A: Use realloc() only to resize dynamically allocated arrays
 MEM_NCCE.c:294: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:294: error: MEM30-C: Do not access freed memory

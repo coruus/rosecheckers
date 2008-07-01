@@ -154,6 +154,58 @@ bool MEM01_A( const SgNode *node ) {
 	return true;
 }
 
+/**
+ * Do not perform zero length allocations
+ */
+bool MEM04_A( const SgNode *node ) {
+	const SgExpression *allocArg = removeImplicitPromotions(getAllocFunctionExpr(isSgFunctionRefExp(node)));
+	if (!allocArg)
+		return false;
+
+	const SgInitializedName *var = getRefDecl(isSgVarRefExp(allocArg));
+	const SgValueExp *val = isSgValueExp(allocArg);
+	if (var) {
+		const SgFunctionDefinition *fn = isSgFunctionDefinition((findParentNodeOfType(node,V_SgFunctionDefinition).first));
+		const SgVarRefExp *ref = NULL;
+		/**
+		 * First try, just look for a check against NULL
+		 */
+		FOREACH_SUBNODE(fn, nodes1, i, V_SgVarRefExp) {
+			ref = isSgVarRefExp(*i);
+			assert(ref);
+			if ((var == getRefDecl(ref)) && isTestForNullOp(ref)) {
+				return false;
+			}
+		}
+		/**
+		 * If there isn't one, maybe the progammer has assigned this var to
+		 * something sane and doesn't need to check
+		 */
+		FOREACH_SUBNODE(fn, nodes2, i, V_SgAssignOp) {
+			const SgAssignOp *op = isSgAssignOp(*i);
+			assert(op);
+			ref = isSgVarRefExp(op->get_lhs_operand());
+			if (!ref || (getRefDecl(ref) != var))
+				continue;
+			if (!isZeroVal(removeCasts(op->get_rhs_operand())))
+				return false;
+		}
+		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initptr());
+		if(init && !isZeroVal(removeCasts(init->get_operand()))) {
+			return false;
+		}
+
+	} else if (val && !isZeroVal(val)) {
+		/** compile time constant that is 0 */
+		return false;
+	} else {
+		/** sizeof or something else we can't handle */
+		return false;
+	}
+
+	print_error(node,"MEM04-A", "Do not perform zero length allocations", true);
+	return true;
+}
 
 /**
  * Use realloc() only to resize dynamically allocated arrays
@@ -304,6 +356,7 @@ bool MEM31_C( const SgNode *node ) {
 bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_A(node);
+  violation |= MEM04_A(node);
   violation |= MEM08_A(node);
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);

@@ -33,6 +33,75 @@ bool FIO07_A( const SgNode *node ) {
 }
 
 /**
+ * Take care when calling remove() on an open file
+ */
+bool FIO08_A( const SgNode *node ) {
+	if(!isCallOfFunctionNamed(node, "remove"))
+		return false;
+
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+
+	const SgExpression *fnExp = removeImplicitPromotions(getFnArg(fnRef,0));
+	assert(fnExp);
+
+	const SgVarRefExp *ref = isSgVarRefExp(fnExp);
+	if(!ref)
+		return false;
+	const SgInitializedName *var = getRefDecl(ref);
+
+	bool opened = false;
+	bool closed = false;
+	/* *open or *close */
+	const SgFunctionRefExp *iFn = NULL;
+	/* Argument to *open or *close */
+	const SgVarRefExp *iVar = NULL;
+	/* File descriptor return by *open */
+	const SgInitializedName *fd = NULL;
+
+	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+		iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+
+		if(iFn == fnRef)
+			break;
+
+		iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
+		if (!iVar)
+			continue;
+
+		if(isCallOfFunctionNamed(iFn, "open")
+		|| isCallOfFunctionNamed(iFn, "fopen")
+		|| isCallOfFunctionNamed(iFn, "freopen")) {
+			fd = getVarAssignedTo(iFn, NULL);
+			assert(fd);
+
+			if (getRefDecl(iVar) == var) {
+				closed = false;
+				opened = true;
+			}
+		}
+
+		if (opened
+		&& (isCallOfFunctionNamed(iFn, "close"))
+		|| isCallOfFunctionNamed(iFn, "fclose")) {
+			if (getRefDecl(iVar) == fd) {
+				closed = true;
+				opened = false;
+			}
+		}
+	}
+
+
+	if (opened && !closed) {
+		print_error(node,"FIO08-A", "Take care when calling remove() on an open file", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Prefer setvbuf() to setbuf()
  */
 bool FIO12_A( const SgNode *node ) {
@@ -168,6 +237,7 @@ bool FIO43_C_4( const SgNode *node ) {
 bool FIO(const SgNode *node) {
   bool violation = false;
   violation |= FIO07_A(node);
+  violation |= FIO08_A(node);
   violation |= FIO12_A(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
