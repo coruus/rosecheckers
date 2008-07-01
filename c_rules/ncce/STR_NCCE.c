@@ -189,7 +189,7 @@ size_t STR37_count_whitespace(char const *s, size_t length) {
 }
 
 void STR37() {
-  if (STR37_count_whitespace("sdf sdf",) != 0) {
+  if (STR37_count_whitespace("sdf sdf", 4) != 0) {
     return;
 	}
 }
