@@ -119,7 +119,8 @@ int MSC05_do_work(int seconds_to_work) {
 }
 
 void MSC05() {
-  MSC05_do_work(1);
+  int a = MSC05_do_work(1);
+  ++a;
 }
 
 
@@ -205,8 +206,9 @@ int MSC15_foo(int a) {
 }
 
 void MSC15() {
-  MSC15_foo(100);
-  MSC15_foo(INT_MAX);
+  int a = MSC15_foo(100);
+  int b = MSC15_foo(INT_MAX);
+  a + b;
 }
 
 

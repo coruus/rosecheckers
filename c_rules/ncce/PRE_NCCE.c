@@ -165,7 +165,7 @@ void PRE07() {
   size_t i = 0;
   /* assignment of i */
   if (i > 9000) {
-    puts("Over 9000!??!");
+    if (puts("Over 9000!??!") == EOF) {}
   }
 }
 

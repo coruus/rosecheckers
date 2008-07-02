@@ -178,7 +178,9 @@ static int copy_file(FILE *src, FILE *dst, size_t bufsize) {
   char buf[bufsize];
 
   while (fgets(buf, bufsize, src)) {
-    fputs(buf, dst);
+    if(fputs(buf, dst) == EOF) {
+      /* handle error */
+	}
   }
 
   return 0;
@@ -197,8 +199,9 @@ unsigned long fib1(unsigned int n) {
 }
 
 void MEM05(void) {
-  copy_file(NULL, NULL, 256);
-  fib1(5);
+  int i = copy_file(NULL, NULL, 256);
+  long b = fib1(5);
+  i + b;
 }
 /* MEM06 v.22 */
 void MEM06(void) {
@@ -375,7 +378,7 @@ void MEM33(void) {
 
 enum { MAX_ALLOCATION = 1000 };
 
-static int MEM34_A(int argc, char const *argv[]) {
+static void MEM34_A(int argc, char const *argv[]) {
   char *str = NULL;
   size_t len;
 
@@ -396,7 +399,6 @@ static int MEM34_A(int argc, char const *argv[]) {
   }
   /* ... */
   free(str);
-  return 0;
 }
 
 void MEM34(void) {
@@ -419,5 +421,5 @@ static void *alloc_blocks(size_t num_blocks) {
 }
 
 void MEM35(void) {
-  alloc_blocks(10);
+  if(alloc_blocks(10) == NULL) {}
 }

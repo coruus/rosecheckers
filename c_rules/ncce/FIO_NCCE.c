@@ -122,15 +122,7 @@ if (remove(file_name) != 0) {
 /* FIO02 v.185*/
 
 void FIO02(void) {
-char t[30];
-fgets(t, 29, stdin);
-/* Verify argv[1] is supplied */
-
-/* Verify file name */
-
-fopen(t, "w");
-
-/* ... */
+/* code removed because it was useless */
 }
 
 /* FIO03 v.108*/
@@ -311,7 +303,9 @@ void FIO09(void) {
 
 	/* initialize file */
 
-	fread(&data, sizeof(struct myData), 1, file);
+	if (fread(&data, sizeof(struct myData), 1, file) != sizeof(struct myData)) {
+      /* handle error */
+	}
 }
 
 /* FIO10 v.10 */
@@ -346,8 +340,8 @@ if (fp == NULL) {
 
 /* read data */
 
-ungetc('\n', fp);
-ungetc('\r', fp);
+if (ungetc('\n', fp) == EOF) {}
+if (ungetc('\r', fp) == EOF) {}
 
 /* continue on */
 }
@@ -374,7 +368,9 @@ x[99] = '\0';
 
 /* Write operation to an unintended file like /etc/passwd 
  *  * gets executed  */
-fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp);
+if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) < sizeof(x)/sizeof(x[0])) {
+
+}
 }
 
 void FIO16(void) {
@@ -541,7 +537,7 @@ buf[strlen(buf) - 1] = '\0';
 /* FIO38 v.24 */
 void FIO38(void) {
   FILE my_stdout = *(stdout);
-  fputs("Hello, World!\n", &my_stdout);
+  if (fputs("Hello, World!\n", &my_stdout) == EOF) {}
 }
 
 /* FIO39 v.24 */
@@ -715,5 +711,5 @@ int fileopener(
 }
 
 void FIO44(void) {
-  fileopener(NULL, NULL, NULL, NULL);
+  if (fileopener(NULL, NULL, NULL, NULL) != 0) {}
 }

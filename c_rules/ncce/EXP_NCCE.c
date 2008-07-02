@@ -156,7 +156,7 @@ unsigned int EXP04_buf_compare(
 }
 
 void EXP04() {
-  EXP04_buf_compare(NULL, NULL);
+  if (EXP04_buf_compare(NULL, NULL) == 0) {}
 }
 
 

@@ -52,10 +52,10 @@ void ENV00() {
   if (!tempvar) return;
 
   if (strcmp(tmpvar, tempvar) == 0) {
-    puts("TMP and TEMP are the same.\n");
+    if (puts("TMP and TEMP are the same.\n") == EOF) {}
   }
   else {
-    puts("TMP and TEMP are NOT the same.\n");
+    if (puts("TMP and TEMP are NOT the same.\n") == EOF) {}
   }
 }
 
@@ -94,7 +94,7 @@ void ENV02() {
 /* ENV03_A v.62 */
 
 void ENV03() {
-  system("/bin/ls dir.`date +%Y%m%d`");
+  if (system("/bin/ls dir.`date +%Y%m%d`") != 0) {}
 }
 
 
@@ -136,10 +136,10 @@ void ENV30() {
 
 void ENV31(char const *envp[]) {
    size_t i;
-   setenv("MY_NEW_VAR", "new_value", 1);
+   if (setenv("MY_NEW_VAR", "new_value", 1) == -1) {}
    if (envp != NULL) {
       for (i = 0; envp[i] != NULL; i++) {
-         puts(envp[i]);
+         if (puts(envp[i]) == EOF) {}
       }
    }
 }

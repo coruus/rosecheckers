@@ -85,7 +85,7 @@ void INT02() {
 
 /* INT04_A v.44 */
 
-int INT04_create_table(size_t length) {
+void INT04_create_table(size_t length) {
   char **table;
 
   if (sizeof(char *) > SIZE_MAX/length) {
@@ -101,7 +101,6 @@ int INT04_create_table(size_t length) {
   else
     free(table);
   /* ... */
-  return 0;
 }
 
 void INT04() {
@@ -113,7 +112,7 @@ void INT04() {
 
 void INT05() {
   long sl;
-  scanf("%ld", &sl);
+  if(scanf("%ld", &sl) != 1) {}
 }
 
 
@@ -167,7 +166,7 @@ int INT10_insert(int INT10_index, int *list, int size, int value) {
 void INT10() {
   int list[10];
 
-  INT10_insert(0, list, -1, 4);
+  if(INT10_insert(0, list, -1, 4) != 0) {}
 }
 
 

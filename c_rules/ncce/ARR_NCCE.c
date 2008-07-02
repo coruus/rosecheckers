@@ -84,7 +84,7 @@ enum { TABLESIZE = 100 };
 }
 
 void ARR30(void) {
-	ARR30_NCCE_insert_in_table(0, 1);
+	if (ARR30_NCCE_insert_in_table(0, 1) == -1) {}
 }
 
 
@@ -171,7 +171,7 @@ int sum_numbers2(const struct numbers *numb){
 
 void ARR37(void) {
   struct numbers my_numbers = { 1, 2, /* ... */ 64 };
-  sum_numbers2(&my_numbers);
+  if (sum_numbers2(&my_numbers) < 100) {}
 }
 
 /*ARR38_C v.28 */
