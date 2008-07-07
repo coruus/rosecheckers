@@ -47,6 +47,7 @@ FIO_NCCE.c:616: warning: ENV04-A: Do not use system() or popen() unless you need
 FIO_NCCE.c:636: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO_NCCE.c:662: error: FIO43-C: Do not use open() on the results of mktemp()
 FIO_NCCE.c:674: error: FIO43-C: Do not use tmpfile()
+FIO_NCCE.c:705: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
 FLP_NCCE.c:124: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:125: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:126: error: FLP33-C: Convert integers to floating point for floating point operations

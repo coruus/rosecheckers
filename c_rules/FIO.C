@@ -267,6 +267,51 @@ bool FIO43_C_4( const SgNode *node ) {
   return true;
 }
 
+/**
+ * Only use values for fsetpos() that are returned from fgetpos()
+ */
+bool FIO44_C( const SgNode *node) {
+	if (!isCallOfFunctionNamed(node,"fsetpos"))
+		return false;
+
+	const SgFunctionRefExp * setRef = isSgFunctionRefExp(node);
+	assert(setRef);
+
+	const SgExpression * arg = removeImplicitPromotions(getFnArg(setRef, 1));
+	assert(arg);
+	const SgAddressOfOp *setAddr = isSgAddressOfOp(arg);
+	assert(setAddr);
+	const SgVarRefExp * posRef = isSgVarRefExp(setAddr->get_operand());
+	if (!posRef)
+		return false;
+	const SgInitializedName *posName = getRefDecl(posRef);
+	assert(posName);
+
+	/* We can't really handle global variables, too complicated */
+	if (isGlobalVar(posRef))
+		return false;
+
+	FOREACH_SUBNODE(posName->get_scope(), nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		assert(iVar);
+
+		if (getRefDecl(iVar) != posName)
+			continue;
+
+		const SgAddressOfOp *addrOp = isSgAddressOfOp(iVar->get_parent());
+		if (!addrOp)
+			continue;
+		const SgFunctionCallExp *iFn = isSgFunctionCallExp(addrOp->get_parent()->get_parent());
+		if (!iFn)
+			continue;
+		if (isCallOfFunctionNamed(iFn->get_function(), "fgetpos"))
+			return false;
+	}
+
+	print_error(node, "FIO44-C", "Only use values for fsetpos() that are returned from fgetpos()");
+	return true;
+}
+
 bool FIO(const SgNode *node) {
   bool violation = false;
   violation |= FIO07_A(node);
@@ -278,5 +323,6 @@ bool FIO(const SgNode *node) {
   violation |= FIO43_C_2(node);
   violation |= FIO43_C_3(node);
   violation |= FIO43_C_4(node);
+  violation |= FIO44_C(node);
   return violation;
 }
