@@ -275,6 +275,57 @@ static bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef) {
 }
 
 /**
+ * Ensure that operations on signed integers do not result in overflow
+ *
+ * \note We only check the Unary negation case here
+ *
+ * \see INT33_C
+ */
+bool INT32_C( const SgNode *node ) {
+	const SgMinusOp *negOp = isSgMinusOp(node);
+	if(!negOp)
+		return false;
+
+	//std::cerr << "1" << std::endl;
+
+	const SgVarRefExp * var= isSgVarRefExp(negOp->get_operand());
+	if (!var)
+		return false;
+	//std::cerr << "2" << std::endl;
+	const SgInitializedName *varName = getRefDecl(var);
+	assert(varName);
+
+	FOREACH_SUBNODE(findInBlockByOffset(node, -1), nodes, i, V_SgBinaryOp) {
+		const SgBinaryOp *binOp = isSgBinaryOp(*i);
+		assert(binOp);
+	//std::cerr << "3" << std::endl;
+	//std::cerr << binOp->unparseToString() << std::endl;
+
+		const SgExpression *lhs = binOp->get_lhs_operand();
+		const SgExpression *rhs = binOp->get_rhs_operand();
+		const SgVarRefExp *iVar = isSgVarRefExp(lhs);
+		if (iVar && (getRefDecl(iVar) == varName)) {
+		//std::cerr << "4" << std::endl;
+		//std::cerr << rhs->unparseToString() << std::endl;
+		//std::cerr << isSgIntVal(rhs)->unparseToString() << std::endl;
+		//std::cerr << isSgIntVal(rhs)->get_value() << std::endl;
+		//std::cerr << isSgIntVal(rhs)->get_valueString() << std::endl;
+			if (isMinVal(rhs))
+				return false;
+		}
+		iVar = isSgVarRefExp(rhs);
+		if (iVar && (getRefDecl(iVar) == varName)) {
+	//std::cerr << "5" << std::endl;
+			if (isMinVal(lhs))
+				return false;
+		}
+	}
+
+	print_error(node,"INT32-C", "Ensure that operations on signed integers do not result in overflow");
+	return true;
+}
+
+/**
  * Ensure that division and modulo operations do not result in divide-by-zero
  * errors
  *
@@ -315,6 +366,7 @@ bool INT(const SgNode *node) {
   violation |= INT06_A(node);
   violation |= INT07_A(node);
   violation |= INT13_A(node);
+  violation |= INT32_C(node);
   violation |= INT33_C(node);
   return violation;
 }

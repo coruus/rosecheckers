@@ -235,9 +235,14 @@ void INT31() {
 /* INT32_C v.110 */
 
 void INT32() {
-  int si1 = 0, si2 = 0, sum;
-  sum = si1 + si2;
-	printf("INT32 %d\n", sum);
+	int si1 = 0, si2 = 0, sum;
+	sum = si1 + si2;
+
+	signed int result;
+
+	result = -si1;
+
+	printf("INT32 %d %d\n", sum, result);
 }
 
 

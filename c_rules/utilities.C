@@ -293,6 +293,9 @@ void print_error(const SgNode* node, const char* rule, const char* desc, bool wa
 /**
  * Returns True if node is inside an expression that tests its value to see if
  * it is NULL
+ *
+ * \bug This doesn't actually check for NULL, just the existence of a
+ * comparison
  */
 bool isTestForNullOp(const SgNode* node) {
   if (node == NULL) return false;
@@ -524,7 +527,7 @@ bool getSizetVal(const SgExpression *node, size_t *value) {
 }
 
 /**
- * Takes a Value node and tries to make sure it is .
+ * Takes a Value node and tries to make sure it is 0
  */
 bool isZeroVal(const SgExpression *node) {
 	if(!node)
@@ -546,6 +549,47 @@ bool isZeroVal(const SgExpression *node) {
 	} else if (isSgShortVal(node)) {
 		return 0 == isSgShortVal(node)->get_value();
 	} else {
+		return false;
+	}
+}
+
+/**
+ * Takes a Value node and tries to make sure it is the minimum
+ */
+bool isMinVal(const SgExpression *node) {
+	if(!node)
+		return false;
+	if (isSgUnsignedIntVal(node)) {
+		//std::cerr << "1a" << std::endl;
+		return 0 == isSgUnsignedIntVal(node)->get_value();
+	} else if (isSgIntVal(node)) {
+		//std::cerr << "2a" << std::endl;
+		//std::cerr << INT_MIN << std::endl;
+		//std::cerr << isSgIntVal(node)->get_value() << std::endl;
+		return INT_MIN == isSgIntVal(node)->get_value();
+	} else if (isSgUnsignedLongVal(node)) {
+		//std::cerr << "3a" << std::endl;
+		return 0 == isSgUnsignedLongVal(node)->get_value();
+	} else if (isSgLongIntVal(node)) {
+		//std::cerr << "4a" << std::endl;
+		return LONG_MIN == isSgLongIntVal(node)->get_value();
+	} else if (isSgUnsignedLongLongIntVal(node)) {
+		//std::cerr << "5a" << std::endl;
+		return 0 == isSgUnsignedLongLongIntVal(node)->get_value();
+	} else if (isSgLongLongIntVal(node)) {
+		//std::cerr << "6a" << std::endl;
+		return std::numeric_limits<long long>::min() == isSgLongLongIntVal(node)->get_value();
+	} else if (isSgUnsignedShortVal(node)) {
+		//std::cerr << "7a" << std::endl;
+		return 0 == isSgUnsignedShortVal(node)->get_value();
+	} else if (isSgShortVal(node)) {
+		return SHRT_MIN == isSgShortVal(node)->get_value();
+	} else if (isSgUnsignedCharVal(node)) {
+		return 0 == isSgUnsignedCharVal(node)->get_value();
+	} else if (isSgCharVal(node)) {
+		return CHAR_MIN == isSgCharVal(node)->get_value();
+	} else {
+		//std::cerr << "no match" << std::endl;
 		return false;
 	}
 }

@@ -335,6 +335,14 @@ void INT32() {
     {
       /* handle error condition */
     }
+
+	signed int result;
+
+	if (si1 == INT_MIN) {
+		/* handle error condition */
+	}
+	result = -si1;
+	printf("%d\n", result);
 }
 
 

@@ -61,8 +61,8 @@ INT_NCCE.c:123: warning: INT01-A: Use strtol() or a related function to convert 
 INT_NCCE.c:132: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
 INT_NCCE.c:134: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:181: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-INT_NCCE.c:249: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-INT_NCCE.c:259: warning: INT13-A: Use bitwise operators only on unsigned operands
+INT_NCCE.c:254: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
+INT_NCCE.c:264: warning: INT13-A: Use bitwise operators only on unsigned operands
 MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.
