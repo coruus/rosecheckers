@@ -97,6 +97,7 @@ MEM_NCCE.c:332: error: EXP34-C: Ensure pointer is valid before dereferencing it
 MSC_NCCE.c:225: error: MSC30-C: Do not use rand()
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
+POS_NCCE.c:93: error: POS35-A: Avoid race conditions while checking for the existence of a symbolic link
 POS_NCCE.c:113: error: POS36-C: Observe correct revocation order while relinquishing privileges
 PRE_NCCE.c:114: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers

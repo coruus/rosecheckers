@@ -102,6 +102,39 @@ bool FIO08_A( const SgNode *node ) {
 }
 
 /**
+ * Take care when specifying the mode parameter of fopen()
+ */
+bool FIO11_A( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "fopen"))
+		return false;
+
+	const SgStringVal* mode = isSgStringVal(getFnArg(isSgFunctionRefExp(node), 1));
+	if(!mode)
+		return false;
+
+	const std::string str = mode->get_value();
+
+	if((str == "r")
+	|| (str == "w")
+	|| (str == "a")
+	|| (str == "rb")
+	|| (str == "wb")
+	|| (str == "ab")
+	|| (str == "r+")
+	|| (str == "w+")
+	|| (str == "r+b")
+	|| (str == "rb+")
+	|| (str == "w+b")
+	|| (str == "wb+")
+	|| (str == "a+b")
+	|| (str == "ab+"))
+		return false;
+
+	print_error(node, "FIO11-A", "Take care when specifying the mode parameter of fopen()", true);
+	return true;
+}
+
+/**
  * Prefer setvbuf() to setbuf()
  */
 bool FIO12_A( const SgNode *node ) {

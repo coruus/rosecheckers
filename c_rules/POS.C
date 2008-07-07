@@ -72,6 +72,65 @@ bool POS34_C( const SgNode *node ) {
 }
 
 /**
+ * Avoid race conditions while checking for the existence of a symbolic link
+ */
+bool POS35_C( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "open"))
+		return false;
+
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+
+	const SgExpression *fnExp = removeImplicitPromotions(getFnArg(fnRef,0));
+	assert(fnExp);
+
+	const SgVarRefExp *ref = isSgVarRefExp(fnExp);
+	if (!ref)
+		return false;
+	const SgInitializedName *var = getRefDecl(ref);
+
+	const SgInitializedName *fd = getVarAssignedTo(fnRef, NULL);
+	assert(fd);
+
+	const SgFunctionRefExp *iFn = NULL;
+	const SgVarRefExp *iVar = NULL;
+
+	bool lstat = false;
+	bool after = false;
+	bool fstat = false;
+
+	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) { 
+		iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+
+		if (iFn == fnRef) {
+			after = true;
+			continue;
+		}
+
+		iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
+		if (!iVar)
+			continue;
+
+		if (!after && isCallOfFunctionNamed(iFn, "lstat")) {
+			if (getRefDecl(iVar) == var)
+				lstat = true;
+		} else if (after && isCallOfFunctionNamed(iFn, "fstat")) {
+			if (getRefDecl(iVar) == fd)
+				fstat = true;
+			break;
+		}
+	}
+
+	if (lstat && !fstat) {
+		print_error(node, "POS35-A", "Avoid race conditions while checking for the existence of a symbolic link");
+		return true;
+	}
+
+	return true;
+}
+
+/**
  * Observe correct revocation order while relinquishing privileges
  *
  * \note Since there's really no clean way to do this, we'll just traverse up
@@ -100,6 +159,7 @@ bool POS(const SgNode *node) {
   bool violation = false;
   violation |= POS33_C(node);
   violation |= POS34_C(node);
+  violation |= POS35_C(node);
   violation |= POS36_C(node);
   return violation;
 }
