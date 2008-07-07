@@ -201,7 +201,7 @@ unsigned long fib1(unsigned int n) {
 void MEM05(void) {
   int i = copy_file(NULL, NULL, 256);
   long b = fib1(5);
-  i + b;
+  printf("%d\n", i + b);
 }
 /* MEM06 v.22 */
 void MEM06(void) {

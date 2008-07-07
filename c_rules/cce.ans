@@ -1,9 +1,4 @@
 
-"./cce/DCL_CS.c", line 81: warning: 
-          subscript out of range
-      error_msg[sizeof(DCL01_system_msg) - 1] = '\0';
-               ^
-
 ENV_CS.c:165: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
 EXP_CS.c:269: warning: EXP12-A: Do not ignore values returned by functions
 FIO_CS.c:683: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values

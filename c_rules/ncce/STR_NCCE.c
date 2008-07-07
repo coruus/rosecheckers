@@ -165,7 +165,9 @@ void STR34() {
 
 void STR35() {
   char buf[BUFSIZ];
-  gets(buf);
+	if (gets(buf) == NULL) {
+		/* Handle Erorr */
+	}
 }
 
 

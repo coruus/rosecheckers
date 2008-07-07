@@ -37,6 +37,11 @@ bool INT01_A( const SgNode *node ) {
 	const SgBinaryOp *op = isSgBinaryOp(node);
 	if(!op)
 		return false;
+
+	/* Ignore commas */
+	if(isSgCommaOpExp(op))
+		return false;
+
 	/* Ignore array derefences */
 	if(isSgPntrArrRefExp(op))
 		return false;

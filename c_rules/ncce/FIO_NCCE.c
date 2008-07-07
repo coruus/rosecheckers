@@ -147,14 +147,14 @@ if (!fp) { /* file does not exist */
 /* FIO04 v.44 */
 
 void FIO04(void) {
-long offset = 19;
-FILE *file = fopen("t", "w");
-if(!file) return;
+	long offset = 19;
+	FILE *file = fopen("t", "w");
+	if(!file) return;
 
-/* initialize file and offset */
+	/* initialize file and offset */
 
-fseek(file, offset, SEEK_SET);
-/* process file */
+	fseek(file, offset, SEEK_SET);
+	/* process file */
 }
 
 /* FIO05 v.51 */
@@ -267,25 +267,25 @@ rewind(fp);
 /* FIO08 v.41 */
 
 void FIO08(void) {
-char *file_name = "foo";
-FILE *file;
+	char *file_name = "foo";
+	FILE *file;
 
-/* initialize file+name */
+	/* initialize file+name */
 
-file = fopen(file_name, "w+");
-if (file == NULL) {
-  /* handle error condition */
-}
+	file = fopen(file_name, "w+");
+	if (file == NULL) {
+	  /* handle error condition */
+	}
 
-/* ... */
+	/* ... */
 
-if (remove(file_name) != 0) {
-  /* handle error condition */
-}
+	if (remove(file_name) != 0) {
+	  /* handle error condition */
+	}
 
-/* continue performing I/O operations on file */
+	/* continue performing I/O operations on file */
 
-fclose(file);
+	fclose(file);
 }
 
 /* FIO09 v.14 */
@@ -598,22 +598,24 @@ void FIO41(void) {
 /* FIO42 v.81 */
 
 void FIO42(void) {
-FILE* f;
-char *editor;
-char *filename = "foo";
+	FILE* f;
+	char *editor;
+	char *filename = "foo";
 
-/* initialize filename */
+	/* initialize filename */
 
-f = fopen(filename, "r");
-if (f == NULL) {
-  /* Handle fopen() error */
-}
-/* ... */
-editor = getenv("EDITOR");
-if (editor == NULL) {
-  /* Handle getenv() error */
-}
-system(editor);
+	f = fopen(filename, "r");
+	if (f == NULL) {
+	  /* Handle fopen() error */
+	}
+	/* ... */
+	editor = getenv("EDITOR");
+	if (editor == NULL) {
+	  /* Handle getenv() error */
+	}
+	if (system(editor) == -1) {
+	  /* Handle Error */
+	}
 }
 
 /* FIO43 v.110*/

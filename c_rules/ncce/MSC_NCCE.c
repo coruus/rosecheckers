@@ -208,7 +208,7 @@ int MSC15_foo(int a) {
 void MSC15() {
   int a = MSC15_foo(100);
   int b = MSC15_foo(INT_MAX);
-  a + b;
+  printf("%d\n", a + b);
 }
 
 

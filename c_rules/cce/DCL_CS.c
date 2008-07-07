@@ -75,11 +75,6 @@ void DCL01_report_error(char const *error_msg) {
 
 void DCL01(void) {
   char error_msg[] = "Error!";
-
-  /* Ensure error_msg isn't too long */
-  if (strlen(error_msg) >= sizeof(DCL01_system_msg)) {
-    error_msg[sizeof(DCL01_system_msg) - 1] = '\0';
-  }
   DCL01_report_error(error_msg);
 }
 
