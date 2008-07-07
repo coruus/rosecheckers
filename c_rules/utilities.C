@@ -617,7 +617,7 @@ const SgExpression* removeCasts(const SgExpression * expr) {
  */
 const SgType *stripModifiers(const SgType *type) {
 	const SgModifierType *mt;
-	while(mt = isSgModifierType(type)) {
+	while((mt = isSgModifierType(type)) != NULL) {
 		type = mt->get_base_type();
 	}
 	return type;
