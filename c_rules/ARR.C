@@ -128,8 +128,11 @@ size_t sizeOfType(const SgType *type) {
  * Guarantee that copies are made into storage of sufficient size
  *
  * We make sure that the length argument to memcpy is at most the size
- * of the first argument.  We can only do this if the first argument
- * is an array (not variable-length).
+ * of memcpy's first argument (destination). This rule fires if:
+ * * the destination is a fixed-length array
+ * * the last argument is N * sizeof( arraytype)
+ * * N is known at compile time
+ * * N > destination array index
  */
 bool ARR33_C( const SgNode *node ) {
 	if(!isCallOfFunctionNamed(node, "memcpy"))
