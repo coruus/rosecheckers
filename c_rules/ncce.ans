@@ -125,6 +125,5 @@ STR_NCCE.c:63: warning: ARR02-A: Explicitly specify array dimensions, even if im
 STR_NCCE.c:129: error: STR32-C: Null-terminate byte strings as required
 STR_NCCE.c:168: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
 STR_NCCE.c:177: error: STR36-C: Do not specify the dimension of a character array initialized with a string literal
-STR_NCCE.c:188: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
 STR_NCCE.c:188: warning: EXP05-A: Do not cast away a const qualification
 STR_NCCE.c:188: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object

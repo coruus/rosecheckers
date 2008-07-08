@@ -163,8 +163,7 @@ bool EXP11_A( const SgNode *node ) {
 	const SgExpression *rhs;
 
 	if(binOp) {
-		/// Allowing for equaliity on pointers
-		if (isSgEqualityOp(binOp))
+		if (!isSgAssignOp(binOp))
 			return false;
 		lhsSgType = binOp->get_lhs_operand()->get_type();
 		rhs = removeImplicitPromotions(binOp->get_rhs_operand());
