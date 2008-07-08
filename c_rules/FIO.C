@@ -154,22 +154,11 @@ bool FIO30_C( const SgNode *node) {
 	if(!fnRef)
 		return false;
 
-	unsigned int argNum;
-	if(isCallOfFunctionNamed(fnRef, "printf")
-	|| isCallOfFunctionNamed(fnRef, "scanf")
-	|| isCallOfFunctionNamed(fnRef, "vprintf")
-	|| isCallOfFunctionNamed(fnRef, "vscanf")) { argNum = 0; }
-	else if(isCallOfFunctionNamed(fnRef, "fprintf")
-	|| isCallOfFunctionNamed(fnRef, "fscanf")
-	|| isCallOfFunctionNamed(fnRef, "sprintf")
-	|| isCallOfFunctionNamed(fnRef, "sscanf")
-	|| isCallOfFunctionNamed(fnRef, "vfprintf")
-	|| isCallOfFunctionNamed(fnRef, "vfscanf")
-	|| isCallOfFunctionNamed(fnRef, "vsprintf")
-	|| isCallOfFunctionNamed(fnRef, "vsscanf")) { argNum = 1; }
-	else if(isCallOfFunctionNamed(fnRef, "snprintf")
-	|| isCallOfFunctionNamed(fnRef, "vsnprintf")) {argNum = 2; }
-	else return false;
+	int argNum;
+	if(((argNum = getScanfFormatString(fnRef)) == -1) &&
+		 ((argNum = getPrintfFormatString(fnRef)) == -1)) {
+		return false;
+	}
 
 	const SgExpression *frmt = removeImplicitPromotions(getFnArg(fnRef,argNum));
 	assert(frmt);

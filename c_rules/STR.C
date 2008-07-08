@@ -43,6 +43,8 @@ bool STR31_C(const SgNode *node ) {
  * Null-terminate byte strings as required
  *
  * \note This only works on character arrays that don't get initialized
+ * It also only examines strncpy; it doesn't handle realloc or
+ * other string-copying functions.
  */
 bool STR32_C(const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "strncpy")) return false;
@@ -130,30 +132,21 @@ bool STR35_C(const SgNode *node) {
 		return true;
 	}
 
-	if(isCallOfFunctionNamed(node, "scanf")) {
-		SgFunctionCallExp const *fn = isSgFunctionCallExp(node->get_parent());
-		assert(fn);
-
-		SgExprListExp const *expr = fn->get_args();
-		assert(expr);
-
-		SgExpressionPtrList const &list = expr->get_expressions();
-		SgExpressionPtrList::const_iterator i = list.begin();
-		//How do I asserted iterator?
-
-		SgCastExp const *cast = isSgCastExp(*i);
-		assert(cast);
-		
-		std::vector< SgNode * > t = const_cast<SgCastExp *>(cast)->get_traversalSuccessorContainer ();
-		SgStringVal const *val = isSgStringVal(t[0]);
-		assert(val);
-
-		std::string s = val->get_value();
-
-		if(strstr(s.c_str(), "%s") != NULL) {
-			print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
-			return true;
-		}
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	int argNum;
+	if((argNum = getScanfFormatString(fnRef)) == -1) {
+		return false;
+	}
+	const SgExpression *frmt = removeImplicitPromotions(getFnArg(fnRef,argNum));
+	assert(frmt);
+	const SgStringVal *frmt_s = isSgStringVal( frmt);
+	if (frmt_s == NULL) {
+		return false;
+	}
+	std::string s = frmt_s->get_value();
+	if(strstr(s.c_str(), "%s") != NULL) {
+		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
+		return true;
 	}
 
 	return false;

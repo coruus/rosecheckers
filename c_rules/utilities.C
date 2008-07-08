@@ -677,3 +677,38 @@ const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
 }
 
 
+/**
+ * If node is a function reference to scanf, or any of its derivitaves,
+ * returns the argument number of the format string (eg 0 for scanf, 1 for fscanf, etc)
+ * Otherwise, returns -1
+ */
+int getScanfFormatString(const SgFunctionRefExp *node) {
+	if (!node) return -1;
+	return isCallOfFunctionNamed(node, "scanf")
+		|| isCallOfFunctionNamed(node, "vscanf") ? 0
+		: isCallOfFunctionNamed(node, "fscanf")
+		|| isCallOfFunctionNamed(node, "sscanf")
+		|| isCallOfFunctionNamed(node, "vfscanf")
+		|| isCallOfFunctionNamed(node, "vsscanf") ? 1
+		: -1;
+}
+
+/**
+ * If node is a function reference to printf, or any of its derivitaves,
+ * returns the argument number of the format string (eg 0 for printf, 1 for fprintf, etc)
+ * Otherwise, returns -1
+ */
+int getPrintfFormatString(const SgFunctionRefExp *node) {
+	if (!node) return -1;
+	return isCallOfFunctionNamed(node, "printf")
+		|| isCallOfFunctionNamed(node, "vprintf") ? 0
+		: isCallOfFunctionNamed(node, "fprintf")
+		|| isCallOfFunctionNamed(node, "sprintf")
+		|| isCallOfFunctionNamed(node, "vfprintf")
+		|| isCallOfFunctionNamed(node, "vsprintf") ? 1
+		: isCallOfFunctionNamed(node, "snprintf")
+		|| isCallOfFunctionNamed(node, "vsnprintf") ? 2
+		: -1;
+}
+
+
