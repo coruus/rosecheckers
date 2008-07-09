@@ -258,6 +258,87 @@ bool EXP12_A( const SgNode *node ) {
 }
 
 /**
+ * This is a helper class for EXP30 because we need to do a traversal within
+ * sequence points
+ */
+class traverseSequencePoints: public AstPrePostProcessing {
+	private:
+	const SgNode * ignore_node;
+	std::map<const SgInitializedName*, bool> seen;
+
+	protected:
+	virtual void preOrderVisit(SgNode *node) {
+		/** Do nothing if we are in a subtree set off by a sequence point */
+		if (ignore_node)
+			return;
+
+		/**
+		 * Set a flag when entering a different sequence point
+		 * \see C99 Annex C
+		 */
+		if(isSgConditionalExp(node)
+		|| isSgFunctionCallExp(node)) {
+			ignore_node = node;
+			return;
+		}
+
+		/** We only care about variables that are being written to */
+		const SgVarRefExp* var = isSgVarRefExp(node);
+		if (!var || !varWrittenTo(var))
+			return;
+
+		/** 
+		 * Trigger a violation if we write to the same variable more than
+		 * once
+		 */
+		if (seen[getRefDecl(var)]) {
+			violation = true;
+		} else {
+			seen[getRefDecl(var)] = true;
+		}
+	}
+
+	virtual void postOrderVisit(SgNode *node) {
+		/** Clear flag once we leave the subtree */
+		if (ignore_node == node)
+			ignore_node = NULL;
+	}
+
+	public:
+	bool violation;
+
+	traverseSequencePoints() {
+		ignore_node = NULL;
+		violation = false;
+	}
+};
+
+	
+/**
+ * Do not depend on order of evaluation between sequence points
+ *
+ * \todo We could probably tune the sequence point matching better by looking
+ * at all SgExpressions, not just SgExprStatements... we'd also need to
+ * incorporate all of the sequence points from Annex C into the traversal
+ * class above, right now many of them are implicit in the ExprStatement match
+ */
+bool EXP30_C( const SgNode *node ) {
+	if (!isSgExprStatement(node))
+		return false;
+
+	traverseSequencePoints traversal;
+
+	traversal.traverse(const_cast<SgNode *>(node));
+
+	if (traversal.violation) {
+		print_error(node, "EXP30-C", "Do not depend on order of evaluation between sequence points");
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
  * Do not cast away a volatile qualification
  *
  * We check cast expressions to make sure that if they don't posses a volatile
@@ -359,6 +440,7 @@ bool EXP(const SgNode *node) {
   violation |= EXP09_A(node);
   violation |= EXP11_A(node);
   violation |= EXP12_A(node);
+  violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
   return violation;

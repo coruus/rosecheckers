@@ -560,27 +560,18 @@ bool isMinVal(const SgExpression *node) {
 	if(!node)
 		return false;
 	if (isSgUnsignedIntVal(node)) {
-		//std::cerr << "1a" << std::endl;
 		return 0 == isSgUnsignedIntVal(node)->get_value();
 	} else if (isSgIntVal(node)) {
-		//std::cerr << "2a" << std::endl;
-		//std::cerr << INT_MIN << std::endl;
-		//std::cerr << isSgIntVal(node)->get_value() << std::endl;
 		return INT_MIN == isSgIntVal(node)->get_value();
 	} else if (isSgUnsignedLongVal(node)) {
-		//std::cerr << "3a" << std::endl;
 		return 0 == isSgUnsignedLongVal(node)->get_value();
 	} else if (isSgLongIntVal(node)) {
-		//std::cerr << "4a" << std::endl;
 		return LONG_MIN == isSgLongIntVal(node)->get_value();
 	} else if (isSgUnsignedLongLongIntVal(node)) {
-		//std::cerr << "5a" << std::endl;
 		return 0 == isSgUnsignedLongLongIntVal(node)->get_value();
 	} else if (isSgLongLongIntVal(node)) {
-		//std::cerr << "6a" << std::endl;
 		return std::numeric_limits<long long>::min() == isSgLongLongIntVal(node)->get_value();
 	} else if (isSgUnsignedShortVal(node)) {
-		//std::cerr << "7a" << std::endl;
 		return 0 == isSgUnsignedShortVal(node)->get_value();
 	} else if (isSgShortVal(node)) {
 		return SHRT_MIN == isSgShortVal(node)->get_value();
@@ -589,7 +580,6 @@ bool isMinVal(const SgExpression *node) {
 	} else if (isSgCharVal(node)) {
 		return CHAR_MIN == isSgCharVal(node)->get_value();
 	} else {
-		//std::cerr << "no match" << std::endl;
 		return false;
 	}
 }
@@ -676,6 +666,134 @@ const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
 		: NULL;
 }
 
+enum VAL_TYPE {BOOL, CHAR, COMPLEX, DOUBLE, ENUM, FLOAT, INT, LDOUBLE, LONG, LLONG, SHORT, STRING, UCHAR, UINT, ULONG, ULLONG, USHORT, WCHAR, UNKNOWN };
+
+const VAL_TYPE getValType(const SgValueExp* node) {
+	if (isSgBoolValExp(node)) {
+		return BOOL;
+	} else if (isSgCharVal(node)) {
+		return CHAR;
+	} else if (isSgComplexVal(node)) {
+		return COMPLEX;
+	} else if (isSgDoubleVal(node)) {
+		return DOUBLE;
+	} else if (isSgEnumVal(node)) {
+		return ENUM;
+	} else if (isSgFloatVal(node)) {
+		return FLOAT;
+	} else if (isSgIntVal(node)) {
+		return INT;
+	} else if (isSgLongDoubleVal(node)) {
+		return LDOUBLE;
+	} else if (isSgLongIntVal(node)) {
+		return LONG;
+	} else if (isSgLongLongIntVal(node)) {
+		return LLONG;
+	} else if (isSgShortVal(node)) {
+		return SHORT;
+	} else if (isSgStringVal(node)) {
+		return STRING;
+	} else if (isSgUnsignedCharVal(node)) {
+		return UCHAR;
+	} else if (isSgUnsignedIntVal(node)) {
+		return UINT;
+	} else if (isSgUnsignedLongLongIntVal(node)) {
+		return ULLONG;
+	} else if (isSgUnsignedLongVal(node)) {
+		return ULONG;
+	} else if (isSgUnsignedShortVal(node)) {
+		return USHORT;
+	} else if (isSgWcharVal(node)) {
+		return WCHAR;
+	} else {
+		return UNKNOWN;
+	}
+}
+
+/**
+ * Evaluates an SgValueExp using the originalExpressionTree
+ *
+ * \note We only support a limited amount of operations and types
+ */
+SgValueExp* computeValueTree(SgValueExp* node) {
+	if (!node)
+		return NULL;
+
+	const SgExpression* tree = isSgValueExp(node)->get_originalExpressionTree();
+	if (!tree)
+		return node;
+
+	enum VAL_OP {ADD, ANDASSIGN, AND, ARROW, ARROWSTAR, ASSIGN, BITAND, BITOR, BITXOR, COMMA, CONCATENATION, DIVASSIGN, DIV, DOT, DOTSTAR, EQ, EXPONENTIATION, GEQ, GT, INTDIV, IORASSIGN, LEQ, LSHIFTASSIGN, LSHIFT, MINUSASSIGN, MODASSIGN, MOD, MULTASSIGN, MULT, NEQ, OR, PLUSASSIGN, PNTRARRREF, RSHIFTASSIGN, RSHIFT, SCOPE, SUBTRACT, XORASSIGN, BITCOMPLEMENT, CAST, MINUSMINUS, MINUS, NOT, PLUSPLUS, POINTERDEREF, THROW, UNKNOWN} val_op = UNKNOWN;
+	SgValueExp *lhs = NULL;
+	SgValueExp *rhs = NULL;
+
+	if (isSgBinaryOp(tree)) {
+		const SgBinaryOp * op = isSgBinaryOp(tree);
+		lhs = computeValueTree(isSgValueExp(op->get_lhs_operand()));
+		rhs = computeValueTree(isSgValueExp(op->get_rhs_operand()));
+		if (!lhs || !rhs)
+			return NULL;
+		if (isSgSubtractOp(op))
+			val_op = SUBTRACT;
+		else if (isSgPlusAssignOp(op))
+			val_op = PLUSASSIGN;
+		else if (isSgMinusAssignOp(op))
+			val_op = MINUSASSIGN;
+		else if (isSgAddOp(op))
+			val_op = ADD;
+		else if (isSgMultiplyOp(op))
+			val_op = MULT;
+		else if (isSgMultAssignOp(op))
+			val_op = MULTASSIGN;
+		else
+			return NULL;
+	} else if (isSgUnaryOp(tree)) {
+		const SgUnaryOp * op = isSgUnaryOp(tree);
+		lhs = computeValueTree(isSgValueExp(op->get_operand()));
+		if (!lhs)
+			return NULL;
+		if (isSgMinusOp(op))
+			val_op = MINUS;
+		else
+			return NULL;
+	} else {
+		return NULL;
+	}
+
+	switch(getValType(node)) {
+	case INT:
+		SgIntVal* val = isSgIntVal(node);
+		SgIntVal* lhsT = isSgIntVal(lhs);
+		SgIntVal* rhsT = isSgIntVal(rhs);
+
+		assert(val);
+		assert(lhsT);
+		if (rhs) assert(rhsT);
+
+		switch(val_op) {
+		case MULTASSIGN:
+		case MULT:
+			val->set_value(lhsT->get_value() * rhsT->get_value());
+			break;
+		case PLUSASSIGN:
+		case ADD:
+			val->set_value(lhsT->get_value() + rhsT->get_value());
+			break;
+		case MINUSASSIGN:
+		case SUBTRACT:
+			val->set_value(lhsT->get_value() - rhsT->get_value());
+			break;
+		case MINUS:
+			val->set_value(0 - lhsT->get_value());
+			break;
+		default:
+			return NULL;
+		}
+		return val;
+	default:
+		return NULL;
+	}
+}
 
 /**
  * If node is a function reference to scanf, or any of its derivitaves,
@@ -711,4 +829,40 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
 		: -1;
 }
 
+/**
+ * Checks to see if the variable is being written to by some kind of
+ * assignment or ++/-- operator
+ */
+bool varWrittenTo(const SgVarRefExp* var) {
+	const SgNode* parent = var;
+	const SgNode* child = NULL;
 
+	while (1) {
+		child = parent;
+		parent = child->get_parent();
+		assert(parent);
+
+		if (isSgCastExp(parent)
+		|| isSgAddressOfOp(parent)) {
+			continue;
+		} else if (isSgAndAssignOp(parent)
+		|| isSgAssignOp(parent)
+		|| isSgDivAssignOp(parent)
+		|| isSgIorAssignOp(parent)
+		|| isSgLshiftAssignOp(parent)
+		|| isSgMinusAssignOp(parent)
+		|| isSgModAssignOp(parent)
+		|| isSgMultAssignOp(parent)
+		|| isSgPlusAssignOp(parent)
+		|| isSgRshiftAssignOp(parent)
+		|| isSgXorAssignOp(parent)) {
+			if (isSgBinaryOp(parent)->get_lhs_operand() == child)
+				return true;
+		} else if(isSgMinusMinusOp(parent)
+		|| isSgPlusPlusOp(parent)) {
+			return true;
+		}
+		return false;
+
+	}
+}

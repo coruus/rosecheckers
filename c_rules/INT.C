@@ -302,7 +302,7 @@ bool INT32_C( const SgNode *node ) {
 	//std::cerr << binOp->unparseToString() << std::endl;
 
 		const SgExpression *lhs = binOp->get_lhs_operand();
-		const SgExpression *rhs = binOp->get_rhs_operand();
+		SgValueExp *rhs = isSgValueExp(binOp->get_rhs_operand());
 		const SgVarRefExp *iVar = isSgVarRefExp(lhs);
 		if (iVar && (getRefDecl(iVar) == varName)) {
 		//std::cerr << "4" << std::endl;
@@ -310,7 +310,7 @@ bool INT32_C( const SgNode *node ) {
 		//std::cerr << isSgIntVal(rhs)->unparseToString() << std::endl;
 		//std::cerr << isSgIntVal(rhs)->get_value() << std::endl;
 		//std::cerr << isSgIntVal(rhs)->get_valueString() << std::endl;
-			if (isMinVal(rhs))
+			if (isMinVal(computeValueTree(rhs)))
 				return false;
 		}
 		iVar = isSgVarRefExp(rhs);

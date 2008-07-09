@@ -29,6 +29,7 @@ void EXP09();
 void EXP10();
 void EXP11();
 void EXP12();
+void EXP30();
 void EXP31();
 void EXP32();
 void EXP33();
@@ -49,6 +50,7 @@ void EXP() {
   EXP10();
   EXP11();
   EXP12();
+  EXP30();
   EXP31();
   EXP32();
   EXP33();

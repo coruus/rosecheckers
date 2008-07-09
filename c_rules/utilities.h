@@ -167,7 +167,9 @@ const SgExpression* removeCasts(const SgExpression * expr);
 const SgType *stripModifiers(const SgType *type);
 const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p);
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node);
+SgValueExp* computeValueTree(SgValueExp* node);
 int getScanfFormatString(const SgFunctionRefExp *node);
 int getPrintfFormatString(const SgFunctionRefExp *node);
+bool varWrittenTo(const SgVarRefExp* var);
 
 #endif

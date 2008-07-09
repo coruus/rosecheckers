@@ -12,29 +12,30 @@ ENV_NCCE.c:121: warning: ENV04-A: Do not use system() or popen() unless you need
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
-"./ncce/EXP_NCCE.c", line 279: warning: 
+"./ncce/EXP_NCCE.c", line 281: warning: 
           a value of type "int **" cannot be assigned to an entity of type
           "volatile int **"
     ipp = &ip; /* produces warnings in modern compilers */
         ^
 
-"./ncce/EXP_NCCE.c", line 281: warning: 
+"./ncce/EXP_NCCE.c", line 283: warning: 
           a value of type "int **" cannot be assigned to an entity of type
           "volatile int **"
     ipp = (int**) &ip; /* constraint violation */
         ^
 
-EXP_NCCE.c:77: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
-EXP_NCCE.c:117: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:166: warning: EXP05-A: Do not cast away a const qualification
-EXP_NCCE.c:201: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:207: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:238: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:239: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:250: warning: EXP12-A: Do not ignore values returned by functions
-EXP_NCCE.c:316: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:79: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
+EXP_NCCE.c:119: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:168: warning: EXP05-A: Do not cast away a const qualification
+EXP_NCCE.c:203: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:209: warning: EXP09-A: malloc called using something other than sizeof()
+EXP_NCCE.c:240: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:241: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:252: warning: EXP12-A: Do not ignore values returned by functions
+EXP_NCCE.c:259: error: EXP30-C: Do not depend on order of evaluation between sequence points
 EXP_NCCE.c:318: error: EXP34-C: Ensure pointer is valid before dereferencing it
-EXP_NCCE.c:346: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
+EXP_NCCE.c:348: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:156: warning: EXP12-A: Do not ignore values returned by functions
 FIO_NCCE.c:262: warning: FIO07-A: Prefer fseek() to rewind()
 FIO_NCCE.c:282: warning: FIO08-A: Take care when calling remove() on an open file
