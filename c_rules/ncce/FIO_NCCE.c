@@ -413,7 +413,10 @@ void incorrect_password(char const *user) {
   if (!msg) {
     /* handle error condition */
   }
-  snprintf(msg, len, msg_format, user);
+  int ret = snprintf(msg, len, msg_format, user);
+  if (ret < 0 || (size_t) ret >= len) {\
+    /* Handle Error */
+  }
   fprintf(stderr, msg);
   free(msg);
   msg = NULL;

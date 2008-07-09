@@ -110,6 +110,17 @@ bool EXP05_A( const SgNode *node ) {
 }
 
 /**
+ * Ensure pointer arithmetic is used correctly
+ *
+ * \todo NOT DONE
+ */
+bool EXP08_A( const SgNode *node ) {
+	// get inside of a *alloc, [], or pointer arith
+	// Evaluate the number, make sure it has type byte 
+	return false;
+}
+
+/**
  * Use sizeof to determine the size of a type or variable -jp
  *
  * If this alloc expr is being cast to a type char* or char[], bail, it's OK
@@ -135,7 +146,7 @@ bool EXP09_A( const SgNode *node ) {
 	const SgType *t = stripModifiers(exp->get_type());
 	if (isSgTypedefType(t)
 	&& ((t->unparseToString() == "size_t")
-	 || (t->unparseToString() == "rsize_t")))
+	||  (t->unparseToString() == "rsize_t")))
 		return false;
 
 	// Find a sizeof operator inside argument
@@ -219,7 +230,6 @@ bool EXP12_A( const SgNode *node ) {
 	if ((ref == NULL)
 	|| isCallOfFunctionNamed(ref, "printf")
 	|| isCallOfFunctionNamed(ref, "fprintf")
-	|| isCallOfFunctionNamed(ref, "snprintf")
 	|| isCallOfFunctionNamed(ref, "close")
 	|| isCallOfFunctionNamed(ref, "fclose")
 	|| isCallOfFunctionNamed(ref, "free")
@@ -437,6 +447,7 @@ bool EXP(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_A(node);
   violation |= EXP05_A(node);
+  violation |= EXP08_A(node);
   violation |= EXP09_A(node);
   violation |= EXP11_A(node);
   violation |= EXP12_A(node);
