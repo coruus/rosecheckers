@@ -353,6 +353,38 @@ bool MEM31_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Use the correct syntax for flexible array members
+ */
+bool MEM33_C( const SgNode *node ) {
+	const SgClassDefinition* def = isSgClassDefinition(node);
+	if (!def)
+		return false;
+
+	const SgVariableDeclaration* varDecl = isSgVariableDeclaration(def->get_members().back());
+	assert(varDecl);
+
+	if (varDecl->get_variables().size() != 1)
+		return false;
+
+	const SgInitializedName *varName = varDecl->get_variables().front();
+	assert(varName);
+
+	const SgArrayType *arrT = isSgArrayType(varName->get_type());
+	if (!arrT)
+		return false;
+
+	const SgValueExp* arrSize = isSgValueExp(arrT->get_index());
+	if (!arrSize)
+		return false;
+
+	if (isVal(arrSize,0) || isVal(arrSize,1)) {
+		print_error(varDecl, "MEM33-C", "Use the correct syntax for flexible array members");
+		return true;
+	}
+	return false;
+}
+
 bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_A(node);
@@ -360,5 +392,6 @@ bool MEM(const SgNode *node) {
   violation |= MEM08_A(node);
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);
+  violation |= MEM33_C(node);
   return violation;
 }

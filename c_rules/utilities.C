@@ -526,31 +526,35 @@ bool getSizetVal(const SgExpression *node, size_t *value) {
 	return true;
 }
 
+bool isVal(const SgExpression *node, const intmax_t n) {
+	if(!node)
+		return false;
+	if (isSgUnsignedIntVal(node)) {
+		return n == isSgUnsignedIntVal(node)->get_value();
+	} else if (isSgIntVal(node)) {
+		return n == isSgIntVal(node)->get_value();
+	} else if (isSgUnsignedLongVal(node)) {
+		return n == isSgUnsignedLongVal(node)->get_value();
+	} else if (isSgLongIntVal(node)) {
+		return n == isSgLongIntVal(node)->get_value();
+	} else if (isSgUnsignedLongLongIntVal(node)) {
+		return n == (intmax_t) isSgUnsignedLongLongIntVal(node)->get_value();
+	} else if (isSgLongLongIntVal(node)) {
+		return n == isSgLongLongIntVal(node)->get_value();
+	} else if (isSgUnsignedShortVal(node)) {
+		return n == isSgUnsignedShortVal(node)->get_value();
+	} else if (isSgShortVal(node)) {
+		return n == isSgShortVal(node)->get_value();
+	} else {
+		return false;
+	}
+}
+
 /**
  * Takes a Value node and tries to make sure it is 0
  */
 bool isZeroVal(const SgExpression *node) {
-	if(!node)
-		return false;
-	if (isSgUnsignedIntVal(node)) {
-		return 0 == isSgUnsignedIntVal(node)->get_value();
-	} else if (isSgIntVal(node)) {
-		return 0 == isSgIntVal(node)->get_value();
-	} else if (isSgUnsignedLongVal(node)) {
-		return 0 == isSgUnsignedLongVal(node)->get_value();
-	} else if (isSgLongIntVal(node)) {
-		return 0 == isSgLongIntVal(node)->get_value();
-	} else if (isSgUnsignedLongLongIntVal(node)) {
-		return 0 == isSgUnsignedLongLongIntVal(node)->get_value();
-	} else if (isSgLongLongIntVal(node)) {
-		return 0 == isSgLongLongIntVal(node)->get_value();
-	} else if (isSgUnsignedShortVal(node)) {
-		return 0 == isSgUnsignedShortVal(node)->get_value();
-	} else if (isSgShortVal(node)) {
-		return 0 == isSgShortVal(node)->get_value();
-	} else {
-		return false;
-	}
+	return isVal(node,0);
 }
 
 /**

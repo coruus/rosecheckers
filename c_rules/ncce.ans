@@ -76,6 +76,7 @@ MEM_NCCE.c:317: warning: MEM01-A: Store a new value in pointers immediately afte
 MEM_NCCE.c:317: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:317: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM_NCCE.c:332: error: EXP34-C: Ensure pointer is valid before dereferencing it
+MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array members
 "./ncce/MSC_NCCE.c", line 87: warning: 
           expression has no effect
     a == b;
