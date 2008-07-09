@@ -769,7 +769,11 @@ void FIO39(void) {
 	if (fwrite(append_data, BUFSIZ, 1, file) != BUFSIZ) {
 	  /* Handle error */
 	}
-	fflush(file);
+
+	if (fseek(file, 0L, SEEK_SET) != 0) {
+	  /* Handle Error */
+	}
+
 	if (fread(data, BUFSIZ, 1, file) != 0) {
 	  /* handle there not being data */
 	}
