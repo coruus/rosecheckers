@@ -833,7 +833,7 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
  * Checks to see if the variable is being written to by some kind of
  * assignment or ++/-- operator
  */
-bool varWrittenTo(const SgVarRefExp* var) {
+bool varWrittenTo(const SgNode* var) {
 	const SgNode* parent = var;
 	const SgNode* child = NULL;
 

@@ -170,6 +170,6 @@ const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node);
 SgValueExp* computeValueTree(SgValueExp* node);
 int getScanfFormatString(const SgFunctionRefExp *node);
 int getPrintfFormatString(const SgFunctionRefExp *node);
-bool varWrittenTo(const SgVarRefExp* var);
+bool varWrittenTo(const SgNode* var);
 
 #endif

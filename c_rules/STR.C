@@ -23,6 +23,55 @@
 #include "utilities.h"
 
 /**
+ * Do not attempt to modify string literals
+ */
+bool STR30_C(const SgNode *node ) {
+	const SgInitializedName *varName = isSgInitializedName(node);
+	if (!varName)
+		return false;
+
+	/* Find out if varName is initialized with a string literal */
+	const SgAssignInitializer *init = isSgAssignInitializer(varName->get_initializer());
+	if (!init)
+		return false;
+
+	if (!isSgTypeString(init->get_type()))
+		return false;
+
+	FOREACH_SUBNODE(varName->get_scope(), nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		assert(iVar);
+
+		/* For some reason the compiler generates spurious accesses ... */
+		if (isCompilerGeneratedNode(iVar))
+			continue;
+
+		/* Make sure we are dealing with the correct variable here */
+		if (getRefDecl(iVar) != varName)
+			continue;
+
+		/* if the variable got written to, it probably no longer points to the
+		 * string */
+		if (varWrittenTo(iVar))
+			return false;
+
+		/* is it getting derefenced? */
+		const SgNode *parent = iVar->get_parent();
+		if (!(isSgPntrArrRefExp(parent)
+		    ||isSgPointerDerefExp(parent))) {
+			continue;
+		}
+
+		/* And is the derefence getting written to? */
+		if (varWrittenTo(parent)) {
+			print_error(iVar, "STR30-C", "Do not attempt to modify string literals");
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
  * Ensure that string storage is sufficient for chars & terminator
  *
  * This just ensures that strcpy is copying into a pointer
@@ -222,6 +271,7 @@ bool STR37_C(const SgNode *node) {
 
 bool STR(const SgNode *node) {
   bool violation = false;
+  violation |= STR30_C(node);
   violation |= STR31_C(node);
   violation |= STR32_C(node);
   violation |= STR35_C(node);

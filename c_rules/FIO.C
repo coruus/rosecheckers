@@ -122,6 +122,7 @@ bool FIO11_A( const SgNode *node ) {
 	|| (str == "ab")
 	|| (str == "r+")
 	|| (str == "w+")
+	|| (str == "a+")
 	|| (str == "r+b")
 	|| (str == "rb+")
 	|| (str == "w+b")
@@ -305,6 +306,7 @@ bool FIO(const SgNode *node) {
   bool violation = false;
   violation |= FIO07_A(node);
   violation |= FIO08_A(node);
+  violation |= FIO11_A(node);
   violation |= FIO12_A(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);

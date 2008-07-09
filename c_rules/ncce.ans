@@ -123,6 +123,7 @@ SIG_NCCE.c:147: error: SIG32-A: Do not call longjmp() from within a signal handl
 
 STR_NCCE.c:62: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
 STR_NCCE.c:63: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:101: error: STR30-C: Do not attempt to modify string literals
 STR_NCCE.c:129: error: STR32-C: Null-terminate byte strings as required
 STR_NCCE.c:168: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
 STR_NCCE.c:177: error: STR36-C: Do not specify the dimension of a character array initialized with a string literal
