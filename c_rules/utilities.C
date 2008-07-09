@@ -621,7 +621,7 @@ const SgType *stripModifiers(const SgType *type) {
  * Takes a function reference and tries to find the variable that the return
  * value is stored into
  *
- * \param[in] Function reference to search
+ * \param[in] fnRef Function reference to search
  * \param[out] varRef_p If this is an assignment not just an initializer, we
  * store the varref here
  */
