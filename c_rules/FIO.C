@@ -334,6 +334,38 @@ bool FIO34_C( const SgNode *node) {
 }
 
 /**
+ * Do not use a copy of a FILE object for input and output
+ */
+bool FIO38_C( const SgNode *node) {
+	const SgExpression *rhs = NULL;
+	if (isSgAndAssignOp(node)
+	|| isSgAssignOp(node)
+	|| isSgDivAssignOp(node)
+	|| isSgIorAssignOp(node)
+	|| isSgLshiftAssignOp(node)
+	|| isSgMinusAssignOp(node)
+	|| isSgModAssignOp(node)
+	|| isSgMultAssignOp(node)
+	|| isSgPlusAssignOp(node)
+	|| isSgRshiftAssignOp(node)
+	|| isSgXorAssignOp(node)) {
+		rhs = isSgBinaryOp(node)->get_rhs_operand();
+	} else if (isSgAssignInitializer(node)) {
+		rhs = isSgAssignInitializer(node)->get_operand();
+	}
+	if (!rhs)
+		return false;
+
+	if ((rhs->get_type()->unparseToString() == "FILE")
+	||  (rhs->get_type()->unparseToString() == "struct _IO_FILE")) {
+		print_error(node, "FIO38-C", "Do not use a copy of a FILE object for input and output");
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Do not alternately input and output from a stream without an intervening
  * flush or positioning call
  */
@@ -494,6 +526,7 @@ bool FIO(const SgNode *node) {
   violation |= FIO13_A(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
+  violation |= FIO38_C(node);
   violation |= FIO39_C(node);
   violation |= FIO43_C(node);
   violation |= FIO43_C_2(node);
