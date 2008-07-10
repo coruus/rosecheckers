@@ -23,6 +23,30 @@
 #include "rose.h"
 #include "utilities.h"
 
+bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+	if(isCallOfFunctionNamed(fnRef, "fread")) {
+		*argNum = 3;
+		return true;
+	}
+	if(isCallOfFunctionNamed(fnRef, "read")) {
+		*argNum = 0;
+		return true;
+	}
+	return false;
+}
+
+bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+	if(isCallOfFunctionNamed(fnRef, "fwrite")) {
+		*argNum = 3;
+		return true;
+	}
+	if(isCallOfFunctionNamed(fnRef, "write")) {
+		*argNum = 0;
+		return true;
+	}
+	return false;
+}
+
 /**
  * Prefer fseek() to rewind()
  */
@@ -145,6 +169,68 @@ bool FIO12_A( const SgNode *node ) {
 }
 
 /**
+ * Never push back anything other than one read character
+ */
+bool FIO13_A( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+
+	if(!isCallOfFunctionNamed(fnRef, "ungetc"))
+		return false;
+
+	const SgVarRefExp* fd = isSgVarRefExp(getFnArg(fnRef, 1));
+	assert(fd);
+
+	bool before = true;
+
+	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgBasicBlock).first, nodes, i, V_SgFunctionRefExp) {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+
+		/* Ignore nodes before fnRef */
+		if (before) {
+			if (iFn == fnRef)
+				before = false;
+			continue;
+		}
+
+		/* If we flushed the stream, we're done */
+		if (isCallOfFunctionNamed(iFn, "fflush")
+		||  isCallOfFunctionNamed(iFn, "fseek")
+		||  isCallOfFunctionNamed(iFn, "fsetpos")
+		||  isCallOfFunctionNamed(iFn, "rewind")) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 0));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
+				return false;
+			}
+			continue;
+		}
+
+		/* If we read from the stream, we're done */
+		unsigned int argNum;
+		if (isReadFn(iFn, &argNum)) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, argNum));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
+				return false;
+			}
+			continue;
+		}
+
+		/* Buf if it's another ungetc, that's no good */
+		if (isCallOfFunctionNamed(iFn, "ungetc")) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 1));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
+				print_error(node, "FIO13-A", "Never push back anything other than one read character", true);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
  * Exclude user input from format strings
  *
  * We make sure that the format argument to *printf family of functions is
@@ -207,30 +293,6 @@ bool FIO34_C( const SgNode *node) {
 
 	print_error( node, "FIO34-C", "Use int to capture the return value of character I/O functions");
 	return true;
-}
-
-bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
-	if(isCallOfFunctionNamed(fnRef, "fread")) {
-		*argNum = 3;
-		return true;
-	}
-	if(isCallOfFunctionNamed(fnRef, "read")) {
-		*argNum = 0;
-		return true;
-	}
-	return false;
-}
-
-bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
-	if(isCallOfFunctionNamed(fnRef, "fwrite")) {
-		*argNum = 3;
-		return true;
-	}
-	if(isCallOfFunctionNamed(fnRef, "write")) {
-		*argNum = 0;
-		return true;
-	}
-	return false;
 }
 
 /**
@@ -390,6 +452,7 @@ bool FIO(const SgNode *node) {
   violation |= FIO08_A(node);
   violation |= FIO11_A(node);
   violation |= FIO12_A(node);
+  violation |= FIO13_A(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
   violation |= FIO39_C(node);

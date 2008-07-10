@@ -40,6 +40,7 @@ FIO_NCCE.c:156: warning: EXP12-A: Do not ignore values returned by functions
 FIO_NCCE.c:262: warning: FIO07-A: Prefer fseek() to rewind()
 FIO_NCCE.c:282: warning: FIO08-A: Take care when calling remove() on an open file
 FIO_NCCE.c:324: warning: FIO12-A: Prefer setvbuf() to setbuf()
+FIO_NCCE.c:343: warning: FIO13-A: Never push back anything other than one read character
 FIO_NCCE.c:420: error: FIO30-C: Exclude user input from format strings
 FIO_NCCE.c:481: warning: EXP12-A: Do not ignore values returned by functions
 FIO_NCCE.c:492: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
