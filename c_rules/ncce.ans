@@ -36,6 +36,7 @@ EXP_NCCE.c:259: error: EXP30-C: Do not depend on order of evaluation between seq
 EXP_NCCE.c:318: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:348: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+FIO_NCCE.c:109: warning: FIO01-A: Be careful using functions that use file names for identification
 FIO_NCCE.c:156: warning: EXP12-A: Do not ignore values returned by functions
 FIO_NCCE.c:262: warning: FIO07-A: Prefer fseek() to rewind()
 FIO_NCCE.c:282: warning: FIO08-A: Take care when calling remove() on an open file

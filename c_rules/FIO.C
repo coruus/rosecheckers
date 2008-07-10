@@ -48,6 +48,44 @@ bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 }
 
 /**
+ * Be careful using functions that use file names for identification
+ */
+bool FIO01_A( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(isCallOfFunctionNamed(fnRef, "chown")
+	|| isCallOfFunctionNamed(fnRef, "stat")
+	|| isCallOfFunctionNamed(fnRef, "chmod"))) {
+		return false;
+	}
+
+	const SgVarRefExp* file_name = isSgVarRefExp(getFnArg(fnRef,0));
+	if (!file_name)
+		return false;
+
+
+	/**
+	 * See if the file was opened inside this function, if so, we have a
+	 * problem
+	 */
+	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+
+		if (isCallOfFunctionNamed(iFn, "open")
+		||  isCallOfFunctionNamed(iFn, "fopen")) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn,0));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(file_name))) {
+				print_error(node, "FIO01-A", "Be careful using functions that use file names for identification", true);
+				return true;
+			}
+		}
+	}
+
+	/* If the file was not opened, it's probably ok to use these functions */
+	return false;
+}
+
+/**
  * Prefer fseek() to rewind()
  */
 bool FIO07_A( const SgNode *node ) {
@@ -448,6 +486,7 @@ bool FIO44_C( const SgNode *node) {
 
 bool FIO(const SgNode *node) {
   bool violation = false;
+  violation |= FIO01_A(node);
   violation |= FIO07_A(node);
   violation |= FIO08_A(node);
   violation |= FIO11_A(node);
