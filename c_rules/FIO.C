@@ -209,6 +209,88 @@ bool FIO34_C( const SgNode *node) {
 	return true;
 }
 
+bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+	if(isCallOfFunctionNamed(fnRef, "fread")) {
+		*argNum = 3;
+		return true;
+	}
+	if(isCallOfFunctionNamed(fnRef, "read")) {
+		*argNum = 0;
+		return true;
+	}
+	return false;
+}
+
+bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+	if(isCallOfFunctionNamed(fnRef, "fwrite")) {
+		*argNum = 3;
+		return true;
+	}
+	if(isCallOfFunctionNamed(fnRef, "write")) {
+		*argNum = 0;
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Do not alternately input and output from a stream without an intervening
+ * flush or positioning call
+ */
+bool FIO39_C( const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+
+	bool read1 = false;
+	bool write1 = false;
+	unsigned int argNum;
+	read1 = isReadFn(fnRef, &argNum);
+	write1 = isWriteFn(fnRef, &argNum);
+	if (!(read1 || write1))
+		return false;
+
+	const SgVarRefExp* fd = isSgVarRefExp(getFnArg(fnRef, argNum));
+	assert(fd);
+
+	bool before = true;
+
+	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgBasicBlock).first, nodes, i, V_SgFunctionRefExp) {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+
+		/* Ignore nodes before fnRef */
+		if (before) {
+			if (iFn == fnRef)
+				before = false;
+			continue;
+		}
+
+		/* If we flushed the stream, we're done */
+		if (isCallOfFunctionNamed(iFn, "fflush")
+		||  isCallOfFunctionNamed(iFn, "fseek")
+		||  isCallOfFunctionNamed(iFn, "fsetpos")
+		||  isCallOfFunctionNamed(iFn, "rewind")) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 0));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
+				return false;
+			}
+			continue;
+		}
+
+		if ((read1 && isWriteFn(iFn, &argNum))
+		|| (write1 && isReadFn(iFn, &argNum))) {
+			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, argNum));
+			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
+				print_error(node, "FIO39-C", "Do not alternately input and output from a stream without an intervening flush or positioning call");
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 /**
  * Do not use tmpfile()
  */
@@ -310,6 +392,7 @@ bool FIO(const SgNode *node) {
   violation |= FIO12_A(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
+  violation |= FIO39_C(node);
   violation |= FIO43_C(node);
   violation |= FIO43_C_2(node);
   violation |= FIO43_C_3(node);
