@@ -5,6 +5,7 @@
   	                          ^
 
 ARR_NCCE.c:50: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
 DCL_NCCE.c:68: warning: DCL01-A: Do not reuse variable names in subscopes
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
 ENV_NCCE.c:97: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter

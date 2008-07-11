@@ -176,6 +176,74 @@ bool ARR34_C( const SgNode *node ) {
 }
 
 /**
+ * Do not add or subtract an integer to a pointer to a non-array object
+ */
+bool ARR37_C( const SgNode *node ) {
+	const SgVarRefExp* varRef = isSgVarRefExp(node);
+	if (!varRef || !isSgPointerType(varRef->get_type()))
+		return false;
+
+	const SgNode *parent = removeCasts(isSgExpression(varRef->get_parent()));
+	if (!parent)
+		return false;
+
+	/* See if we have a case of pointer arithmetic */
+	/**
+	 * \todo XXX consider checking +=/-=
+	 */
+	if (!(isSgPlusPlusOp(parent)
+	||  isSgMinusMinusOp(parent)
+	||  isSgAddOp(parent)
+	||  isSgSubtractOp(parent)))
+		return false;
+
+	/* Search forward to find the varRef */
+	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgScopeStatement*>(varRef->get_symbol()->get_scope()), V_SgVarRefExp);
+	Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
+	for (; i != nodes.end(); ++i ) {
+		const SgVarRefExp * iVar = isSgVarRefExp(*i);
+		assert(iVar);
+		if (iVar == varRef)
+			break;
+	}
+
+	/* Now walk backwards looking at the assignments to our variable */
+	assert(i != nodes.begin());
+	bool flag = true;
+	for (--i; flag; --i) {
+		/* We have to be  a little tricky here since we can't do >= begin */
+		if (i == nodes.begin())
+			flag = false;
+		const SgVarRefExp * iVar = isSgVarRefExp(*i);
+		assert(iVar);
+		if (getRefDecl(iVar) != getRefDecl(varRef))
+			continue;
+		parent = removeCasts(isSgExpression(iVar->get_parent()));
+		assert(parent);
+		const SgExpression *rhs = NULL;
+		if (isSgAssignInitializer(parent)) {
+			rhs = isSgAssignInitializer(parent)->get_operand();
+		} else if (isSgAssignOp(parent)) {
+			rhs = isSgBinaryOp(parent)->get_rhs_operand();
+		} else {
+			/* Hopefully this is just a reference to var */
+			continue;
+		}
+		assert(rhs);
+		rhs = removeImplicitPromotions(rhs);
+		if (isSgAddressOfOp(rhs)) {
+			FOREACH_SUBNODE(rhs, rhs_nodes, j, V_SgPntrArrRefExp) {
+				return false;
+			}
+			print_error(node, "ARR37-C", "Do not add or subtract an integer to a pointer to a non-array object");
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Do not add or subtract an integer to a pointer if the resulting value does
  * not refer to a valid array element
  *
@@ -192,6 +260,7 @@ bool ARR(const SgNode *node) {
   violation |= ARR02_A(node);
   violation |= ARR33_C(node);
   violation |= ARR34_C(node);
+  violation |= ARR37_C(node);
   violation |= ARR38_C(node);
   return violation;
 }
