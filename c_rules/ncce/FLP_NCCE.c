@@ -20,6 +20,7 @@
 void FLP02();
 void FLP03();
 void FLP30();
+//void FLP31();
 void FLP32();
 void FLP33();
 void FLP34();
@@ -28,6 +29,7 @@ void FLP() {
 	FLP02();
 	FLP03();
 	FLP30();
+//	FLP31();
 	FLP32();
 	FLP33();
 	FLP34();
@@ -97,9 +99,19 @@ void FLP30(void) {
 	for (x = 100000001.0f; x <= 100000010.0f; x += 1.0f) {
 	  /* ... */
 	}
-	}
+}
 
-	void FLP32(void) {
+/* FLP31_A v.15 */
+
+//void FLP31(void) {
+//	double complex c = 2.0 + 4.0 * I;
+//	/* ... */
+//	double complex result = log2(c);
+//	printf("%f + %fi\n", creal(result), cimag(result));
+//}
+
+
+void FLP32(void) {
 	double x = 0;
 	double y = 0; 
 	double result;

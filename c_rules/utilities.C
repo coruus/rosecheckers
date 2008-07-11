@@ -839,10 +839,12 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
  * assignment or ++/-- operator
  */
 bool varWrittenTo(const SgNode* var) {
+	assert(var);
 	const SgNode* parent = var;
 	const SgNode* child = NULL;
 
 	while (1) {
+		assert(parent);
 		child = parent;
 		parent = child->get_parent();
 		assert(parent);

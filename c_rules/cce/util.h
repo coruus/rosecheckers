@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <math.h>
+#include <complex.h>
 #include <time.h>
 #include <float.h>
 #include <unistd.h>

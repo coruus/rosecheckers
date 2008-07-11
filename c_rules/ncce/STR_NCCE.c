@@ -90,6 +90,8 @@ void STR06() {
   while (token = strtok(0, ":")) {
     /* something */
   }
+
+	printf("STR06 %s\n", path);
 	printf("STR06 %p\n", token);
 }
 

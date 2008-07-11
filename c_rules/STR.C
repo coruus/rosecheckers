@@ -23,6 +23,67 @@
 #include "utilities.h"
 
 /**
+ * Do not assume that strtok() leaves the parse string unchanged 
+ */
+bool STR06_A( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+
+	if(!isCallOfFunctionNamed(fnRef, "strtok"))
+		return false;
+
+	const SgVarRefExp* str = isSgVarRefExp(removeImplicitPromotions(getFnArg(fnRef, 0)));
+
+	/* Probably a call to strtok(0,...) */
+	if (!str)
+		return false;
+
+	bool before = true;
+
+	FOREACH_SUBNODE(str->get_symbol()->get_scope(), nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		assert(iVar);
+
+		/* Ignore nodes before fnRef */
+		if (before) {
+			if (iVar == str)
+				before = false;
+			continue;
+		}
+
+		/* Ignore other variables */
+		if (getRefDecl(iVar) != getRefDecl(str))
+			continue;
+
+		/* If we wrote to the string, we're done */
+		if (varWrittenTo(iVar))
+			return false;
+
+		const SgFunctionCallExp* iFn = isSgFunctionCallExp(findParentNodeOfType(iVar, V_SgFunctionCallExp).first);
+		if (iFn) {
+			const SgFunctionRefExp *iRef = isSgFunctionRefExp(iFn->get_function());
+			assert(iRef);
+			if (isCallOfFunctionNamed(iRef, "free"))
+				return false;
+			if (isCallOfFunctionNamed(iRef, "memcpy")
+			||  isCallOfFunctionNamed(iRef, "strcpy")
+			||  isCallOfFunctionNamed(iRef, "strncpy")) {
+				const SgVarRefExp* arg = isSgVarRefExp(getFnArg(iRef, 0));
+				assert(arg);
+				if (getRefDecl(arg) == getRefDecl(str))
+					return false;
+			}
+		}
+
+		print_error(iVar, "STR06-A", "Do not assume that strtok() leaves the parse string unchanged", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Do not attempt to modify string literals
  */
 bool STR30_C(const SgNode *node ) {
@@ -271,6 +332,7 @@ bool STR37_C(const SgNode *node) {
 
 bool STR(const SgNode *node) {
   bool violation = false;
+  violation |= STR06_A(node);
   violation |= STR30_C(node);
   violation |= STR31_C(node);
   violation |= STR32_C(node);

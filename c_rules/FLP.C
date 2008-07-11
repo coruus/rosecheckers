@@ -30,6 +30,63 @@
 #include "utilities.h"
 
 /**
+ * Do not call functions expecting real values with complex values
+ */
+bool FLP31_C( const SgNode *node ) {
+	bool violation = false;;
+	/* one arg */
+	if (isCallOfFunctionNamed(node, "cbrt")
+	||  isCallOfFunctionNamed(node, "ceil")
+	||  isCallOfFunctionNamed(node, "erf")
+	||  isCallOfFunctionNamed(node, "erfc")
+	||  isCallOfFunctionNamed(node, "exp2")
+	||  isCallOfFunctionNamed(node, "expm1")
+	||  isCallOfFunctionNamed(node, "floor")
+	||  isCallOfFunctionNamed(node, "frexp")
+	||  isCallOfFunctionNamed(node, "ilogb")
+	||  isCallOfFunctionNamed(node, "ldexp")
+	||  isCallOfFunctionNamed(node, "lgamma")
+	||  isCallOfFunctionNamed(node, "llrint")
+	||  isCallOfFunctionNamed(node, "llround")
+	||  isCallOfFunctionNamed(node, "log10")
+	||  isCallOfFunctionNamed(node, "log1p")
+	||  isCallOfFunctionNamed(node, "log2")
+	||  isCallOfFunctionNamed(node, "logb")
+	||  isCallOfFunctionNamed(node, "lrint")
+	||  isCallOfFunctionNamed(node, "lround")
+	||  isCallOfFunctionNamed(node, "nearbyint")
+	||  isCallOfFunctionNamed(node, "rint")
+	||  isCallOfFunctionNamed(node, "round")
+	||  isCallOfFunctionNamed(node, "tgamma")
+	||  isCallOfFunctionNamed(node, "trunc")) {
+		violation = isSgTypeComplex(getFnArg(isSgFunctionRefExp(node), 0)->get_type());
+	} else
+	/* two args */
+	if (isCallOfFunctionNamed(node, "atan2")
+	||  isCallOfFunctionNamed(node, "copysign")
+	||  isCallOfFunctionNamed(node, "fdim")
+	||  isCallOfFunctionNamed(node, "fmax")
+	||  isCallOfFunctionNamed(node, "fmin")
+	||  isCallOfFunctionNamed(node, "fmod")
+	||  isCallOfFunctionNamed(node, "hypot")
+	||  isCallOfFunctionNamed(node, "nextafter")
+	||  isCallOfFunctionNamed(node, "nexttoward")
+	||  isCallOfFunctionNamed(node, "remainder")
+	||  isCallOfFunctionNamed(node, "remquo")
+	||  isCallOfFunctionNamed(node, "scalbn")
+	||  isCallOfFunctionNamed(node, "scalbln")) {
+	} else
+	/* three args */
+	if (isCallOfFunctionNamed(node, "fma")) {
+	}
+	if (violation) {
+		print_error(node, "FLP31-C", "Do not call functions expecting real values with complex values");
+		return true;
+	}
+	return false;
+}
+
+/**
  * Convert integers to floating point for floating point operations
  *
  * \see INT07_A
@@ -77,6 +134,7 @@ bool FLP33_C( const SgNode *node ) {
 
 bool FLP(const SgNode *node) {
   bool violation = false;
+  violation |= FLP31_C(node);
   violation |= FLP33_C(node);
   return violation;
 }
