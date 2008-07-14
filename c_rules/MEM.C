@@ -233,6 +233,7 @@ bool MEM07_A( const SgNode *node ) {
 	if (nmembRef || sizeRef) {
 		/* Search for the previous line, see if it is a check for overflow */
 		/* XXX */
+		return false;
 	} else {
 		if (nmembVal <= (std::numeric_limits<size_t>::max() / sizeVal))
 			return false;
