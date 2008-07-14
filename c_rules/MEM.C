@@ -208,6 +208,41 @@ bool MEM04_A( const SgNode *node ) {
 }
 
 /**
+ * Ensure that the arguments to calloc() when multiplied can be represented as
+ * a size_t
+ */
+bool MEM07_A( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "calloc"))
+		return false;
+	const SgFunctionRefExp* fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+
+	const SgExpression* nmembExp = getFnArg(fnRef, 0);
+	const SgExpression* sizeExp = getFnArg(fnRef, 1);
+	assert(nmembExp && sizeExp);
+
+	const SgVarRefExp* nmembRef = isSgVarRefExp(nmembExp);
+	size_t nmembVal;
+	if (!nmembRef && !getSizetVal(nmembExp, &nmembVal))
+		return false;
+	const SgVarRefExp* sizeRef = isSgVarRefExp(sizeExp);
+	size_t sizeVal;
+	if (!sizeRef && !getSizetVal(sizeExp, &sizeVal))
+		return false;
+
+	if (nmembRef || sizeRef) {
+		/* Search for the previous line, see if it is a check for overflow */
+		/* XXX */
+	} else {
+		if (nmembVal <= (std::numeric_limits<size_t>::max() / sizeVal))
+			return false;
+	}
+
+	print_error(node, "MEM07-A", "Ensure that the arguments to calloc() when multiplied can be represented as a size_t", true);
+	return true;
+}
+
+/**
  * Use realloc() only to resize dynamically allocated arrays
  */
 bool MEM08_A( const SgNode *node ) {
@@ -389,6 +424,7 @@ bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_A(node);
   violation |= MEM04_A(node);
+  violation |= MEM07_A(node);
   violation |= MEM08_A(node);
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);

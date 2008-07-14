@@ -37,7 +37,7 @@ using namespace std;
  *
  * \note obsolete
  */
-bool SIG00_a( const SgNode *node ) {
+bool SIG00_A( const SgNode *node ) {
   static set<const SgFunctionSymbol*> All_Handlers;
 
   if (!isCallOfFunctionNamed( node, "signal")) return false;
@@ -143,7 +143,7 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
 }
 
 
-bool SIG30_c( const SgNode *node ) { // Call only async-safe functions in a signal handler
+bool SIG30_C( const SgNode *node ) { // Call only async-safe functions in a signal handler
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
   assert(sig_fn != NULL);
@@ -163,7 +163,7 @@ bool SIG30_c( const SgNode *node ) { // Call only async-safe functions in a sign
  * Specifically, this rule only ensures that any variable referenced is either
  * local or is static volatile sig_atomic_t
  */
-bool SIG31_c( const SgNode *node ) {
+bool SIG31_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed( node, "signal"))
 		return false;
 	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
@@ -222,7 +222,7 @@ bool SIG31_c( const SgNode *node ) {
 /**
  * Do not call longjmp() from within a signal handler
  */
-bool SIG32_c( const SgNode *node ) {
+bool SIG32_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
   assert(sig_fn != NULL);
@@ -241,11 +241,87 @@ bool SIG32_c( const SgNode *node ) {
   return false;
 }
 
+/**
+ * Do not call signal() from within interruptible signal handlers
+ */
+bool SIG34_C( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "signal"))
+		return false;
+
+	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
+	assert(sigRef);
+
+	/**
+	 * Usually this is a value, but we really have no idea what type the macro
+	 * will expand to, so it's easier to just look at the string, which will
+	 * be either a number (or a variable name)
+	 */
+	const std::string sigStr = getFnArg(sigRef, 0)->unparseToString();
+
+	const SgFunctionRefExp *handlerRef = isSgFunctionRefExp(getFnArg(isSgFunctionRefExp(node), 1));
+	if (!handlerRef)
+		return false;
+
+	const SgFunctionDeclaration *handlerDecl = handlerRef->get_symbol()->get_declaration();
+	assert(handlerDecl);
+
+	const SgFunctionDefinition *handlerDef = handlerDecl->get_definition();
+	assert(handlerDef);
+
+	/**
+	 * Because we are looking at a recursive call, we should ignore the case
+	 * where the "node" is the same as the iCall that we will find later,
+	 * otherwise we will report the same line twice
+	 */
+	if (isSgFunctionDefinition(findParentNodeOfType(sigRef, V_SgFunctionDefinition).first) == handlerDef)
+		return false;
+
+	const SgInitializedName *signum = handlerDecl->get_args().front();
+	assert(signum);
+
+	bool violation = false;
+
+	FOREACH_SUBNODE(handlerDef, nodes, i, V_SgFunctionCallExp) {
+		const SgFunctionCallExp *iCall = isSgFunctionCallExp(*i);
+		assert(iCall);
+		const SgFunctionRefExp *iSig = isSgFunctionRefExp(iCall->get_function());
+		assert(iSig);
+		if (!isCallOfFunctionNamed(iSig, "signal"))
+			continue;
+
+		const SgFunctionRefExp *iRef = isSgFunctionRefExp(getFnArg(isSgFunctionRefExp(iSig), 1));
+		if (!iRef)
+			continue;
+
+		if (iRef->get_symbol() != handlerRef->get_symbol())
+			continue;
+
+		const SgExpression *sigExp = getFnArg(iSig, 0);
+		assert(sigExp);
+
+		/**
+		 * If we are not assigning to the same signal, ignore
+		 */
+		if (isSgVarRefExp(sigExp)) {
+			if (getRefDecl(isSgVarRefExp(sigExp)) != signum)
+				continue;
+		} else if(sigExp->unparseToString() != sigStr) {
+			continue;
+		}
+
+		print_error(iSig, "SIG34-C", "Do not call signal() from within interruptible signal handlers");
+		violation = true;
+	}
+
+	return violation;
+}
+
 bool SIG(const SgNode *node) {
   bool violation = false;
-  //  violation |= SIG00_a(node);
-  violation |= SIG30_c(node);
-  violation |= SIG31_c(node);
-  violation |= SIG32_c(node);
+  //  violation |= SIG00_A(node);
+  violation |= SIG30_C(node);
+  violation |= SIG31_C(node);
+  violation |= SIG32_C(node);
+  violation |= SIG34_C(node);
   return violation;
 }

@@ -108,6 +108,7 @@ POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
 POS_NCCE.c:93: error: POS35-A: Avoid race conditions while checking for the existence of a symbolic link
 POS_NCCE.c:113: error: POS36-C: Observe correct revocation order while relinquishing privileges
 PRE_NCCE.c:114: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
+SIG_NCCE.c:74: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG_NCCE.c:96: error: SIG31-C: Do not access or modify shared objects in a signal handler
 SIG_NCCE.c:123: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
@@ -115,6 +116,7 @@ SIG_NCCE.c:123: error: SIG31-C: Do not access or modify shared objects in a sign
 SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG_NCCE.c:144: error: SIG31-C: Do not access or modify shared objects in a signal handler
 SIG_NCCE.c:147: error: SIG32-A: Do not call longjmp() from within a signal handler
+SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 "./ncce/STR_NCCE.c", line 67: warning: 
           argument of type "signed char *" is incompatible with parameter of
           type "const char *"
