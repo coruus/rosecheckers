@@ -67,8 +67,8 @@ INT_NCCE.c:123: warning: INT01-A: Use strtol() or a related function to convert 
 INT_NCCE.c:132: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
 INT_NCCE.c:134: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:181: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-INT_NCCE.c:254: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-INT_NCCE.c:264: warning: INT13-A: Use bitwise operators only on unsigned operands
+INT_NCCE.c:256: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
+INT_NCCE.c:266: warning: INT13-A: Use bitwise operators only on unsigned operands
 MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.
@@ -104,6 +104,8 @@ MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array member
     ^
 
 MSC_NCCE.c:69: warning: MSC01-A: Strive for logical completeness
+MSC_NCCE.c:105: warning: MSC03-A: Avoid errors of addition
+MSC_NCCE.c:198: warning: MSC03-A: Avoid errors of addition
 MSC_NCCE.c:243: error: MSC30-C: Do not use rand()
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable

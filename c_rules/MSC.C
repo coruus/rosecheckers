@@ -55,44 +55,69 @@ bool MSC01_A( const SgNode *node ) {
  *
  * \todo Catch if statements with empty BasicBlocks
  */
-//bool MSC03_A( const SgNode *node ) {
-//	const SgExprStatement *exprStmt = isSgExprStatement(node);
-//	if (!exprStmt)
-//		return false;
-//
-//	const SgBasicBlock *parent = isSgBasicBlock(exprStmt->get_parent());
-//	if (!parent)
-//		return false;
-//
-//	const SgExpression *expr = exprStmt->get_expression();
-//	assert(expr);
-//
-//	if (isCompilerGeneratedNode(expr))
-//		return false;
-//
-//	if(isSgFunctionCallExp(expr)
-//	|| isSgAssignOp(expr)
-//	|| isSgConditionalExp(expr)
-//	|| isSgAndAssignOp(expr)
-//	|| isSgDivAssignOp(expr)
-//	|| isSgIorAssignOp(expr)
-//	|| isSgXorAssignOp(expr)
-//	|| isSgLshiftAssignOp(expr)
-//	|| isSgRshiftAssignOp(expr)
-//	|| isSgMinusAssignOp(expr)
-//	|| isSgModAssignOp(expr)
-//	|| isSgMultAssignOp(expr)
-//	|| isSgPointerDerefExp(expr)
-//	|| isSgPlusPlusOp(expr)
-//	|| isSgMinusMinusOp(expr)
-//	|| isSgPlusAssignOp(expr))
-//		return false;
-//
-//	std::cerr << expr->unparseToString() << std::endl;
-//
-//	print_error(node, "MSC03-A", "Avoid errors of addition", true);
-//	return true;
-//}
+bool MSC03_A( const SgNode *node ) {
+	const SgExprStatement *exprStmt = isSgExprStatement(node);
+	if (!exprStmt) {
+		/**
+		 * Check for empty bodies
+		 */
+		const SgBasicBlock *block = NULL;
+		if (isSgIfStmt(node))
+			block = isSgBasicBlock(isSgIfStmt(node)->get_true_body());
+		else if (isSgForStatement(node))
+			block = isSgBasicBlock(isSgForStatement(node)->get_loop_body());
+		else if (isSgWhileStmt(node))
+			block = isSgBasicBlock(isSgWhileStmt(node)->get_body());
+		else
+			return false;
+
+		if (!block
+		|| !isCompilerGeneratedNode(block))
+			return false;
+	} else {
+		/**
+		 * Check for statements with no effect
+		 */
+		const SgBasicBlock *parent = isSgBasicBlock(exprStmt->get_parent());
+		if (!parent)
+			return false;
+
+		/**
+		 * Ignore the last statement in a block because it could be an implicit
+		 * return value, this is GNU extension
+		 */
+		if ((exprStmt == isSgExprStatement(parent->get_statements().back()))
+		&&  (!isSgFunctionDefinition(parent->get_parent())))
+			return false;
+
+		const SgExpression *expr = exprStmt->get_expression();
+		assert(expr);
+
+		if (isCompilerGeneratedNode(expr))
+			return false;
+
+		if(isSgFunctionCallExp(expr)
+		|| isSgAssignOp(expr)
+		|| isSgConditionalExp(expr)
+		|| isSgAndAssignOp(expr)
+		|| isSgDivAssignOp(expr)
+		|| isSgIorAssignOp(expr)
+		|| isSgXorAssignOp(expr)
+		|| isSgLshiftAssignOp(expr)
+		|| isSgRshiftAssignOp(expr)
+		|| isSgMinusAssignOp(expr)
+		|| isSgModAssignOp(expr)
+		|| isSgMultAssignOp(expr)
+		|| isSgPointerDerefExp(expr)
+		|| isSgPlusPlusOp(expr)
+		|| isSgMinusMinusOp(expr)
+		|| isSgPlusAssignOp(expr))
+			return false;
+	}
+
+	print_error(node, "MSC03-A", "Avoid errors of addition", true);
+	return true;
+}
 
 /**
  * Do not use rand()
@@ -106,7 +131,7 @@ bool MSC30_C( const SgNode *node ) {
 bool MSC(const SgNode *node) {
   bool violation = false;
   violation |= MSC01_A(node);
-//  violation |= MSC03_A(node);
+  violation |= MSC03_A(node);
   violation |= MSC30_C(node);
   return violation;
 }
