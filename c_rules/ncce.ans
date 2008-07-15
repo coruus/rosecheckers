@@ -83,29 +83,28 @@ MEM_NCCE.c:317: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:317: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM_NCCE.c:332: error: EXP34-C: Ensure pointer is valid before dereferencing it
 MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array members
-"./ncce/MSC_NCCE.c", line 87: warning: 
+"./ncce/MSC_NCCE.c", line 105: warning: 
           expression has no effect
     a == b;
     ^
 
-"./ncce/MSC_NCCE.c", line 102: warning: 
+"./ncce/MSC_NCCE.c", line 120: warning: 
           nested comment is not allowed
        /* some other comment */
        ^
 
-"./ncce/MSC_NCCE.c", line 152: warning: 
+"./ncce/MSC_NCCE.c", line 170: warning: 
           statement is unreachable
       if (s) {
       ^
 
-"./ncce/MSC_NCCE.c", line 180: warning: 
+"./ncce/MSC_NCCE.c", line 198: warning: 
           expression has no effect
     a == b;
     ^
 
-MSC_NCCE.c:87: warning: MSC03-A: Avoid errors of addition
-MSC_NCCE.c:180: warning: MSC03-A: Avoid errors of addition
-MSC_NCCE.c:225: error: MSC30-C: Do not use rand()
+MSC_NCCE.c:69: warning: MSC01-A: Strive for logical completeness
+MSC_NCCE.c:243: error: MSC30-C: Do not use rand()
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
 POS_NCCE.c:93: error: POS35-A: Avoid race conditions while checking for the existence of a symbolic link

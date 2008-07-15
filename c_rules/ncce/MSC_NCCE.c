@@ -61,7 +61,25 @@ void MSC01() {
   else if (a == c) {
     /* ... */
   }
+
+	enum WidgetEnum { WE_W, WE_X, WE_Y, WE_Z } widget_type;
+
+	widget_type = WE_W;
+
+	switch (widget_type) {
+	  case WE_X:
+		/* ... */
+		break;
+	  case WE_Y:
+		/* ... */
+		break;
+	  case WE_Z:
+		/* ... */
+		break;
+	}
 }
+
+
 
 
 /* MSC02_A v.46 */

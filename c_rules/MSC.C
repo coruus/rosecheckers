@@ -30,11 +30,30 @@
 #include "utilities.h"
 
 /**
+ * Strive for logical completeness
+ */
+bool MSC01_A( const SgNode *node ) {
+	const SgSwitchStatement *swch = isSgSwitchStatement(node);
+	if (!swch)
+		return false;
+
+	const SgStatementPtrList &stats = swch->get_body()->get_statements();
+	if ((stats.size() > 0)
+	&& isSgDefaultOptionStmt(stats.back()))
+		return false;
+
+	print_error(node, "MSC01-A", "Strive for logical completeness", true);
+	return true;
+}
+
+/**
  * Avoid errors of addition 
  *
  * \note Because of a problem with the expansion of isnan/isless/etc, this
  * rule is disabled, ROSE catches most of this on it's own, so this should not
  * be a problem
+ *
+ * \todo Catch if statements with empty BasicBlocks
  */
 //bool MSC03_A( const SgNode *node ) {
 //	const SgExprStatement *exprStmt = isSgExprStatement(node);
@@ -86,6 +105,7 @@ bool MSC30_C( const SgNode *node ) {
 
 bool MSC(const SgNode *node) {
   bool violation = false;
+  violation |= MSC01_A(node);
 //  violation |= MSC03_A(node);
   violation |= MSC30_C(node);
   return violation;
