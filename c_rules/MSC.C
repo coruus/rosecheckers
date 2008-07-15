@@ -30,6 +30,52 @@
 #include "utilities.h"
 
 /**
+ * Avoid errors of addition 
+ *
+ * \note Because of a problem with the expansion of isnan/isless/etc, this
+ * rule is disabled, ROSE catches most of this on it's own, so this should not
+ * be a problem
+ */
+//bool MSC03_A( const SgNode *node ) {
+//	const SgExprStatement *exprStmt = isSgExprStatement(node);
+//	if (!exprStmt)
+//		return false;
+//
+//	const SgBasicBlock *parent = isSgBasicBlock(exprStmt->get_parent());
+//	if (!parent)
+//		return false;
+//
+//	const SgExpression *expr = exprStmt->get_expression();
+//	assert(expr);
+//
+//	if (isCompilerGeneratedNode(expr))
+//		return false;
+//
+//	if(isSgFunctionCallExp(expr)
+//	|| isSgAssignOp(expr)
+//	|| isSgConditionalExp(expr)
+//	|| isSgAndAssignOp(expr)
+//	|| isSgDivAssignOp(expr)
+//	|| isSgIorAssignOp(expr)
+//	|| isSgXorAssignOp(expr)
+//	|| isSgLshiftAssignOp(expr)
+//	|| isSgRshiftAssignOp(expr)
+//	|| isSgMinusAssignOp(expr)
+//	|| isSgModAssignOp(expr)
+//	|| isSgMultAssignOp(expr)
+//	|| isSgPointerDerefExp(expr)
+//	|| isSgPlusPlusOp(expr)
+//	|| isSgMinusMinusOp(expr)
+//	|| isSgPlusAssignOp(expr))
+//		return false;
+//
+//	std::cerr << expr->unparseToString() << std::endl;
+//
+//	print_error(node, "MSC03-A", "Avoid errors of addition", true);
+//	return true;
+//}
+
+/**
  * Do not use rand()
  */
 bool MSC30_C( const SgNode *node ) {
@@ -40,6 +86,7 @@ bool MSC30_C( const SgNode *node ) {
 
 bool MSC(const SgNode *node) {
   bool violation = false;
+//  violation |= MSC03_A(node);
   violation |= MSC30_C(node);
   return violation;
 }

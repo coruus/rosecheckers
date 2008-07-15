@@ -103,6 +103,8 @@ MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array member
     a == b;
     ^
 
+MSC_NCCE.c:87: warning: MSC03-A: Avoid errors of addition
+MSC_NCCE.c:180: warning: MSC03-A: Avoid errors of addition
 MSC_NCCE.c:225: error: MSC30-C: Do not use rand()
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable

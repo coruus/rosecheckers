@@ -214,7 +214,10 @@ bool FIO13_A( const SgNode *node ) {
 	if (!fnRef)
 		return false;
 
-	if(!isCallOfFunctionNamed(fnRef, "ungetc"))
+	std::string fn_str;
+
+	if(!(isCallOfFunctionNamed(fnRef, "ungetc"))
+	  ||(isCallOfFunctionNamed(fnRef, "ungetwc")))
 		return false;
 
 	const SgVarRefExp* fd = isSgVarRefExp(getFnArg(fnRef, 1));
@@ -256,7 +259,8 @@ bool FIO13_A( const SgNode *node ) {
 		}
 
 		/* Buf if it's another ungetc, that's no good */
-		if (isCallOfFunctionNamed(iFn, "ungetc")) {
+		if (isCallOfFunctionNamed(iFn, "ungetc")
+		||  isCallOfFunctionNamed(iFn, "ungetwc")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 1));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
 				print_error(node, "FIO13-A", "Never push back anything other than one read character", true);
