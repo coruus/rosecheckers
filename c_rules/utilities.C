@@ -499,8 +499,16 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 			return NULL;
 	}
 	while (delta < 0) {
-		if ((i--) == nodes.begin())
+		if ((i--) == nodes.begin()) {
+			if (delta == -1) {
+				parent = block->get_parent();
+				assert(parent);
+				if (isSgForStatement(parent)
+				||  isSgIfStmt(parent))
+					return isSgStatement(parent);
+			}
 			return NULL;
+		}
 		delta++;
 	}
 

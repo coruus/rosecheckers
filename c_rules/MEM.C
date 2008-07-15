@@ -232,8 +232,31 @@ bool MEM07_A( const SgNode *node ) {
 
 	if (nmembRef || sizeRef) {
 		/* Search for the previous line, see if it is a check for overflow */
-		/* XXX */
-		return false;
+		/**
+		 * \todo We need to find a more rigorous way to find checks for
+		 * overflow
+		 */
+		const SgStatement *prevStat = findInBlockByOffset(node, -1);
+		if (prevStat) {
+			FOREACH_SUBNODE(prevStat, nodes, i, V_SgBinaryOp) {
+				const SgBinaryOp *binOp = isSgBinaryOp(*i);
+				assert(binOp);
+				if (!(isSgEqualityOp(binOp)
+					||isSgGreaterOrEqualOp(binOp)
+					||isSgGreaterThanOp(binOp)
+					||isSgLessOrEqualOp(binOp)
+					||isSgLessThanOp(binOp)
+					||isSgNotEqualOp(binOp)))
+					continue;
+				const SgVarRefExp *lhs = isSgVarRefExp(binOp->get_lhs_operand());
+				const SgVarRefExp *rhs = isSgVarRefExp(binOp->get_rhs_operand());
+				if((lhs && nmembRef && (getRefDecl(lhs)==getRefDecl(nmembRef)))
+				|| (lhs && sizeRef  && (getRefDecl(lhs)==getRefDecl(sizeRef)))
+				|| (rhs && nmembRef && (getRefDecl(rhs)==getRefDecl(nmembRef)))
+				|| (rhs && sizeRef  && (getRefDecl(rhs)==getRefDecl(sizeRef))))
+					return false;
+			}
+		}
 	} else {
 		if (nmembVal <= (std::numeric_limits<size_t>::max() / sizeVal))
 			return false;
