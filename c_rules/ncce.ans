@@ -5,7 +5,9 @@
   	                          ^
 
 ARR_NCCE.c:50: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR_NCCE.c:146: warning: EXP05-A: Do not cast away a const qualification
 ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
+DCL_NCCE.c:54: warning: DCL00-A: Const-qualify immutable objects: pi
 DCL_NCCE.c:68: warning: DCL01-A: Do not reuse variable names in subscopes
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
 ENV_NCCE.c:97: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
@@ -66,8 +68,10 @@ INT_NCCE.c:91: error: INT33-C: Ensure that division and modulo operations do not
 INT_NCCE.c:123: warning: INT01-A: Use strtol() or a related function to convert a string token to an integer
 INT_NCCE.c:132: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
 INT_NCCE.c:181: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+INT_NCCE.c:246: error: INT32-C: Ensure that operations on signed integers do not result in overflow
 INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:269: warning: INT13-A: Use bitwise operators only on unsigned operands
+MEM_NCCE.c:78: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.

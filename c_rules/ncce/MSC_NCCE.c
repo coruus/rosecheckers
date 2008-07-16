@@ -210,7 +210,7 @@ void MSC14() {
   if (~ui1 < ui2) {
     /* handle error condition */
   }
-  unsigned int sum = ui1 + ui2;
+  const unsigned int sum = ui1 + ui2;
 	printf("MSC14 %d\n",sum);
 }
 

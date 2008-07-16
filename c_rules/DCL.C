@@ -94,6 +94,7 @@ bool DCL00_A( const SgNode *node ) {
 			|| isSgSubtractOp(parent)
 			|| isSgAssignOp(parent)
 			|| isSgPntrArrRefExp(parent)
+			|| isSgPointerDerefExp(parent)
 			|| isSgAssignInitializer(parent)))
 			return false;
 	}
