@@ -91,7 +91,7 @@ void FIO(void){
 
 void FIO00(void) {
 char const *error_msg = "Resource not available to user.";
-int error_type = 3;
+const int error_type = 3;
 /* ... */
 printf("Error (type %s): %d\n", error_type, error_msg);
 }
@@ -147,7 +147,7 @@ if (!fp) { /* file does not exist */
 /* FIO04 v.44 */
 
 void FIO04(void) {
-	long offset = 19;
+	const long offset = 19;
 	FILE *file = fopen("t", "w");
 	if(!file) return;
 
@@ -408,12 +408,12 @@ void incorrect_password(char const *user) {
   /* user names are restricted to 256 characters or less */
   static char const *msg_format 
     = "%s cannot be authenticated.\n";
-  size_t len = strlen(user) + sizeof(msg_format);
+  const size_t len = strlen(user) + sizeof(msg_format);
   char *msg = (char *) malloc(len);
   if (!msg) {
     /* handle error condition */
   }
-  int ret = snprintf(msg, len, msg_format, user);
+  const int ret = snprintf(msg, len, msg_format, user);
   if (ret < 0 || (size_t) ret >= len) {\
     /* Handle Error */
   }
@@ -429,7 +429,7 @@ void FIO30(void) {
 /* FIO31 v.27 */
 
 void do_stuff(void) {
-  FILE *logfile = fopen("log", "a");
+  const FILE *logfile = fopen("log", "a");
   if(logfile == NULL) {
     /* handle error */
   }
@@ -440,7 +440,7 @@ void do_stuff(void) {
 }
 
 void FIO31(void) {
-  FILE *logfile = fopen("log", "a");
+  const FILE *logfile = fopen("log", "a");
   if(logfile == NULL) {
     /* handle error */
   }
@@ -590,7 +590,7 @@ void FIO41(void) {
 
 	/* initialize file_name */
 
-	int c = getc(fptr = fopen(file_name, "r"));
+	const int c = getc(fptr = fopen(file_name, "r"));
 	if (c == EOF) {
 	  /* Handle error */
 	}

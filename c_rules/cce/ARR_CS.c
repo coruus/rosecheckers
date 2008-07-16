@@ -61,7 +61,7 @@ void ARR01(void) {
 /*ARR02_A v.08 */
 
 void ARR02(void) {
-  int ARR02_a[4] = {1, 2, 3, 4};
+  const int ARR02_a[4] = {1, 2, 3, 4};
   printf("ARR02: %d\n", ARR02_a);
 }
 
@@ -161,9 +161,9 @@ void ARR34(void) {
 /*ARR36_C v.17 */
 
 void ARR36(void) {
-	int nums[16];
+	const int nums[16];
 	char *strings[16];
-	int *next_num_ptr = nums;
+	const int *next_num_ptr = nums;
 	int free_bytes;
 
 	free_bytes = (next_num_ptr - nums) * sizeof(int);
@@ -185,7 +185,7 @@ int sum_numbers(int const *numb, size_t dim) {
 
 void ARR37(void) {
   int my_numbers[3] = { 1, 2, 3 };
-	int sum = sum_numbers(my_numbers, sizeof(my_numbers)/sizeof(my_numbers[0]));
+	const int sum = sum_numbers(my_numbers, sizeof(my_numbers)/sizeof(my_numbers[0]));
 	printf("%d\n", sum);
 }
 

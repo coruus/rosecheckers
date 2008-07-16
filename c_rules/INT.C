@@ -342,6 +342,14 @@ bool INT33_C( const SgNode *node ) {
 		return false;
 
 	/**
+	 * If the variable is constant, it's likely that the programmer already
+	 * knows the value and a check is not necessary
+	 */
+	Type varType(varRef->get_type());
+	if (varType.isConst())
+		return false;
+
+	/**
 	 * See if we checked the var against zero in the previous line or
 	 * maybe we're in an if statement or something that has the check in the
 	 * conditional

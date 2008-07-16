@@ -107,10 +107,10 @@ void STR30() {
 /* STR31_C v.79 */
 
 void STR31() {
-  size_t ARRAY_SIZE = 8;
+  const size_t ARRAY_SIZE = 8;
 
   char dest[ARRAY_SIZE];
-  char src[] = "012345678";
+  const char src[] = "012345678";
   size_t i;
 
   for (i=0; src[i] && (i < sizeof(dest)); i++) {

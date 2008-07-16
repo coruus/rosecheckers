@@ -57,7 +57,7 @@ void POS30() {
 void POS33() {
   char *filename = "foo";
 
-  pid_t pid = fork();
+  const pid_t pid = fork();
   if ( pid == 0 )  /* child */ {
     if (execve(filename, NULL, NULL) == -1) {
       /* Handle Error */
@@ -77,7 +77,7 @@ int POS34_func(char const *var) {
   if (env == NULL) {
     return -1;
   }
-  int rc = snprintf(env, len, env_format, var);
+  const int rc = snprintf(env, len, env_format, var);
   if (rc < 0 || (size_t)rc >= len) {
     /* Handle Error */
   }
@@ -103,7 +103,7 @@ void POS34() {
 void POS35() {
   char *filename = "foo";
   char userbuf[] = "foobar";
-  unsigned int userlen = sizeof(userbuf);
+  const unsigned int userlen = sizeof(userbuf);
 
   struct stat lstat_info;
   struct stat fstat_info;

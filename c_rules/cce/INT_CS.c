@@ -67,7 +67,7 @@ void INT00() {
  #error "No safe type is available."
 #endif
   /* ... */
-  unsigned int a = 2, b = 3;
+  const unsigned int a = 2, b = 3;
   uintmax_t c;
   /* ... */
   c = (uintmax_t)a * b; /* guaranteed to fit, verified above */
@@ -78,8 +78,8 @@ void INT00() {
 /* INT02_A v.54 */
 
 void INT02() {
-  int si = -1;
-  unsigned ui = 1;
+  const int si = -1;
+  const unsigned ui = 1;
   if(si < (int) ui)
     return;
   return;
@@ -206,8 +206,8 @@ void INT06() {
 /* INT07_A v.34 */
 
 void INT07() {
-  unsigned char c = 200;
-  int i = 1000;
+  const unsigned char c = 200;
+  const int i = 1000;
   printf("INT05 %d\n", i/c);
 }
 
@@ -258,7 +258,7 @@ struct INT11_ptrflag {
 
 void INT11() {
   char *ptr = NULL;
-  unsigned int flag = 0;
+  const unsigned int flag = 0;
 
   ptrflag.pointer = ptr;
   ptrflag.flag = flag;
@@ -279,7 +279,7 @@ void INT12() {
 
 void INT13() {
   int rc = 0;
-  unsigned int stringify = 0x80000000;
+  const unsigned int stringify = 0x80000000;
   char buf[sizeof("256")];
   rc = snprintf(buf, sizeof(buf), "%u", stringify >> 24);
   if (rc == -1 || rc >= sizeof(buf)) {
@@ -314,7 +314,7 @@ void INT30() {
 /* INT31_C v.66 */
 
 void INT31() {
-  unsigned long int ul = ULONG_MAX;
+  const unsigned long int ul = ULONG_MAX;
   signed char sc;
   if (ul <= SCHAR_MAX) {
     sc = (signed char)ul;  /* use cast to eliminate warning */
@@ -365,7 +365,8 @@ void INT33() {
 /* INT34_C v.43 */
 
 void INT34() {
-	unsigned int ui1 = 0, ui2 = 0, sresult;
+	const unsigned int ui1 = 0, ui2 = 0;
+	unsigned int sresult;
 
 	if ((ui2 >= sizeof(int)*CHAR_BIT) 
 	  || (ui1 > (INT_MAX >> ui2)) ) 

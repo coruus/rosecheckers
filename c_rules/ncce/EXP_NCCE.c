@@ -63,7 +63,7 @@ void EXP() {
 /* EXP00_A v.52 */
 
 void EXP00() {
-  int x = 0;
+  const int x = 0;
 
   printf("EXP00 %d\n" ,x & 1 == 0);
 }
@@ -93,7 +93,7 @@ void EXP01() {
 void EXP02() {
   char *p;
 
-  unsigned int BUF_SIZE = 12;
+  const unsigned int BUF_SIZE = 12;
 
   if ( p || (p = (char *)malloc(BUF_SIZE)) ) {
     /* do stuff with p */
@@ -182,7 +182,7 @@ void EXP05() {
 
 void EXP06() {
   int a = 14;
-  int b = sizeof(a++);
+  const int b = sizeof(a++);
   printf("EXP06 %d %d\n", a, b);
 }
 
@@ -190,8 +190,8 @@ void EXP06() {
 /* EXP07_A v.14 */
 
 void EXP07() {
-  unsigned int nbytes = 4;
-  unsigned int nblocks = 1 + ((nbytes - 1) >> 9); /* BUFSIZ = 512 = 2^9 */
+  const unsigned int nbytes = 4;
+  const unsigned int nblocks = 1 + ((nbytes - 1) >> 9); /* BUFSIZ = 512 = 2^9 */
   printf("EXP07 %d\n", nblocks);
 }
 
@@ -224,7 +224,7 @@ int EXP10_f(int i) {
 }
 
 void EXP10() {
-  int x = EXP10_f(1) + EXP10_f(2); 
+  const int x = EXP10_f(1) + EXP10_f(2); 
 }
 
 
@@ -316,7 +316,7 @@ void EXP33() {
 
 void EXP34() {
   char *input_str = (char*) malloc(3);
-  size_t size = strlen(input_str)+1;
+  const size_t size = strlen(input_str)+1;
   char *str = (char*) malloc(size);
   memcpy(str, input_str, size);
   /* ... */
@@ -330,7 +330,7 @@ void EXP34() {
 struct EXP35_X { char a[6]; };
 
 struct EXP35_X EXP35_addressee(void) {
-  struct EXP35_X result = { "world" };
+  const struct EXP35_X result = { "world" };
   return result;
 }
 

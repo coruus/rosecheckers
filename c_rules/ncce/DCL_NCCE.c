@@ -52,7 +52,7 @@ void DCL() {
 
 void DCL00() {
   float pi = 3.14159f;
-  float degrees = 0.0;
+  const float degrees = 0.0;
   float radians;
   /* ... */
   radians = degrees * pi / 180;
@@ -104,7 +104,7 @@ void DCL04() {
 /* DCL06_A v.88 */
 
 void DCL06() {
-  int age = random() % 100;
+  const int age = random() % 100;
 
   if(age > 18) {
     /* something */
@@ -137,7 +137,7 @@ void DCL10() {
 /* DCL11_A v.49 */
 
 void DCL11() {
-  long long a = 1;
+  const long long a = 1;
   char const msg[] = "Default message";
 
   printf("%d %s", a, msg);
@@ -185,7 +185,7 @@ void DCL30() {
 /* DCL31_C v.20 */
 
 void DCL31() {
-  unsigned foo = 0;
+  const unsigned foo = 0;
   printf("DCL31 %d\n", foo);
 }
 

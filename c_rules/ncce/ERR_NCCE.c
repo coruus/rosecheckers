@@ -111,7 +111,7 @@ void ERR31() {}
 typedef void (*ERR32_pfv)(int);
 
 void ERR32_handler(int signum) {
-  ERR32_pfv old_handler = signal(signum, SIG_DFL);
+  const ERR32_pfv old_handler = signal(signum, SIG_DFL);
   if (old_handler == SIG_ERR) {
     perror("SIGINT handler"); /* undefined behavior */
     /* handle error condition */
@@ -119,7 +119,7 @@ void ERR32_handler(int signum) {
 }
 
 void ERR32() {
-  ERR32_pfv old_handler = signal(SIGINT, ERR32_handler);
+  const ERR32_pfv old_handler = signal(SIGINT, ERR32_handler);
   if (old_handler == SIG_ERR) {
     perror("SIGINT handler");
     /* handle error condition */

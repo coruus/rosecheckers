@@ -64,7 +64,7 @@ inline int PRE00_A_A(int i) {
 
 void PRE00_A() {
   int i = 2;
-  int a = 81 / PRE00_A_A(++i);
+  const int a = 81 / PRE00_A_A(++i);
 }
 
 size_t PRE00_B_count = 0;
@@ -107,8 +107,8 @@ inline int PRE00_C_B(int x) {
 }
 
 void PRE00_C() {
-  unsigned int x = 3;
-  unsigned int y = PRE00_C_A(x) + PRE00_C_B(x);  
+  const unsigned int x = 3;
+  const unsigned int y = PRE00_C_A(x) + PRE00_C_B(x);  
 }
 
 
@@ -117,7 +117,7 @@ void PRE00_C() {
 #define PRE01_CUBE(I) ( (I) * (I) * (I) )
 
 void PRE01() {
-  int a = 81 / PRE01_CUBE(2 + 1);
+  const int a = 81 / PRE01_CUBE(2 + 1);
   printf("PRE01 %d\n", a);
 }
 
@@ -127,8 +127,8 @@ void PRE01() {
 #define PRE02_CUBE(X) ((X) * (X) * (X))
 
 void PRE02_A() {
-  int i = 3;
-  int a = 81 / PRE02_CUBE(i);
+  const int i = 3;
+  const int a = 81 / PRE02_CUBE(i);
   printf("PRE02 %d\n", a);
 }
 

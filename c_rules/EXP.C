@@ -98,6 +98,13 @@ bool EXP05_A( const SgNode *node ) {
 	const SgExpression *expr = cast->get_operand();
 	assert(expr);
 
+	/**
+	 * This allows things like a = (int) b, where b is const and is not
+	 */
+	const Type exprType(expr->get_type());
+	if (!(exprType.isPointer() || exprType.isArray()))
+		return false;
+
 	bool castIsConst = Type(cast->get_type()).isConst();
 	bool exprIsConst = Type(expr->get_type()->dereference()).isConst();
 

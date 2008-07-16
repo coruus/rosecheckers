@@ -67,7 +67,7 @@ int verify_size(char *list, size_t size) {
 }
 
 void MEM00() {
-  size_t number = 15;
+  const size_t number = 15;
   char *list = (char *)malloc(number);
 
   if (list == NULL) {
@@ -106,9 +106,9 @@ char *message = (char *)malloc(10);
 /* TODO */
 /* MEM03 v.95 */
 void ncce_free_example(char *secret) {
-size_t secret_size = strlen(secret);
+const size_t secret_size = strlen(secret);
 char *new_secret;
-size_t size = strlen(secret);
+const size_t size = strlen(secret);
 if (size == SIZE_MAX) {
   /* Handle Error */
 }
@@ -126,7 +126,7 @@ new_secret = NULL;
 }
 
 void ncce_realloc_example(char *secret) {
-size_t secret_size = strlen(secret);
+const size_t secret_size = strlen(secret);
 /* ... */
 if (secret_size > SIZE_MAX/2) {
    /* handle error condition */
@@ -161,7 +161,7 @@ void MEM04(void) {
 	}
 
 	/* ... */
-	int nsize = 0;
+	const int nsize = 0;
 
 	if ((p2 = (char *)realloc(p, nsize)) == NULL) {
 	  free(p);
@@ -199,8 +199,8 @@ unsigned long fib1(unsigned int n) {
 }
 
 void MEM05(void) {
-  int i = copy_file(NULL, NULL, 256);
-  long b = fib1(5);
+  const int i = copy_file(NULL, NULL, 256);
+  const long b = fib1(5);
   printf("%d\n", i + b);
 }
 /* MEM06 v.22 */
@@ -220,7 +220,7 @@ secret = NULL;
 
 /* MEM07 v.55 */
 void MEM07(void) {
-size_t num_elements = 10;
+const size_t num_elements = 10;
 long *buffer = (long *)calloc(num_elements, sizeof(long));
 if (buffer == NULL) {
   /* handle error condition */
@@ -266,7 +266,7 @@ void MEM09(void) {
 
 	/* initialize string to be copied */
 
-	size_t len = strlen(str);
+	const size_t len = strlen(str);
 	if (len >= MAX_BUF_SIZE)  {
 	  /* handle string too long error */
 	}
@@ -305,8 +305,8 @@ void MEM30(void) {
 /* MEM31 v.61 */
 
 void MEM31(void) {
-size_t number = 10;
-int error_condition = 0;
+const size_t number = 10;
+const int error_condition = 0;
 int *x = (int *)malloc (number * sizeof(int));
 if (x == NULL) {
   /* Handle Allocation Error */
@@ -324,11 +324,11 @@ free(x);
 void MEM32(void) {
 	char *input_string = "Awefajgae";
 	void *p = NULL;
-	size_t new_size = 10;
+	const size_t new_size = 10;
 
 	/* initialize input_string */
 
-	size_t size = strlen(input_string) + 1;
+	const size_t size = strlen(input_string) + 1;
 	char *str = (char *)malloc(size);
 	strcpy(str, input_string);
 	/* ... */
@@ -354,7 +354,7 @@ struct flexArrayStruct {
 /* ... */
 
 void MEM33(void) {
-	size_t array_size = 0;
+	const size_t array_size = 0;
 	size_t i;
 
 	/* space is allocated for the struct */
@@ -414,7 +414,7 @@ static void *alloc_blocks(size_t num_blocks) {
   if (num_blocks == 0) {
     return NULL;
   }
-  unsigned long long alloc = num_blocks * BLOCKSIZE ;
+  const unsigned long long alloc = num_blocks * BLOCKSIZE ;
   return (alloc < UINT_MAX)
      ? malloc(num_blocks * BLOCKSIZE )
      : NULL;

@@ -38,7 +38,7 @@ void POS() {
 
 void POS30() {
   char buf[1024];
-  ssize_t len = readlink("/usr/bin/perl", buf, sizeof(buf));
+  const ssize_t len = readlink("/usr/bin/perl", buf, sizeof(buf));
   buf[len] = '\0';
 }
 
@@ -48,7 +48,7 @@ void POS30() {
 void POS33() {
   char *filename = "foo";
 
-  pid_t pid = vfork();
+  const pid_t pid = vfork();
   if ( pid == 0 )  /* child */ {
     if (execve(filename, NULL, NULL) == -1) {
       /* Handle Error */
@@ -81,7 +81,7 @@ void POS34() {
 void POS35() {
   char *filename = "foo";
   char userbuf[]  = "foo";
-  unsigned int userlen = sizeof(userbuf);
+  const unsigned int userlen = sizeof(userbuf);
 
   struct stat lstat_info;
   int fd;

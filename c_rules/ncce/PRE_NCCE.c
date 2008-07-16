@@ -61,7 +61,7 @@ void PRE00(void) {
 
 void PRE00_A() {
   int i = 2;
-  int a = 81 / PRE00_A_CUBE(++i);
+  const int a = 81 / PRE00_A_CUBE(++i);
 }
 
 size_t PRE00_B_count = 0;
@@ -90,8 +90,8 @@ void PRE00_C() {
   unsigned int operations = 0;
   unsigned int calls_to_PRE00_C_A = 0;
   unsigned int calls_to_PRE00_C_B = 0;
-  unsigned int x = 3;
-  unsigned int y = PRE00_C_A(x) + PRE00_C_B(x);  
+  const unsigned int x = 3;
+  const unsigned int y = PRE00_C_A(x) + PRE00_C_B(x);  
 }
 
 
@@ -100,7 +100,7 @@ void PRE00_C() {
 #define PRE01_CUBE(I) (I * I * I)
 
 void PRE01() {
-  int a = 81 / PRE01_CUBE(2 + 1);
+  const int a = 81 / PRE01_CUBE(2 + 1);
 	printf("PRE01 %d\n", a);
 }
 
@@ -110,8 +110,8 @@ void PRE01() {
 #define PRE02_CUBE(X) (X) * (X) * (X)
 
 void PRE02_A() {
-  int i = 3;
-  int a = 81 / PRE02_CUBE(i);
+  const int i = 3;
+  const int a = 81 / PRE02_CUBE(i);
 	printf("PRE02 %d\n", a);
 }
 
@@ -162,7 +162,7 @@ void PRE06() {}
 /* PRE07_A v.33 */
 
 void PRE07() {
-  size_t i = 0;
+  const size_t i = 0;
   /* assignment of i */
   if (i > 9000) {
     if (puts("Over 9000!??!") == EOF) {}
@@ -193,7 +193,8 @@ void PRE09() {}
   y = tmp
 
 void PRE10() {
-  int x = 0, y = 0, z = 0, tmp;
+  const int z = 0;
+  int x = 0, y = 0, tmp;
   if (z == 0)
     PRE10_SWAP(x, y);
 }

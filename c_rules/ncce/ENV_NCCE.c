@@ -106,7 +106,7 @@ void ENV04() {
   /* input gets initialized by user */
 
   char cmdbuf[512];
-  int len_wanted = snprintf(
+  const int len_wanted = snprintf(
 			    cmdbuf, 
 			    sizeof(cmdbuf), 
 			    "any_cmd '%s'", 

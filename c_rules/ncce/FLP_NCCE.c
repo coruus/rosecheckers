@@ -112,8 +112,8 @@ void FLP30(void) {
 
 
 void FLP32(void) {
-	double x = 0;
-	double y = 0; 
+	const double x = 0;
+	const double y = 0; 
 	double result;
 
 	result = acos(x);
@@ -129,13 +129,13 @@ void FLP32(void) {
 }
 
 void FLP33(void) {
-	short a = 533;
-	int b = 6789;
-	long c = 466438237;
+	const short a = 533;
+	const int b = 6789;
+	const long c = 466438237;
 
-	float d = a / 7; /* d is 76.0 */
-	double e = b / 30; /* e is 226.0 */
-	double f = c * 789; /*  f may be negative due to overflow */
+	const float d = a / 7; /* d is 76.0 */
+	const double e = b / 30; /* e is 226.0 */
+	const double f = c * 789; /*  f may be negative due to overflow */
 }
 
 void FLP34(void) {
@@ -150,8 +150,8 @@ void FLP34(void) {
 
 	/* Begin {code} */
 
-	long double ld = 0.0;
-	double d1 = 0.0;
+	const long double ld = 0.0;
+	const double d1 = 0.0;
 	double d2 = 0.0;
 	f1 = 0.0f;
 	float f2 = 0.0f;

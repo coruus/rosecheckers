@@ -51,9 +51,9 @@ void MSC() {
 /* MSC01_A v.35 */
 
 void MSC01() {
-  unsigned int a = 0;
-  unsigned int b = 0;
-  unsigned int c = 0;
+  const unsigned int a = 0;
+  const unsigned int b = 0;
+  const unsigned int c = 0;
 
   if (a == b) {
     /* ... */
@@ -92,8 +92,8 @@ void MSC01() {
 /* MSC02_A v.46 */
 
 void MSC02() {
-  unsigned int a = 0;
-  unsigned int b = 0;
+  const unsigned int a = 0;
+  const unsigned int b = 0;
  
   if (a == b) {
     /* ... */
@@ -105,7 +105,7 @@ void MSC02() {
 
 void MSC03() {
   unsigned int a = 0;
-  unsigned int b = 0;
+  const unsigned int b = 0;
 
   a = b;
   printf("MSC03 %d\n", a);
@@ -132,7 +132,7 @@ void MSC04() {
 /* MSC05_A v.40 */
 
 int MSC05_do_work(int seconds_to_work) {
-  time_t start = time(NULL);
+  const time_t start = time(NULL);
   time_t current = start;
 
   if (start == (time_t)(-1)) {
@@ -198,10 +198,10 @@ void MSC07() {
 /* MSC09_A v.50 */
 
 void MSC09() {
-  char *file_name = "name.ext";
-  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+  const char *file_name = "name.ext";
+  const mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-  int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, mode);
+  const int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, mode);
   if (fd == -1) {
     /* Handle Error */
   }
@@ -213,7 +213,7 @@ void MSC09() {
 
 void MSC12() {
   int a = 0;
-  int b = 1;
+  const int b = 1;
 
   a = b;
 
@@ -263,7 +263,7 @@ void MSC30() {
   int r;
   int num;
   /* ... */
-  time_t now = time(NULL);
+  const time_t now = time(NULL);
   if (now == (time_t) -1) {
     /* handle error */
   }
@@ -278,7 +278,7 @@ void MSC30() {
 /* MSC31_C v.104 */
 
 void MSC31() {
-  time_t now = time(NULL);
+  const time_t now = time(NULL);
   if (now != (time_t)-1) {
     /* Continue processing */
   }

@@ -59,16 +59,15 @@ FLP_NCCE.c:137: error: FLP33-C: Convert integers to floating point for floating 
 FLP_NCCE.c:138: error: FLP33-C: Convert integers to floating point for floating point operations
 "./ncce/INT_NCCE.c", line 132: warning: 
           integer conversion resulted in a change of sign
-    char c = 200;
-             ^
+    const char c = 200;
+                   ^
 
 INT_NCCE.c:91: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:123: warning: INT01-A: Use strtol() or a related function to convert a string token to an integer
 INT_NCCE.c:132: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
-INT_NCCE.c:134: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:181: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-INT_NCCE.c:256: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-INT_NCCE.c:266: warning: INT13-A: Use bitwise operators only on unsigned operands
+INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
+INT_NCCE.c:269: warning: INT13-A: Use bitwise operators only on unsigned operands
 MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.
@@ -111,7 +110,6 @@ POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
 POS_NCCE.c:93: error: POS35-A: Avoid race conditions while checking for the existence of a symbolic link
 POS_NCCE.c:113: error: POS36-C: Observe correct revocation order while relinquishing privileges
-PRE_NCCE.c:114: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 SIG_NCCE.c:74: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG_NCCE.c:96: error: SIG31-C: Do not access or modify shared objects in a signal handler
@@ -140,5 +138,4 @@ STR_NCCE.c:103: error: STR30-C: Do not attempt to modify string literals
 STR_NCCE.c:131: error: STR32-C: Null-terminate byte strings as required
 STR_NCCE.c:170: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
 STR_NCCE.c:179: error: STR36-C: Do not specify the dimension of a character array initialized with a string literal
-STR_NCCE.c:190: warning: EXP05-A: Do not cast away a const qualification
 STR_NCCE.c:190: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object

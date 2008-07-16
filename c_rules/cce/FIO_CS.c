@@ -92,7 +92,7 @@ void FIO(void){
 
 void FIO00(void) {
 	char const *error_msg = "Resource not available to user.";
-	int error_type = 3;
+	const int error_type = 3;
 	/* ... */
 	printf("Error (type %d): %s\n", error_type, error_msg);
 }
@@ -148,11 +148,11 @@ void FIO02(void) {
 
 void FIO03(void) {
 char *file_name = "Awefawef";
-int new_file_mode = 0600;
+const int new_file_mode = 0600;
 
 /* initialize file_name and new_file_mode */
 
-int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
+const int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
 if (fd == -1) {
   /* Handle Error */
 }
@@ -160,7 +160,7 @@ if (fd == -1) {
 
 /* FIO04 v.44 */
 void FIO04(void) {
-long offset = 19;
+const long offset = 19;
 FILE *file = fopen("t", "w");
 if(!file) return;
 
@@ -244,11 +244,11 @@ void FIO05(void) {
 
 void FIO06(void) {
 char *file_name = "foo";
-int file_access_permissions = 0600;
+const int file_access_permissions = 0600;
 
 /* initialize file_name */
 
-int fd = open(
+const int fd = open(
   file_name, 
   O_CREAT | O_WRONLY, 
   file_access_permissions
@@ -440,7 +440,7 @@ int secure_dir(const char* path) {
   int secure = 1;
   int i;
   struct stat buf;
-  uid_t my_uid = geteuid();
+  const uid_t my_uid = geteuid();
 
   if (realpath_res == NULL) {
     /* Handle Error */
@@ -543,12 +543,12 @@ void incorrect_password(char const *user) {
   /* user names are restricted to 256 characters or less */
   static char const *msg_format 
     = "%s cannot be authenticated.\n";
-  size_t len = strlen(user) + sizeof(msg_format);
+  const size_t len = strlen(user) + sizeof(msg_format);
   char *msg = (char *) malloc(len);
   if (!msg) {
     /* handle error condition */
   }
-  int ret = snprintf(msg, len, msg_format, user);
+  const int ret = snprintf(msg, len, msg_format, user);
   if (ret < 0 || (size_t) ret >= len) {\
     /* Handle Error */
   }
@@ -845,7 +845,7 @@ void FIO42(void) {
 void FIO43(void) {
 char sfn[] = "temp-XXXXXX";
 FILE *sfp;
-int fd = mkstemp(sfn);
+const int fd = mkstemp(sfn);
 if (fd == -1) {
   /* Handle Error */
 }

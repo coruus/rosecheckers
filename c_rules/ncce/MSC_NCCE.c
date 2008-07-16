@@ -51,9 +51,9 @@ void MSC() {
 /* MSC01_A v.35 */
 
 void MSC01() {
-  unsigned int a = 0;
-  unsigned int b = 0;
-  unsigned int c = 0;
+  const unsigned int a = 0;
+  const unsigned int b = 0;
+  const unsigned int c = 0;
 
   if (a == b) {
     /* ... */
@@ -86,7 +86,7 @@ void MSC01() {
 
 void MSC02() {
   unsigned int a = 0;
-  unsigned int b = 0;
+  const unsigned int b = 0;
  
   if (a = b) {
     /* ... */
@@ -98,8 +98,8 @@ void MSC02() {
 /* MSC03_A v.26 */
 
 void MSC03() {
-  unsigned int a = 0;
-  unsigned int b = 0;
+  const unsigned int a = 0;
+  const unsigned int b = 0;
 
 /* ROSE catches this */
   a == b;
@@ -125,7 +125,7 @@ void MSC04() {
 /* MSC05_A v.40 */
 
 int MSC05_do_work(int seconds_to_work) {
-  time_t start = time(NULL);
+  const time_t start = time(NULL);
 
   if (start == (time_t)(-1)) {
     /* Handle error */
@@ -177,10 +177,10 @@ void MSC07() {
 /* MSC09_A v.50 */
 
 void MSC09() {
-  char *file_name = "&#xBB;&#xA3;???&#xAB;";
-  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+  const char *file_name = "&#xBB;&#xA3;???&#xAB;";
+  const mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-  int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, mode);
+  const int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, mode);
   if (fd == -1) {
     /* Handle Error */
   }
@@ -192,7 +192,7 @@ void MSC09() {
 
 void MSC12() {
   int a = 0;
-  int b = 1;
+  const int b = 1;
 
 /* ROSE catches this */
   a == b;
@@ -205,12 +205,12 @@ void MSC12() {
 /* MSC14_A v.14 */
 
 void MSC14() {
-  unsigned int ui1 = 0, ui2 = 0, sum;
+  const unsigned int ui1 = 0, ui2 = 0;
 
   if (~ui1 < ui2) {
     /* handle error condition */
   }
-  sum = ui1 + ui2;
+  unsigned int sum = ui1 + ui2;
 	printf("MSC14 %d\n",sum);
 }
 
@@ -224,8 +224,8 @@ int MSC15_foo(int a) {
 }
 
 void MSC15() {
-  int a = MSC15_foo(100);
-  int b = MSC15_foo(INT_MAX);
+  const int a = MSC15_foo(100);
+  const int b = MSC15_foo(INT_MAX);
   printf("%d\n", a + b);
 }
 
@@ -249,7 +249,7 @@ void MSC30() {
 /* MSC31_C v.104 */
 
 void MSC31() {
-  time_t now = time(NULL);
+  const time_t now = time(NULL);
   if (now != -1) {
     /* Continue processing */
   }

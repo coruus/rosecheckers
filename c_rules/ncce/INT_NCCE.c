@@ -63,7 +63,7 @@ void INT() {
 /* INT00_A v.41 */
 
 void INT00() {
-  unsigned int a = 0, b = 0;
+  const unsigned int a = 0, b = 0;
   unsigned long c;
 
   c = (unsigned long)a * b; /* not guaranteed to fit */
@@ -75,8 +75,8 @@ void INT00() {
 /* INT02_A v.54 */
 
 void INT02() {
-  int si = -1;
-  unsigned ui = 1;
+  const int si = -1;
+  const unsigned ui = 1;
   if(si < ui)
     return;
   return;
@@ -92,7 +92,7 @@ void INT04_create_table(size_t length) {
     /* handle overflow */
   }
 
-  size_t table_length = length * sizeof(char *);
+  const size_t table_length = length * sizeof(char *);
   table = (char **)malloc(table_length);
 
   if (table == NULL) {
@@ -129,8 +129,8 @@ void INT06() {
 
 void INT07() {
 /* ROSE catches this */
-  char c = 200;
-  int i = 1000;
+  const char c = 200;
+  const int i = 1000;
   printf("INT07 %d\n", i/c);
 }
 
@@ -174,7 +174,7 @@ void INT10() {
 
 void INT11() {
   char *ptr = NULL;
-  unsigned int flag = 0;
+  const unsigned int flag = 0;
 
   unsigned int number = (unsigned int)ptr;
   number = (number & 0x7fffff) | (flag << 23);
@@ -197,7 +197,7 @@ void INT12() {
 
 void INT13() {
   int rc = 0;
-  int stringify = 0x80000000;
+  const int stringify = 0x80000000;
   char buf[sizeof("256")];
   rc = snprintf(buf, sizeof(buf), "%u", stringify >> 24);
   if (rc == -1 || rc >= sizeof(buf)) {
@@ -217,7 +217,8 @@ void INT14() {
 /* INT30_C v.24 */
 
 void INT30() {
-  unsigned int ui1 = 0, ui2 = 0, sum;
+  const unsigned int ui1 = 0, ui2 = 0;
+  unsigned int sum;
 
   sum = ui1 + ui2;
 	printf("INT30 %d\n", sum);
@@ -227,7 +228,7 @@ void INT30() {
 /* INT31_C v.66 */
 
 void INT31() {
-  unsigned long int ul = ULONG_MAX;
+  const unsigned long int ul = ULONG_MAX;
   signed char sc;
   sc = (signed char)ul; /* cast eliminates warning */
 	printf("INT31 %d\n", sc);
@@ -237,8 +238,8 @@ void INT31() {
 /* INT32_C v.110 */
 
 void INT32() {
-	int si1 = 0, si2 = 0, sum;
-	sum = si1 + si2;
+	const int si1 = 0, si2 = 0;
+	const int sum = si1 + si2;
 
 	signed int result;
 
@@ -251,9 +252,11 @@ void INT32() {
 /* INT33_C v.41 */
 
 void INT33() {
-	signed long sl1 = 0, sl2 = 0, result;
+	const signed long sl1 = 0;
+	signed long sl2;
+	sl2 = random();
 
-	result = sl1/sl2;
+	const signed long result = sl1/sl2;
 	printf("INT33 %d\n", result);
 }
 
@@ -261,9 +264,9 @@ void INT33() {
 /* INT34_C v.43 */
 
 void INT34() {
-	int si1 = 0, si2 = 0, sresult;
+	const int si1 = 0, si2 = 0;
 
-	sresult = si1 << si2;
+	const int sresult = si1 << si2;
 	printf("INT33 %d\n", sresult);
 }
 

@@ -138,9 +138,9 @@ void ARR34(void) {
 /*ARR36_C v.17 */
 
 void ARR36(void) {
-	int nums[32];
+	const int nums[32];
 	char *strings[32];
-	int *next_num_ptr = nums;
+	const int *next_num_ptr = nums;
 	int free_bytes;
 
 	free_bytes = strings - (char **)next_num_ptr;
