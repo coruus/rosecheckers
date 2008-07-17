@@ -834,7 +834,8 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
 		|| isCallOfFunctionNamed(node, "vfprintf")
 		|| isCallOfFunctionNamed(node, "vsprintf") ? 1
 		: isCallOfFunctionNamed(node, "snprintf")
-		|| isCallOfFunctionNamed(node, "vsnprintf") ? 2
+		|| isCallOfFunctionNamed(node, "vsnprintf")
+		|| isCallOfFunctionNamed(node, "syslog") ? 2
 		: -1;
 }
 
