@@ -32,7 +32,7 @@
 /**
  * Strive for logical completeness
  */
-bool MSC01_A( const SgNode *node ) {
+bool MSC01_C( const SgNode *node ) {
 	const SgSwitchStatement *swch = isSgSwitchStatement(node);
 	if (!swch)
 		return false;
@@ -42,7 +42,7 @@ bool MSC01_A( const SgNode *node ) {
 	&& isSgDefaultOptionStmt(stats.back()))
 		return false;
 
-	print_error(node, "MSC01-A", "Strive for logical completeness", true);
+	print_error(node, "MSC01-C", "Strive for logical completeness", true);
 	return true;
 }
 
@@ -55,7 +55,7 @@ bool MSC01_A( const SgNode *node ) {
  *
  * \todo Catch if statements with empty BasicBlocks
  */
-bool MSC03_A( const SgNode *node ) {
+bool MSC03_C( const SgNode *node ) {
 	const SgExprStatement *exprStmt = isSgExprStatement(node);
 	if (!exprStmt) {
 		/**
@@ -115,7 +115,7 @@ bool MSC03_A( const SgNode *node ) {
 			return false;
 	}
 
-	print_error(node, "MSC03-A", "Avoid errors of addition", true);
+	print_error(node, "MSC03-C", "Avoid errors of addition", true);
 	return true;
 }
 
@@ -130,8 +130,8 @@ bool MSC30_C( const SgNode *node ) {
 
 bool MSC(const SgNode *node) {
   bool violation = false;
-  violation |= MSC01_A(node);
-  violation |= MSC03_A(node);
+  violation |= MSC01_C(node);
+  violation |= MSC03_C(node);
   violation |= MSC30_C(node);
   return violation;
 }

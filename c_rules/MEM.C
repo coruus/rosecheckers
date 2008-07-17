@@ -102,7 +102,7 @@ bool hasAssignToVar(const SgNode* node,
 /**
  * Store a new value in pointers immediately after free()
  */
-bool MEM01_A( const SgNode *node ) {
+bool MEM01_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "free")) return false;
 	//	bool violation = false;
 
@@ -149,7 +149,7 @@ bool MEM01_A( const SgNode *node ) {
 			return false;
 	}
 
-	print_error(node, "MEM01-A", "Store a new value in pointers immediately after free()", true);
+	print_error(node, "MEM01-C", "Store a new value in pointers immediately after free()", true);
 
 	return true;
 }
@@ -157,7 +157,7 @@ bool MEM01_A( const SgNode *node ) {
 /**
  * Do not perform zero length allocations
  */
-bool MEM04_A( const SgNode *node ) {
+bool MEM04_C( const SgNode *node ) {
 	const SgExpression *allocArg = removeImplicitPromotions(getAllocFunctionExpr(isSgFunctionRefExp(node)));
 	if (!allocArg)
 		return false;
@@ -203,7 +203,7 @@ bool MEM04_A( const SgNode *node ) {
 		return false;
 	}
 
-	print_error(node,"MEM04-A", "Do not perform zero length allocations", true);
+	print_error(node,"MEM04-C", "Do not perform zero length allocations", true);
 	return true;
 }
 
@@ -211,7 +211,7 @@ bool MEM04_A( const SgNode *node ) {
  * Ensure that the arguments to calloc() when multiplied can be represented as
  * a size_t
  */
-bool MEM07_A( const SgNode *node ) {
+bool MEM07_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "calloc"))
 		return false;
 	const SgFunctionRefExp* fnRef = isSgFunctionRefExp(node);
@@ -262,14 +262,14 @@ bool MEM07_A( const SgNode *node ) {
 			return false;
 	}
 
-	print_error(node, "MEM07-A", "Ensure that the arguments to calloc() when multiplied can be represented as a size_t", true);
+	print_error(node, "MEM07-C", "Ensure that the arguments to calloc() when multiplied can be represented as a size_t", true);
 	return true;
 }
 
 /**
  * Use realloc() only to resize dynamically allocated arrays
  */
-bool MEM08_A( const SgNode *node ) {
+bool MEM08_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "realloc"))
 		return false;
 
@@ -283,7 +283,7 @@ bool MEM08_A( const SgNode *node ) {
 		return false;
 
 	if (cast->get_type() != arg->get_type()) {
-		print_error(node, "MEM08-A", "Use realloc() only to resize dynamically allocated arrays", true);
+		print_error(node, "MEM08-C", "Use realloc() only to resize dynamically allocated arrays", true);
 		return true;
 	}
 
@@ -446,10 +446,10 @@ bool MEM33_C( const SgNode *node ) {
 
 bool MEM(const SgNode *node) {
   bool violation = false;
-  violation |= MEM01_A(node);
-  violation |= MEM04_A(node);
-  violation |= MEM07_A(node);
-  violation |= MEM08_A(node);
+  violation |= MEM01_C(node);
+  violation |= MEM04_C(node);
+  violation |= MEM07_C(node);
+  violation |= MEM08_C(node);
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   violation |= MEM33_C(node);

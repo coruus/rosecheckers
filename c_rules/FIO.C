@@ -50,7 +50,7 @@ bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 /**
  * Be careful using functions that use file names for identification
  */
-bool FIO01_A( const SgNode *node ) {
+bool FIO01_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(isCallOfFunctionNamed(fnRef, "chown")
 	|| isCallOfFunctionNamed(fnRef, "stat")
@@ -75,7 +75,7 @@ bool FIO01_A( const SgNode *node ) {
 		||  isCallOfFunctionNamed(iFn, "fopen")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn,0));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(file_name))) {
-				print_error(node, "FIO01-A", "Be careful using functions that use file names for identification", true);
+				print_error(node, "FIO01-C", "Be careful using functions that use file names for identification", true);
 				return true;
 			}
 		}
@@ -88,16 +88,16 @@ bool FIO01_A( const SgNode *node ) {
 /**
  * Prefer fseek() to rewind()
  */
-bool FIO07_A( const SgNode *node ) {
+bool FIO07_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "rewind")) return false;
-  print_error( node, "FIO07-A", "Prefer fseek() to rewind()", true);
+  print_error( node, "FIO07-C", "Prefer fseek() to rewind()", true);
   return true;
 }
 
 /**
  * Take care when calling remove() on an open file
  */
-bool FIO08_A( const SgNode *node ) {
+bool FIO08_C( const SgNode *node ) {
 	if(!isCallOfFunctionNamed(node, "remove"))
 		return false;
 
@@ -156,7 +156,7 @@ bool FIO08_A( const SgNode *node ) {
 
 
 	if (opened && !closed) {
-		print_error(node,"FIO08-A", "Take care when calling remove() on an open file", true);
+		print_error(node,"FIO08-C", "Take care when calling remove() on an open file", true);
 		return true;
 	}
 
@@ -166,7 +166,7 @@ bool FIO08_A( const SgNode *node ) {
 /**
  * Take care when specifying the mode parameter of fopen()
  */
-bool FIO11_A( const SgNode *node ) {
+bool FIO11_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "fopen"))
 		return false;
 
@@ -193,23 +193,23 @@ bool FIO11_A( const SgNode *node ) {
 	|| (str == "ab+"))
 		return false;
 
-	print_error(node, "FIO11-A", "Take care when specifying the mode parameter of fopen()", true);
+	print_error(node, "FIO11-C", "Take care when specifying the mode parameter of fopen()", true);
 	return true;
 }
 
 /**
  * Prefer setvbuf() to setbuf()
  */
-bool FIO12_A( const SgNode *node ) {
+bool FIO12_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "setbuf")) return false;
-  print_error( node, "FIO12-A", "Prefer setvbuf() to setbuf()", true);
+  print_error( node, "FIO12-C", "Prefer setvbuf() to setbuf()", true);
   return true;
 }
 
 /**
  * Never push back anything other than one read character
  */
-bool FIO13_A( const SgNode *node ) {
+bool FIO13_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
@@ -263,7 +263,7 @@ bool FIO13_A( const SgNode *node ) {
 		||  isCallOfFunctionNamed(iFn, "ungetwc")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 1));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
-				print_error(node, "FIO13-A", "Never push back anything other than one read character", true);
+				print_error(node, "FIO13-C", "Never push back anything other than one read character", true);
 				return true;
 			}
 		}
@@ -522,12 +522,12 @@ bool FIO44_C( const SgNode *node) {
 
 bool FIO(const SgNode *node) {
   bool violation = false;
-  violation |= FIO01_A(node);
-  violation |= FIO07_A(node);
-  violation |= FIO08_A(node);
-  violation |= FIO11_A(node);
-  violation |= FIO12_A(node);
-  violation |= FIO13_A(node);
+  violation |= FIO01_C(node);
+  violation |= FIO07_C(node);
+  violation |= FIO08_C(node);
+  violation |= FIO11_C(node);
+  violation |= FIO12_C(node);
+  violation |= FIO13_C(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
   violation |= FIO38_C(node);

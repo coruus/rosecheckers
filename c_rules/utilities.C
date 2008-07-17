@@ -273,7 +273,7 @@ bool switchHasDefault( const SgSwitchStatement *theSwitch ) {
 
 /**
  * \param[in] node Node at which to genererate the error
- * \param[in] rule Abbreviation of the violated rule (ie. ARR01-A)
+ * \param[in] rule Abbreviation of the violated rule (ie. ARR01-C)
  * \param[in] desc Short description of the error
  * \param[in] warning If true than generate a warning, else an error
  */
@@ -301,7 +301,6 @@ bool isTestForNullOp(const SgNode* node) {
   if (node == NULL) return false;
   const SgNode* parent = node->get_parent();
   assert(parent != NULL);
-    // std::cerr << parent->class_name() << std::endl;
   if (isSgEqualityOp( parent)) return true; // if (expr == ...
   else if (isSgNotEqualOp( parent)) return true; // if (ptr != ...
   else if (isSgCastExp( parent)) {
@@ -345,10 +344,6 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
   if (node == NULL) return NULL;
 
   const SgFunctionCallExp *fnCall = isSgFunctionCallExp( node->get_parent());
-	if (!fnCall) {
-		std::cerr << node->unparseToString() << std::endl;
-		std::cerr << node->get_parent()->unparseToString() << std::endl;
-	}
   assert( fnCall != NULL);
   return getFnArg(fnCall, i);
 }

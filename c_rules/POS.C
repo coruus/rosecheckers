@@ -123,7 +123,7 @@ bool POS35_C( const SgNode *node ) {
 	}
 
 	if (lstat && !fstat) {
-		print_error(node, "POS35-A", "Avoid race conditions while checking for the existence of a symbolic link");
+		print_error(node, "POS35-C", "Avoid race conditions while checking for the existence of a symbolic link");
 		return true;
 	}
 

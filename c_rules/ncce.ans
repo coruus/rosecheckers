@@ -4,14 +4,14 @@
   	for (ip = &ar[0]; ip < &ar[21]; ip++) {
   	                          ^
 
-ARR_NCCE.c:50: warning: ARR01-A: Do not apply the sizeof operator to a pointer when taking the size of an array
-ARR_NCCE.c:146: warning: EXP05-A: Do not cast away a const qualification
+ARR_NCCE.c:50: warning: ARR01-C: Do not apply the sizeof operator to a pointer when taking the size of an array
+ARR_NCCE.c:146: warning: EXP05-C: Do not cast away a const qualification
 ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
-DCL_NCCE.c:54: warning: DCL00-A: Const-qualify immutable objects: pi
-DCL_NCCE.c:68: warning: DCL01-A: Do not reuse variable names in subscopes
+DCL_NCCE.c:54: warning: DCL00-C: Const-qualify immutable objects: pi
+DCL_NCCE.c:68: warning: DCL01-C: Do not reuse variable names in subscopes
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
-ENV_NCCE.c:97: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
-ENV_NCCE.c:121: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
@@ -27,35 +27,35 @@ ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within sig
     ipp = (int**) &ip; /* constraint violation */
         ^
 
-EXP_NCCE.c:79: warning: EXP01-A: Do not take the sizeof a pointer to determine the sizeof a type
-EXP_NCCE.c:119: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:168: warning: EXP05-A: Do not cast away a const qualification
-EXP_NCCE.c:203: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:209: warning: EXP09-A: malloc called using something other than sizeof()
-EXP_NCCE.c:240: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:241: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:252: warning: EXP12-A: Do not ignore values returned by functions
+EXP_NCCE.c:79: warning: EXP01-C: Do not take the sizeof a pointer to determine the sizeof a type
+EXP_NCCE.c:119: warning: EXP09-C: malloc called using something other than sizeof()
+EXP_NCCE.c:168: warning: EXP05-C: Do not cast away a const qualification
+EXP_NCCE.c:203: warning: EXP09-C: malloc called using something other than sizeof()
+EXP_NCCE.c:209: warning: EXP09-C: malloc called using something other than sizeof()
+EXP_NCCE.c:240: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:241: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
+EXP_NCCE.c:252: warning: EXP12-C: Do not ignore values returned by functions
 EXP_NCCE.c:259: error: EXP30-C: Do not depend on order of evaluation between sequence points
 EXP_NCCE.c:318: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
-EXP_NCCE.c:348: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
-FIO_NCCE.c:109: warning: FIO01-A: Be careful using functions that use file names for identification
-FIO_NCCE.c:156: warning: EXP12-A: Do not ignore values returned by functions
-FIO_NCCE.c:262: warning: FIO07-A: Prefer fseek() to rewind()
-FIO_NCCE.c:282: warning: FIO08-A: Take care when calling remove() on an open file
-FIO_NCCE.c:324: warning: FIO12-A: Prefer setvbuf() to setbuf()
-FIO_NCCE.c:343: warning: FIO13-A: Never push back anything other than one read character
+EXP_NCCE.c:348: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
+FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names for identification
+FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:262: warning: FIO07-C: Prefer fseek() to rewind()
+FIO_NCCE.c:282: warning: FIO08-C: Take care when calling remove() on an open file
+FIO_NCCE.c:324: warning: FIO12-C: Prefer setvbuf() to setbuf()
+FIO_NCCE.c:343: warning: FIO13-C: Never push back anything other than one read character
 FIO_NCCE.c:420: error: FIO30-C: Exclude user input from format strings
-FIO_NCCE.c:481: warning: EXP12-A: Do not ignore values returned by functions
-FIO_NCCE.c:492: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
+FIO_NCCE.c:481: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:492: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
 FIO_NCCE.c:492: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO_NCCE.c:542: error: FIO38-C: Do not use a copy of a FILE object for input and output
 FIO_NCCE.c:563: error: FIO39-C: Do not alternately input and output from a stream without an intervening flush or positioning call
-FIO_NCCE.c:619: warning: ENV04-A: Do not use system() or popen() unless you need a command interpreter
+FIO_NCCE.c:619: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 FIO_NCCE.c:639: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO_NCCE.c:665: error: FIO43-C: Do not use open() on the results of mktemp()
 FIO_NCCE.c:677: error: FIO43-C: Do not use tmpfile()
-FIO_NCCE.c:708: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
+FIO_NCCE.c:697: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
 FLP_NCCE.c:136: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:137: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:138: error: FLP33-C: Convert integers to floating point for floating point operations
@@ -65,23 +65,24 @@ FLP_NCCE.c:138: error: FLP33-C: Convert integers to floating point for floating 
                    ^
 
 INT_NCCE.c:91: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-INT_NCCE.c:123: warning: INT01-A: Use strtol() or a related function to convert a string token to an integer
-INT_NCCE.c:132: warning: INT07-A: Use only explicitly signed or unsigned char type for numeric values
-INT_NCCE.c:181: warning: EXP11-A: Do not apply operators expecting one type to data of an incompatible type
+INT_NCCE.c:115: warning: INT05-C: Do not use input functions to convert character data if they cannot handle all possible inputs
+INT_NCCE.c:123: warning: INT01-C: Use strtol() or a related function to convert a string token to an integer
+INT_NCCE.c:132: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+INT_NCCE.c:181: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 INT_NCCE.c:246: error: INT32-C: Ensure that operations on signed integers do not result in overflow
 INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
-INT_NCCE.c:269: warning: INT13-A: Use bitwise operators only on unsigned operands
+INT_NCCE.c:269: warning: INT13-C: Use bitwise operators only on unsigned operands
 MEM_NCCE.c:78: error: MEM30-C: Do not access freed memory
-MEM_NCCE.c:95: warning: MEM01-A: Store a new value in pointers immediately after free()
+MEM_NCCE.c:95: warning: MEM01-C: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.
-MEM_NCCE.c:148: warning: MEM04-A: Do not perform zero length allocations
-MEM_NCCE.c:166: warning: MEM04-A: Do not perform zero length allocations
-MEM_NCCE.c:224: warning: MEM07-A: Ensure that the arguments to calloc() when multiplied can be represented as a size_t
-MEM_NCCE.c:254: warning: MEM08-A: Use realloc() only to resize dynamically allocated arrays
-MEM_NCCE.c:297: warning: MEM01-A: Store a new value in pointers immediately after free()
+MEM_NCCE.c:148: warning: MEM04-C: Do not perform zero length allocations
+MEM_NCCE.c:166: warning: MEM04-C: Do not perform zero length allocations
+MEM_NCCE.c:224: warning: MEM07-C: Ensure that the arguments to calloc() when multiplied can be represented as a size_t
+MEM_NCCE.c:254: warning: MEM08-C: Use realloc() only to resize dynamically allocated arrays
+MEM_NCCE.c:297: warning: MEM01-C: Store a new value in pointers immediately after free()
 MEM_NCCE.c:297: error: MEM30-C: Do not access freed memory
-MEM_NCCE.c:317: warning: MEM01-A: Store a new value in pointers immediately after free()
+MEM_NCCE.c:317: warning: MEM01-C: Store a new value in pointers immediately after free()
 MEM_NCCE.c:317: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:317: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM_NCCE.c:332: error: EXP34-C: Ensure pointer is valid before dereferencing it
@@ -106,13 +107,13 @@ MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array member
     a == b;
     ^
 
-MSC_NCCE.c:69: warning: MSC01-A: Strive for logical completeness
-MSC_NCCE.c:105: warning: MSC03-A: Avoid errors of addition
-MSC_NCCE.c:198: warning: MSC03-A: Avoid errors of addition
+MSC_NCCE.c:69: warning: MSC01-C: Strive for logical completeness
+MSC_NCCE.c:105: warning: MSC03-C: Avoid errors of addition
+MSC_NCCE.c:198: warning: MSC03-C: Avoid errors of addition
 MSC_NCCE.c:243: error: MSC30-C: Do not use rand()
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
-POS_NCCE.c:93: error: POS35-A: Avoid race conditions while checking for the existence of a symbolic link
+POS_NCCE.c:93: error: POS35-C: Avoid race conditions while checking for the existence of a symbolic link
 POS_NCCE.c:113: error: POS36-C: Observe correct revocation order while relinquishing privileges
 SIG_NCCE.c:74: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
@@ -121,7 +122,7 @@ SIG_NCCE.c:123: error: SIG30-C: Call only asynchronous-safe functions within sig
 SIG_NCCE.c:123: error: SIG31-C: Do not access or modify shared objects in a signal handler
 SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG_NCCE.c:144: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:147: error: SIG32-A: Do not call longjmp() from within a signal handler
+SIG_NCCE.c:147: error: SIG32-C: Do not call longjmp() from within a signal handler
 SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 "./ncce/STR_NCCE.c", line 67: warning: 
           argument of type "signed char *" is incompatible with parameter of
@@ -135,11 +136,11 @@ SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible s
     len = strlen(ucstr);  /* warns when char is signed */
                  ^
 
-STR_NCCE.c:62: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
-STR_NCCE.c:63: warning: ARR02-A: Explicitly specify array dimensions, even if implicitly defined by an initializer
-STR_NCCE.c:94: warning: STR06-A: Do not assume that strtok() leaves the parse string unchanged
+STR_NCCE.c:62: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:63: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:94: warning: STR06-C: Do not assume that strtok() leaves the parse string unchanged
 STR_NCCE.c:103: error: STR30-C: Do not attempt to modify string literals
 STR_NCCE.c:131: error: STR32-C: Null-terminate byte strings as required
 STR_NCCE.c:170: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array
 STR_NCCE.c:179: error: STR36-C: Do not specify the dimension of a character array initialized with a string literal
-STR_NCCE.c:190: warning: INT01-A: Use rsize_t or size_t for all integer values representing the size of an object
+STR_NCCE.c:190: warning: INT01-C: Use rsize_t or size_t for all integer values representing the size of an object

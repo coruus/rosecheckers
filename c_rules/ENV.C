@@ -28,10 +28,10 @@
  *
  * \note As written, these tests catch template declarations only if instantiated.
  */
-bool ENV04_A( const SgNode *node ) {
+bool ENV04_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "system") &&
       !isCallOfFunctionNamed( node, "popen")) return false;
-  print_error( node, "ENV04-A", "Do not use system() or popen() unless you need a command interpreter", true);
+  print_error( node, "ENV04-C", "Do not use system() or popen() unless you need a command interpreter", true);
   return true;
 }
 
@@ -70,7 +70,7 @@ bool ENV32_C( const SgNode *node ) {
 
 bool ENV(const SgNode *node) {
 	bool violation = false;
-	violation |= ENV04_A(node);
+	violation |= ENV04_C(node);
 	violation |= ENV32_C(node);
 	return violation;
 }

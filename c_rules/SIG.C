@@ -37,7 +37,7 @@ using namespace std;
  *
  * \note obsolete
  */
-bool SIG00_A( const SgNode *node ) {
+bool SIG00_C( const SgNode *node ) {
   static set<const SgFunctionSymbol*> All_Handlers;
 
   if (!isCallOfFunctionNamed( node, "signal")) return false;
@@ -61,7 +61,7 @@ bool SIG00_A( const SgNode *node ) {
   }
 
   if (All_Handlers.insert( symbol).second) return false;
-  print_error( node, "SIG00-A", "Avoid using the same handler for multiple signals", true);
+  print_error( node, "SIG00-C", "Avoid using the same handler for multiple signals", true);
   return true;
 }
 #endif
@@ -235,7 +235,7 @@ bool SIG32_C( const SgNode *node ) {
     = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp );
   for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i )
     if (isCallOfFunctionNamed( *i, "longjmp")) {
-      print_error( *i, "SIG32-A", "Do not call longjmp() from within a signal handler");
+      print_error( *i, "SIG32-C", "Do not call longjmp() from within a signal handler");
       return true;
     }
   return false;
@@ -318,7 +318,7 @@ bool SIG34_C( const SgNode *node ) {
 
 bool SIG(const SgNode *node) {
   bool violation = false;
-  //  violation |= SIG00_A(node);
+  //  violation |= SIG00_C(node);
   violation |= SIG30_C(node);
   violation |= SIG31_C(node);
   violation |= SIG32_C(node);

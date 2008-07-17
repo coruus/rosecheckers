@@ -28,12 +28,13 @@
 #include <algorithm>
 #include "rose.h"
 #include "utilities.h"
+#include <boost/regex.hpp>
 
 /**
  * Use rsize_t or size_t for all integer values representing the size of an
  * object
  */
-bool INT01_A( const SgNode *node ) {
+bool INT01_C( const SgNode *node ) {
 	const SgBinaryOp *op = isSgBinaryOp(node);
 	if(!op)
 		return false;
@@ -103,7 +104,39 @@ bool INT01_A( const SgNode *node ) {
 	}
 
 	if((lhsIsSize ^ rhsIsSize) || (lhsIsRSize ^ rhsIsRSize)) {
-		print_error(node,"INT01-A", "Use rsize_t or size_t for all integer values representing the size of an object", true);
+		print_error(node,"INT01-C", "Use rsize_t or size_t for all integer values representing the size of an object", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Do not use input functions to convert character data if they cannot handle
+ * all possible inputs
+ */
+bool INT05_C( const SgNode *node ) {
+	unsigned int numArg;
+	if (isCallOfFunctionNamed(node, "scanf")
+	  ||isCallOfFunctionNamed(node, "vscanf"))
+		numArg = 0;
+	else if (isCallOfFunctionNamed(node, "fscanf")
+	       ||isCallOfFunctionNamed(node, "fscanf")
+	       ||isCallOfFunctionNamed(node, "vsscanf")
+	       ||isCallOfFunctionNamed(node, "vfscanf"))
+		numArg = 1;
+	else
+		return false;
+
+	const SgStringVal *format = isSgStringVal(removeCasts(getFnArg(isSgFunctionRefExp(node),numArg)));
+	if (!format)
+		return false;
+
+	const std::string formatStr = format->get_value();
+
+	boost::regex r("\%.?[fDdiouxXegE]");
+	if (regex_search(formatStr,r)) {
+		print_error(node, "INT05-C", "Do not use input functions to convert character data if they cannot handle all possible inputs", true);
 		return true;
 	}
 
@@ -115,12 +148,12 @@ bool INT01_A( const SgNode *node ) {
  *
  * \todo catch sscanf conversions
  */
-bool INT06_A( const SgNode *node ) {
+bool INT06_C( const SgNode *node ) {
 	if(isCallOfFunctionNamed(node,"atoi")
 			|| isCallOfFunctionNamed(node,"atol")
 			|| isCallOfFunctionNamed(node,"atoll")
 			|| isCallOfFunctionNamed(node,"atoq")) {
-		print_error(node,"INT01-A", "Use strtol() or a related function to convert a string token to an integer", true);
+		print_error(node,"INT01-C", "Use strtol() or a related function to convert a string token to an integer", true);
 		return true;
 	}
 
@@ -133,7 +166,7 @@ bool INT06_A( const SgNode *node ) {
  * \bug (char c = 'a') will trigger a false positive, work around by
  * using (char c; c = 'a')
  */
-bool INT07_A( const SgNode *node ) {
+bool INT07_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
 	const SgInitializedName *var = isSgInitializedName(node);
 	const SgType *lhsSgType;
@@ -168,11 +201,8 @@ bool INT07_A( const SgNode *node ) {
 			NULL;
 
 		if (stat) {
-			std::cerr << "stat" <<std::endl;
-			std::cerr << stat->unparseToString() <<std::endl;
 			FOREACH_SUBNODE(stat, nodes, i, V_SgAssignOp) {
 				const SgAssignOp *assign = isSgAssignOp(*i);
-				std::cerr << assign->unparseToString() << std::endl;
 				const SgFunctionRefExp *fn = isSgFunctionRefExp(assign->get_rhs_operand());
 				if(isCallOfFunctionNamed(fn, "fgetc")
 				|| isCallOfFunctionNamed(fn, "gettc")
@@ -182,7 +212,7 @@ bool INT07_A( const SgNode *node ) {
 			}
 		}*/
 
-		print_error(node, "INT07-A", "Use only explicitly signed or unsigned char type for numeric values", true);
+		print_error(node, "INT07-C", "Use only explicitly signed or unsigned char type for numeric values", true);
 		return true;
 	}
 	return false;
@@ -191,7 +221,7 @@ bool INT07_A( const SgNode *node ) {
 /**
  * Use bitwise operators only on unsigned operands
  */
-bool INT13_A( const SgNode *node ) {
+bool INT13_C( const SgNode *node ) {
 	bool violation = false;
 	if(isSgBitComplementOp(node)) {
 		const SgBitComplementOp *bitOp = isSgBitComplementOp(node);
@@ -241,7 +271,7 @@ bool INT13_A( const SgNode *node ) {
 	}
 
 	if(violation) {
-		print_error(node, "INT13-A", "Use bitwise operators only on unsigned operands", true);
+		print_error(node, "INT13-C", "Use bitwise operators only on unsigned operands", true);
 		return true;
 	}
 
@@ -286,36 +316,25 @@ bool INT32_C( const SgNode *node ) {
 	if(!negOp)
 		return false;
 
-	//std::cerr << "1" << std::endl;
-
 	const SgVarRefExp * var= isSgVarRefExp(negOp->get_operand());
 	if (!var)
 		return false;
-	//std::cerr << "2" << std::endl;
 	const SgInitializedName *varName = getRefDecl(var);
 	assert(varName);
 
 	FOREACH_SUBNODE(findInBlockByOffset(node, -1), nodes, i, V_SgBinaryOp) {
 		const SgBinaryOp *binOp = isSgBinaryOp(*i);
 		assert(binOp);
-	//std::cerr << "3" << std::endl;
-	//std::cerr << binOp->unparseToString() << std::endl;
 
 		const SgExpression *lhs = binOp->get_lhs_operand();
 		SgValueExp *rhs = isSgValueExp(binOp->get_rhs_operand());
 		const SgVarRefExp *iVar = isSgVarRefExp(lhs);
 		if (iVar && (getRefDecl(iVar) == varName)) {
-		//std::cerr << "4" << std::endl;
-		//std::cerr << rhs->unparseToString() << std::endl;
-		//std::cerr << isSgIntVal(rhs)->unparseToString() << std::endl;
-		//std::cerr << isSgIntVal(rhs)->get_value() << std::endl;
-		//std::cerr << isSgIntVal(rhs)->get_valueString() << std::endl;
 			if (isMinVal(computeValueTree(rhs)))
 				return false;
 		}
 		iVar = isSgVarRefExp(rhs);
 		if (iVar && (getRefDecl(iVar) == varName)) {
-	//std::cerr << "5" << std::endl;
 			if (isMinVal(lhs))
 				return false;
 		}
@@ -370,10 +389,11 @@ bool INT33_C( const SgNode *node ) {
 
 bool INT(const SgNode *node) {
   bool violation = false;
-  violation |= INT01_A(node);
-  violation |= INT06_A(node);
-  violation |= INT07_A(node);
-  violation |= INT13_A(node);
+  violation |= INT01_C(node);
+  violation |= INT05_C(node);
+  violation |= INT06_C(node);
+  violation |= INT07_C(node);
+  violation |= INT13_C(node);
   violation |= INT32_C(node);
   violation |= INT33_C(node);
   return violation;

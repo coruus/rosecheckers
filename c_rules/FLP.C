@@ -89,7 +89,7 @@ bool FLP31_C( const SgNode *node ) {
 /**
  * Convert integers to floating point for floating point operations
  *
- * \see INT07_A
+ * \see INT07_C
  */
 bool FLP33_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);

@@ -30,7 +30,7 @@
  *
  * \todo BROKEN, NEEDS ROSE SUPPPORT
  */
-bool PRE04_A( const SgNode *node ) {
+bool PRE04_C( const SgNode *node ) {
 /*	const SgIncludeDirectiveStatement *inc = isSgIncludeDirectiveStatement(node);
 	std::cerr << " boo " << std::endl;
 	if(isSgC_PreprocessorDirectiveStatement(node))
@@ -48,6 +48,6 @@ bool PRE04_A( const SgNode *node ) {
  */
 bool PREPRO(const SgNode *node) {
   bool violation = false;
-//  violation |= PRE04_A(node);
+//  violation |= PRE04_C(node);
   return violation;
 }

@@ -25,7 +25,7 @@
 /**
  * Do not assume that strtok() leaves the parse string unchanged 
  */
-bool STR06_A( const SgNode *node ) {
+bool STR06_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
@@ -76,7 +76,7 @@ bool STR06_A( const SgNode *node ) {
 			}
 		}
 
-		print_error(iVar, "STR06-A", "Do not assume that strtok() leaves the parse string unchanged", true);
+		print_error(iVar, "STR06-C", "Do not assume that strtok() leaves the parse string unchanged", true);
 		return true;
 	}
 
@@ -332,7 +332,7 @@ bool STR37_C(const SgNode *node) {
 
 bool STR(const SgNode *node) {
   bool violation = false;
-  violation |= STR06_A(node);
+  violation |= STR06_C(node);
   violation |= STR30_C(node);
   violation |= STR31_C(node);
   violation |= STR32_C(node);

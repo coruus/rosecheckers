@@ -31,7 +31,7 @@
  * The other type is explicitly typecast:  (T2*) malloc(...)
  * Rule fails if T1 != T2 (usually because T1 == *T2)
  */
-bool EXP01_A( const SgNode *node ) {
+bool EXP01_C( const SgNode *node ) {
 	const SgExpression* arg0 = getAllocFunctionExpr(isSgFunctionRefExp(node));
 	if (arg0 == NULL)
 		return false;
@@ -70,7 +70,7 @@ bool EXP01_A( const SgNode *node ) {
 	if (t1 == t2) {
 		return false;
 	}
-	print_error( node, "EXP01-A", "Do not take the sizeof a pointer to determine the sizeof a type", true);
+	print_error( node, "EXP01-C", "Do not take the sizeof a pointer to determine the sizeof a type", true);
 	return true;
 }
 
@@ -85,7 +85,7 @@ bool EXP01_A( const SgNode *node ) {
  *
  * \see EXP32_C
  */
-bool EXP05_A( const SgNode *node ) {
+bool EXP05_C( const SgNode *node ) {
 	const SgCastExp * cast = isSgCastExp(node);
 	if(!cast)
 		return false;
@@ -109,7 +109,7 @@ bool EXP05_A( const SgNode *node ) {
 	bool exprIsConst = Type(expr->get_type()->dereference()).isConst();
 
 	if(exprIsConst && !castIsConst) {
-		print_error(node, "EXP05-A", "Do not cast away a const qualification", true);
+		print_error(node, "EXP05-C", "Do not cast away a const qualification", true);
 		return true;
 	}
 
@@ -121,7 +121,7 @@ bool EXP05_A( const SgNode *node ) {
  *
  * \todo NOT DONE
  */
-bool EXP08_A( const SgNode *node ) {
+bool EXP08_C( const SgNode *node ) {
 	// get inside of a *alloc, [], or pointer arith
 	// Evaluate the number, make sure it has type byte 
 	return false;
@@ -132,7 +132,7 @@ bool EXP08_A( const SgNode *node ) {
  *
  * If this alloc expr is being cast to a type char* or char[], bail, it's OK
  */
-bool EXP09_A( const SgNode *node ) {
+bool EXP09_C( const SgNode *node ) {
 	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
 	if (exp == NULL)
 		return false;
@@ -164,7 +164,7 @@ bool EXP09_A( const SgNode *node ) {
 		return false;
 	}
 
-	print_error(node, "EXP09-A", "malloc called using something other than sizeof()", true);
+	print_error(node, "EXP09-C", "malloc called using something other than sizeof()", true);
 	return true;
 }
 
@@ -172,9 +172,9 @@ bool EXP09_A( const SgNode *node ) {
  * Do not apply operators expecting one type to data of an incompatible type
  *
  * \see FLP33_C
- * \see INT07_A
+ * \see INT07_C
  */
-bool EXP11_A( const SgNode *node ) {
+bool EXP11_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
 	const SgInitializedName *var = isSgInitializedName(node);
 	const SgType *lhsSgType;
@@ -206,7 +206,7 @@ bool EXP11_A( const SgNode *node ) {
 	 * void *
 	 */
 
-	/// Exception b/c MEM02_A
+	/// Exception b/c MEM02_C
 	const SgFunctionRefExp *fnRef = isSgFunctionCallExp(castExpr) ? isSgFunctionRefExp(isSgFunctionCallExp(castExpr)->get_function()) : NULL;
 	const bool castIsAlloc = fnRef
 		&& (isCallOfFunctionNamed(fnRef, "malloc")
@@ -221,7 +221,7 @@ bool EXP11_A( const SgNode *node ) {
 	if(castBase == "char*") castBase = "char";
 
 	if(!castIsZero && !castIsAlloc && (lhsBase != castBase)) {
-		print_error(cast, "EXP11-A", "Do not apply operators expecting one type to data of an incompatible type", true);
+		print_error(cast, "EXP11-C", "Do not apply operators expecting one type to data of an incompatible type", true);
 		return true;
 	}
 
@@ -231,7 +231,7 @@ bool EXP11_A( const SgNode *node ) {
 /**
  * Do not ignore values returned by functions
  */
-bool EXP12_A( const SgNode *node ) {
+bool EXP12_C( const SgNode *node ) {
 	const SgFunctionRefExp *ref = isSgFunctionRefExp(node);
 	/** WHITE LIST */
 	if ((ref == NULL)
@@ -266,7 +266,7 @@ bool EXP12_A( const SgNode *node ) {
 			if (isSgCastExp(parent)->get_type()->unparseToString() == "void")
 				return false;
 		} else if (isSgExprStatement(parent)) {
-			print_error(node, "EXP12-A", "Do not ignore values returned by functions", true);
+			print_error(node, "EXP12-C", "Do not ignore values returned by functions", true);
 			return true;
 		} else {
 			return false;
@@ -364,7 +364,7 @@ bool EXP30_C( const SgNode *node ) {
  * \note GCC catches implicit casts, we just focus on explicit ones because
  * GCC assumes the programmer is right in those cases
  *
- * \see EXP05_A
+ * \see EXP05_C
  */
 bool EXP32_C( const SgNode *node ) {
 	const SgCastExp * cast = isSgCastExp(node);
@@ -452,12 +452,12 @@ bool EXP34_C( const SgNode *node ) {
 
 bool EXP(const SgNode *node) {
   bool violation = false;
-  violation |= EXP01_A(node);
-  violation |= EXP05_A(node);
-  violation |= EXP08_A(node);
-  violation |= EXP09_A(node);
-  violation |= EXP11_A(node);
-  violation |= EXP12_A(node);
+  violation |= EXP01_C(node);
+  violation |= EXP05_C(node);
+  violation |= EXP08_C(node);
+  violation |= EXP09_C(node);
+  violation |= EXP11_C(node);
+  violation |= EXP12_C(node);
   violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);

@@ -29,7 +29,7 @@
  * We find cases of sizeof(var) where var is an array and is also a function
  * parameter
  */
-bool ARR01_A( const SgNode *node ) {
+bool ARR01_C( const SgNode *node ) {
 	const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( node);
 	if(!sizeOfOp)
 		return false;
@@ -56,7 +56,7 @@ bool ARR01_A( const SgNode *node ) {
 
 	FOREACH_INITNAME(fnRef->get_args(), i) {
 		if((*i)->get_name() == varName) {
-			print_error( node, "ARR01-A", "Do not apply the sizeof operator to a pointer when taking the size of an array", true);
+			print_error( node, "ARR01-C", "Do not apply the sizeof operator to a pointer when taking the size of an array", true);
 			return true;
 		}
 	}
@@ -68,9 +68,9 @@ bool ARR01_A( const SgNode *node ) {
  * Explicitly specify array dimensions, even if implicitly defined by an
  * initializer
  *
- * \see STR36_A
+ * \see STR36_C
  */
-bool ARR02_A( const SgNode *node ) {
+bool ARR02_C( const SgNode *node ) {
 	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
 	if (!varDecl)
 		return false;
@@ -86,7 +86,7 @@ bool ARR02_A( const SgNode *node ) {
 		if (!(*i)->get_initializer())
 			continue;
 		if (!varType->get_index()) {
-			print_error(*i, "ARR02-A", "Explicitly specify array dimensions, even if implicitly defined by an initializer", true);
+			print_error(*i, "ARR02-C", "Explicitly specify array dimensions, even if implicitly defined by an initializer", true);
 		return true;
 		}
 	}
@@ -256,8 +256,8 @@ bool ARR38_C( const SgNode *node ) {
 
 bool ARR(const SgNode *node) {
   bool violation = false;
-  violation |= ARR01_A(node);
-  violation |= ARR02_A(node);
+  violation |= ARR01_C(node);
+  violation |= ARR02_C(node);
   violation |= ARR33_C(node);
   violation |= ARR34_C(node);
   violation |= ARR37_C(node);

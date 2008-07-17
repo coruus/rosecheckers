@@ -30,7 +30,7 @@
  *
  * \todo count assignments, if only one, report violation
  */
-bool DCL00_A( const SgNode *node ) {
+bool DCL00_C( const SgNode *node ) {
 	const SgInitializedName *varName = isSgInitializedName(node);
 	if (!varName)
 		return false;
@@ -100,14 +100,14 @@ bool DCL00_A( const SgNode *node ) {
 	}
 
 	const std::string msg = "Const-qualify immutable objects: " + varName->unparseToString();
-	print_error(node, "DCL00-A", msg.c_str(), true);
+	print_error(node, "DCL00-C", msg.c_str(), true);
 	return true;
 }
 
 /**
  * Do not reuse variable names in subscopes
  */
-bool DCL01_A( const SgNode *node ) {
+bool DCL01_C( const SgNode *node ) {
 	const SgInitializedName *varInitName = isSgInitializedName(node);
 	if (!varInitName)
 		return false;
@@ -117,9 +117,28 @@ bool DCL01_A( const SgNode *node ) {
 	while(!isSgGlobal(varScope)) {
 		varScope = varScope->get_scope();
 		if(varScope->symbol_exists(varName)) {
-			print_error(node, "DCL01-A", "Do not reuse variable names in subscopes", true);
+			print_error(node, "DCL01-C", "Do not reuse variable names in subscopes", true);
 			return true;
 		}
+	}
+
+	return false;
+}
+
+/**
+ * Do not declare more than one variable per declaration 
+ */
+bool DCL04_C( const SgNode *node ) {
+	const SgVariableDeclaration *varDec = isSgVariableDeclaration(node);
+	if (!varDec)
+		return false;
+
+	/**
+	 * \note Due to a bug in ROSE this comparison will always be false
+	 */
+	if (varDec->get_variables().size() > 1) {
+		print_error(node, "DCL04-C", "Do not declare more than one variable per declaration", true);
+		return true;
 	}
 
 	return false;
@@ -136,7 +155,8 @@ bool DCL36_C( const SgNode *node ) {
 
 bool DCL(const SgNode *node) {
   bool violation = false;
-  violation |= DCL00_A(node);
-  violation |= DCL01_A(node);
+  violation |= DCL00_C(node);
+  violation |= DCL01_C(node);
+  violation |= DCL04_C(node);
   return violation;
 }

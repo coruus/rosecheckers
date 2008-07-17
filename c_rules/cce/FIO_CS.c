@@ -875,15 +875,7 @@ fclose(sfp); /* also closes fd */
 
 enum { NO_FILE_POS_VALUES = 3 };
 
-int opener(
-  FILE* file, 
-  unsigned int *width, 
-  unsigned int *height, 
-  unsigned int *data_offset
-) {
-  unsigned int file_w;
-  unsigned int file_h;
-  unsigned int file_o;
+int opener(FILE* file)  {
   int rc;
   fpos_t offset;
 
@@ -892,21 +884,14 @@ int opener(
   rc = fgetpos(file, &offset);
   if (rc != 0 ) { return rc; }
 
-  if (fscanf(file, "%u %u %u", &file_w, &file_h, &file_o)  
-      != NO_FILE_POS_VALUES) { return EIO; }
-
   rc = fsetpos(file, &offset);
   if (rc != 0 ) { return rc; }
-
-  *width = file_w;
-  *height = file_h;
-  *data_offset = file_o;
 
   return 0;
 }
 
 void FIO44(void) {
-	if (opener(NULL, NULL, NULL, NULL) != 0) {
+	if (opener(NULL) != 0) {
 		/* Handle Error */
 	}
 }
