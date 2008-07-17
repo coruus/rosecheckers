@@ -116,19 +116,12 @@ bool INT01_C( const SgNode *node ) {
  * all possible inputs
  */
 bool INT05_C( const SgNode *node ) {
-	unsigned int numArg;
-	if (isCallOfFunctionNamed(node, "scanf")
-	  ||isCallOfFunctionNamed(node, "vscanf"))
-		numArg = 0;
-	else if (isCallOfFunctionNamed(node, "fscanf")
-	       ||isCallOfFunctionNamed(node, "fscanf")
-	       ||isCallOfFunctionNamed(node, "vsscanf")
-	       ||isCallOfFunctionNamed(node, "vfscanf"))
-		numArg = 1;
-	else
-		return false;
+	const SgFunctionRefExp *ref = isSgFunctionRefExp( node);
+	if (ref == NULL) return false;
+	int numArg = getScanfFormatString(ref);
+	if (numArg == -1) return false;
 
-	const SgStringVal *format = isSgStringVal(removeCasts(getFnArg(isSgFunctionRefExp(node),numArg)));
+	const SgStringVal *format = isSgStringVal(removeCasts(getFnArg(ref,numArg)));
 	if (!format)
 		return false;
 
