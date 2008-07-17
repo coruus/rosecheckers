@@ -542,7 +542,7 @@ bool isVal(const SgExpression *node, const intmax_t n) {
 	} else if (isSgIntVal(node)) {
 		return n == isSgIntVal(node)->get_value();
 	} else if (isSgUnsignedLongVal(node)) {
-		return n == isSgUnsignedLongVal(node)->get_value();
+		return n == (intmax_t) (isSgUnsignedLongVal(node)->get_value());
 	} else if (isSgLongIntVal(node)) {
 		return n == isSgLongIntVal(node)->get_value();
 	} else if (isSgUnsignedLongLongIntVal(node)) {
@@ -774,7 +774,7 @@ SgValueExp* computeValueTree(SgValueExp* node) {
 	}
 
 	switch(getValType(node)) {
-	case INT:
+	case INT: {
 		SgIntVal* val = isSgIntVal(node);
 		SgIntVal* lhsT = isSgIntVal(lhs);
 		SgIntVal* rhsT = isSgIntVal(rhs);
@@ -803,6 +803,7 @@ SgValueExp* computeValueTree(SgValueExp* node) {
 			return NULL;
 		}
 		return val;
+	}
 	default:
 		return NULL;
 	}
