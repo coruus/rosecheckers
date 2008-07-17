@@ -235,8 +235,6 @@ bool EXP12_C( const SgNode *node ) {
 	const SgFunctionRefExp *ref = isSgFunctionRefExp(node);
 	/** WHITE LIST */
 	if ((ref == NULL)
-	|| isCallOfFunctionNamed(ref, "printf")
-	|| isCallOfFunctionNamed(ref, "fprintf")
 	|| isCallOfFunctionNamed(ref, "close")
 	|| isCallOfFunctionNamed(ref, "fclose")
 	|| isCallOfFunctionNamed(ref, "free")
@@ -245,7 +243,8 @@ bool EXP12_C( const SgNode *node ) {
 	|| isCallOfFunctionNamed(ref, "memset")
 	|| isCallOfFunctionNamed(ref, "memmove")
 	|| isCallOfFunctionNamed(ref, "strcpy")
-	|| isCallOfFunctionNamed(ref, "strncpy"))
+	|| isCallOfFunctionNamed(ref, "strncpy")
+	|| (getPrintfFormatString(ref) != -1))
 		return false;
 	const SgFunctionCallExp *fn = isSgFunctionCallExp(ref->get_parent());
 	if (!fn)
