@@ -307,19 +307,35 @@ fclose(file);
 void FIO09(void) {
 	struct myData {
 	  char c;
-	  float f;
+	  long l;
 	};
-
-	/* ... */
 
 	FILE *file = NULL;
 	struct myData data;
+	char buf[25];
+	char *end_ptr;
 
 	/* initialize file */
 
-	if (fscanf(file, "%c %f\n", &data.c, &data.f) != 2) {
-	  /* handle error */
+	if (fgets(buf, 1, file) == NULL) {
+	  /* Handle Error */
 	}
+
+	data.c = buf[0];
+
+	if (fgets(buf, sizeof(buf), file) == NULL) {
+	  /* Handle Error */
+	}
+
+	data.l = strtol(buf, &end_ptr, 10);
+
+	if ((ERANGE == errno)
+	 || (end_ptr == buf)
+	 || ('\n' != *end_ptr && '\0' != *end_ptr)) {
+		/* Handle Error */
+	}
+
+	printf("%c %ld\n", data.c, data.l);
 }
 
 /* FIO10 v.10 */

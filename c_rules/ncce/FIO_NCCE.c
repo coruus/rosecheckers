@@ -292,10 +292,15 @@ void FIO08(void) {
 
 struct myData {
   char c;
-  float f;
+  long l;
 };
 
 void FIO09(void) {
+	struct myData {
+	  char c;
+	  long l;
+	};
+
 	/* ... */
 
 	FILE *file = NULL;
@@ -303,8 +308,8 @@ void FIO09(void) {
 
 	/* initialize file */
 
-	if (fread(&data, sizeof(struct myData), 1, file) != sizeof(struct myData)) {
-      /* handle error */
+	if (fread(&data, sizeof(struct myData), 1, file) < sizeof(struct myData)) {
+	  /* handle error */
 	}
 }
 

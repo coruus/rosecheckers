@@ -2,9 +2,8 @@
 ARR_CS.c:202: warning: DCL00-C: Const-qualify immutable objects: buf
 ENV_CS.c:165: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 EXP_CS.c:269: warning: EXP12-C: Do not ignore values returned by functions
-FIO_CS.c:320: warning: INT05-C: Do not use input functions to convert character data if they cannot handle all possible inputs
-FIO_CS.c:686: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
-FIO_CS.c:838: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+FIO_CS.c:702: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+FIO_CS.c:854: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 MEM_CS.c:77: error: MEM30-C: Do not access freed memory
 MSC_CS.c:163: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
 POS_CS.c:85: error: MEM30-C: Do not access freed memory

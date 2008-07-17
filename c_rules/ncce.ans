@@ -43,19 +43,19 @@ FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names
 FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions
 FIO_NCCE.c:262: warning: FIO07-C: Prefer fseek() to rewind()
 FIO_NCCE.c:282: warning: FIO08-C: Take care when calling remove() on an open file
-FIO_NCCE.c:324: warning: FIO12-C: Prefer setvbuf() to setbuf()
-FIO_NCCE.c:343: warning: FIO13-C: Never push back anything other than one read character
-FIO_NCCE.c:420: error: FIO30-C: Exclude user input from format strings
-FIO_NCCE.c:481: warning: EXP12-C: Do not ignore values returned by functions
-FIO_NCCE.c:492: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
-FIO_NCCE.c:492: error: FIO34-C: Use int to capture the return value of character I/O functions
-FIO_NCCE.c:542: error: FIO38-C: Do not use a copy of a FILE object for input and output
-FIO_NCCE.c:563: error: FIO39-C: Do not alternately input and output from a stream without an intervening flush or positioning call
-FIO_NCCE.c:619: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
-FIO_NCCE.c:639: error: FIO43-C: Do not use fopen() on the results of tmpnam()
-FIO_NCCE.c:665: error: FIO43-C: Do not use open() on the results of mktemp()
-FIO_NCCE.c:677: error: FIO43-C: Do not use tmpfile()
-FIO_NCCE.c:697: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
+FIO_NCCE.c:329: warning: FIO12-C: Prefer setvbuf() to setbuf()
+FIO_NCCE.c:348: warning: FIO13-C: Never push back anything other than one read character
+FIO_NCCE.c:425: error: FIO30-C: Exclude user input from format strings
+FIO_NCCE.c:486: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:497: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+FIO_NCCE.c:497: error: FIO34-C: Use int to capture the return value of character I/O functions
+FIO_NCCE.c:547: error: FIO38-C: Do not use a copy of a FILE object for input and output
+FIO_NCCE.c:568: error: FIO39-C: Do not alternately input and output from a stream without an intervening flush or positioning call
+FIO_NCCE.c:624: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+FIO_NCCE.c:644: error: FIO43-C: Do not use fopen() on the results of tmpnam()
+FIO_NCCE.c:670: error: FIO43-C: Do not use open() on the results of mktemp()
+FIO_NCCE.c:682: error: FIO43-C: Do not use tmpfile()
+FIO_NCCE.c:702: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
 FLP_NCCE.c:136: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:137: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:138: error: FLP33-C: Convert integers to floating point for floating point operations

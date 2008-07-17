@@ -49,6 +49,7 @@ bool DCL00_C( const SgNode *node ) {
 	if (varType.isConst()
 	|| varType.dereference().isConst()
 	|| varType.isFunction()
+	|| isSgClassType(varName->get_type())
 	|| findParentNodeOfType(varName, V_SgEnumDeclaration).first
 	|| findParentNodeOfType(varName, V_SgClassDeclaration).first
 	|| findParentNodeOfType(varName, V_SgFunctionParameterList).first)
