@@ -212,6 +212,21 @@ bool INT07_C( const SgNode *node ) {
 }
 
 /**
+ * Do not make assumptions about the type of a plain int bit-field when used
+ * in an expression
+ *
+ * \bug NOT DONE, waiting on Dan regarding bit-fields
+ */
+bool INT12_C( const SgNode *node ) {
+//	const SgInitializedName *varName = isSgInitializedName(node);
+//	if (!varName)
+//		return false;
+//
+//	std::cerr << isSgTypeInt(varName->get_type())->get_field_size() << std::endl;
+	return false;
+}
+
+/**
  * Use bitwise operators only on unsigned operands
  */
 bool INT13_C( const SgNode *node ) {
@@ -386,6 +401,7 @@ bool INT(const SgNode *node) {
   violation |= INT05_C(node);
   violation |= INT06_C(node);
   violation |= INT07_C(node);
+  violation |= INT12_C(node);
   violation |= INT13_C(node);
   violation |= INT32_C(node);
   violation |= INT33_C(node);
