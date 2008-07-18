@@ -68,6 +68,7 @@ INT_NCCE.c:91: error: INT33-C: Ensure that division and modulo operations do not
 INT_NCCE.c:115: warning: INT05-C: Do not use input functions to convert character data if they cannot handle all possible inputs
 INT_NCCE.c:123: warning: INT01-C: Use strtol() or a related function to convert a string token to an integer
 INT_NCCE.c:132: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+INT_NCCE.c:149: warning: INT09-C: Ensure enumeration constants map to unique values
 INT_NCCE.c:181: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 INT_NCCE.c:181: warning: INT11-C: Take care when converting from pointer to integer or integer to pointer
 INT_NCCE.c:188: warning: INT12-C: Do not make assumptions about the type of a plain int bit-field when used in an expression

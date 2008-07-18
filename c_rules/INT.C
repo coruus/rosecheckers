@@ -211,6 +211,46 @@ bool INT07_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Ensure enumeration constants map to unique values
+ */
+bool INT09_C( const SgNode *node ) {
+	const SgEnumDeclaration* enumDec = isSgEnumDeclaration(node);
+	if (!enumDec)
+		return false;
+
+	bool violation = false;
+	int base = 1;
+	std::map<int, const SgInitializedName*> m;
+
+	FOREACH_INITNAME(enumDec->get_enumerators(), i) {
+		const SgInitializedName *var = isSgInitializedName(*i);
+		assert(var);
+
+		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
+		if (init) {
+			/** Explicit numbering */
+			const SgIntVal *val = isSgIntVal(init->get_operand());
+			assert(val);
+			base = val->get_value();
+		} else if (m[base]) {
+			/** Collision */
+			print_error(node, "INT09-C", "Ensure enumeration constants map to unique values", true);
+			violation = true;
+		} else {
+			/** First time we've seen this implicit value */
+			m[base] = var;
+		}
+
+		base++;
+	}
+
+	return violation;
+}
+
+/**
+ * helper function for INT11, this should eventually be merged in with type.C
+ */
 bool INT11_isPointer(const SgType *type) {
 	const SgType *base = type->findBaseType();
 	return (isSgArrayType(type)
@@ -474,6 +514,7 @@ bool INT(const SgNode *node) {
   violation |= INT05_C(node);
   violation |= INT06_C(node);
   violation |= INT07_C(node);
+  violation |= INT09_C(node);
   violation |= INT11_C(node);
   violation |= INT12_C(node);
   violation |= INT13_C(node);
