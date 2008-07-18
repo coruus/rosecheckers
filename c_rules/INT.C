@@ -214,15 +214,31 @@ bool INT07_C( const SgNode *node ) {
 /**
  * Do not make assumptions about the type of a plain int bit-field when used
  * in an expression
- *
- * \bug NOT DONE, waiting on Dan regarding bit-fields
  */
 bool INT12_C( const SgNode *node ) {
-//	const SgInitializedName *varName = isSgInitializedName(node);
-//	if (!varName)
-//		return false;
-//
-//	std::cerr << isSgTypeInt(varName->get_type())->get_field_size() << std::endl;
+	const SgInitializedName *varName = isSgInitializedName(node);
+	if (!varName)
+		return false;
+
+	if (!findParentNodeOfType(varName, V_SgClassDefinition).first)
+		return false;
+
+	const SgVariableDefinition *varDef = isSgVariableDefinition(varName->get_definition());
+	assert(varDef);
+
+	if (!varDef->get_bitfield())
+		return false;
+
+	const SgType *varType = varName->get_type();
+	if (isSgTypeChar(varType)
+	||  isSgTypeShort(varType)
+	||  isSgTypeInt(varType)
+	||  isSgTypeLong(varType)
+	||  isSgTypeLongLong(varType)) {
+		print_error(node, "INT12-C", "Do not make assumptions about the type of a plain int bit-field when used in an expression", true);
+		return true;
+	}
+
 	return false;
 }
 
