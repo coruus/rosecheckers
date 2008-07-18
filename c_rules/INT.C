@@ -211,6 +211,63 @@ bool INT07_C( const SgNode *node ) {
 	return false;
 }
 
+bool INT11_isPointer(const SgType *type) {
+	const SgType *base = type->findBaseType();
+	return (isSgArrayType(type)
+		||  isSgTypeString(type)
+		||  isSgPointerType(type)
+		||  isSgFunctionType(type)
+		||  (type->unparseToString() == "uintptr_t")
+		||  isSgArrayType(base)
+		||  isSgTypeString(base)
+		||  isSgFunctionType(base)
+		||  isSgPointerType(base));
+}
+
+/**
+ * Take care when converting from pointer to integer or integer to pointer
+ */
+bool INT11_C( const SgNode *node ) {
+	const SgCastExp *cast = isSgCastExp(node);
+	if (!cast)
+		return false;
+
+	/**
+	 * Allow pointer arith, also allow pointer subtraction
+	 */
+	if (isSgAddOp(cast->get_parent())
+	||  isSgSubtractOp(cast->get_parent())
+	||  isSgSubtractOp(cast->get_operand()))
+		return false;
+
+	/**
+ 	 * Allow casting constant expressions such as NULL to pointers
+ 	 */
+	if (isSgValueExp(cast->get_operand())
+	||  isSgValueExp(cast->get_parent()))
+		return false;
+
+	/**
+	 * casts are dumb... *sigh*
+	 */
+	if (isSgUnaryOp(cast->get_operand())
+	&&  isSgValueExp(isSgUnaryOp(cast->get_operand())->get_operand()))
+		return false;
+
+	const SgType * outerType = cast->get_type();
+	assert(outerType);
+
+	const SgType * innerType = cast->get_operand()->get_type();
+	assert(innerType);
+
+	if (INT11_isPointer(outerType) && ! INT11_isPointer(innerType)) {
+		print_error(node, "INT11-C", "Take care when converting from pointer to integer or integer to pointer", true);
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Do not make assumptions about the type of a plain int bit-field when used
  * in an expression
@@ -417,6 +474,7 @@ bool INT(const SgNode *node) {
   violation |= INT05_C(node);
   violation |= INT06_C(node);
   violation |= INT07_C(node);
+  violation |= INT11_C(node);
   violation |= INT12_C(node);
   violation |= INT13_C(node);
   violation |= INT32_C(node);

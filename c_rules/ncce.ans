@@ -69,6 +69,7 @@ INT_NCCE.c:115: warning: INT05-C: Do not use input functions to convert characte
 INT_NCCE.c:123: warning: INT01-C: Use strtol() or a related function to convert a string token to an integer
 INT_NCCE.c:132: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
 INT_NCCE.c:181: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
+INT_NCCE.c:181: warning: INT11-C: Take care when converting from pointer to integer or integer to pointer
 INT_NCCE.c:188: warning: INT12-C: Do not make assumptions about the type of a plain int bit-field when used in an expression
 INT_NCCE.c:246: error: INT32-C: Ensure that operations on signed integers do not result in overflow
 INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
