@@ -878,3 +878,134 @@ bool varWrittenTo(const SgNode* var) {
 
 	}
 }
+
+
+/// NextVisitor code
+
+void add_dfs_to_stack(Rose_STL_Container< SgNode*>& stack, const SgNode *node) {
+	Rose_STL_Container<SgNode *> list;
+	list = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgNode);
+	stack.insert( stack.end(), list.begin(), list.end());
+}
+
+
+// Visits nodes that will be executed after this one
+void NextVisitor::traverse_next(const SgNode* node) {
+	stack_.erase( stack_.begin(), stack_.end());
+	sentinel_ = node;
+	after_ = false;
+	skip_ = NULL;
+	traverse(const_cast<SgNode*>( findParentNodeOfType( node, V_SgFunctionDefinition).first));
+}
+
+void NextVisitor::preOrderVisit(SgNode *node) {
+	if (node == skip_) skip_ = NULL;
+	else if (skip_ != NULL) return;
+			
+	const SgForStatement *forLoop;
+	if (after_) {
+		// TODO: for loops visited in AST order, not execution order
+		// TODO: handle break, continue, return, goto
+		visit_next( node);
+	} else if (node == sentinel_) after_ = true;
+	else if (!after_) {
+		if ((forLoop = isSgForStatement( node)) != NULL) {
+			// for loops must be treated specially, since the statements
+			// are not executed in the AST order. 
+			if (!stack_.empty()) {
+				add_dfs_to_stack( stack_.back(), forLoop->get_for_init_stmt());
+				add_dfs_to_stack( stack_.back(), forLoop->get_test());
+			}
+			stack_.push_back( Rose_STL_Container<SgNode*>()); // part of for loop
+			stack_.back().push_back( node);
+			add_dfs_to_stack( stack_.back(), forLoop->get_increment());
+			add_dfs_to_stack( stack_.back(), forLoop->get_test());
+			skip_ = forLoop->get_loop_body(); // ignore nodes in for line, skip to body
+
+		} else if (isSgWhileStmt( node) || isSgDoWhileStmt( node)) {
+			// add do & while loop nodes to stack
+			stack_.push_back( Rose_STL_Container<SgNode*>());
+			stack_.back().push_back( node);
+		} else { // node is nothing special
+
+			if (!stack_.empty()) { // inside a loop
+				stack_.back().push_back( node);
+			}
+		}
+	}
+}
+
+void NextVisitor::postOrderVisit(SgNode *node) {
+	if (skip_ != NULL) return;
+	if (!stack_.empty() && (stack_.back().front() == node)) {
+		// unwind loop, visit all nodes
+		if (after_) 
+			for (Rose_STL_Container<SgNode *>::const_iterator i = stack_.back().begin();
+					 i != stack_.back().end(); i++)
+				visit_next(*i);
+		stack_.pop_back();
+	}
+}
+
+void NextVisitor::visit_next(SgNode* node) {
+#if 0
+	if (isSgExpression( node))
+		std::cerr << "visit-next: " << node->unparseToString() << " in "
+							<< node->get_parent()->unparseToString() << std::endl;
+#endif
+}
+
+
+/**
+ * Checks to see if node is an assignment with var as the lhs and not in
+ * the rhs
+ */
+bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
+	const SgAssignOp *assignOp = isSgAssignOp(node);
+	if (!assignOp)
+		return false;
+
+	// Ensure that we are assigning to the variable in the LHS
+	const SgVarRefExp *lhsVar = isSgVarRefExp(assignOp->get_lhs_operand());
+	assert(lhsVar);
+	if (getRefDecl(var) != getRefDecl(lhsVar))
+		return false;
+
+	// Ensure variable does not appear in RHS
+	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgVarRefExp);
+	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
+	Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
+	SgVarRefExp *rhsVar;
+	for (++i; i < end; i++) {
+		rhsVar = isSgVarRefExp(*i);
+		assert(rhsVar);
+		if (getRefDecl(var) == getRefDecl(rhsVar))
+			return false;
+	}
+	return true;
+}
+
+// Returns next instance where ref's value is used, or NULL if none
+const SgVarRefExp* NextValueReferred::next_value_referred(const SgVarRefExp* ref) {
+	next_ref_ = NULL;
+	var_ = getRefDecl( ref);
+	traverse_next( ref);
+	return next_ref_;
+}
+
+void NextValueReferred::visit_next(SgNode* node) {
+	const SgVarRefExp* ref = isSgVarRefExp( node);
+	if (ref == NULL || getRefDecl(ref) != var_)
+		return;
+
+	skip_ = node; // disables all visits hereafter
+
+	if (isTestForNullOp(ref) ||
+			isAssignToVar(findParentNodeOfType( ref, V_SgAssignOp).first, ref))
+		return;
+
+	next_ref_ = ref;
+}
+
+
+

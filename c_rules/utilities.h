@@ -173,4 +173,46 @@ int getScanfFormatString(const SgFunctionRefExp *node);
 int getPrintfFormatString(const SgFunctionRefExp *node);
 bool varWrittenTo(const SgNode* var);
 
+class NextVisitor : public AstPrePostProcessing {
+public:
+	// Visits nodes that will be executed after this one
+	void traverse_next(const SgNode* node);
+protected:
+	virtual void preOrderVisit(SgNode *node);
+	virtual void postOrderVisit(SgNode *node);
+	virtual void visit_next(SgNode* node);
+
+	// This is the node passed to traverse_next, we only want nodes
+	// that follow it.
+	const SgNode* sentinel_;
+
+	// A stack of nodes before our sentinel that we might visit
+	// because they are in the same for/while loop as our sentinel
+	Rose_STL_Container< Rose_STL_Container< SgNode*> > stack_;
+
+	// true if we've passed our sentinel yet
+	bool after_;
+
+	// If non-NULL, skip nodes until we encounter this one
+	const SgNode* skip_;
+};
+
+/**
+ * Checks to see if node is an assignment with var as the lhs and not in
+ * the rhs
+ */
+bool isAssignToVar( const SgNode *node, const SgVarRefExp *var);
+
+
+class NextValueReferred : public NextVisitor {
+public:
+	// Returns next instance where ref's value is used, or NULL if none
+	const SgVarRefExp* next_value_referred(const SgVarRefExp* ref);
+protected:
+	const SgVarRefExp* next_ref_;
+	const SgInitializedName* var_;
+	virtual void visit_next(SgNode* node);
+};
+
+
 #endif
