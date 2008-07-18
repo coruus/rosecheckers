@@ -124,9 +124,7 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
 	/// Walk through definition ensuring that all function calls are async-safe
 	Async_Stack.push_back( name);
 	const SgNode* result = NULL;
-	Rose_STL_Container<SgNode *> nodes
-		= NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp);
-	for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
+	FOREACH_SUBNODE( def, nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
 		assert( fn_ref != NULL);
 		if (non_async_fn( fn_ref)) {
