@@ -399,6 +399,67 @@ bool INT13_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Avoid performing bitwise and arithmetic operations on the same data
+ */
+bool INT14_C( const SgNode *node ) {
+	const SgBinaryOp *assign = isSgBinaryOp(node);
+	if (!assign)
+		return false;
+
+	bool arith = false;
+	bool bitwise = false;
+
+	if (isSgPlusAssignOp(assign)
+	||  isSgMinusAssignOp(assign)
+	||  isSgModAssignOp(assign)
+	||  isSgMultAssignOp(assign)
+	||  isSgDivAssignOp(assign)) {
+		arith = true;
+	} else if (isSgLshiftAssignOp(assign)
+	||  isSgRshiftAssignOp(assign)
+	||  isSgAndAssignOp(assign)
+	||  isSgXorAssignOp(assign)
+	||  isSgIorAssignOp(assign)) {
+		bitwise = true;
+	} else if (!isSgAssignOp(assign)) {
+		return false;
+	}
+
+	FOREACH_SUBNODE(assign, nodes, i, V_SgExpression) {
+		if (isSgAddOp(*i)
+		||  isSgSubtractOp(*i)
+		||  isSgDivideOp(*i)
+		||  isSgMultiplyOp(*i)
+		||  isSgModOp(*i)
+		||  isSgExponentiationOp(*i)
+		||  isSgIntegerDivideOp(*i)
+		||  isSgMinusMinusOp(*i)
+		||  isSgPlusPlusOp(*i)
+		||  isSgMinusOp(*i)
+		||  isSgUnaryAddOp(*i)) {
+			arith = true;
+		} else if (isSgBitAndOp(*i)
+		||  isSgBitOrOp(*i)
+		||  isSgBitXorOp(*i)
+		||  isSgLshiftOp(*i)
+		||  isSgRshiftOp(*i)
+		||  isSgBitComplementOp(*i)) {
+			bitwise = true;
+		}
+	}
+
+	if (bitwise && arith) {
+		print_error(node, "INT14-C", "Avoid performing bitwise and arithmetic operations on the same data", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * This should eventually find it's way into utilities
+ */
 static bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef) {
 	if (!stat)
 		return false;
@@ -518,6 +579,7 @@ bool INT(const SgNode *node) {
   violation |= INT11_C(node);
   violation |= INT12_C(node);
   violation |= INT13_C(node);
+  violation |= INT14_C(node);
   violation |= INT32_C(node);
   violation |= INT33_C(node);
   return violation;

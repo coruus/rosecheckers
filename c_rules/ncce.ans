@@ -72,6 +72,7 @@ INT_NCCE.c:149: warning: INT09-C: Ensure enumeration constants map to unique val
 INT_NCCE.c:181: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 INT_NCCE.c:181: warning: INT11-C: Take care when converting from pointer to integer or integer to pointer
 INT_NCCE.c:188: warning: INT12-C: Do not make assumptions about the type of a plain int bit-field when used in an expression
+INT_NCCE.c:213: warning: INT14-C: Avoid performing bitwise and arithmetic operations on the same data
 INT_NCCE.c:246: error: INT32-C: Ensure that operations on signed integers do not result in overflow
 INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:269: warning: INT13-C: Use bitwise operators only on unsigned operands
