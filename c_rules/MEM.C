@@ -106,8 +106,8 @@ bool MEM04_C( const SgNode *node ) {
 		 * If there isn't one, maybe the progammer has assigned this var to
 		 * something sane and doesn't need to check
 		 */
-		FOREACH_SUBNODE(fn, nodes2, i, V_SgAssignOp) {
-			const SgAssignOp *op = isSgAssignOp(*i);
+		FOREACH_SUBNODE(fn, nodes2, i2, V_SgAssignOp) {
+			const SgAssignOp *op = isSgAssignOp(*i2);
 			assert(op);
 			ref = isSgVarRefExp(op->get_lhs_operand());
 			if (!ref || (getRefDecl(ref) != var))

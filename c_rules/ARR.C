@@ -198,9 +198,7 @@ bool ARR37_C( const SgNode *node ) {
 		return false;
 
 	/* Search forward to find the varRef */
-	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgScopeStatement*>(varRef->get_symbol()->get_scope()), V_SgVarRefExp);
-	Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
-	for (; i != nodes.end(); ++i ) {
+	FOREACH_SUBNODE( varRef->get_symbol()->get_scope(), nodes, i, V_SgVarRefExp) {
 		const SgVarRefExp * iVar = isSgVarRefExp(*i);
 		assert(iVar);
 		if (iVar == varRef)

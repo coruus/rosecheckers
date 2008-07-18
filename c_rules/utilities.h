@@ -44,8 +44,9 @@
  * \param[in] type Only iterate over nodes of this type
  */
 #define FOREACH_SUBNODE(node, nodes, i, type) \
-	Rose_STL_Container<SgNode *> (nodes) = NodeQuery::querySubTree( const_cast<SgNode*>((const SgNode *) node), (type) ); \
-	for (Rose_STL_Container<SgNode *>::iterator (i) = (nodes).begin(); (i) != (nodes).end(); ++(i) )
+	Rose_STL_Container<SgNode *> (nodes) = NodeQuery::querySubTree( const_cast<SgNode*>((const SgNode *) (node)), (type) ); \
+	Rose_STL_Container<SgNode *>::iterator (i) = (nodes).begin(); \
+	for (; (i) != (nodes).end(); ++(i) )
 
 
 /**
