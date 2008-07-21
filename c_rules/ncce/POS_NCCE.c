@@ -90,7 +90,7 @@ void POS35() {
     /* handle error */
   }
   if (!S_ISLNK(lstat_info.st_mode)) {
-    if ((fd = open(filename, O_RDWR)) == -1) {
+    if ((fd = open(filename, O_RDWR, S_IRWXU)) == -1) {
       /* handle error */
     }
   }

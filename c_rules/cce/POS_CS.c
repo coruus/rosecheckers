@@ -112,7 +112,7 @@ void POS35() {
   if (lstat(filename, &lstat_info) == -1) {
     /* handle error */
   }
-  if ((fd = open(filename, O_RDWR)) == -1) {
+  if ((fd = open(filename, O_RDWR, S_IRWXU)) == -1) {
     /* handle error */
   }
   if (fstat(fd, &fstat_info) == -1) {

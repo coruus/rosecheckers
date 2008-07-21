@@ -448,6 +448,22 @@ bool EXP34_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Call functions with the arguments intended by the API
+ */
+bool EXP37_C( const SgNode *node ) {
+	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(node);
+	if (!fnCall)
+		return false;
+	if (!isCallOfFunctionNamed(fnCall->get_function(), "open"))
+		return false;
+
+	if (fnCall->get_args()->get_expressions().size() == 3)
+		return false;
+
+	print_error(fnCall, "EXP37-C", "Call functions with the arguments intended by the API");
+	return true;
+}
 
 bool EXP(const SgNode *node) {
   bool violation = false;
@@ -460,5 +476,6 @@ bool EXP(const SgNode *node) {
   violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
+  violation |= EXP37_C(node);
   return violation;
 }
