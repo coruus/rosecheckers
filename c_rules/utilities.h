@@ -128,8 +128,8 @@ bool isTestForNullOp(const SgNode* node);
  * typecasts.
  * \return NULL if no such parm
  */
-const SgExpression* getFnArg(const SgFunctionRefExp* node, int i);
-const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i);
+const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i);
+const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i);
 
 /**
  * Fills list with all nodes in enclosing function

@@ -129,6 +129,7 @@ SIG_NCCE.c:123: error: SIG31-C: Do not access or modify shared objects in a sign
 SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 SIG_NCCE.c:144: error: SIG31-C: Do not access or modify shared objects in a signal handler
 SIG_NCCE.c:147: error: SIG32-C: Do not call longjmp() from within a signal handler
+SIG_NCCE.c:211: error: SIG33-C: Do not recursively invoke the raise() function
 SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible signal handlers
 "./ncce/STR_NCCE.c", line 67: warning: 
           argument of type "signed char *" is incompatible with parameter of

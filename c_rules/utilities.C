@@ -317,20 +317,12 @@ bool isTestForNullOp(const SgNode* node) {
 /**
  * Returns reference to ith argument of function call. Dives through
  * typecasts. Returns NULL if no such parm
- *
- * \bug segfaults if \c i is too big
- * \todo introduce proper bounds checks
  */
-const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
-	if (fnCall == NULL) return NULL;
-
-	const SgExprListExp* fnArgs = fnCall->get_args();
-	assert( fnArgs != NULL);
-	Rose_STL_Container<SgExpression*>::const_iterator iterator = fnArgs->get_expressions().begin();
-	for (int j = 0; j < i; j++) iterator++;
-	if(iterator == fnArgs->get_expressions().end())
-		return NULL;
-	const SgExpression* fnArg = *iterator;
+const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i) {
+	assert(fnCall);
+	const SgExpressionPtrList exprs = fnCall->get_args()->get_expressions();
+	assert(i < exprs.size());
+	const SgExpression *fnArg = exprs[i];
 	assert( fnArg != NULL);
 	const SgCastExp* castArg = isSgCastExp( fnArg);
 	return (castArg != NULL) ? castArg->get_operand() : fnArg;
@@ -340,12 +332,9 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, int i) {
  * Returns reference to ith argument of function reference. Dives through
  * typecasts. Returns NULL if no such parm
  */
-const SgExpression* getFnArg(const SgFunctionRefExp* node, int i) {
+const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
   if (node == NULL) return NULL;
-
-  const SgFunctionCallExp *fnCall = isSgFunctionCallExp( node->get_parent());
-  assert( fnCall != NULL);
-  return getFnArg(fnCall, i);
+  return getFnArg(isSgFunctionCallExp(node->get_parent()), i);
 }
 
 /**

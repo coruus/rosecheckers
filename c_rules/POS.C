@@ -108,6 +108,10 @@ bool POS35_C( const SgNode *node ) {
 			continue;
 		}
 
+		if (!(isCallOfFunctionNamed(iFn, "lstat")
+			||isCallOfFunctionNamed(iFn, "fstat")))
+			continue;
+
 		iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
 		if (!iVar)
 			continue;

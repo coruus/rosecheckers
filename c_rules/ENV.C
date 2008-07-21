@@ -50,6 +50,8 @@ bool ENV32_C( const SgNode *node ) {
 	const SgFunctionDeclaration *fnDecl = ref->get_symbol()->get_declaration();
 	assert(fnDecl);
 
+	bool violation = false;
+
 	const SgExpression *fnCall;
 	FOREACH_SUBNODE((SgExpression *) fnDecl,nodes,i,V_SgFunctionCallExp) {
 		assert(*i);
@@ -61,11 +63,11 @@ bool ENV32_C( const SgNode *node ) {
 		|| isCallOfFunctionNamed( fnCall, "longjmp")
 		|| isCallOfFunctionNamed( fnCall, "siglongjmp")) {
 			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning");
-			return true;
+			violation = true;
 		}
 	}
 
-	return false;
+	return violation;
 }
 
 bool ENV(const SgNode *node) {

@@ -141,7 +141,10 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
 }
 
 
-bool SIG30_C( const SgNode *node ) { // Call only async-safe functions in a signal handler
+/**
+ * Call only async-safe functions in a signal handler
+ */
+bool SIG30_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
   assert(sig_fn != NULL);
@@ -240,6 +243,60 @@ bool SIG32_C( const SgNode *node ) {
 }
 
 /**
+ * Do not recursively invoke the raise() function
+ */
+bool SIG33_C( const SgNode *node ) {
+	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
+	if (!isCallOfFunctionNamed(sigRef, "signal"))
+		return false;
+
+	/**
+	 * We can only handle this if we know explicitly what signal is assigned
+	 * to this handler.
+	 */
+	const SgIntVal *sigInt = isSgIntVal(getFnArg(sigRef,0));
+	if (!sigInt)
+		return false;
+	const int signum = sigInt->get_value();
+
+	const SgFunctionRefExp* ref = isSgFunctionRefExp(getFnArg(sigRef, 1));
+	assert(ref);
+
+	const SgFunctionDeclaration *fnDecl = ref->get_symbol()->get_declaration();
+	assert(fnDecl);
+
+	/**
+	 * See if there's a call too raise in this handler
+	 */
+	bool raise = false;
+	FOREACH_SUBNODE(fnDecl, nodes1, i, V_SgFunctionRefExp) {
+		if (isCallOfFunctionNamed(*i, "raise"))
+			raise = true;
+	}
+	if (!raise)
+		return false;
+
+	/**
+	 * See if there's another raise that can raise this signal
+	 */
+	const SgFunctionRefExp *fnCall;
+	bool violation = false;
+	FOREACH_SUBNODE(fnDecl->get_scope(), nodes, j, V_SgFunctionRefExp) {
+		fnCall = isSgFunctionRefExp(*j);;
+		if (isCallOfFunctionNamed(fnCall, "raise")) {
+			const SgIntVal *raiseInt = isSgIntVal(getFnArg(fnCall, 0));
+			if (!raiseInt
+			|| (raiseInt->get_value() != signum))
+				continue;
+			print_error(fnCall, "SIG33-C", "Do not recursively invoke the raise() function");
+			violation = true;
+		}
+	}
+
+	return violation;
+}
+
+/**
  * Do not call signal() from within interruptible signal handlers
  */
 bool SIG34_C( const SgNode *node ) {
@@ -320,6 +377,7 @@ bool SIG(const SgNode *node) {
   violation |= SIG30_C(node);
   violation |= SIG31_C(node);
   violation |= SIG32_C(node);
+  violation |= SIG33_C(node);
   violation |= SIG34_C(node);
   return violation;
 }
