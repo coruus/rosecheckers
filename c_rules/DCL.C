@@ -24,6 +24,7 @@
 
 #include "rose.h"
 #include "utilities.h"
+#include <boost/regex.hpp>
 
 /**
  * Const-qualify immutable objects
@@ -126,6 +127,83 @@ bool DCL01_C( const SgNode *node ) {
 	return false;
 }
 
+std::string normalize_string(std::string str) {
+	size_t found;
+
+	while((found = str.find_first_of("1")) != std::string::npos)
+		str[found] = 'l';
+	while((found = str.find_first_of("0")) != std::string::npos)
+		str[found] = 'O';
+	while((found = str.find_first_of("2")) != std::string::npos)
+		str[found] = 'Z';
+	while((found = str.find_first_of("5")) != std::string::npos)
+		str[found] = 'S';
+	while((found = str.find_first_of("8")) != std::string::npos)
+		str[found] = 'B';
+
+	return str;
+}
+
+/**
+ * Use visually distinct identifiers 
+ */
+bool DCL02_C( const SgNode *node ) {
+	static std::map<const SgScopeStatement *, std::set<std::string> > scopeMap;
+	static std::map<std::string, const SgInitializedName *> strVarMap;
+
+	const SgScopeStatement *scope = isSgScopeStatement(node);
+	if (!scope)
+		return false;
+
+	bool violation = false;
+
+	if (isSgGlobal(scope)) {
+		/** populate scopeMap */
+		FOREACH_SUBNODE(scope, nodes, i, V_SgInitializedName) {
+			const SgInitializedName *var = isSgInitializedName(*i);
+			assert(var);
+			if (isCompilerGeneratedNode(var)
+			|| !isSgDeclarationStatement(var->get_parent())
+			|| var->get_name().getString().empty()
+			|| (var->get_name().getString().substr(0,2) == "__"))
+				continue;
+
+			/** Ignore function prototypes */
+			const SgFunctionDeclaration * fnDecl = isSgFunctionDeclaration(findParentNodeOfType(var, V_SgFunctionDeclaration).first);
+			if (fnDecl && !fnDecl->get_definition())
+				continue;
+
+			const SgScopeStatement *varScope = var->get_scope();
+			std::string str (normalize_string(var->get_name().str()));
+			if (scopeMap[varScope].find(str) != scopeMap[varScope].end()) {
+				print_error(var, "DCL02-C", "Use visually distinct identifiers", true);
+				violation = true;
+			} else {
+				scopeMap[varScope].insert(str);
+				strVarMap[str] = var;
+			}
+		}
+		return false;
+	}
+
+	std::set<std::string> ids;
+	do {
+		if (isCompilerGeneratedNode(scope))
+			continue;
+		for (std::set<std::string>::iterator i = scopeMap[scope].begin(); i != scopeMap[scope].end(); i++) {
+			if (ids.find(*i) != ids.end()) {
+				const std::string msg = "Use visually distinct identifiers: " + *i;
+				print_error(strVarMap[*i], "DCL02-C", msg.c_str(), true);
+				violation = true;
+			} else {
+				ids.insert(*i);
+			}
+		}
+	} while (!isSgGlobal(scope) && (scope = scope->get_scope()));
+
+	return violation;
+}
+
 /**
  * Do not declare more than one variable per declaration 
  */
@@ -158,6 +236,7 @@ bool DCL(const SgNode *node) {
   bool violation = false;
   violation |= DCL00_C(node);
   violation |= DCL01_C(node);
+  violation |= DCL02_C(node);
   violation |= DCL04_C(node);
   return violation;
 }
