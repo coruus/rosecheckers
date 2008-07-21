@@ -178,7 +178,7 @@ char *file_name = "foo";
 
 /* initialize file_name */
 
-int fd = open(file_name, O_WRONLY, S_IRWXU);
+int fd = open(file_name, O_WRONLY);
 if (fd == -1) {
   /* handle Error */
 }
@@ -193,7 +193,7 @@ fd = -1;
 
 /* ... */
 
-fd = open(file_name, O_RDONLY, S_IRWXU);
+fd = open(file_name, O_RDONLY);
 if (fd == -1) {
   /* handle error */
 }
@@ -218,7 +218,7 @@ char *file_name = "foo";
 
 /* initialize file_name */
 
-int fd = open(file_name, O_RDONLY, S_IRWXU);
+int fd = open(file_name, O_RDONLY);
 if (fd == -1) {
   /* Handle Error */
 }
@@ -630,7 +630,7 @@ void FIO32(void) {
 
 	/* A TOCTOU race condition exists here, see below */
 
-	fd = open(filename, OPEN_FLAGS | O_WRONLY, S_IRWXU);
+	fd = open(filename, OPEN_FLAGS | O_WRONLY);
 	if (fd == -1) {
 	  /* handle error */
 	}
