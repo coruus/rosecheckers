@@ -42,7 +42,6 @@ EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:348: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names for identification
 FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions
-FIO_NCCE.c:234: error: EXP37-C: Call functions with the arguments intended by the API
 FIO_NCCE.c:262: warning: FIO07-C: Prefer fseek() to rewind()
 FIO_NCCE.c:282: warning: FIO08-C: Take care when calling remove() on an open file
 FIO_NCCE.c:329: warning: FIO12-C: Prefer setvbuf() to setbuf()

@@ -450,7 +450,10 @@ bool EXP34_C( const SgNode *node ) {
 
 /**
  * Call functions with the arguments intended by the API
+ *
+ * \note Disabled until we have macro support and can check for O_CREAT
  */
+#if 0
 bool EXP37_C( const SgNode *node ) {
 	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(node);
 	if (!fnCall)
@@ -464,6 +467,7 @@ bool EXP37_C( const SgNode *node ) {
 	print_error(fnCall, "EXP37-C", "Call functions with the arguments intended by the API");
 	return true;
 }
+#endif
 
 bool EXP(const SgNode *node) {
   bool violation = false;
@@ -476,6 +480,6 @@ bool EXP(const SgNode *node) {
   violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
-  violation |= EXP37_C(node);
+//  violation |= EXP37_C(node);
   return violation;
 }
