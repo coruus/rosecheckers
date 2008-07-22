@@ -205,8 +205,11 @@ bool isEqRelop( const SgNode *e ) {
 const SgFunctionSymbol *isCallOfFunctionNamed( const SgNode *node, const std::string &name ) { 
 	if( const SgFunctionRefExp *f = isSgFunctionRefExp(node)) {
 		const SgFunctionSymbol *sym = f->get_symbol();
-		if( sym->get_name().getString() == name ) //XXX what about qualified names?
+		if( sym->get_name().getString() == name ) {//XXX what about qualified names?
+			if (!isSgFunctionCallExp(f->get_parent()))
+				return false;
 			return sym;
+		}
 	}
 	return 0;
 }
@@ -333,8 +336,10 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i) {
  * typecasts. Returns NULL if no such parm
  */
 const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
-  if (node == NULL) return NULL;
-  return getFnArg(isSgFunctionCallExp(node->get_parent()), i);
+	if (node == NULL) return NULL;
+	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(node->get_parent());
+	assert(fnCall);
+	return getFnArg(fnCall, i);
 }
 
 /**
@@ -602,11 +607,12 @@ const SgExpression* removeCasts(const SgExpression * expr) {
  * \todo port this into type.C
  */
 const SgType *stripModifiers(const SgType *type) {
-	const SgModifierType *mt;
-	while((mt = isSgModifierType(type)) != NULL) {
-		type = mt->get_base_type();
-	}
-	return type;
+//	const SgModifierType *mt;
+//	while((mt = isSgModifierType(type)) != NULL) {
+//		type = mt->get_base_type();
+//	}
+//	return type;
+	return type->stripType(SgType::STRIP_MODIFIER_TYPE);
 }
 
 /**

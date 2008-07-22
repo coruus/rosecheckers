@@ -21,6 +21,7 @@ void DCL00();
 void DCL01();
 void DCL03();
 void DCL04();
+void DCL05();
 void DCL06();
 void DCL08();
 void DCL10();
@@ -91,18 +92,17 @@ void DCL03(void) {
   assert(offsetof(struct DCL03_timer, DATA) == 4);
 }
 
-
 /* DCL04_A v.37 */
 
 void DCL04() {
-  char *src, c;
-
+	char *src, c;
 	printf("DCL04 %p %p\n", &src, &c);
 }
 
+/* DCL05_C */
+void (*DCL05_signal(int, void (*)(int)))(int);
 
 /* DCL06_A v.88 */
-
 void DCL06() {
   const int age = random() % 100;
 

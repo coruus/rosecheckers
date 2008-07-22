@@ -581,7 +581,7 @@ void FIO30(void) {
 
 /* FIO31 v.27 */
 
-void do_stuff(FILE *logfile) {
+void do_stuff(const FILE *logfile) {
   /* Write logs pertaining to do_stuff() */
 
   /* ... */

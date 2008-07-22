@@ -21,6 +21,7 @@ void DCL00();
 void DCL01();
 void DCL03();
 void DCL04();
+void DCL05();
 void DCL06();
 void DCL08();
 void DCL10();
@@ -100,13 +101,18 @@ void DCL03() {
 
 
 /* DCL04_A v.37 */
-
 void DCL04() {
   char *src = 0;
   char *c = 0;
   printf("DCL04 %p %p\n", src, c);
 }
 
+/* DCL05_C */
+typedef void (*DCL05_SighandlerType)(int signum);
+extern DCL05_SighandlerType DCL05_signal(
+  int signum, 
+  DCL05_SighandlerType handler
+);
 
 /* DCL06_A v.88 */
 

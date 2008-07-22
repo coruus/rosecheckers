@@ -90,7 +90,13 @@ bool POS35_C( const SgNode *node ) {
 	const SgInitializedName *var = getRefDecl(ref);
 
 	const SgInitializedName *fd = getVarAssignedTo(fnRef, NULL);
-	assert(fd);
+	if (!fd) {
+		/**
+		 * Ignoring the return value here is a violation of EXP12-C
+		 * Or alternatively, we might just be returning the value
+		 */
+		return false;
+	}
 
 	const SgFunctionRefExp *iFn = NULL;
 	const SgVarRefExp *iVar = NULL;

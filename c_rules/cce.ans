@@ -1,5 +1,4 @@
 
-ARR_CS.c:202: warning: DCL00-C: Const-qualify immutable objects: buf
 ENV_CS.c:165: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 EXP_CS.c:269: warning: EXP12-C: Do not ignore values returned by functions
 FIO_CS.c:702: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values

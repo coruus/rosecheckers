@@ -460,7 +460,13 @@ bool EXP37_C( const SgNode *node ) {
 		return false;
 
 	bool o_creat = false;
-	FOREACH_SUBNODE(getFnArg(fnCall, 1), nodes, i, V_SgValueExp) {
+	FOREACH_SUBNODE(getFnArg(fnCall, 1), nodes, i, V_SgExpression) {
+		/**
+		 * If there's a variable present, we have no idea what the flags could
+		 * be
+		 */
+		if (isSgVarRefExp(*i))
+			return false;
 		if (isVal(isSgValueExp(*i), O_CREAT))
 			o_creat = true;
 	}

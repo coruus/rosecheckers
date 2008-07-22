@@ -7,9 +7,10 @@
 ARR_NCCE.c:50: warning: ARR01-C: Do not apply the sizeof operator to a pointer when taking the size of an array
 ARR_NCCE.c:146: warning: EXP05-C: Do not cast away a const qualification
 ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
-DCL_NCCE.c:54: warning: DCL00-C: Const-qualify immutable objects: pi
-DCL_NCCE.c:68: warning: DCL02-C: Use visually distinct identifiers: DCLOl_msg
-DCL_NCCE.c:68: warning: DCL01-C: Do not reuse variable names in subscopes
+DCL_NCCE.c:55: warning: DCL00-C: Const-qualify immutable objects: pi
+DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCLOl_msg
+DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
+DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
 ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter

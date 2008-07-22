@@ -49,12 +49,31 @@ bool DCL00_C( const SgNode *node ) {
 	Type varType(varName->get_type());
 	if (varType.isConst()
 	|| varType.dereference().isConst()
+	|| varType.dereference().dereference().isConst()
 	|| varType.isFunction()
 	|| isSgClassType(varName->get_type())
 	|| findParentNodeOfType(varName, V_SgEnumDeclaration).first
-	|| findParentNodeOfType(varName, V_SgClassDeclaration).first
-	|| findParentNodeOfType(varName, V_SgFunctionParameterList).first)
+	|| findParentNodeOfType(varName, V_SgClassDeclaration).first)
 		return false;
+
+	/**
+	 * DCL13-C is a subset of this rule, figure out which rule we are dealing
+	 * with here
+	 */
+	std::string ruleStr;
+	std::string errStr;
+	if (findParentNodeOfType(varName, V_SgFunctionParameterList).first) {
+		if (Type(varName->get_type()).isPointer()
+		||  Type(varName->get_type()).isArray()) {
+			ruleStr = "DCL13-C";
+			errStr = "Declare function parameters that are pointers to values not changed by the function as const: ";
+		} else {
+			return false;
+		}
+	} else {
+		ruleStr = "DCL00-C";
+		errStr = "Const-qualify immutable objects: ";
+	}
 
 	/**
 	 * Ignore global variables or variables declared as extern
@@ -71,6 +90,9 @@ bool DCL00_C( const SgNode *node ) {
 			continue;
 
 		const SgNode *parent = iVar->get_parent();
+		while(isSgCastExp(parent)) {
+			parent = parent->get_parent();
+		}
 		assert(parent);
 
 		/**
@@ -101,8 +123,8 @@ bool DCL00_C( const SgNode *node ) {
 			return false;
 	}
 
-	const std::string msg = "Const-qualify immutable objects: " + varName->unparseToString();
-	print_error(node, "DCL00-C", msg.c_str(), true);
+	const std::string msg =  errStr + varName->unparseToString();
+	print_error(node, ruleStr.c_str(), msg.c_str(), true);
 	return true;
 }
 
@@ -224,11 +246,58 @@ bool DCL04_C( const SgNode *node ) {
 }
 
 /**
- * Do not declare an identifier with conflicting linkage classifications
+ * Use typedefs to improve code readability
  *
- * \note GCC catches this
+ * \note our algorithm is to count open parens/brackets... if there are more
+ * than 2, we flag
  */
-bool DCL36_C( const SgNode *node ) {
+bool DCL05_C( const SgNode *node ) {
+	const SgInitializedName *var = isSgInitializedName(node);
+	if (!var)
+		return false;
+
+	/**
+	 * Ignore function definitions
+	 */
+	const SgDeclarationStatement *varDecl = var->get_declaration();
+	assert(varDecl);
+	if (isSgFunctionDeclaration(varDecl) && isSgFunctionDeclaration(varDecl)->get_definition())
+		return false;
+
+	/**
+	 * \bug ROSE is missing the const version of derefence()
+	 */
+	SgType *t = var->get_type();
+	assert(t);
+
+	const unsigned int threshold = 4;
+	unsigned int count = 0;
+	unsigned int modifiers = 0;
+	do {
+		/** count modifiers because they add clutter */
+		if (t->get_modifiers())
+			modifiers += t->get_modifiers()->get_nodes().size();
+		t = t->stripType(SgType::STRIP_MODIFIER_TYPE);
+
+		/** obviously, typedefs should break us out */
+		if (t != t->stripType(SgType::STRIP_TYPEDEF_TYPE))
+			break;
+		/** Count functions as two points */
+		if (isSgFunctionType(t))
+			count++;
+		/** Arrays will derefence twice, so let's only count them once */
+		if (isSgArrayType(t))
+			count--;
+		/** count all other pointers as one point */
+		count++;
+	} while ((t != t->dereference()) && (t = t->dereference()));
+	if (isSgPointerType(t) || isSgFunctionType(t) || isSgArrayType(t))
+		count++;
+
+	if (count + (modifiers / 2) >= threshold) {
+		print_error(node, "DCL05-C", "Use typedefs to improve code readability", true);
+		return true;
+	}
 	return false;
 }
 
@@ -238,5 +307,6 @@ bool DCL(const SgNode *node) {
   violation |= DCL01_C(node);
   violation |= DCL02_C(node);
   violation |= DCL04_C(node);
+  violation |= DCL05_C(node);
   return violation;
 }

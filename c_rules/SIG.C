@@ -147,8 +147,10 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
 bool SIG30_C( const SgNode *node ) {
   if (!isCallOfFunctionNamed( node, "signal")) return false;
   const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-  assert(sig_fn != NULL);
-  const SgExpression* ref = getFnArg( sig_fn, 1);
+  assert(sig_fn);
+  const SgExpression* ref = getFnArg(sig_fn, 1);
+  if (!ref)
+	return false;
   const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
   if (handler == NULL) return false; // no signal handler
   const SgNode* bad_node = non_async_fn( handler);
@@ -306,12 +308,16 @@ bool SIG34_C( const SgNode *node ) {
 	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
 	assert(sigRef);
 
+	const SgFunctionCallExp *sigCall = isSgFunctionCallExp(sigRef->get_parent());
+	if (!sigCall)
+		return false;
+
 	/**
 	 * Usually this is a value, but we really have no idea what type the macro
 	 * will expand to, so it's easier to just look at the string, which will
 	 * be either a number (or a variable name)
 	 */
-	const std::string sigStr = getFnArg(sigRef, 0)->unparseToString();
+	const std::string sigStr = getFnArg(sigCall, 0)->unparseToString();
 
 	const SgFunctionRefExp *handlerRef = isSgFunctionRefExp(getFnArg(isSgFunctionRefExp(node), 1));
 	if (!handlerRef)

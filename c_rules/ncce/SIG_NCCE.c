@@ -147,7 +147,7 @@ void SIG32_handler(int signum) {
   longjmp(SIG32_env, 1);
 }
 
-void SIG32_log_message(char *info1, char *info2) {
+void SIG32_log_message(const char *info1, const char *info2) {
   static char *buf = NULL;
   static size_t bufsize;
   char buf0[SIG32_MAXLINE];
