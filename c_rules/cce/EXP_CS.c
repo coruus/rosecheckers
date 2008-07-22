@@ -354,9 +354,9 @@ void EXP35() {
 
 
 /* EXP37_C v.50 */
-
+typedef char *(*EXP37_twoarg_fn) (const char *, int);
 void EXP37() {
-char *(*fp) (char const *, int);
+  EXP37_twoarg_fn fp;
   char *c;
   fp = strchr;
   c = fp("Hello",'H');
