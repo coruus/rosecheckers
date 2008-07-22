@@ -149,7 +149,7 @@ bool DCL01_C( const SgNode *node ) {
 	return false;
 }
 
-std::string normalize_string(std::string str) {
+std::string normalize_string(std::string str, bool isExtern) {
 	size_t found;
 
 	while((found = str.find_first_of("1")) != std::string::npos)
@@ -163,11 +163,39 @@ std::string normalize_string(std::string str) {
 	while((found = str.find_first_of("8")) != std::string::npos)
 		str[found] = 'B';
 
+	//std::cerr << str << "||" << isExtern << std::endl;
+
+	unsigned int len = isExtern ? 31 : 63;
+
+	if (str.size() > len)
+		str = str.substr(0,len);
+
 	return str;
+}
+
+void DCL02_report_error(const SgInitializedName *var) {
+	unsigned int len = const_cast<SgInitializedName *>(var)->get_storageModifier().isExtern() ? 31 : 63;
+	std::string varStr = var->get_name().str();
+	std::string ruleStr;
+	std::string errStr;
+	bool warning;
+	if (varStr.size() > len) {
+		ruleStr = "DCL31-C";
+		errStr = "Guarantee that mutually visible identifiers are unique";
+		warning = false;
+	} else {
+		ruleStr = "DCL02-C";
+		errStr = "Use visually distinct identifiers";
+		warning = true;
+	}
+	const std::string msg = errStr + ": " + varStr;
+	print_error(var, ruleStr.c_str(), msg.c_str(), warning);
 }
 
 /**
  * Use visually distinct identifiers 
+ *
+ * \note also checks DCL31-C
  */
 bool DCL02_C( const SgNode *node ) {
 	static std::map<const SgScopeStatement *, std::set<std::string> > scopeMap;
@@ -182,7 +210,7 @@ bool DCL02_C( const SgNode *node ) {
 	if (isSgGlobal(scope)) {
 		/** populate scopeMap */
 		FOREACH_SUBNODE(scope, nodes, i, V_SgInitializedName) {
-			const SgInitializedName *var = isSgInitializedName(*i);
+			SgInitializedName *var = isSgInitializedName(*i);
 			assert(var);
 			if (isCompilerGeneratedNode(var)
 			|| !isSgDeclarationStatement(var->get_parent())
@@ -196,9 +224,11 @@ bool DCL02_C( const SgNode *node ) {
 				continue;
 
 			const SgScopeStatement *varScope = var->get_scope();
-			std::string str (normalize_string(var->get_name().str()));
+			//std::cerr << var->unparseToString() << std::endl;
+			//std::cerr << var->get_storageModifier().displayString() << std::endl;
+			std::string str (normalize_string(var->get_name().str(), var->get_storageModifier().isExtern()));
 			if (scopeMap[varScope].find(str) != scopeMap[varScope].end()) {
-				print_error(var, "DCL02-C", "Use visually distinct identifiers", true);
+				DCL02_report_error(var);
 				violation = true;
 			} else {
 				scopeMap[varScope].insert(str);
@@ -214,8 +244,7 @@ bool DCL02_C( const SgNode *node ) {
 			continue;
 		for (std::set<std::string>::iterator i = scopeMap[scope].begin(); i != scopeMap[scope].end(); i++) {
 			if (ids.find(*i) != ids.end()) {
-				const std::string msg = "Use visually distinct identifiers: " + *i;
-				print_error(strVarMap[*i], "DCL02-C", msg.c_str(), true);
+				DCL02_report_error(strVarMap[*i]);
 				violation = true;
 			} else {
 				ids.insert(*i);

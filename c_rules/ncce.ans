@@ -8,7 +8,7 @@ ARR_NCCE.c:50: warning: ARR01-C: Do not apply the sizeof operator to a pointer w
 ARR_NCCE.c:146: warning: EXP05-C: Do not cast away a const qualification
 ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
 DCL_NCCE.c:55: warning: DCL00-C: Const-qualify immutable objects: pi
-DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCLOl_msg
+DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
 DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
@@ -32,6 +32,7 @@ ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within sig
 EXP_NCCE.c:79: warning: EXP01-C: Do not take the sizeof a pointer to determine the sizeof a type
 EXP_NCCE.c:119: warning: EXP09-C: malloc called using something other than sizeof()
 EXP_NCCE.c:168: warning: EXP05-C: Do not cast away a const qualification
+EXP_NCCE.c:185: warning: EXP06-C: Operands to the sizeof operator should not contain side effects
 EXP_NCCE.c:203: warning: EXP09-C: malloc called using something other than sizeof()
 EXP_NCCE.c:209: warning: EXP09-C: malloc called using something other than sizeof()
 EXP_NCCE.c:240: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type

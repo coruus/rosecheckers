@@ -118,6 +118,38 @@ bool EXP05_C( const SgNode *node ) {
 }
 
 /**
+ * Operands to the sizeof operator should not contain side effects 
+ */
+bool EXP06_C( const SgNode *node ) {
+	const SgSizeOfOp *op = isSgSizeOfOp(node);
+	if (!op)
+		return false;
+
+	bool violation = false;
+	FOREACH_SUBNODE(op, nodes, i, V_SgExpression) {
+		if(isSgFunctionCallExp(*i)
+		|| isSgAndAssignOp(*i)
+		|| isSgPlusAssignOp(*i)
+		|| isSgMinusAssignOp(*i)
+		|| isSgModAssignOp(*i)
+		|| isSgAssignOp(*i)
+		|| isSgDivAssignOp(*i)
+		|| isSgMultAssignOp(*i)
+		|| isSgIorAssignOp(*i)
+		|| isSgXorAssignOp(*i)
+		|| isSgLshiftAssignOp(*i)
+		|| isSgRshiftAssignOp(*i)
+		|| isSgMinusMinusOp(*i)
+		|| isSgPlusPlusOp(*i)) {
+			print_error(*i, "EXP06-C", "Operands to the sizeof operator should not contain side effects", true);
+			violation = true;
+		}
+	}
+
+	return violation;
+}
+
+/**
  * Ensure pointer arithmetic is used correctly
  *
  * \todo NOT DONE
@@ -484,6 +516,7 @@ bool EXP(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_C(node);
   violation |= EXP05_C(node);
+  violation |= EXP06_C(node);
   violation |= EXP08_C(node);
   violation |= EXP09_C(node);
   violation |= EXP11_C(node);

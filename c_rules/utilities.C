@@ -962,7 +962,13 @@ bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
 
 	// Ensure that we are assigning to the variable in the LHS
 	const SgVarRefExp *lhsVar = isSgVarRefExp(assignOp->get_lhs_operand());
-	assert(lhsVar);
+	/**
+	 * LHS Could be more complicated than a variable
+	 *
+	 * \todo FIXME
+	 */
+	if (!lhsVar)
+		return false;
 	if (getRefDecl(var) != getRefDecl(lhsVar))
 		return false;
 
