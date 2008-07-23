@@ -340,9 +340,9 @@ void EXP35() {
 
 
 /* EXP37_C v.50 */
-typedef char *(*EXP37_noarg_fn) ();
+
 void EXP37() {
-  EXP37_noarg_fn fp;
+	char *(*fp) ();
 
   char *c;
   fp = strchr;

@@ -63,6 +63,11 @@ bool DCL00_C( const SgNode *node ) {
 	std::string ruleStr;
 	std::string errStr;
 	if (findParentNodeOfType(varName, V_SgFunctionParameterList).first) {
+		/** ignore function prototypes, just worry about the definitions */
+		const SgFunctionDeclaration *fnDecl = isSgFunctionDeclaration(findParentNodeOfType(varName, V_SgFunctionDeclaration).first);
+		assert(fnDecl);
+		if (!fnDecl->get_definition())
+			return false;
 		if (Type(varName->get_type()).isPointer()
 		||  Type(varName->get_type()).isArray()) {
 			ruleStr = "DCL13-C";
@@ -274,36 +279,12 @@ bool DCL04_C( const SgNode *node ) {
 	return false;
 }
 
-/**
- * Use typedefs to improve code readability
- *
- * \note our algorithm is to count open parens/brackets... if there are more
- * than 2, we flag
- */
-bool DCL05_C( const SgNode *node ) {
-	const SgInitializedName *var = isSgInitializedName(node);
-	if (!var)
-		return false;
-
-	/**
-	 * Ignore function definitions
-	 */
-	const SgDeclarationStatement *varDecl = var->get_declaration();
-	assert(varDecl);
-	if (isSgFunctionDeclaration(varDecl) && isSgFunctionDeclaration(varDecl)->get_definition())
-		return false;
-
-	/**
-	 * \bug ROSE is missing the const version of derefence()
-	 */
-	SgType *t = var->get_type();
-	assert(t);
-
-	const unsigned int threshold = 4;
-	unsigned int count = 0;
+static unsigned int DCL05_score(const SgType *t) {
+	unsigned int score = 0;
 	unsigned int modifiers = 0;
+	const SgType *d = NULL;
 	do {
-		/** count modifiers because they add clutter */
+		/** score modifiers because they add clutter */
 		if (t->get_modifiers())
 			modifiers += t->get_modifiers()->get_nodes().size();
 		t = t->stripType(SgType::STRIP_MODIFIER_TYPE);
@@ -312,18 +293,59 @@ bool DCL05_C( const SgNode *node ) {
 		if (t != t->stripType(SgType::STRIP_TYPEDEF_TYPE))
 			break;
 		/** Count functions as two points */
-		if (isSgFunctionType(t))
-			count++;
-		/** Arrays will derefence twice, so let's only count them once */
-		if (isSgArrayType(t))
-			count--;
-		/** count all other pointers as one point */
-		count++;
-	} while ((t != t->dereference()) && (t = t->dereference()));
-	if (isSgPointerType(t) || isSgFunctionType(t) || isSgArrayType(t))
-		count++;
+		if (isSgFunctionType(t)) {
+			//std::cerr << "fn" << std::endl;
+			SgTypePtrList &args = isSgFunctionType(t)->get_argument_list()->get_arguments();
+			for (SgTypePtrList::iterator i = args.begin(); i != args.end(); i++) {
+				//std::cerr << "recursing" << std::endl;
+				score += DCL05_score(*i);
+			}
+			score+=2;
+		}
+		/** Arrays will derefence twice, so let's only score them once */
+//		if (isSgArrayType(t))
+//			score;
+		/** score all other pointers as one point */
+		if (isSgPointerType(t)) {
+			//std::cerr << "inc" << std::endl;
+			score++;
+		}
+		/**
+		 * \bug ROSE is missing the const version of derefence()
+		 */
+		d = const_cast<SgType *>(t)->dereference();
+	} while ((t != d) && (t = d));
+	//std::cerr << "score is " << score << std::endl;
+	return score + modifiers;
+//	return score;
+}
 
-	if (count + (modifiers / 2) >= threshold) {
+/**
+ * Use typedefs to improve code readability
+ *
+ * \note our algorithm is to count open parens/brackets... if there are more
+ * than 2, we flag
+ */
+bool DCL05_C( const SgNode *node ) {
+	const SgInitializedName *var = isSgInitializedName(node);
+	const SgFunctionDeclaration *fn = isSgFunctionDeclaration(node);
+	if (!(var || fn))
+		return false;
+
+	/**
+	 * Ignore function definitions
+	 */
+//	const SgDeclarationStatement *varDecl = var->get_declaration();
+//	assert(varDecl);
+//	if (isSgFunctionDeclaration(varDecl) && isSgFunctionDeclaration(varDecl)->get_definition())
+//		return false;
+
+	const SgType *t = var ? var->get_type() : fn->get_type();
+	assert(t);
+	const unsigned int threshold = 5;
+	//std::cerr << "type is " << t->unparseToString() << " || " << (var ? var->unparseToString() : fn->unparseToString()) << std::endl;
+	unsigned int score = DCL05_score(t);
+	if (score  >= threshold) {
 		print_error(node, "DCL05-C", "Use typedefs to improve code readability", true);
 		return true;
 	}
