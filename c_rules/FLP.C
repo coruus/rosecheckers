@@ -109,6 +109,24 @@ bool FLP03_C( const SgNode *node ) {
 }
 
 /**
+ * Do not use floating point variables as loop counters
+ */
+bool FLP30_C( const SgNode *node ) {
+	const SgForStatement *forSt = isSgForStatement(node);
+	if (!forSt)
+		return false;
+
+	FOREACH_SUBNODE(forSt->get_increment(), nodes, i, V_SgVarRefExp) {
+		if (Type(isSgVarRefExp(*i)->get_type()).isFloatingPoint()) {
+			print_error(*i, "FLP30-C", "Do not use floating point variables as loop counters");
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Do not call functions expecting real values with complex values
  */
 bool FLP31_C( const SgNode *node ) {
@@ -214,6 +232,7 @@ bool FLP33_C( const SgNode *node ) {
 bool FLP(const SgNode *node) {
   bool violation = false;
   violation |= FLP03_C(node);
+  violation |= FLP30_C(node);
   violation |= FLP31_C(node);
   violation |= FLP33_C(node);
   return violation;
