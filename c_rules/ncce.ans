@@ -150,7 +150,9 @@ SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible s
 
 STR_NCCE.c:62: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
 STR_NCCE.c:63: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:77: warning: STR05-C: Use pointers to const when referring to string literals
 STR_NCCE.c:94: warning: STR06-C: Do not assume that strtok() leaves the parse string unchanged
+STR_NCCE.c:102: warning: STR05-C: Use pointers to const when referring to string literals
 STR_NCCE.c:103: error: STR30-C: Do not attempt to modify string literals
 STR_NCCE.c:131: error: STR32-C: Null-terminate byte strings as required
 STR_NCCE.c:170: error: STR35-C: Do not copy data from an unbounded source to a fixed-length array

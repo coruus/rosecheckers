@@ -322,7 +322,7 @@ free(x);
 
 /* MEM32 v.63 */
 void MEM32(void) {
-	char *input_string = "Awefajgae";
+	const char *input_string = "Awefajgae";
 	void *p = NULL;
 	const size_t new_size = 10;
 

@@ -100,7 +100,7 @@ void FIO00(void) {
 /* FIO01 v.148*/
 
 void FIO01(void) {
-	char *file_name = "Awefawef";
+	const char *file_name = "Awefawef";
 	int fd;
 
 	/* initialize file_name */
@@ -147,7 +147,7 @@ void FIO02(void) {
 /* FIO03 v.108*/
 
 void FIO03(void) {
-char *file_name = "Awefawef";
+const char *file_name = "Awefawef";
 const int new_file_mode = 0600;
 
 /* initialize file_name and new_file_mode */
@@ -174,7 +174,7 @@ if (fseek(file, offset, SEEK_SET) != 0) {
 void FIO05_A(void) {
 struct stat orig_st;
 struct stat new_st;
-char *file_name = "foo";
+const char *file_name = "foo";
 
 /* initialize file_name */
 
@@ -214,7 +214,7 @@ fd = -1;
 
 void FIO05_B(void) {
 struct stat st;
-char *file_name = "foo";
+const char *file_name = "foo";
 
 /* initialize file_name */
 
@@ -243,7 +243,7 @@ void FIO05(void) {
 /* FIO06 v.101*/
 
 void FIO06(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 const int file_access_permissions = 0600;
 
 /* initialize file_name */
@@ -261,7 +261,7 @@ if (fd == -1){
 /* FIO07 v.17 */
 
 void FIO07(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 FILE *fp;
 
 /* initialize file_name */
@@ -284,7 +284,7 @@ if (fseek(fp, 0L, SEEK_SET) != 0) {
 
 void FIO08(void) {
 FILE *file;
-char *file_name = "foo";
+const char *file_name = "foo";
 
 /* initialize file_name */
 
@@ -363,7 +363,7 @@ void FIO12(void) {
 void FIO13(void) {
 	FILE *fp;
 	fpos_t pos;
-	char *file_name = "foo";
+	const char *file_name = "foo";
 
 	/* initialize file_name */
 
@@ -394,7 +394,7 @@ void FIO13(void) {
 /* FIO15 v.76 */
 
 void FIO15(void) {
-	char *dir_name = "dirfoo";
+	const char *dir_name = "dirfoo";
 
 	/* initialize dir_name */
 
@@ -528,7 +528,7 @@ int secure_dir(const char* path) {
 }
 
 void FIO17(void) {
-	char *file_name = "foo";
+	const char *file_name = "foo";
 	FILE *fp;
 
 	/* initialize file_name */
@@ -614,7 +614,7 @@ void FIO32(void) {
 	struct stat open_st;
 	int fd;
 	int flags;
-	char *filename = "foo";
+	char filename[] = "foo";
 
 	/* initialize filename */
 
@@ -770,7 +770,7 @@ void FIO38(void) {
 void FIO39(void) {
 	char data[BUFSIZ];
 	char append_data[BUFSIZ];
-	char *filename = "foo";
+	const char *filename = "foo";
 	FILE *file;
 
 	/* initialize filename */
@@ -814,7 +814,7 @@ void FIO40(void) {
 
 void FIO41(void) {
 	int c;
-	char *filename = "foo";
+	const char *filename = "foo";
 	FILE *fptr;
 
 	/* initialize filename */
@@ -835,7 +835,7 @@ void FIO41(void) {
 void FIO42(void) {
 	FILE* f;
 	char *editor;
-	char *filename = "foo";
+	const char *filename = "foo";
 
 	/* initialize filename */
 

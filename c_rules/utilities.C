@@ -1037,3 +1037,35 @@ bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef) {
 	return false;
 }
 
+/**
+ * Tries to find sizeof(type)
+ *
+ * \note this function only works on the basic types, nothing fancy
+ *
+ * \return 0 on error
+ */
+size_t sizeOfType(const SgType *type) {
+	const SgType *t = type->stripTypedefsAndModifiers();
+	if (isSgTypeBool(t)) return sizeof(bool);
+	else if (isSgTypeChar(t)) return sizeof(char);
+	else if (isSgTypeDouble(t)) return sizeof(double);
+	else if (isSgTypeFloat(t)) return sizeof(float);
+	else if (isSgTypeInt(t)) return sizeof(int);
+	else if (isSgTypeLong(t)) return sizeof(long);
+	else if (isSgTypeLongDouble(t)) return sizeof(long double);
+	else if (isSgTypeLongLong(t)) return sizeof(long long);
+	else if (isSgTypeShort(t)) return sizeof(short);
+	else if (isSgTypeSignedChar(t)) return sizeof(signed char);
+	else if (isSgTypeSignedInt(t)) return sizeof(signed int);
+	else if (isSgTypeSignedLong(t)) return sizeof(signed long);
+	else if (isSgTypeSignedShort(t)) return sizeof(signed short);
+	else if (isSgTypeUnsignedChar(t)) return sizeof(unsigned char);
+	else if (isSgTypeUnsignedInt(t)) return sizeof(unsigned int);
+	else if (isSgTypeUnsignedLong(t)) return sizeof(unsigned long);
+	else if (isSgTypeUnsignedShort(t)) return sizeof(unsigned short);
+	else if (isSgTypeWchar(t)) return sizeof(wchar_t);
+	else if (isSgPointerType(t)) return sizeof(void *);
+	else return 0;
+}
+
+

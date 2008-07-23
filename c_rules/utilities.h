@@ -216,5 +216,6 @@ protected:
 };
 
 bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
+size_t sizeOfType(const SgType *type);
 
 #endif

@@ -23,6 +23,25 @@
 #include "utilities.h"
 
 /**
+ * Use pointers to const when referring to string literals
+ */
+bool STR05_C( const SgNode *node ) {
+	const SgInitializedName *var = isSgInitializedName(node);
+	if(!var)
+		return false;
+	const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
+	if (!init)
+		return false;
+	if (!isSgTypeString(init->get_type()))
+		return false;
+	if (!isSgPointerType(var->get_type()))
+		return false;
+
+	print_error(node, "STR05-C", "Use pointers to const when referring to string literals", true);
+	return true;
+}
+
+/**
  * Do not assume that strtok() leaves the parse string unchanged 
  */
 bool STR06_C( const SgNode *node ) {
@@ -332,6 +351,7 @@ bool STR37_C(const SgNode *node) {
 
 bool STR(const SgNode *node) {
   bool violation = false;
+  violation |= STR05_C(node);
   violation |= STR06_C(node);
   violation |= STR30_C(node);
   violation |= STR31_C(node);

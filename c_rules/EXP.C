@@ -482,6 +482,45 @@ bool EXP34_C( const SgNode *node ) {
 }
 
 /**
+ * Do not convert pointers into more strictly aligned pointer types
+ */
+bool EXP36_C( const SgNode *node ) {
+	/**
+	 * \todo remove this compiler generated bug out
+	 */
+	if (isCompilerGeneratedNode(node))
+		return false;
+	const SgCastExp *cast = isSgCastExp(node);
+	if(!cast)
+		return false;
+	const SgPointerType *lhsP = isSgPointerType(cast->get_type());
+	if (!lhsP)
+		return false;
+	const SgType *rhsT = cast->get_operand()->get_type();
+	assert(rhsT);
+	const SgPointerType *rhsP = isSgPointerType(rhsT);
+	if (!rhsP && isSgArrayType(rhsT)) {
+	/** \bug ROSE is missing const dereference */
+		rhsP = isSgPointerType(const_cast<SgType *>(rhsT)->dereference());
+	}
+	if (!rhsP)
+		return false;
+
+	/** \todo also check for void */
+	/** \bug ROSE is missing const dereference */
+	if (sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference()) < sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference())) {
+		std::cerr << lhsP->unparseToString() << std::endl;
+		std::cerr << rhsP->unparseToString() << std::endl;
+		std::cerr << sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference()) << std::endl;
+		std::cerr << sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference()) << std::endl;
+		print_error(node, "EXP36-C", "Do not convert pointers into more strictly aligned pointer types");
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Call functions with the arguments intended by the API
  */
 bool EXP37_C( const SgNode *node ) {
@@ -524,6 +563,7 @@ bool EXP(const SgNode *node) {
   violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);
+  violation |= EXP36_C(node);
   violation |= EXP37_C(node);
   return violation;
 }

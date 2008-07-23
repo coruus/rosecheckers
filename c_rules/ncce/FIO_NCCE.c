@@ -99,7 +99,7 @@ printf("Error (type %s): %d\n", error_type, error_msg);
 /* FIO01 v.148*/
 
 void FIO01(void) {
-char *file_name = "awefgar";
+const char *file_name = "awefgar";
 FILE *f_ptr = fopen(file_name, "w");
 if (f_ptr == NULL) {
   /* Handle Error */
@@ -128,7 +128,7 @@ void FIO02(void) {
 /* FIO03 v.108*/
 
 void FIO03(void) {
-char *file_name = "awefewf";
+const char *file_name = "awefewf";
 FILE *fp;
 
 /* initialize file_name */
@@ -160,7 +160,7 @@ void FIO04(void) {
 /* FIO05 v.51 */
 
 void FIO05_A(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 
 /* initialize file_name */
 
@@ -191,7 +191,7 @@ fd = NULL;
 }
 
 void FIO05_B(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 FILE *fd;
 
 /* initialize file_name */
@@ -214,7 +214,7 @@ void FIO05(void) {
 /* FIO06 v.101*/
 
 void FIO06_A(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 FILE *fp;
 
 /* initialize file_name */
@@ -226,7 +226,7 @@ if (!fp){
 }
 
 void FIO06_B(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 int fd;
 
 /* initialize file_name */
@@ -247,7 +247,7 @@ void FIO06(void) {
 /* FIO07 v.17 */
 
 void FIO07(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 FILE *fp;
 
 /* initialize file_name */
@@ -267,7 +267,7 @@ rewind(fp);
 /* FIO08 v.41 */
 
 void FIO08(void) {
-	char *file_name = "foo";
+	const char *file_name = "foo";
 	FILE *file;
 
 	/* initialize file+name */
@@ -334,7 +334,7 @@ setbuf(file, NULL);
 
 void FIO13(void) {
 FILE *fp;
-char *file_name = "foo";
+const char *file_name = "foo";
 
 /* initialize file_name */
 
@@ -386,7 +386,7 @@ void FIO16(void) {
 /* FIO17 v.14 */
 
 void FIO17(void) {
-char *file_name = "foo";
+const char *file_name = "foo";
 FILE *fp;
 
 /* initialize file_name */
@@ -460,7 +460,7 @@ void FIO31(void) {
 /* FIO32 v.50 */
 
 void FIO32(void) {
-char *filename = "foo";
+char filename[] = "foo";
 FILE *file;
 
 /* initialize filename */
@@ -553,7 +553,7 @@ void FIO38(void) {
 void FIO39(void) {
 char data[BUFSIZ];
 char append_data[BUFSIZ];
-char *filename = "foo";
+const char *filename = "foo";
 FILE *file;
 
 /* initialize filename */
@@ -590,7 +590,7 @@ if (fgets(buf, sizeof(buf), file) == NULL) {
 /* FIO41 v.34 */
 
 void FIO41(void) {
-	char *file_name = "foo";
+	const char *file_name = "foo";
 	FILE *fptr;
 
 	/* initialize file_name */
@@ -608,7 +608,7 @@ void FIO41(void) {
 void FIO42(void) {
 	FILE* f;
 	char *editor;
-	char *filename = "foo";
+	const char *filename = "foo";
 
 	/* initialize filename */
 

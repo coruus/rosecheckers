@@ -354,7 +354,7 @@ x = NULL;
 }
 /* MEM32 v.63 */
 void MEM32(void) {
-char *input_string = "awefawe";
+const char *input_string = "awefawe";
 void *p = NULL;
 void *q = NULL;
 const size_t new_size = 10;

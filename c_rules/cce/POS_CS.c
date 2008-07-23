@@ -55,7 +55,7 @@ void POS30() {
 /* POS33_C v.41 */
 
 void POS33() {
-  char *filename = "foo";
+  const char *filename = "foo";
 
   const pid_t pid = fork();
   if ( pid == 0 )  /* child */ {
@@ -101,7 +101,7 @@ void POS34() {
 /* POS35_C v.33 */
 
 void POS35() {
-  char *filename = "foo";
+  const char *filename = "foo";
   char userbuf[] = "foobar";
   const unsigned int userlen = sizeof(userbuf);
 
