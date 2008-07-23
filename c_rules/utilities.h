@@ -215,5 +215,6 @@ protected:
 	virtual void visit_next(SgNode* node);
 };
 
+bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
 
 #endif

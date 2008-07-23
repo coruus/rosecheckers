@@ -30,6 +30,85 @@
 #include "utilities.h"
 
 /**
+ * Detect and handle floating point errors
+ *
+ * \bog ROSE can't handle the FENV_ACCESS pragma :( so there's no way to a
+ * have a compliant solution here
+ */
+bool FLP03_C( const SgNode *node ) {
+	if (isCompilerGeneratedNode(node))
+		return false;
+
+	/**
+	 * We are looking for floating point mult, divide (with non const/value on
+	 * rhs), and floating point casts from double->float
+	 */
+	if (isSgBinaryOp(node)) {
+		const SgBinaryOp *op = isSgBinaryOp(node);
+		assert(op);
+		const Type lhsT(removeCasts(op->get_lhs_operand())->get_type());
+		const Type rhsT(removeCasts(op->get_rhs_operand())->get_type());
+		if (!(lhsT.isFloatingPoint() || rhsT.isFloatingPoint()))
+			return false;
+		bool lhsKnown = isSgValueExp(removeCasts(op->get_lhs_operand())) || lhsT.isConst();
+		bool rhsKnown = isSgValueExp(removeCasts(op->get_rhs_operand())) || rhsT.isConst();
+		if (isSgDivideOp(op)) {
+			if (rhsKnown)
+				return false;
+
+			/** Also check for a divde-by-zero check on the previous line */
+			const SgStatement *prevSt = findInBlockByOffset(node, -1);
+			const SgVarRefExp *varRef = isSgVarRefExp(removeCasts(op->get_rhs_operand()));
+			if (prevSt && varRef) {
+				FOREACH_SUBNODE(prevSt, nodes, i, V_SgStatement) {
+					if (isCheckForZero(isSgStatement(*i), varRef))
+					return false;
+				}
+			}
+		} else if (isSgMultiplyOp(op)) {
+			if (lhsKnown && rhsKnown)
+				return false;
+		} else {
+			return false;
+		}
+	} else if (isSgCastExp(node)) {
+		const SgCastExp *cast = isSgCastExp(node);
+		assert(cast);
+		const Type lhsT(cast->get_type());
+		const Type rhsT(cast->get_operand()->get_type());
+		if (!(lhsT.isDouble() && rhsT.isFloat()))
+			return false;
+	} else {
+		return false;
+	}
+
+	const SgStatement *prevSt = findInBlockByOffset(node, -1);
+	bool no_feclearexcept = true;
+	if (prevSt) {
+		FOREACH_SUBNODE(prevSt, nodes, i, V_SgFunctionCallExp) {
+			if (isCallOfFunctionNamed(*i, "feclearexcept"))
+				no_feclearexcept = false;
+		}
+	}
+
+	const SgStatement *nextSt = findInBlockByOffset(node,  1);
+	bool no_fetestexcept = true;
+	if (nextSt) {
+		FOREACH_SUBNODE(nextSt, nodes, i, V_SgFunctionCallExp) {
+			if (isCallOfFunctionNamed(*i, "fetestexcept"))
+				no_fetestexcept = false;
+		}
+	}
+
+	if (no_feclearexcept || no_fetestexcept) {
+		print_error(node, "FLP03-C", "Detect and handle floating point errors", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Do not call functions expecting real values with complex values
  */
 bool FLP31_C( const SgNode *node ) {
@@ -134,6 +213,7 @@ bool FLP33_C( const SgNode *node ) {
 
 bool FLP(const SgNode *node) {
   bool violation = false;
+  violation |= FLP03_C(node);
   violation |= FLP31_C(node);
   violation |= FLP33_C(node);
   return violation;

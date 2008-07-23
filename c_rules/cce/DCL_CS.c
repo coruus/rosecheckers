@@ -53,7 +53,7 @@ void DCL() {
 
 void DCL00() {
   float const pi = 3.14159f;
-  const float degrees = 360.0 / ((float) random());
+  const float degrees = 180.0;
   float radians;
   /* ... */
   radians = degrees * pi / 180;

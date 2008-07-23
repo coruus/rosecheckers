@@ -8,6 +8,7 @@ ARR_NCCE.c:50: warning: ARR01-C: Do not apply the sizeof operator to a pointer w
 ARR_NCCE.c:146: warning: EXP05-C: Do not cast away a const qualification
 ARR_NCCE.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object
 DCL_NCCE.c:55: warning: DCL00-C: Const-qualify immutable objects: pi
+DCL_NCCE.c:59: warning: FLP03-C: Detect and handle floating point errors
 DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
 DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability

@@ -457,34 +457,6 @@ bool INT14_C( const SgNode *node ) {
 	return false;
 }
 
-/**
- * This should eventually find it's way into utilities
- */
-static bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef) {
-	if (!stat)
-		return false;
-
-	const SgVarRefExp *compareVar;
-	const SgExpression *lhs;
-	const SgExpression *rhs;
-	FOREACH_SUBNODE(stat, nodes, i, V_SgBinaryOp) {
-		assert(*i);
-		if(!(isSgEqualityOp(*i) || isSgNotEqualOp(*i)))
-			continue;
-		lhs = removeImplicitPromotions(isSgBinaryOp(*i)->get_lhs_operand());
-		rhs = removeImplicitPromotions(isSgBinaryOp(*i)->get_rhs_operand());
-		if ((compareVar = isSgVarRefExp(lhs))
-		&&  (compareVar->get_symbol()->get_name() == varRef->get_symbol()->get_name())
-		&& isZeroVal(rhs))
-			return true;
-		if ((compareVar = isSgVarRefExp(rhs))
-		&&  (compareVar->get_symbol()->get_name() == varRef->get_symbol()->get_name())
-		&& isZeroVal(lhs))
-			return true;
-	}
-
-	return false;
-}
 
 /**
  * Ensure that operations on signed integers do not result in overflow
