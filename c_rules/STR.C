@@ -23,6 +23,33 @@
 #include "utilities.h"
 
 /**
+ * Use plain char for characters in the basic character set 
+ */
+bool STR04_C( const SgNode *node ) {
+	const SgInitializedName *var = isSgInitializedName(node);
+	if (!var)
+		return false;
+	const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
+	if (!init)
+		return false;
+	if (!isSgTypeString(init->get_type()))
+		return false;
+	if (isSgTypeChar(var->get_type()->findBaseType())
+	||  isSgTypeWchar(var->get_type()->findBaseType()))
+		return false;
+
+	/**
+	 * \bug Rose is missing const dereference
+	 * \bug Rose fails at handling wchar_t
+	 */
+	if (const_cast<SgType *>(var->get_type())->dereference()->unparseToString() == "wchar_t")
+		return false;
+
+	print_error(node, "STR04-C", "Use plain char for characters in the basic character set", true);
+	return true;
+}
+
+/**
  * Use pointers to const when referring to string literals
  */
 bool STR05_C( const SgNode *node ) {
@@ -351,6 +378,7 @@ bool STR37_C(const SgNode *node) {
 
 bool STR(const SgNode *node) {
   bool violation = false;
+  violation |= STR04_C(node);
   violation |= STR05_C(node);
   violation |= STR06_C(node);
   violation |= STR30_C(node);

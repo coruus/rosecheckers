@@ -155,7 +155,9 @@ SIG_NCCE.c:221: error: SIG34-C: Do not call signal() from within interruptible s
                  ^
 
 STR_NCCE.c:62: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:62: warning: STR04-C: Use plain char for characters in the basic character set
 STR_NCCE.c:63: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
+STR_NCCE.c:63: warning: STR04-C: Use plain char for characters in the basic character set
 STR_NCCE.c:77: warning: STR05-C: Use pointers to const when referring to string literals
 STR_NCCE.c:94: warning: STR06-C: Do not assume that strtok() leaves the parse string unchanged
 STR_NCCE.c:102: warning: STR05-C: Use pointers to const when referring to string literals
