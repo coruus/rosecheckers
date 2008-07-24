@@ -89,6 +89,7 @@ INT_NCCE.c:213: warning: INT14-C: Avoid performing bitwise and arithmetic operat
 INT_NCCE.c:246: error: INT32-C: Ensure that operations on signed integers do not result in overflow
 INT_NCCE.c:259: error: INT33-C: Ensure that division and modulo operations do not result in divide-by-zero errors
 INT_NCCE.c:269: warning: INT13-C: Use bitwise operators only on unsigned operands
+INT_NCCE.c:269: error: INT34-C: Do not shift a negative number of bits or more bits than exist in the operand
 MEM_NCCE.c:78: error: MEM30-C: Do not access freed memory
 MEM_NCCE.c:95: warning: MEM01-C: Store a new value in pointers immediately after free()
 MEM_NCCE.c:95: error: MEM30-C: Do not access freed memory

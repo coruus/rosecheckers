@@ -373,11 +373,11 @@ void INT34() {
 	{
 	  /* handle error condition */
 	}
-	else {
-	  sresult = ui1 << ui2;
-	}
+	sresult = ui1 << ui2;
 	printf("INT34 %d\n", sresult);
 }
+
+
 
 
 /* INT35_C v.34 */

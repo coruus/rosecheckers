@@ -541,6 +541,60 @@ bool INT33_C( const SgNode *node ) {
 	return true;
 }
 
+/**
+ * Do not shift a negative number of bits or more bits than exist in the
+ * operand
+ */
+bool INT34_C( const SgNode *node ) {
+	const SgBinaryOp *op = isSgBinaryOp(node);
+	if (!op)
+		return false;
+	if (!(isSgLshiftOp(op)
+		||isSgLshiftAssignOp(op)
+		||isSgRshiftOp(op)
+		||isSgRshiftAssignOp(op)))
+		return false;
+
+	const SgExpression *rhs = removeCasts(op->get_rhs_operand());
+	assert(rhs);
+
+	/**
+	 * Allow compile time known values 
+	 */
+	if (isSgValueExp(rhs))
+		return false;
+
+	const SgVarRefExp *varRef = isSgVarRefExp(rhs);
+	if (!varRef)
+		return false;
+	const SgInitializedName *var = getRefDecl(varRef);
+	assert(var);
+
+	const SgStatement *prevSt = findInBlockByOffset(op, -1);
+	if (prevSt) {
+		FOREACH_SUBNODE(prevSt, nodes, i, V_SgBinaryOp) {
+			const SgBinaryOp *iOp = isSgBinaryOp(*i);
+			if (!iOp)
+				continue;
+			if (!(isSgGreaterOrEqualOp(iOp)
+				||isSgGreaterThanOp(iOp)
+				||isSgLessOrEqualOp(iOp)
+				||isSgLessThanOp(iOp)))
+				continue;
+
+			const SgVarRefExp *iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
+			if (iVar && (getRefDecl(iVar) == var))
+				return false;
+			iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
+			if (iVar && (getRefDecl(iVar) == var))
+				return false;
+		}
+	}
+
+	print_error(node, "INT34-C", "Do not shift a negative number of bits or more bits than exist in the operand");
+	return true;
+}
+
 bool INT(const SgNode *node) {
   bool violation = false;
   violation |= INT01_C(node);
@@ -554,5 +608,6 @@ bool INT(const SgNode *node) {
   violation |= INT14_C(node);
   violation |= INT32_C(node);
   violation |= INT33_C(node);
+  violation |= INT34_C(node);
   return violation;
 }

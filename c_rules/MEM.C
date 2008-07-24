@@ -80,6 +80,16 @@ bool MEM01_C( const SgNode *node ) {
 }
 
 /**
+ * Immediately cast the result of a memory allocation function call into a
+ * pointer to the allocated type
+ *
+ * \see EXP36-C which catches this
+ */
+bool MEM02_C( const SgNode *node ) {
+	return false;
+}
+
+/**
  * Do not perform zero length allocations
  */
 bool MEM04_C( const SgNode *node ) {
@@ -328,6 +338,7 @@ bool MEM33_C( const SgNode *node ) {
 bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_C(node);
+  violation |= MEM02_C(node);
   violation |= MEM04_C(node);
   violation |= MEM07_C(node);
   violation |= MEM08_C(node);

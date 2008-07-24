@@ -942,6 +942,10 @@ void NextVisitor::postOrderVisit(SgNode *node) {
 	}
 }
 
+/**
+ * \todo Rewrite this so that it just returns a list (possibly just an
+ * extension
+ */
 void NextVisitor::visit_next(SgNode* node) {
 #if 0
 	if (isSgExpression( node))

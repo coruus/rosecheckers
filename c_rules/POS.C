@@ -73,6 +73,8 @@ bool POS34_C( const SgNode *node ) {
 
 /**
  * Avoid race conditions while checking for the existence of a symbolic link
+ *
+ * \todo Add fopen/fileno support
  */
 bool POS35_C( const SgNode *node ) {
 	if (!isCallOfFunctionNamed(node, "open"))
