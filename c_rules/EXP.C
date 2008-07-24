@@ -482,14 +482,23 @@ bool EXP34_C( const SgNode *node ) {
 }
 
 /**
+ * \todo find a way to do this w/o unparseToString()
+ */
+static bool isVoidStar(const SgType *t) {
+	/** \bug ROSE is missing const dereference */
+	std::string str = const_cast<SgType *>(t)->dereference()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+	return str == "void";
+}
+
+/**
  * Do not convert pointers into more strictly aligned pointer types
  */
 bool EXP36_C( const SgNode *node ) {
 	/**
 	 * \todo remove this compiler generated bug out
 	 */
-	if (isCompilerGeneratedNode(node))
-		return false;
+//	if (isCompilerGeneratedNode(node))
+//		return false;
 	const SgCastExp *cast = isSgCastExp(node);
 	if(!cast)
 		return false;
@@ -506,14 +515,24 @@ bool EXP36_C( const SgNode *node ) {
 	if (!rhsP)
 		return false;
 
-	/** \todo also check for void */
-	/** \bug ROSE is missing const dereference */
-	if (sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference()) < sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference())) {
-		std::cerr << lhsP->unparseToString() << std::endl;
-		std::cerr << rhsP->unparseToString() << std::endl;
-		std::cerr << sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference()) << std::endl;
-		std::cerr << sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference()) << std::endl;
-		print_error(node, "EXP36-C", "Do not convert pointers into more strictly aligned pointer types");
+	/*
+	 * \bug ROSE is missing const dereference
+	 */
+	if (isVoidStar(lhsP) || isZeroVal(removeCasts(cast)))
+		return false;
+	const unsigned int lhsSize = sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference());
+	const unsigned int rhsSize = sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference());
+	/**
+	 * Allow casting to char's for pointer arith
+	 */
+	if (lhsSize == 1)
+		return false;
+	/**
+	 * If we see a void * and the cast is implicit, then also flag
+	 */
+	if ((!isVoidStar(rhsP) && (lhsSize > rhsSize))
+	|| (isVoidStar(rhsP) && isCompilerGeneratedNode(cast))) {
+		print_error(cast->get_operand(), "EXP36-C", "Do not convert pointers into more strictly aligned pointer types");
 		return true;
 	}
 

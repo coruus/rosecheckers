@@ -35,6 +35,7 @@ void EXP32();
 void EXP33();
 void EXP34();
 void EXP35();
+void EXP36();
 void EXP37();
 
 void EXP() {
@@ -56,6 +57,7 @@ void EXP() {
   EXP33();
   EXP34();
   EXP35();
+  EXP36();
   EXP37();
 }
 
@@ -338,6 +340,20 @@ void EXP35() {
   EXP35_addressee().a;
 }
 
+/* EXP36-C */
+
+int *EXP36_loop_function(const void *v_pointer) {
+  /* ... */
+  return v_pointer;
+}
+
+void EXP36() {
+	char *loop_ptr = NULL;
+	int *int_ptr;
+
+	int_ptr = EXP36_loop_function(loop_ptr);
+	printf("%p\n", int_ptr);
+}
 
 /* EXP37_C v.50 */
 
