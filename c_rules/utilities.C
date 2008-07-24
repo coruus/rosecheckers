@@ -542,6 +542,10 @@ bool isVal(const SgExpression *node, const intmax_t n) {
 		return n == isSgUnsignedShortVal(node)->get_value();
 	} else if (isSgShortVal(node)) {
 		return n == isSgShortVal(node)->get_value();
+	} else if (isSgFloatVal(node)) {
+		return n == isSgFloatVal(node)->get_value();
+	} else if (isSgDoubleVal(node)) {
+		return n == isSgDoubleVal(node)->get_value();
 	} else {
 		return false;
 	}

@@ -30,6 +30,34 @@
 #include "utilities.h"
 
 /**
+ * Consider avoiding floating point numbers when precise computation is needed
+ */
+bool FLP02_C( const SgNode *node ) {
+	const SgBinaryOp *op = isSgBinaryOp(node);
+	if (!op)
+		return false;
+	if (!(isSgEqualityOp(op)
+		||isSgNotEqualOp(op)))
+		return false;
+
+	const SgExpression *lhs = op->get_lhs_operand();
+	assert(lhs);
+	const SgExpression *rhs = op->get_rhs_operand();
+	assert(rhs);
+
+	if (Type(lhs->get_type()).isFloatingPoint()
+	  ||Type(rhs->get_type()).isFloatingPoint()) {
+		if (isZeroVal(removeCasts(lhs))
+		||  isZeroVal(removeCasts(rhs)))
+			return false;
+		
+		print_error(node, "FLP02-C", "Consider avoiding floating point numbers when precise computation is needed", true);
+		return true;
+	}
+	return false;
+}
+
+/**
  * Detect and handle floating point errors
  *
  * \bog ROSE can't handle the FENV_ACCESS pragma :( so there's no way to a
@@ -231,6 +259,7 @@ bool FLP33_C( const SgNode *node ) {
 
 bool FLP(const SgNode *node) {
   bool violation = false;
+  violation |= FLP02_C(node);
   violation |= FLP03_C(node);
   violation |= FLP30_C(node);
   violation |= FLP31_C(node);

@@ -67,6 +67,7 @@ FIO_NCCE.c:644: error: FIO43-C: Do not use fopen() on the results of tmpnam()
 FIO_NCCE.c:670: error: FIO43-C: Do not use open() on the results of mktemp()
 FIO_NCCE.c:682: error: FIO43-C: Do not use tmpfile()
 FIO_NCCE.c:702: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
+FLP_NCCE.c:68: warning: FLP02-C: Consider avoiding floating point numbers when precise computation is needed
 FLP_NCCE.c:95: error: FLP30-C: Do not use floating point variables as loop counters
 FLP_NCCE.c:99: error: FLP30-C: Do not use floating point variables as loop counters
 FLP_NCCE.c:136: error: FLP33-C: Convert integers to floating point for floating point operations
