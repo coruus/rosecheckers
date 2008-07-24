@@ -193,8 +193,8 @@ void DCL31() {
 /* DCL32_C v.47 */
 
 void DCL32() {
-  int *global_symbol_definition_lookup_table_a = NULL;
-  int *global_symbol_definition_lookup_table_b = NULL;
+  extern int *global_symbol_definition_lookup_table_a;
+  extern int *global_symbol_definition_lookup_table_b;
   printf("DCL32 %p %p\n", global_symbol_definition_lookup_table_a, global_symbol_definition_lookup_table_b);
 }
 

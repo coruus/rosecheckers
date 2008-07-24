@@ -26,6 +26,10 @@
 #include "utilities.h"
 #include <boost/regex.hpp>
 
+static bool isExtern(const SgInitializedName * var) {
+	return const_cast<SgInitializedName*>(var)->get_declaration()->get_declarationModifier().get_storageModifier().isExtern();
+}
+
 /**
  * Const-qualify immutable objects
  *
@@ -84,8 +88,7 @@ bool DCL00_C( const SgNode *node ) {
 	 * Ignore global variables or variables declared as extern
 	 */
 	const SgScopeStatement *varScope = varName->get_scope();
-	if (isSgGlobal(varScope)
-	|| const_cast<SgInitializedName*>(varName)->get_storageModifier().isExtern())
+	if (isSgGlobal(varScope) || isExtern(varName))
 		return false;
 
 	FOREACH_SUBNODE(varScope, nodes, i, V_SgVarRefExp) {
@@ -168,8 +171,6 @@ std::string normalize_string(std::string str, bool isExtern) {
 	while((found = str.find_first_of("8")) != std::string::npos)
 		str[found] = 'B';
 
-	//std::cerr << str << "||" << isExtern << std::endl;
-
 	unsigned int len = isExtern ? 31 : 63;
 
 	if (str.size() > len)
@@ -179,7 +180,7 @@ std::string normalize_string(std::string str, bool isExtern) {
 }
 
 void DCL02_report_error(const SgInitializedName *var) {
-	unsigned int len = const_cast<SgInitializedName *>(var)->get_storageModifier().isExtern() ? 31 : 63;
+	unsigned int len = isExtern(var) ? 31 : 63;
 	std::string varStr = var->get_name().str();
 	std::string ruleStr;
 	std::string errStr;
@@ -229,9 +230,7 @@ bool DCL02_C( const SgNode *node ) {
 				continue;
 
 			const SgScopeStatement *varScope = var->get_scope();
-			//std::cerr << var->unparseToString() << std::endl;
-			//std::cerr << var->get_storageModifier().displayString() << std::endl;
-			std::string str (normalize_string(var->get_name().str(), var->get_storageModifier().isExtern()));
+			std::string str (normalize_string(var->get_name().str(), isExtern(var)));
 			if (scopeMap[varScope].find(str) != scopeMap[varScope].end()) {
 				DCL02_report_error(var);
 				violation = true;
@@ -294,10 +293,8 @@ static unsigned int DCL05_score(const SgType *t) {
 			break;
 		/** Count functions as two points */
 		if (isSgFunctionType(t)) {
-			//std::cerr << "fn" << std::endl;
 			SgTypePtrList &args = isSgFunctionType(t)->get_argument_list()->get_arguments();
 			for (SgTypePtrList::iterator i = args.begin(); i != args.end(); i++) {
-				//std::cerr << "recursing" << std::endl;
 				score += DCL05_score(*i);
 			}
 			score+=2;
@@ -307,7 +304,6 @@ static unsigned int DCL05_score(const SgType *t) {
 //			score;
 		/** score all other pointers as one point */
 		if (isSgPointerType(t)) {
-			//std::cerr << "inc" << std::endl;
 			score++;
 		}
 		/**
@@ -315,7 +311,6 @@ static unsigned int DCL05_score(const SgType *t) {
 		 */
 		d = const_cast<SgType *>(t)->dereference();
 	} while ((t != d) && (t = d));
-	//std::cerr << "score is " << score << std::endl;
 	return score + modifiers;
 //	return score;
 }
@@ -343,7 +338,6 @@ bool DCL05_C( const SgNode *node ) {
 	const SgType *t = var ? var->get_type() : fn->get_type();
 	assert(t);
 	const unsigned int threshold = 5;
-	//std::cerr << "type is " << t->unparseToString() << " || " << (var ? var->unparseToString() : fn->unparseToString()) << std::endl;
 	unsigned int score = DCL05_score(t);
 	if (score  >= threshold) {
 		print_error(node, "DCL05-C", "Use typedefs to improve code readability", true);
