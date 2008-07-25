@@ -38,6 +38,7 @@ ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within sig
 
 EXP_NCCE.c:81: warning: EXP01-C: Do not take the sizeof a pointer to determine the sizeof a type
 EXP_NCCE.c:121: warning: EXP09-C: malloc called using something other than sizeof()
+EXP_NCCE.c:156: warning: EXP04-C: Do not perform byte-by-byte comparisons between structures
 EXP_NCCE.c:170: warning: EXP05-C: Do not cast away a const qualification
 EXP_NCCE.c:187: warning: EXP06-C: Operands to the sizeof operator should not contain side effects
 EXP_NCCE.c:205: warning: EXP09-C: malloc called using something other than sizeof()

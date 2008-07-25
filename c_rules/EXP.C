@@ -76,6 +76,26 @@ bool EXP01_C( const SgNode *node ) {
 }
 
 /**
+ * Do not perform byte-by-byte comparisons between structures
+ */
+bool EXP04_C( const SgNode *node ) {
+	if (!isCallOfFunctionNamed(node, "memcmp"))
+		return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	assert(fnRef);
+	const SgType *dstT = getFnArg(fnRef, 0)->get_type();
+	assert(dstT);
+	const SgType *srcT = getFnArg(fnRef, 1)->get_type();
+	assert(srcT);
+	if (isSgNamedType(dstT->findBaseType()) || isSgNamedType(srcT->findBaseType())) {
+		print_error(node, "EXP04-C", "Do not perform byte-by-byte comparisons between structures", true);
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Do not cast away a const qualification
  *
  * We check cast expressions to make sure that if they don't posses a const
@@ -573,6 +593,7 @@ bool EXP37_C( const SgNode *node ) {
 bool EXP(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_C(node);
+  violation |= EXP04_C(node);
   violation |= EXP05_C(node);
   violation |= EXP06_C(node);
   violation |= EXP08_C(node);
