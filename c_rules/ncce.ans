@@ -21,6 +21,7 @@ ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:56: error: FIO42-C: Ensure files are properly closed when they are no longer needed
+ERR_NCCE.c:62: warning: ERR06-C: Understand the termination behavior of assert() and abort()
 ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 "./ncce/EXP_NCCE.c", line 283: warning: 
           a value of type "int **" cannot be assigned to an entity of type

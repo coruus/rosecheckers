@@ -29,6 +29,43 @@
  * Understand the termination behavior of assert() and abort()
  */
 bool ERR06_C( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!node)
+		return false;
+	if (!isCallOfFunctionNamed(fnRef, "abort"))
+		return false;
+
+	std::set<const SgInitializedName *> fds;
+
+	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+		if (iFn == fnRef)
+			break;
+
+		if (isCallOfFunctionNamed(iFn, "open")
+		  ||isCallOfFunctionNamed(iFn, "fopen")
+		  ||isCallOfFunctionNamed(iFn, "mkstemp")) {
+			const SgInitializedName *var = getVarAssignedTo(iFn, NULL);
+			if (var && !(isGlobalVar(var) || isStaticVar(var))) {
+				fds.insert(var);
+			}
+		} else if (isCallOfFunctionNamed(iFn, "close")
+		  ||isCallOfFunctionNamed(iFn, "open")) {
+			const SgVarRefExp *varRef = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn, 0)));
+			if (!varRef)
+				continue;
+			const SgInitializedName *var = getRefDecl(varRef);
+			assert(var);
+			fds.erase(fds.find(var));
+		}
+	}
+
+	if (fds.size() > 0) {
+		print_error(node, "ERR06-C", "Understand the termination behavior of assert() and abort()", true);
+		return true;
+	}
+
 	return false;
 }
 
