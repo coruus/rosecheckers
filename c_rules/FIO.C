@@ -458,11 +458,15 @@ bool FIO42_C( const SgNode *node ) {
 			continue;
 		}
 
+		/**
+		 * ERR04 allows using exit to close file descriptors
+		 */
 		if (isCallOfFunctionNamed(iFn, "exit")
 		  ||isCallOfFunctionNamed(iFn, "_Exit"))
 			return false;
 		if (!(isCallOfFunctionNamed(iFn, "close")
-			||isCallOfFunctionNamed(iFn, "fclose")))
+			||isCallOfFunctionNamed(iFn, "fclose")
+			||isCallOfFunctionNamed(iFn, "fcntl")))
 			continue;
 
 		const SgVarRefExp *iFd = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));

@@ -224,9 +224,17 @@ bool FLP33_C( const SgNode *node ) {
 
 	if(binOp) {
 		/**
+		 * \todo Does this rule even make sense for binory ops?
+		 */
+		/**
 		 * This should allow macros like isnan
 		 */
 		if (isCompilerGeneratedNode(binOp))
+			return false;
+
+		if (!Type(binOp->get_type()).isFloatingPoint())
+			return false;
+		if (isSgPntrArrRefExp(binOp))
 			return false;
 
 		lhsSgType = binOp->get_lhs_operand()->get_type();
@@ -235,26 +243,32 @@ bool FLP33_C( const SgNode *node ) {
 		 */
 		rhsSgType = binOp->get_rhs_operand()->get_type();
 //		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
+		assert(lhsSgType);
+		assert(rhsSgType);
+		const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
+		const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
+		if(lhsType.isFloatingPoint() || rhsType.isFloatingPoint()) {
+			return false;
+		}
 	} else if(var) {
 		lhsSgType = var->get_type();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
 		if(!init)
 			return false;
 		rhsSgType = removeImplicitPromotions(init->get_operand())->get_type();
+
+		assert(lhsSgType);
+		assert(rhsSgType);
+		const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
+		const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
+		if(!(lhsType.isFloatingPoint() && rhsType.isIntegral()))
+			return false;
 	} else
 		return false;
 
-	assert(lhsSgType);
-	assert(rhsSgType);
 
-	const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
-	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
-
-	if(lhsType.isFloatingPoint() && rhsType.isIntegral()) {
-		print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations");
-		return true;
-	}
-	return false;
+	print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations");
+	return true;
 }
 
 /**

@@ -61,10 +61,9 @@ bool POS34_C( const SgNode *node ) {
 	const SgVarRefExp* var = isSgVarRefExp( arg0);
 	if (var == NULL) return false; // we don't handle non-var putenv args
 
-	const SgInitializedName* decl = var->get_symbol()->get_declaration();
-	if (isSgGlobal( decl->get_parent()->get_parent()))
-		return false;
-	if (decl->get_declaration()->get_declarationModifier().get_storageModifier().isStatic())
+	const SgInitializedName* decl = getRefDecl(var);
+	assert(decl);
+	if (isGlobalVar(decl) || isStaticVar(decl))
 		return false;
 
 	print_error( node, "POS34-C", "Do not call putenv() with an automatic variable");

@@ -113,7 +113,7 @@ void FLP02(void) {
 /* FLP30_A v.25 */
 
 void FLP30(void) {
-int count;
+	int count;
 	for (count = 1; count <= 10; count += 1) {
 	  const float x = count/10.0f;
 	  /* ... */

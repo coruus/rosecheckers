@@ -24,6 +24,47 @@
 #include "utilities.h"
 
 /**
+ * Beware of multiple environment variables with the same effective name
+ */
+bool ENV02_C( const SgNode *node ) {
+	static std::set<std::string> origStrs;
+	static std::set<std::string> normStrs;
+	static std::map<std::string, const SgFunctionRefExp *> strToNode;
+
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+
+	if (!(isCallOfFunctionNamed(fnRef, "getenv")
+		||isCallOfFunctionNamed(fnRef, "setenv")
+		||isCallOfFunctionNamed(fnRef, "putenv"))) {
+		return false;
+	}
+	const SgStringVal *strVal = isSgStringVal(removeImplicitPromotions(getFnArg(fnRef,0)));
+	if (!strVal)
+		return false;
+	std::string str = strVal->get_value();
+	if (const unsigned int eq = str.find_first_of("="))
+		str = str.substr(0,eq);
+
+	if (origStrs.find(str) != origStrs.end())
+		return false;
+	origStrs.insert(str);
+
+	std::transform(str.begin(), str.end(), str.begin(), tolower);
+
+	if (normStrs.find(str) != normStrs.end()) {
+		print_error(node, "ENV02-C", "Beware of multiple environment variables with the same effective name", true);
+		print_error(strToNode[str], "ENV02-C", "Previous reference was here", true);
+		return true;
+	}
+
+	normStrs.insert(str);
+	strToNode[str] = fnRef;
+	return false;
+}
+
+/**
  * Do not use system()
  *
  * \note As written, these tests catch template declarations only if instantiated.
@@ -72,6 +113,7 @@ bool ENV32_C( const SgNode *node ) {
 
 bool ENV(const SgNode *node) {
 	bool violation = false;
+	violation |= ENV02_C(node);
 	violation |= ENV04_C(node);
 	violation |= ENV32_C(node);
 	return violation;

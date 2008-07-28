@@ -14,6 +14,8 @@ DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
 DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
+ENV_NCCE.c:82: warning: ENV02-C: Beware of multiple environment variables with the same effective name
+ENV_NCCE.c:67: warning: ENV02-C: Previous reference was here
 ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
