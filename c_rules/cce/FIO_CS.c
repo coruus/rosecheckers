@@ -116,7 +116,7 @@ void FIO01(void) {
 	  /* Handle Error */
 	}
 
-	/* ... */
+	close(fd);
 }
 
 /* FIO02 v.185*/
@@ -147,29 +147,36 @@ void FIO02(void) {
 /* FIO03 v.108*/
 
 void FIO03(void) {
-const char *file_name = "Awefawef";
-const int new_file_mode = 0600;
+	const char *file_name = "Awefawef";
+	const int new_file_mode = 0600;
 
-/* initialize file_name and new_file_mode */
+	/* initialize file_name and new_file_mode */
 
-const int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
-if (fd == -1) {
-  /* Handle Error */
-}
+	const int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
+	if (fd == -1) {
+	  /* Handle Error */
+	}
+
+	/* ... */
+	close(fd);
 }
 
 /* FIO04 v.44 */
 void FIO04(void) {
-const long offset = 19;
-FILE *file = fopen("t", "w");
-if(!file) return;
+	const long offset = 19;
+	FILE *file = fopen("t", "w");
+	if(!file) return;
 
-/* initialize file and offset */
+	/* initialize file and offset */
 
-if (fseek(file, offset, SEEK_SET) != 0) {
-  /* Handle Error */
+	if (fseek(file, offset, SEEK_SET) != 0) {
+	  /* Handle Error */
+	}
+
+	/* ... */
+	fclose(file);
 }
-}
+
 /* FIO05 v.51 */
 void FIO05_A(void) {
 struct stat orig_st;
@@ -243,41 +250,41 @@ void FIO05(void) {
 /* FIO06 v.101*/
 
 void FIO06(void) {
-const char *file_name = "foo";
-const int file_access_permissions = 0600;
+	const char *file_name = "foo";
+	const int file_access_permissions = 0600;
 
-/* initialize file_name */
+	/* initialize file_name */
 
-const int fd = open(
-  file_name, 
-  O_CREAT | O_WRONLY, 
-  file_access_permissions
-);
-if (fd == -1){
-  /* handle Error */
-}
+	const int fd = open( file_name, O_CREAT | O_WRONLY, file_access_permissions);
+	if (fd == -1){
+	  /* handle Error */
+	}
+
+	/* ... */
+	close(fd);
 }
 
 /* FIO07 v.17 */
 
 void FIO07(void) {
-const char *file_name = "foo";
-FILE *fp;
+	const char *file_name = "foo";
+	FILE *fp;
 
-/* initialize file_name */
+	/* initialize file_name */
 
-fp = fopen(file_name, "r");
-if (fp == NULL) {
-  /* handle open error */
-}
+	fp = fopen(file_name, "r");
+	if (fp == NULL) {
+	  /* handle open error */
+	}
 
-/* read data */
+	/* read data */
 
-if (fseek(fp, 0L, SEEK_SET) != 0) {
-  /* handle repositioning error */
-}
+	if (fseek(fp, 0L, SEEK_SET) != 0) {
+	  /* handle repositioning error */
+	}
 
-/* continue */
+	/* continue */
+	fclose(fp);
 }
 
 /* FIO08 v.41 */
@@ -385,6 +392,7 @@ void FIO13(void) {
 	}
 
 	/* Continue on */
+	fclose(fp);
 }
 
 /* FIO14 v.30 */
@@ -438,6 +446,7 @@ void FIO16_A(char *argv[]) {
 	if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) < sizeof(x)/sizeof(x[0])) {
 		/* Handle Error */
 	}
+	fclose(fp);
 }
 
 void FIO16(void) {
@@ -598,6 +607,7 @@ void FIO31(void) {
   do_stuff(logfile);
 
   /* ... */
+  fclose(logfile);
 }
 
 /* FIO32 v.50 */
@@ -828,6 +838,7 @@ void FIO41(void) {
 	if (c == EOF) {
 	  /* Handle Error */
 	}
+	fclose(fptr);
 }
 
 /* FIO42 v.81 */

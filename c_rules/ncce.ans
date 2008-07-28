@@ -18,6 +18,7 @@ ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need 
 ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
+ERR_NCCE.c:56: error: FIO42-C: Ensure files are properly closed when they are no longer needed
 ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
 "./ncce/EXP_NCCE.c", line 283: warning: 
           a value of type "int **" cannot be assigned to an entity of type
@@ -53,22 +54,23 @@ EXP_NCCE.c:347: error: EXP36-C: Do not convert pointers into more strictly align
 EXP_NCCE.c:364: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names for identification
 FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions
-FIO_NCCE.c:234: error: EXP37-C: Call functions with the arguments intended by the API
-FIO_NCCE.c:262: warning: FIO07-C: Prefer fseek() to rewind()
-FIO_NCCE.c:282: warning: FIO08-C: Take care when calling remove() on an open file
-FIO_NCCE.c:329: warning: FIO12-C: Prefer setvbuf() to setbuf()
-FIO_NCCE.c:348: warning: FIO13-C: Never push back anything other than one read character
-FIO_NCCE.c:425: error: FIO30-C: Exclude user input from format strings
-FIO_NCCE.c:486: warning: EXP12-C: Do not ignore values returned by functions
-FIO_NCCE.c:497: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
-FIO_NCCE.c:497: error: FIO34-C: Use int to capture the return value of character I/O functions
-FIO_NCCE.c:547: error: FIO38-C: Do not use a copy of a FILE object for input and output
-FIO_NCCE.c:568: error: FIO39-C: Do not alternately input and output from a stream without an intervening flush or positioning call
-FIO_NCCE.c:624: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
-FIO_NCCE.c:644: error: FIO43-C: Do not use fopen() on the results of tmpnam()
-FIO_NCCE.c:670: error: FIO43-C: Do not use open() on the results of mktemp()
-FIO_NCCE.c:682: error: FIO43-C: Do not use tmpfile()
-FIO_NCCE.c:702: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
+FIO_NCCE.c:236: error: EXP37-C: Call functions with the arguments intended by the API
+FIO_NCCE.c:265: warning: FIO07-C: Prefer fseek() to rewind()
+FIO_NCCE.c:286: warning: FIO08-C: Take care when calling remove() on an open file
+FIO_NCCE.c:333: warning: FIO12-C: Prefer setvbuf() to setbuf()
+FIO_NCCE.c:352: warning: FIO13-C: Never push back anything other than one read character
+FIO_NCCE.c:432: error: FIO30-C: Exclude user input from format strings
+FIO_NCCE.c:495: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:506: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+FIO_NCCE.c:506: error: FIO34-C: Use int to capture the return value of character I/O functions
+FIO_NCCE.c:556: error: FIO38-C: Do not use a copy of a FILE object for input and output
+FIO_NCCE.c:577: error: FIO39-C: Do not alternately input and output from a stream without an intervening flush or positioning call
+FIO_NCCE.c:625: error: FIO42-C: Ensure files are properly closed when they are no longer needed
+FIO_NCCE.c:634: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+FIO_NCCE.c:654: error: FIO43-C: Do not use fopen() on the results of tmpnam()
+FIO_NCCE.c:680: error: FIO43-C: Do not use open() on the results of mktemp()
+FIO_NCCE.c:692: error: FIO43-C: Do not use tmpfile()
+FIO_NCCE.c:712: error: FIO44-C: Only use values for fsetpos() that are returned from fgetpos()
 FLP_NCCE.c:68: warning: FLP02-C: Consider avoiding floating point numbers when precise computation is needed
 FLP_NCCE.c:95: error: FLP30-C: Do not use floating point variables as loop counters
 FLP_NCCE.c:99: error: FLP30-C: Do not use floating point variables as loop counters

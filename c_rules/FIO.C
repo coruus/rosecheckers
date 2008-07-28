@@ -23,7 +23,7 @@
 #include "rose.h"
 #include "utilities.h"
 
-bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+static bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 	if(isCallOfFunctionNamed(fnRef, "fread")) {
 		*argNum = 3;
 		return true;
@@ -35,7 +35,7 @@ bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 	return false;
 }
 
-bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
+static bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 	if(isCallOfFunctionNamed(fnRef, "fwrite")) {
 		*argNum = 3;
 		return true;
@@ -428,6 +428,56 @@ bool FIO39_C( const SgNode *node) {
 }
 
 /**
+ * Ensure files are properly closed when they are no longer needed
+ */
+bool FIO42_C( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!(isCallOfFunctionNamed(fnRef, "open")
+		||isCallOfFunctionNamed(fnRef, "fopen")
+		||isCallOfFunctionNamed(fnRef, "freopen")))
+		return false;
+
+	const SgInitializedName *fd = getVarAssignedTo(fnRef, NULL);
+	if (!fd)
+		return false;
+	/**
+	 * It's much to hard to analyze these kinds of variables
+	 */
+	if (isGlobalVar(fd) || isStaticVar(fd))
+		return false;
+
+	bool before = true;
+	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+		const SgFunctionRefExp * iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+		if (before) {
+			if (iFn == fnRef)
+				before = false;
+			continue;
+		}
+
+		if (isCallOfFunctionNamed(iFn, "exit")
+		  ||isCallOfFunctionNamed(iFn, "_Exit"))
+			return false;
+		if (!(isCallOfFunctionNamed(iFn, "close")
+			||isCallOfFunctionNamed(iFn, "fclose")))
+			continue;
+
+		const SgVarRefExp *iFd = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
+		if (!iFd)
+			continue;
+
+		if (getRefDecl(iFd) == fd)
+			return false;
+	}
+
+	print_error(node, "FIO42-C", "Ensure files are properly closed when they are no longer needed");
+	return true;
+}
+
+/**
  * Do not use tmpfile()
  */
 bool FIO43_C( const SgNode *node ) {
@@ -532,6 +582,7 @@ bool FIO(const SgNode *node) {
   violation |= FIO34_C(node);
   violation |= FIO38_C(node);
   violation |= FIO39_C(node);
+  violation |= FIO42_C(node);
   violation |= FIO43_C(node);
   violation |= FIO43_C_2(node);
   violation |= FIO43_C_3(node);

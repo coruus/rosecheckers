@@ -125,6 +125,8 @@ void POS35() {
       /* Handle Error */
     }
   }
+  /* ... */
+  close(fd);
 }
 
 

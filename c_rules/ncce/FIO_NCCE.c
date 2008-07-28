@@ -155,6 +155,7 @@ void FIO04(void) {
 
 	fseek(file, offset, SEEK_SET);
 	/* process file */
+	fclose(file);
 }
 
 /* FIO05 v.51 */
@@ -214,29 +215,31 @@ void FIO05(void) {
 /* FIO06 v.101*/
 
 void FIO06_A(void) {
-const char *file_name = "foo";
-FILE *fp;
+	const char *file_name = "foo";
+	FILE *fp;
 
-/* initialize file_name */
+	/* initialize file_name */
 
-fp = fopen(file_name, "w");
-if (!fp){
-  /* handle Error */
-}
+	fp = fopen(file_name, "w");
+	if (!fp){
+	  /* handle Error */
+	}
+	fclose(fp);
 }
 
 void FIO06_B(void) {
-const char *file_name = "foo";
-int fd;
+	const char *file_name = "foo";
+	int fd;
 
-/* initialize file_name */
+	/* initialize file_name */
 
-fd = open(file_name, O_CREAT | O_WRONLY); 
-/* access permissions were missing */
+	fd = open(file_name, O_CREAT | O_WRONLY); 
+	/* access permissions were missing */
 
-if (fd == -1){
-  /* handle Error */
-}
+	if (fd == -1){
+	  /* handle Error */
+	}
+	close(fd);
 }
 
 void FIO06(void) {
@@ -247,21 +250,22 @@ void FIO06(void) {
 /* FIO07 v.17 */
 
 void FIO07(void) {
-const char *file_name = "foo";
-FILE *fp;
+	const char *file_name = "foo";
+	FILE *fp;
 
-/* initialize file_name */
+	/* initialize file_name */
 
-fp = fopen(file_name, "r");
-if (fp == NULL) {
-  /* handle open error */
-}
+	fp = fopen(file_name, "r");
+	if (fp == NULL) {
+	  /* handle open error */
+	}
 
-/* read data */
+	/* read data */
 
-rewind(fp);
+	rewind(fp);
 
-/* continue */
+	/* continue */
+	fclose(fp);
 }
 
 /* FIO08 v.41 */
@@ -333,22 +337,23 @@ setbuf(file, NULL);
 /* FIO13 v.29 */
 
 void FIO13(void) {
-FILE *fp;
-const char *file_name = "foo";
+	FILE *fp;
+	const char *file_name = "foo";
 
-/* initialize file_name */
+	/* initialize file_name */
 
-fp = fopen(file_name, "rb");
-if (fp == NULL) {
-  /* handle Error */
-}
+	fp = fopen(file_name, "rb");
+	if (fp == NULL) {
+	  /* handle Error */
+	}
 
-/* read data */
+	/* read data */
 
-if (ungetc('\n', fp) == EOF) {}
-if (ungetc('\r', fp) == EOF) {}
+	if (ungetc('\n', fp) == EOF) {}
+	if (ungetc('\r', fp) == EOF) {}
 
-/* continue on */
+	/* continue on */
+	fclose(fp);
 }
 
 /* FIO14 v.30 */
@@ -362,20 +367,22 @@ if (ungetc('\r', fp) == EOF) {}
 /* FIO16 v.27 */
 
 void FIO16_A(char *argv[]) {
-/* Program running with elevated privileges where argv[1] 
- *  * and argv[2] are supplied by the user */
+	/* Program running with elevated privileges where argv[1] 
+	 *  * and argv[2] are supplied by the user */
 
-char x[100];
-FILE *fp = fopen(argv[1], "w");     
+	char x[100];
+	FILE *fp = fopen(argv[1], "w");     
 
-strncpy(x, argv[2], 100);
-x[99] = '\0';
+	strncpy(x, argv[2], 100);
+	x[99] = '\0';
 
-/* Write operation to an unintended file like /etc/passwd 
- *  * gets executed  */
-if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) < sizeof(x)/sizeof(x[0])) {
+	/* Write operation to an unintended file like /etc/passwd 
+	 *  * gets executed  */
+	if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) < sizeof(x)/sizeof(x[0])) {
 
-}
+	}
+	/* ... */
+	fclose(fp);
 }
 
 void FIO16(void) {
@@ -434,7 +441,7 @@ void FIO30(void) {
 /* FIO31 v.27 */
 
 void do_stuff(void) {
-  const FILE *logfile = fopen("log", "a");
+  FILE *logfile = fopen("log", "a");
   if(logfile == NULL) {
     /* handle error */
   }
@@ -442,10 +449,11 @@ void do_stuff(void) {
   /* Write logs pertaining to do_stuff() */
 
   /* ... */
+  fclose(logfile);
 }
 
 void FIO31(void) {
-  const FILE *logfile = fopen("log", "a");
+  FILE *logfile = fopen("log", "a");
   if(logfile == NULL) {
     /* handle error */
   }
@@ -455,6 +463,7 @@ void FIO31(void) {
   do_stuff();
 
   /* ... */
+  fclose(logfile);
 }
 
 /* FIO32 v.50 */
@@ -601,6 +610,7 @@ void FIO41(void) {
 	}
 
 	printf("FIO41 %p\n", fptr);
+	fclose(fptr);
 }
 
 /* FIO42 v.81 */
