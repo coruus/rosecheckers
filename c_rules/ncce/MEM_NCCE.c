@@ -246,7 +246,7 @@ struct widget {
 };
 
 void MEM08(void) {
-	gadget *gp = NULL;
+	gadget *gp = malloc(sizeof(gadget)); if (gp ==NULL) {/* ... */};
 	widget *wp;
 
 	/* ... */

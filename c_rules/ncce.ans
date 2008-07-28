@@ -75,6 +75,10 @@ FLP_NCCE.c:99: error: FLP30-C: Do not use floating point variables as loop count
 FLP_NCCE.c:136: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:137: error: FLP33-C: Convert integers to floating point for floating point operations
 FLP_NCCE.c:138: error: FLP33-C: Convert integers to floating point for floating point operations
+FLP_NCCE.c:147: error: FLP34-C: Ensure that floating point conversions are within range of the new type
+FLP_NCCE.c:161: error: FLP34-C: Ensure that floating point conversions are within range of the new type
+FLP_NCCE.c:162: error: FLP34-C: Ensure that floating point conversions are within range of the new type
+FLP_NCCE.c:163: error: FLP34-C: Ensure that floating point conversions are within range of the new type
 "./ncce/INT_NCCE.c", line 132: warning: 
           integer conversion resulted in a change of sign
     const char c = 200;

@@ -54,6 +54,7 @@ diagnose: diagnose.o \
 		FIO.o \
 		ENV.o \
 		SIG.o \
+		ERR.o \
 		MSC.o \
 		POS.o \
 		type.o \

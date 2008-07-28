@@ -335,6 +335,58 @@ bool MEM33_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Only free memory allocated dynamically
+ */
+bool MEM34_C( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!(isCallOfFunctionNamed(fnRef, "free")
+		||isCallOfFunctionNamed(fnRef, "realloc")))
+		return false;
+
+	const SgVarRefExp *varRef = isSgVarRefExp(removeImplicitPromotions(getFnArg(fnRef,0)));
+	if (!varRef)
+		return false;
+	const SgInitializedName *var = getRefDecl(varRef);
+	assert(var);
+
+	/**
+	 * Ignore arguments to a function
+	 */
+	const SgFunctionDefinition *parent = isSgFunctionDefinition(findParentNodeOfType(node, V_SgFunctionDefinition).first);
+	FOREACH_INITNAME(parent->get_declaration()->get_args(), p) {
+		if(var == *p)
+			return false;
+	}
+
+	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>(parent), V_SgNode );
+	Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
+	while(fnRef != isSgFunctionRefExp(*i)) {
+		assert(i != nodes.end());
+		i++;
+	}
+	do {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		if (iFn) {
+			if (!(isCallOfFunctionNamed(iFn, "malloc")
+				||isCallOfFunctionNamed(iFn, "calloc")
+				||isCallOfFunctionNamed(iFn, "realloc")))
+				continue;
+			if (var == getVarAssignedTo(iFn, NULL))
+				return false;
+		} else if (iVar && (getRefDecl(iVar) == var)) {
+			if (varWrittenTo(iVar))
+				break;
+		}
+	} while ((i--) != nodes.begin());
+
+	print_error(node, "MEM34-C", "Only free memory allocated dynamically");
+	return true;
+}
+
 bool MEM(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_C(node);
@@ -345,5 +397,6 @@ bool MEM(const SgNode *node) {
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   violation |= MEM33_C(node);
+  violation |= MEM34_C(node);
   return violation;
 }

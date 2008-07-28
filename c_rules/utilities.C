@@ -460,6 +460,8 @@ bool isAnyCharType(const SgType *type) {
  * Searches inside of the parent block, then returns the statement that's
  * delta lines before or after node (usually -1 or +1 for previous and next
  * statement)
+ *
+ * \todo Use next visitor to make this better
  * 
  * \param[in] node Find the BasicBlock above this node
  * \param[in] delta Number of lines to search before or after node
@@ -1057,6 +1059,7 @@ size_t sizeOfType(const SgType *type) {
 	if (isSgTypeBool(t)) return sizeof(bool);
 	else if (isSgTypeChar(t)) return sizeof(char);
 	else if (isSgTypeDouble(t)) return sizeof(double);
+	else if (isSgTypeLongDouble(t)) return sizeof(long double);
 	else if (isSgTypeFloat(t)) return sizeof(float);
 	else if (isSgTypeInt(t)) return sizeof(int);
 	else if (isSgTypeLong(t)) return sizeof(long);
@@ -1076,4 +1079,45 @@ size_t sizeOfType(const SgType *type) {
 	else return 0;
 }
 
+
+/**
+ * Checks to see if there was a comparison involving the value on the previous
+ * line.  If the value is an expression or not a variable, return true.
+ */
+bool valueVerified(const SgExpression *expr) {
+	/**
+	 * Allow compile time known values 
+	 */
+	if (isSgValueExp(expr))
+		return true;
+
+	const SgVarRefExp *varRef = isSgVarRefExp(expr);
+	if (!varRef)
+		return true;
+	const SgInitializedName *var = getRefDecl(varRef);
+	assert(var);
+
+	const SgStatement *prevSt = findInBlockByOffset(expr, -1);
+	if (prevSt) {
+		FOREACH_SUBNODE(prevSt, nodes, i, V_SgBinaryOp) {
+			const SgBinaryOp *iOp = isSgBinaryOp(*i);
+			if (!iOp)
+				continue;
+			if (!(isSgGreaterOrEqualOp(iOp)
+				||isSgGreaterThanOp(iOp)
+				||isSgLessOrEqualOp(iOp)
+				||isSgLessThanOp(iOp)))
+				continue;
+
+			const SgVarRefExp *iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
+			if (iVar && (getRefDecl(iVar) == var))
+				return true;
+			iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
+			if (iVar && (getRefDecl(iVar) == var))
+				return true;
+		}
+	}
+
+	return false;
+}
 

@@ -257,6 +257,48 @@ bool FLP33_C( const SgNode *node ) {
 	return false;
 }
 
+/**
+ * Ensure that floating point conversions are within range of the new type
+ */
+bool FLP34_C( const SgNode *node ) {
+	/**
+	 * \bug We really shouldn't have this cop-out here, but a lot of macros
+	 * (ie. isnan) will trigger this rule otherwise
+	 */
+	if (isCompilerGeneratedNode(node))
+		return false;
+
+	const SgType *lhsType = NULL;
+	const SgExpression *rhs = NULL;
+	if (const SgBinaryOp *op = isSgBinaryOp(node)) {
+		/** \todo Add the other assign op's */
+		if (!isSgAssignOp(op))
+			return false;
+		lhsType = op->get_lhs_operand()->get_type()->stripTypedefsAndModifiers();
+		rhs = op->get_rhs_operand();
+	} else if (const SgCastExp *cast = isSgCastExp(node)) {
+		lhsType = cast->get_type()->stripTypedefsAndModifiers();
+		rhs = cast->get_operand();
+	} else {
+		return false;
+	}
+	assert(lhsType && rhs);
+	const SgType *rhsType = rhs->get_type()->stripTypedefsAndModifiers();
+	assert(rhsType);
+	const Type lhsT(lhsType);
+	const Type rhsT(rhsType);
+	if (!rhsT.isFloatingPoint())
+		return false;
+	if (lhsT.isFloatingPoint() && (sizeOfType(lhsType) >= sizeOfType(rhsType)))
+		return false;
+
+	if (valueVerified(removeCasts(rhs)))
+		return false;
+
+	print_error(node, "FLP34-C", "Ensure that floating point conversions are within range of the new type");
+	return true;
+}
+
 bool FLP(const SgNode *node) {
   bool violation = false;
   violation |= FLP02_C(node);
@@ -264,5 +306,6 @@ bool FLP(const SgNode *node) {
   violation |= FLP30_C(node);
   violation |= FLP31_C(node);
   violation |= FLP33_C(node);
+  violation |= FLP34_C(node);
   return violation;
 }

@@ -38,7 +38,7 @@ void FLP() {
 
 /* FLP02_A v.42 */
 
-int FLP02_mean(int array[], int size) {
+float FLP02_mean(int array[], int size) {
   int total = 0;
   int i;
   for (i = 0; i < size; i++) {
@@ -57,7 +57,7 @@ int array_value = 1010;
 
 void FLP02(void) {
   int array[array_size];
-  int avg;
+  float avg;
   int i;
   for (i = 0; i < array_size; i++) {
     array[i] = array_value;
@@ -65,7 +65,7 @@ void FLP02(void) {
 
   avg = FLP02_mean( array, array_size);
   printf("mean is %f\n", avg / 100.0);
-  if (avg == array[0]) {
+  if (((int)nearbyint(avg)) == array[0]) {
     printf("array[0] is the mean\n");
   } else {
     printf("array[0] is not the mean\n");
@@ -74,7 +74,7 @@ void FLP02(void) {
 
 /* FLP03_A v.40 */
 /**
- * Due to a bug in rose we can't use the pragma
+ * \bug Due to a bug in rose we can't use the pragma
  */
 //
 //#pragma STDC FENV_ACCESS ON
@@ -196,25 +196,23 @@ void FLP34(void) {
 
 	if (f1 > (float) INT_MAX || f1 < (float) INT_MIN) {
 	  /* Handle Error */
-	} else {
-	  i1 = (int)f1;
 	}
+	i1 = (int)f1;
 
 	if (d1 > FLT_MAX || d1 < -FLT_MAX) {
 		/* Handle error condition */
-	} else {
-		f1 = (float)d1;
 	}
+	f1 = (float)d1;
+
 	if (ld > FLT_MAX || ld < -FLT_MAX) {
 		/* Handle error condition */
-	} else {
-		f2 = (float)ld;
 	}
+	f2 = (float)ld;
+
 	if (ld > DBL_MAX || ld < -DBL_MAX) {
 		/* Handle error condition */
-	} else {
-		d2 = (double)ld;
 	}
+	d2 = (double)ld;
 
 	/* End {code} */
 

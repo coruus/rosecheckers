@@ -558,38 +558,8 @@ bool INT34_C( const SgNode *node ) {
 	const SgExpression *rhs = removeCasts(op->get_rhs_operand());
 	assert(rhs);
 
-	/**
-	 * Allow compile time known values 
-	 */
-	if (isSgValueExp(rhs))
+	if(valueVerified(rhs))
 		return false;
-
-	const SgVarRefExp *varRef = isSgVarRefExp(rhs);
-	if (!varRef)
-		return false;
-	const SgInitializedName *var = getRefDecl(varRef);
-	assert(var);
-
-	const SgStatement *prevSt = findInBlockByOffset(op, -1);
-	if (prevSt) {
-		FOREACH_SUBNODE(prevSt, nodes, i, V_SgBinaryOp) {
-			const SgBinaryOp *iOp = isSgBinaryOp(*i);
-			if (!iOp)
-				continue;
-			if (!(isSgGreaterOrEqualOp(iOp)
-				||isSgGreaterThanOp(iOp)
-				||isSgLessOrEqualOp(iOp)
-				||isSgLessThanOp(iOp)))
-				continue;
-
-			const SgVarRefExp *iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
-			if (iVar && (getRefDecl(iVar) == var))
-				return false;
-			iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
-			if (iVar && (getRefDecl(iVar) == var))
-				return false;
-		}
-	}
 
 	print_error(node, "INT34-C", "Do not shift a negative number of bits or more bits than exist in the operand");
 	return true;

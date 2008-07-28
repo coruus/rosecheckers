@@ -84,7 +84,7 @@ void MEM00() {
 }
 /* MEM01 v.47 */
 void MEM01(void) {
-char *message = NULL;
+char *message = malloc(1); if (message == NULL) {}
 int message_type = 1;
 
 if (message_type == 1) {
@@ -355,7 +355,7 @@ x = NULL;
 /* MEM32 v.63 */
 void MEM32(void) {
 const char *input_string = "awefawe";
-void *p = NULL;
+void *p = malloc(1); if (p == NULL) {}
 void *q = NULL;
 const size_t new_size = 10;
 

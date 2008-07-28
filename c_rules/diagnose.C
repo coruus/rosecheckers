@@ -33,9 +33,9 @@ extern bool INT(const SgNode *node);
 extern bool STR(const SgNode *node);
 extern bool MEM(const SgNode *node);
 extern bool FIO(const SgNode *node);
-extern bool TMP(const SgNode *node);
 extern bool ENV(const SgNode *node);
 extern bool SIG(const SgNode *node);
+extern bool ERR(const SgNode *node);
 extern bool MSC(const SgNode *node);
 extern bool POS(const SgNode *node);
 
@@ -54,6 +54,7 @@ public :
     FIO(node);
     ENV(node);
     SIG(node);
+    ERR(node);
     MSC(node);
     POS(node);
   }
