@@ -155,8 +155,8 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref);
 /**
  * \return true if the variable has global scope
  */
-bool isGlobalVar(const SgVarRefExp *varRef);
-bool isStaticVar(const SgVarRefExp *varRef);
+bool isGlobalVar(const SgInitializedName *var);
+bool isStaticVar(const SgInitializedName *var);
 
 bool isAnyCharType(const SgType *type);
 

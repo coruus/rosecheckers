@@ -91,6 +91,7 @@ if (message_type == 1) {
   /* Process message type 1 */
   free(message);
   message = NULL;
+  return;
 }
 message_type = 2;
 /* ...*/
@@ -355,7 +356,7 @@ x = NULL;
 /* MEM32 v.63 */
 void MEM32(void) {
 const char *input_string = "awefawe";
-void *p = malloc(1); if (p == NULL) {}
+void *p = malloc(sizeof(void)); if (p == NULL) {}
 void *q = NULL;
 const size_t new_size = 10;
 

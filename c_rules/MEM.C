@@ -37,7 +37,9 @@ bool MEM01_C( const SgNode *node ) {
 	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
 	if (!argVar)
 		return false;
-	bool longlifetime = isGlobalVar(argVar) || isStaticVar(argVar);
+	const SgInitializedName *argVarName = getRefDecl(argVar);
+	assert(argVarName);
+	bool longlifetime = isGlobalVar(argVarName) || isStaticVar(argVarName);
 	/* Block where the variable is defined */
 	const SgBasicBlock* defBlock = isSgBasicBlock(findParentNodeOfType(
 		argVar->get_symbol()->get_declaration(),V_SgBasicBlock).first);
@@ -351,6 +353,11 @@ bool MEM34_C( const SgNode *node ) {
 		return false;
 	const SgInitializedName *var = getRefDecl(varRef);
 	assert(var);
+	/**
+	 * It's much to hard to analyze these kinds of variables
+	 */
+	if (isGlobalVar(var) || isStaticVar(var))
+		return false;
 
 	/**
 	 * Ignore arguments to a function
@@ -367,12 +374,24 @@ bool MEM34_C( const SgNode *node ) {
 		assert(i != nodes.end());
 		i++;
 	}
+	const SgNode *block = NULL;
 	do {
+		if (block) {
+			if (block == *i)
+				block = NULL;
+//			std::cerr << "skipping" << std::endl;
+			continue;
+		} else if (isSgReturnStmt(*i)) {
+//			std::cerr << "found return" << std::endl;
+			block = findParentNodeOfType(*i, V_SgBasicBlock).first;
+		}
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		const SgVarRefExp *iVar = isSgVarRefExp(*i);
 		if (iFn) {
 			if (!(isCallOfFunctionNamed(iFn, "malloc")
 				||isCallOfFunctionNamed(iFn, "calloc")
+				||isCallOfFunctionNamed(iFn, "realpath")
+				||isCallOfFunctionNamed(iFn, "strdup")
 				||isCallOfFunctionNamed(iFn, "realloc")))
 				continue;
 			if (var == getVarAssignedTo(iFn, NULL))

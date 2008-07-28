@@ -529,7 +529,9 @@ bool EXP36_C( const SgNode *node ) {
 	assert(rhsT);
 	const SgPointerType *rhsP = isSgPointerType(rhsT);
 	if (!rhsP && isSgArrayType(rhsT)) {
-	/** \bug ROSE is missing const dereference */
+		/**
+		 * \bug ROSE is missing const dereference
+		 */
 		rhsP = isSgPointerType(const_cast<SgType *>(rhsT)->dereference());
 	}
 	if (!rhsP)

@@ -70,6 +70,7 @@ void ENV00() {
       free(tmpvar);
       tmpvar = NULL;
       /* handle error condition */
+      return;
     }
   }
   else {

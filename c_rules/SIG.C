@@ -188,7 +188,9 @@ bool SIG31_C( const SgNode *node ) {
 			continue; // variable is function arg
 
 		// We only care about global variables really
-		if (!isGlobalVar(var_ref))
+		const SgInitializedName* decl = getRefDecl(var_ref);
+		assert(decl);
+		if (!isGlobalVar(decl))
 			continue;
 
 		const SgType* var_type = var_ref->get_type();
@@ -202,7 +204,7 @@ bool SIG31_C( const SgNode *node ) {
 			compliant = false;
 		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
 			compliant = false;
-		const SgInitializedName* decl = var_ref->get_symbol()->get_declaration();
+
 		if (!isSgGlobal( decl->get_parent()->get_parent()) && 
 	!(decl->get_declaration()->get_declarationModifier().get_storageModifier().isStatic()))
 			compliant = false;

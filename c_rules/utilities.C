@@ -417,28 +417,15 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
 /**
  * Checks to see if the variable was declared static
  */
-bool isStaticVar(const SgVarRefExp *varRef) {
-	const SgVariableSymbol *varSym = varRef->get_symbol();
-	assert(varSym);
-	const SgInitializedName *varName = varSym->get_declaration();
-	assert(varName);
-	return const_cast<SgInitializedName*>(varName)->get_storageModifier().isStatic();
+bool isStaticVar(const SgInitializedName *var) {
+	return const_cast<SgInitializedName*>(var)->get_declaration()->get_declarationModifier().get_storageModifier().isStatic();
 }
 
 /**
  * Checks the scope of the variable to see if it is global or not
  */
-bool isGlobalVar(const SgVarRefExp *varRef) {
-	const SgVariableSymbol *varSym = varRef->get_symbol();
-	assert(varSym);
-	const SgInitializedName *varName = varSym->get_declaration();
-	assert(varName);
-	const SgScopeStatement *varScope = varName->get_scope();
-	assert(varScope);
-	if (isSgGlobal(varScope))
-		return true;
-	else
-		return false;
+bool isGlobalVar(const SgInitializedName *var) {
+	return isSgGlobal(var->get_scope());
 }
 
 /**

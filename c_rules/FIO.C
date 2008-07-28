@@ -496,7 +496,7 @@ bool FIO44_C( const SgNode *node) {
 	assert(posName);
 
 	/* We can't really handle global variables, too complicated */
-	if (isGlobalVar(posRef))
+	if (isGlobalVar(posName))
 		return false;
 
 	FOREACH_SUBNODE(posName->get_scope(), nodes, i, V_SgVarRefExp) {
