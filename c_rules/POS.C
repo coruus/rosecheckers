@@ -31,6 +31,74 @@
 #include <assert.h>
 
 /**
+ * Use the readlink() function properly
+ *
+ * \note, we do this by ensuring the next line after a readlink is comparison
+ * of the return to -1
+ */
+bool POS30_C( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!isCallOfFunctionNamed(fnRef, "readlink"))
+		return false;
+
+	const SgInitializedName *var = getVarAssignedTo(fnRef, NULL);
+	/**
+	 * First, let's see if we are checking the return value as part of a
+	 * complicated expression
+	 */
+	const SgBinaryOp *compOp = isSgBinaryOp(findParentNodeOfType(fnRef, V_SgEqualityOp).first);
+	if (!compOp)
+		compOp = isSgBinaryOp(findParentNodeOfType(fnRef, V_SgNotEqualOp).first);
+	/**
+	 * If not, let's try to look for it on the next line
+	 */
+	if (!compOp && var) {
+		const SgStatement *nextSt = findInBlockByOffset(fnRef, 1);
+		if (nextSt) {
+			FOREACH_SUBNODE(nextSt, nodes, i, V_SgBinaryOp) {
+				const SgBinaryOp *iOp = isSgBinaryOp(*i);
+				assert(iOp);
+				/**
+				 * We are looking for == or !=
+				 */
+				if (!(isSgEqualityOp(iOp) || isSgNotEqualOp(iOp)))
+					continue;
+				/**
+				 * And one of the operands has to be our saved return value
+				 */
+				const SgVarRefExp *iVar = isSgVarRefExp(removeImplicitPromotions(iOp->get_lhs_operand()));
+				if (!iVar)
+					iVar = isSgVarRefExp(removeImplicitPromotions(iOp->get_rhs_operand()));
+				if (iVar && (getRefDecl(iVar) == var)) {
+					compOp = iOp;
+					break;
+				}
+			}
+		}
+	}
+	/**
+	 * Now that we found our comparison, make sure it's being checked against
+	 * the correct value
+	 */
+	if (compOp) {
+		const SgExpression *expr = removeImplicitPromotions(compOp->get_lhs_operand());
+		if (isVal(expr, -1))
+			return false;
+		expr = removeImplicitPromotions(compOp->get_rhs_operand());
+		if (isVal(expr, -1))
+			return false;
+	}
+	/**
+	 * If for whatever reason we didn't find a good comparison, that's cause
+	 * to worry
+	 */
+	print_error(node, "POS30-C", "Use the readlink() function properly");
+	return true;;
+}
+
+/**
  * Do not use vfork (was overload operator&&)
  */
 bool POS33_C( const SgNode *node ) {
@@ -168,6 +236,7 @@ bool POS36_C( const SgNode *node ) {
 
 bool POS(const SgNode *node) {
   bool violation = false;
+  violation |= POS30_C(node);
   violation |= POS33_C(node);
   violation |= POS34_C(node);
   violation |= POS35_C(node);
