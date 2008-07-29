@@ -140,11 +140,12 @@ bool POS34_C( const SgNode *node ) {
 
 /**
  * Avoid race conditions while checking for the existence of a symbolic link
- *
- * \todo Add fopen/fileno support
  */
 bool POS35_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "open"))
+	bool need_fileno = false;
+	if (isCallOfFunctionNamed(node, "fopen"))
+		need_fileno = true;
+	else if (!isCallOfFunctionNamed(node, "open"))
 		return false;
 
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
@@ -194,15 +195,33 @@ bool POS35_C( const SgNode *node ) {
 		if (!after && isCallOfFunctionNamed(iFn, "lstat")) {
 			if (getRefDecl(iVar) == var)
 				lstat = true;
-		} else if (after && isCallOfFunctionNamed(iFn, "fstat")) {
+			continue;
+		}
+
+		if (after && need_fileno && !fstat
+		&& isCallOfFunctionNamed(iFn, "fileno")) {
+			std::cerr << "fileno" << std::endl;
+			if (getRefDecl(iVar) == fd) {
+				fd = getVarAssignedTo(iFn, NULL);
+				if (!fd) break;
+				std::cerr << ":)" << std::endl;
+				need_fileno = false;
+			}
+			continue;
+		}
+
+		if (after && isCallOfFunctionNamed(iFn, "fstat")) {
 			if (getRefDecl(iVar) == fd)
 				fstat = true;
 			break;
 		}
 	}
 
-	if (lstat && !fstat) {
-		print_error(node, "POS35-C", "Avoid race conditions while checking for the existence of a symbolic link");
+	if (lstat && (!fstat || need_fileno)) {
+//		if (isCallOfFunctionNamed(node, "fopen"))
+//			print_error(node, "FIO32-C", "Do not perform operations on devices that are only appropriate for files");
+//		else
+			print_error(node, "POS35-C", "Avoid race conditions while checking for the existence of a symbolic link");
 		return true;
 	}
 
