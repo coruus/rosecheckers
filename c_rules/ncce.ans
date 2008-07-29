@@ -13,6 +13,7 @@ DCL_NCCE.c:59: warning: FLP03-C: Detect and handle floating point errors
 DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
 DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
+ENV_NCCE.c:49: warning: ENV00-C: Do not store the pointer to the string returned by getenv()
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
 ENV_NCCE.c:80: warning: ENV02-C: Beware of multiple environment variables with the same effective name
 ENV_NCCE.c:67: warning: ENV02-C: Previous reference was here

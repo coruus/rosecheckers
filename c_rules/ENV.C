@@ -24,6 +24,67 @@
 #include "utilities.h"
 
 /**
+ * Do not store the pointer to the string returned by getenv()
+ */
+bool ENV00_C( const SgNode *node ) {
+	// find call of getenv
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!isCallOfFunctionNamed(fnRef, "getenv"))
+		return false;
+	// find var saved into
+	const SgInitializedName *var = getVarAssignedTo(fnRef, NULL);
+	if (!var)
+		return false;
+	bool getenv_found = false;
+	bool after = false;
+	// traverse down, searching for copy functions (break)
+	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgExpression) {
+		const SgExpression * expr = isSgExpression(*i);
+		assert(expr);
+		if (!after) {
+			if (isSgFunctionRefExp(expr) == fnRef)
+				after = true;
+			continue;
+		}
+		// search for another call to getenv
+		if (isCallOfFunctionNamed(expr, "getenv")) {
+			getenv_found = true;
+			if (var == getVarAssignedTo(isSgFunctionRefExp(expr), NULL))
+				return false;
+			continue;
+		}
+		if (!getenv_found)
+			continue;
+		// search for write (break)
+		const SgVarRefExp *iVar = isSgVarRefExp(expr);
+		if (!iVar || (getRefDecl(iVar) != var))
+			continue;
+		const SgFunctionCallExp *iFnCall = isSgFunctionCallExp(findParentNodeOfType(iVar, V_SgFunctionCallExp).first);
+		if (!iFnCall) {
+			if (varWrittenTo(iVar))
+				return false;
+			// search for read
+			break;
+		}
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(iFnCall->get_function());
+		assert(iFn);
+		if (isCallOfFunctionNamed(iFn, "strcpy")
+		  ||isCallOfFunctionNamed(iFn, "memset")
+		  ||isCallOfFunctionNamed(iFn, "strdup"))
+			return false;
+		break;
+	}
+	// if read & getenv then error
+	if (getenv_found) {
+		print_error(node, "ENV00-C", "Do not store the pointer to the string returned by getenv()", true);
+		return true;
+	}
+	return false;
+}
+
+/**
  * Beware of multiple environment variables with the same effective name
  */
 bool ENV02_C( const SgNode *node ) {
@@ -160,6 +221,7 @@ bool ENV32_C( const SgNode *node ) {
 
 bool ENV(const SgNode *node) {
 	bool violation = false;
+	violation |= ENV00_C(node);
 	violation |= ENV02_C(node);
 	violation |= ENV04_C(node);
 	violation |= ENV30_C(node);
