@@ -46,7 +46,7 @@ void ENV00() {
   char *tmpvar;
   char *tempvar;
 
-  char *temp = getenv("TMP");
+  const char *temp = getenv("TMP");
   if (temp != NULL) {
     tmpvar = (char *)malloc(strlen(temp)+1);
     if (tmpvar != NULL) {
@@ -100,7 +100,7 @@ void ENV00() {
 
 void ENV01() {
   char *copy = NULL;
-  char *temp = getenv("TEST_ENV");
+  const char *temp = getenv("TEST_ENV");
   if (temp != NULL) {
     copy = (char *)malloc(strlen(temp) + 1);
     if (copy != NULL) {
@@ -117,8 +117,6 @@ void ENV01() {
 /* ENV02_A v.43 */
 
 void ENV02() {
-  char *temp;
-
   if (putenv("TEST_ENV=foo") != 0) {
     /* Handle Error */
   }
@@ -126,7 +124,7 @@ void ENV02() {
     /* Handle Error */
   }
 
-  temp = getenv("TEST_ENV");
+  const char *temp = getenv("TEST_ENV");
 
   if (temp == NULL) {
     /* Handle Error */

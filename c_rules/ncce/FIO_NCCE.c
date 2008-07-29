@@ -617,7 +617,7 @@ void FIO41(void) {
 
 void FIO42(void) {
 	FILE* f;
-	char *editor;
+	const char *editor;
 	const char *filename = "foo";
 
 	/* initialize filename */

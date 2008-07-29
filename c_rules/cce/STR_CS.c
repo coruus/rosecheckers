@@ -88,7 +88,7 @@ void STR05() {
 
 void STR06() {
   char *token;
-  char *path = getenv("PATH");
+  const char *path = getenv("PATH");
   
   char *copy = (char *)malloc(strlen(path) + 1);
   if (copy == NULL) {

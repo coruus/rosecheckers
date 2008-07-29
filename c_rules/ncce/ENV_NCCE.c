@@ -43,8 +43,8 @@ void ENV(char const *envp[]) {
 /* ENV00 v.36 */
 
 void ENV00() {
-  char *tmpvar;
-  char *tempvar;
+  const char *tmpvar;
+  const char *tempvar;
 
   tmpvar = getenv("TMP");
   if (!tmpvar) return;
@@ -64,7 +64,7 @@ void ENV00() {
 
 void ENV01() {
   char copy[16];
-  char *temp = getenv("TEST_ENV");
+  const char *temp = getenv("TEST_ENV");
   if (temp != NULL) {
     strcpy(copy, temp);
   }
@@ -74,8 +74,6 @@ void ENV01() {
 /* ENV02_A v.43 */
 
 void ENV02() {
-  char *temp;
-
   if (putenv("TEST_ENV=foo") != 0) {
     /* Handle Error */
   }
@@ -83,7 +81,7 @@ void ENV02() {
     /* Handle Error */
   }
 
-  temp = getenv("TEST_ENV");
+  const char *temp = getenv("TEST_ENV");
 
   if (temp == NULL) {
     /* Handle Error */

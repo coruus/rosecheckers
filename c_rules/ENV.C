@@ -77,6 +77,24 @@ bool ENV04_C( const SgNode *node ) {
 }
 
 /**
+ * Do not modify the string returned by getenv()
+ */
+bool ENV30_C( const SgNode *node ) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!isCallOfFunctionNamed(fnRef, "getenv"))
+		return false;
+	const SgInitializedName *var = getVarAssignedTo(fnRef, NULL);
+	if (!var)
+		return false;
+	if (Type(var->get_type()->dereference()).isConst())
+		return false;
+	print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
+	return true;
+}
+
+/**
  * Do not rely on an environment pointer following an operation that may
  * invalidate it 
  */
@@ -144,6 +162,7 @@ bool ENV(const SgNode *node) {
 	bool violation = false;
 	violation |= ENV02_C(node);
 	violation |= ENV04_C(node);
+	violation |= ENV30_C(node);
 	violation |= ENV31_C(node);
 	violation |= ENV32_C(node);
 	return violation;

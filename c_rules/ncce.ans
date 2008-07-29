@@ -14,15 +14,16 @@ DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
 DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
-ENV_NCCE.c:82: warning: ENV02-C: Beware of multiple environment variables with the same effective name
+ENV_NCCE.c:80: warning: ENV02-C: Beware of multiple environment variables with the same effective name
 ENV_NCCE.c:67: warning: ENV02-C: Previous reference was here
-ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
-ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:95: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:119: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:128: error: ENV30-C: Do not modify the string returned by getenv()
+ENV_NCCE.c:138: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
+ENV_NCCE.c:139: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
 ENV_NCCE.c:140: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
-ENV_NCCE.c:141: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
-ENV_NCCE.c:142: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
-ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
-ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
+ENV_NCCE.c:153: error: ENV32-C: No atexit handler should terminate in any way other than by returning
+ENV_NCCE.c:178: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:56: error: FIO42-C: Ensure files are properly closed when they are no longer needed
 ERR_NCCE.c:62: warning: ERR06-C: Understand the termination behavior of assert() and abort()
 ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
@@ -177,6 +178,7 @@ STR_NCCE.c:62: warning: STR04-C: Use plain char for characters in the basic char
 STR_NCCE.c:63: warning: ARR02-C: Explicitly specify array dimensions, even if implicitly defined by an initializer
 STR_NCCE.c:63: warning: STR04-C: Use plain char for characters in the basic character set
 STR_NCCE.c:77: warning: STR05-C: Use pointers to const when referring to string literals
+STR_NCCE.c:86: error: ENV30-C: Do not modify the string returned by getenv()
 STR_NCCE.c:94: warning: STR06-C: Do not assume that strtok() leaves the parse string unchanged
 STR_NCCE.c:102: warning: STR05-C: Use pointers to const when referring to string literals
 STR_NCCE.c:103: error: STR30-C: Do not attempt to modify string literals
