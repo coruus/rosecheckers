@@ -18,6 +18,9 @@ ENV_NCCE.c:82: warning: ENV02-C: Beware of multiple environment variables with t
 ENV_NCCE.c:67: warning: ENV02-C: Previous reference was here
 ENV_NCCE.c:97: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
 ENV_NCCE.c:121: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
+ENV_NCCE.c:140: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
+ENV_NCCE.c:141: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
+ENV_NCCE.c:142: error: ENV31-C: Do not rely on an environment pointer following an operation that may invalidate it
 ENV_NCCE.c:155: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ENV_NCCE.c:180: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:56: error: FIO42-C: Ensure files are properly closed when they are no longer needed

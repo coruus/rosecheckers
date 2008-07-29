@@ -77,6 +77,35 @@ bool ENV04_C( const SgNode *node ) {
 }
 
 /**
+ * Do not rely on an environment pointer following an operation that may
+ * invalidate it 
+ */
+bool ENV31_C( const SgNode *node ) {
+	const SgVarRefExp *varRef = isSgVarRefExp(node);
+	if (!varRef)
+		return false;
+	if (getRefDecl(varRef)->get_name().getString() != "envp")
+		return false;
+	bool violation = false;
+	FOREACH_SUBNODE(getRefDecl(varRef)->get_scope(), nodes, i, V_SgExpression) {
+		if (varRef == isSgVarRefExp(*i))
+			break;
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		if (!iFn)
+			continue;
+		if (isCallOfFunctionNamed(iFn, "putenv")
+		  ||isCallOfFunctionNamed(iFn, "setenv")) {
+			violation = true;
+			break;
+		}
+	}
+	if (violation) {
+		print_error(node, "ENV31-C", "Do not rely on an environment pointer following an operation that may invalidate it");
+	}
+	return violation;
+}
+
+/**
  * No atexit handler should terminate in any way other than by returning
  * \note This catches calls to exit, _exit, _abort, _Exit, longjmp and
  * siglongjmp
@@ -115,6 +144,7 @@ bool ENV(const SgNode *node) {
 	bool violation = false;
 	violation |= ENV02_C(node);
 	violation |= ENV04_C(node);
+	violation |= ENV31_C(node);
 	violation |= ENV32_C(node);
 	return violation;
 }
