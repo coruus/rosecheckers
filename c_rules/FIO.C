@@ -348,17 +348,7 @@ bool FIO34_C( const SgNode *node) {
  */
 bool FIO38_C( const SgNode *node) {
 	const SgExpression *rhs = NULL;
-	if (isSgAndAssignOp(node)
-	|| isSgAssignOp(node)
-	|| isSgDivAssignOp(node)
-	|| isSgIorAssignOp(node)
-	|| isSgLshiftAssignOp(node)
-	|| isSgMinusAssignOp(node)
-	|| isSgModAssignOp(node)
-	|| isSgMultAssignOp(node)
-	|| isSgPlusAssignOp(node)
-	|| isSgRshiftAssignOp(node)
-	|| isSgXorAssignOp(node)) {
+	if (isAnyAssignOp(node)) {
 		rhs = isSgBinaryOp(node)->get_rhs_operand();
 	} else if (isSgAssignInitializer(node)) {
 		rhs = isSgAssignInitializer(node)->get_operand();

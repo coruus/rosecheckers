@@ -113,16 +113,6 @@ bool FLP03_C( const SgNode *node ) {
 		return false;
 	}
 
-	/**
-	 * Could be a cast or something at global scope
-	 *
-	 * \todo Remove this debugging stuff
-	 */
-	if(!findParentNodeOfType(node, V_SgBasicBlock).first) {
-		print_error(node, "FLP03-C", "DEBUG");
-		return false;
-	}
-	assert(findParentNodeOfType(node, V_SgBasicBlock).first);
 	const SgStatement *prevSt = findInBlockByOffset(node, -1);
 	bool no_feclearexcept = true;
 	if (prevSt) {
@@ -294,8 +284,7 @@ bool FLP34_C( const SgNode *node ) {
 	const SgType *lhsType = NULL;
 	const SgExpression *rhs = NULL;
 	if (const SgBinaryOp *op = isSgBinaryOp(node)) {
-		/** \todo Add the other assign op's */
-		if (!isSgAssignOp(op))
+		if (!isAnyAssignOp(op))
 			return false;
 		lhsType = op->get_lhs_operand()->get_type()->stripTypedefsAndModifiers();
 		rhs = op->get_rhs_operand();

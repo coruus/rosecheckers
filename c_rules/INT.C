@@ -368,18 +368,7 @@ bool INT13_C( const SgNode *node ) {
 				return false;
 			}
 		}
-		if(isSgAndAssignOp(binOp)
-		|| isSgBitAndOp(binOp)
-		|| isSgIorAssignOp(binOp)
-		|| isSgBitXorOp(binOp)
-		|| isSgIorAssignOp(binOp)
-		|| isSgXorAssignOp(binOp)
-		|| isSgBitOrOp(binOp)) {
-			if((!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType())
-			|| (!stripModifiers(binOp->get_rhs_operand()->get_type())->isUnsignedType())) {
-				violation = true;
-			}
-		} else if(isSgLshiftOp(binOp)
+		if(isSgLshiftOp(binOp)
 		|| isSgLshiftAssignOp(binOp)
 		|| isSgRshiftOp(binOp)
 		|| isSgRshiftAssignOp(binOp)) {
@@ -389,6 +378,12 @@ bool INT13_C( const SgNode *node ) {
 				return false;
 			}
 			if(!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType()) {
+				violation = true;
+			}
+		} else if(isAnyBinBitOp(binOp)
+		|| isAnyBinBitAssignOp(binOp)) {
+			if((!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType())
+			|| (!stripModifiers(binOp->get_rhs_operand()->get_type())->isUnsignedType())) {
 				violation = true;
 			}
 		}
@@ -413,40 +408,22 @@ bool INT14_C( const SgNode *node ) {
 	bool arith = false;
 	bool bitwise = false;
 
-	if (isSgPlusAssignOp(assign)
-	||  isSgMinusAssignOp(assign)
-	||  isSgModAssignOp(assign)
-	||  isSgMultAssignOp(assign)
-	||  isSgDivAssignOp(assign)) {
+	if (isAnyBinArithAssignOp(assign)) {
 		arith = true;
-	} else if (isSgLshiftAssignOp(assign)
-	||  isSgRshiftAssignOp(assign)
-	||  isSgAndAssignOp(assign)
-	||  isSgXorAssignOp(assign)
-	||  isSgIorAssignOp(assign)) {
+	} else if (isAnyBinBitAssignOp(assign)) {
 		bitwise = true;
 	} else if (!isSgAssignOp(assign)) {
 		return false;
 	}
 
 	FOREACH_SUBNODE(assign, nodes, i, V_SgExpression) {
-		if (isSgAddOp(*i)
-		||  isSgSubtractOp(*i)
-		||  isSgDivideOp(*i)
-		||  isSgMultiplyOp(*i)
-		||  isSgModOp(*i)
-		||  isSgExponentiationOp(*i)
-		||  isSgIntegerDivideOp(*i)
+		if (isAnyBinArithOp(*i)
 		||  isSgMinusMinusOp(*i)
 		||  isSgPlusPlusOp(*i)
 		||  isSgMinusOp(*i)
 		||  isSgUnaryAddOp(*i)) {
 			arith = true;
-		} else if (isSgBitAndOp(*i)
-		||  isSgBitOrOp(*i)
-		||  isSgBitXorOp(*i)
-		||  isSgLshiftOp(*i)
-		||  isSgRshiftOp(*i)
+		} else if (isAnyBinBitOp(*i)
 		||  isSgBitComplementOp(*i)) {
 			bitwise = true;
 		}

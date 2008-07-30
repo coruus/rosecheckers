@@ -513,11 +513,6 @@ static bool isVoidStar(const SgType *t) {
  * Do not convert pointers into more strictly aligned pointer types
  */
 bool EXP36_C( const SgNode *node ) {
-	/**
-	 * \todo remove this compiler generated bug out
-	 */
-//	if (isCompilerGeneratedNode(node))
-//		return false;
 	const SgCastExp *cast = isSgCastExp(node);
 	if(!cast)
 		return false;
