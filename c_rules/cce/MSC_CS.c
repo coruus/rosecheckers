@@ -26,6 +26,7 @@ void MSC06();
 void MSC07();
 void MSC09();
 void MSC12();
+void MSC13();
 void MSC14();
 void MSC15();
 void MSC30();
@@ -41,6 +42,7 @@ void MSC() {
   MSC07();
   MSC09();
   MSC12();
+  MSC13();
   MSC14();
   MSC15();
   MSC30();
@@ -104,7 +106,7 @@ void MSC02() {
 /* MSC03_A v.26 */
 
 void MSC03() {
-  unsigned int a = 0;
+  unsigned int a;
   const unsigned int b = 0;
 
   a = b;
@@ -179,7 +181,7 @@ void MSC06() {
 /* MSC07_A v.60 */
 
 void MSC07() {
-    char *s = NULL;
+    char *s;
     if (1) {
         s = (char *)malloc(10);
         if (s == NULL) {
@@ -212,7 +214,7 @@ void MSC09() {
 /* MSC12_A v.34 */
 
 void MSC12() {
-  int a = 0;
+  int a;
   const int b = 1;
 
   a = b;
@@ -220,6 +222,25 @@ void MSC12() {
   int *p = &a;
   (*p)++;
 }
+
+/* MSC13-C */
+int * MSC13_foo() {
+	return NULL;
+}
+
+int *MSC13_() {
+	int *p1;
+
+	p1 = MSC13_foo();
+
+	return p1;
+}
+
+void MSC13() {
+	int *x = MSC13_();
+	printf("MSC13 %p\n", x);
+}
+
 
 
 /* MSC14_A v.14 */

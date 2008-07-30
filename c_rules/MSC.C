@@ -120,6 +120,95 @@ bool MSC03_C( const SgNode *node ) {
 }
 
 /**
+ * Do not manipulate time_t typed values directly 
+ */
+bool MSC05_C( const SgNode *node ) {
+	if (isSgAddOp(node)
+	  ||isSgAndAssignOp(node)
+	  ||isSgAndOp(node)
+	  ||isSgBitAndOp(node)
+	  ||isSgBitOrOp(node)
+	  ||isSgBitXorOp(node)
+	  ||isSgDivAssignOp(node)
+	  ||isSgDivideOp(node)
+	  ||isSgGreaterOrEqualOp(node)
+	  ||isSgGreaterThanOp(node)
+	  ||isSgIntegerDivideOp(node)
+	  ||isSgIorAssignOp(node)
+	  ||isSgLessOrEqualOp(node)
+	  ||isSgLessThanOp(node)
+	  ||isSgLshiftAssignOp(node)
+	  ||isSgLshiftOp(node)
+	  ||isSgRshiftAssignOp(node)
+	  ||isSgRshiftOp(node)
+	  ||isSgMinusAssignOp(node)
+	  ||isSgModAssignOp(node)
+	  ||isSgModOp(node)
+	  ||isSgMultAssignOp(node)
+	  ||isSgMultiplyOp(node)
+	  ||isSgOrOp(node)
+	  ||isSgPlusAssignOp(node)
+	  ||isSgSubtractOp(node)
+	  ||isSgXorAssignOp(node)) {
+		const SgBinaryOp *binOp = isSgBinaryOp(node);
+		assert(binOp);
+		std::string lhsName = binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+		std::string rhsName = binOp->get_rhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+		if (!(lhsName == "time_t" || rhsName == "time_t"))
+			return false;
+	} else if(isSgBitComplementOp(node)
+	  ||isSgMinusMinusOp(node)
+	  ||isSgNotOp(node)
+	  ||isSgPlusPlusOp(node)
+	  ||isSgUnaryAddOp(node)
+	  ||isSgMinusOp(node)) {
+		const SgUnaryOp *op = isSgUnaryOp(node);
+		assert(op);
+		std::string opName = op->get_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+		if (opName != "time_t")
+			return false;
+	} else {
+		return false;
+	}
+
+	print_error(node, "MSC05-C", "Do not manipulate time_t typed values directly", true);
+	return true;
+}
+
+/**
+ * Detect and remove unused values
+ *
+ * \bug Disabled until a better algorithm can be found
+ */
+bool MSC13_C( const SgNode *node ) {
+	const SgInitializedName *var = isSgInitializedName(node);
+	if (!var)
+		return false;
+	bool unused = false;
+	bool violation = false;
+	if (var->get_initializer())
+		unused = true;
+	const SgNode * prev = var;
+	FOREACH_SUBNODE(var->get_scope(), nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		if (!iVar || (getRefDecl(iVar) != var))
+			continue;
+		if (varWrittenTo(iVar) && (!findParentNodeOfType(iVar, V_SgPointerDerefExp).first)) {
+			if (unused) {
+				print_error(prev, "MSC13-C", "Detect and remove unused values", true);
+				violation = true;
+			} else {
+				unused = true;
+				prev = iVar;
+			}
+		} else {
+			unused = false;
+		}
+	}
+	return violation;
+}
+
+/**
  * Do not use rand()
  */
 bool MSC30_C( const SgNode *node ) {
@@ -179,6 +268,8 @@ bool MSC(const SgNode *node) {
   bool violation = false;
   violation |= MSC01_C(node);
   violation |= MSC03_C(node);
+  violation |= MSC05_C(node);
+//  violation |= MSC13_C(node);
   violation |= MSC30_C(node);
   violation |= MSC31_C(node);
   return violation;

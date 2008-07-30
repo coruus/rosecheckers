@@ -123,31 +123,33 @@ MEM_NCCE.c:317: error: MEM31-C: Free dynamically allocated memory exactly once.
 MEM_NCCE.c:332: error: EXP34-C: Ensure pointer is valid before dereferencing it
 MEM_NCCE.c:351: error: MEM33-C: Use the correct syntax for flexible array members
 MEM_NCCE.c:401: error: MEM34-C: Only free memory allocated dynamically
-"./ncce/MSC_NCCE.c", line 105: warning: 
+"./ncce/MSC_NCCE.c", line 107: warning: 
           expression has no effect
     a == b;
     ^
 
-"./ncce/MSC_NCCE.c", line 120: warning: 
+"./ncce/MSC_NCCE.c", line 122: warning: 
           nested comment is not allowed
        /* some other comment */
        ^
 
-"./ncce/MSC_NCCE.c", line 170: warning: 
+"./ncce/MSC_NCCE.c", line 172: warning: 
           statement is unreachable
       if (s) {
       ^
 
-"./ncce/MSC_NCCE.c", line 198: warning: 
+"./ncce/MSC_NCCE.c", line 200: warning: 
           expression has no effect
     a == b;
     ^
 
-MSC_NCCE.c:69: warning: MSC01-C: Strive for logical completeness
-MSC_NCCE.c:105: warning: MSC03-C: Avoid errors of addition
-MSC_NCCE.c:198: warning: MSC03-C: Avoid errors of addition
-MSC_NCCE.c:243: error: MSC30-C: Do not use rand()
-MSC_NCCE.c:253: error: MSC31-C: Ensure that return values are compared against the proper type
+MSC_NCCE.c:71: warning: MSC01-C: Strive for logical completeness
+MSC_NCCE.c:107: warning: MSC03-C: Avoid errors of addition
+MSC_NCCE.c:135: warning: MSC05-C: Do not manipulate time_t typed values directly
+MSC_NCCE.c:135: warning: MSC05-C: Do not manipulate time_t typed values directly
+MSC_NCCE.c:200: warning: MSC03-C: Avoid errors of addition
+MSC_NCCE.c:276: error: MSC30-C: Do not use rand()
+MSC_NCCE.c:286: error: MSC31-C: Ensure that return values are compared against the proper type
 POS_NCCE.c:41: error: POS30-C: Use the readlink() function properly
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
