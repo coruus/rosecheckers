@@ -297,7 +297,7 @@ bool FIO30_C( const SgNode *node) {
 	/**
 	 * for some reason we can't find the const version of dereference
 	 */
-	bool isConst = Type((const_cast<SgType *>(frmtType))->dereference()).isConst();
+	bool isConst = isConstType((const_cast<SgType *>(frmtType))->dereference());
 	if(!(isConst || isSgTypeString(frmtType))) {
 		print_error(node, "FIO30-C", "Exclude user input from format strings");
 		return true;
@@ -328,9 +328,15 @@ bool FIO34_C( const SgNode *node) {
 	if(!(cast = isSgCastExp(parent)))
 		return false;
 
-	Type t = Type(cast->get_type());
-	if(t.isPlainInt() || t.isSignedInt() || t.isPlainLong() ||
-		t.isSignedLong() || (t.isLongLong() && !t.isUnsignedLongLong()))
+	const SgType *t = cast->get_type();
+	if (isSgTypeInt(t)
+	  ||isSgTypeSignedInt(t)
+	  ||isSgTypeUnsignedInt(t)
+	  ||isSgTypeLong(t)
+	  ||isSgTypeSignedLong(t)
+	  ||isSgTypeUnsignedLong(t)
+	  ||isSgTypeLongLong(t)
+	  ||isSgTypeUnsignedLongLong(t))
 		return false;
 
 	print_error( node, "FIO34-C", "Use int to capture the return value of character I/O functions");

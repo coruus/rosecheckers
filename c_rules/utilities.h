@@ -26,7 +26,6 @@
 #include <list>
 #include <string>
 #include "rose.h"
-#include "type.h"
 
 /**
  * Iterate over all initializers "i" in a list of variables
@@ -220,5 +219,7 @@ protected:
 bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
 size_t sizeOfType(const SgType *type);
 bool valueVerified(const SgExpression *expr);
+bool isConstType(const SgType *t);
+bool isVolatileType(const SgType *t);
 
 #endif

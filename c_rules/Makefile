@@ -57,7 +57,7 @@ diagnose: diagnose.o \
 		ERR.o \
 		MSC.o \
 		POS.o \
-		type.o \
+		value.o\
 		utilities.o
 	libtool --mode=link g++ -Wall -g -o diagnose -L$(ROSE)/lib $(ROSE_LIBS) $^
 

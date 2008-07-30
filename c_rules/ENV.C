@@ -151,7 +151,7 @@ bool ENV30_C( const SgNode *node ) {
 	const SgInitializedName *var = getVarAssignedTo(fnRef, NULL);
 	if (!var)
 		return false;
-	if (Type(var->get_type()->dereference()).isConst())
+	if (isConstType(var->get_type()->dereference()))
 		return false;
 	print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
 	return true;

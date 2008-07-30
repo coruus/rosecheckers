@@ -130,8 +130,8 @@ const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
 }
 
 const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
-	Type t( e->get_type() );
-	if( t.isInt() || t.isUnsignedInt() ) {
+	const SgType *t = e->get_type();
+	if( isSgTypeInt(t) || isSgTypeUnsignedInt(t) ) {
 		if( const SgCastExp *cast = isSgCastExp( e ) ) {
 			if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
 				e = cast->get_operand();
@@ -142,8 +142,11 @@ const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
 }
 
 const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpression *e ) {
-	Type t( e->get_type() );
-	if( t.isInt() || t.isUnsignedInt() || t.isFloat() || t.isDouble() ) {
+	const SgType *t = e->get_type();
+	if (isSgTypeInt(t)
+	  ||isSgTypeUnsignedInt(t)
+	  ||isSgTypeFloat(t)
+	  ||isSgTypeDouble(t) ) {
 		if( const SgCastExp *cast = isSgCastExp( e ) ) {
 			if( isCompilerGeneratedNode( cast ) ) {
 				e = cast->get_operand();
@@ -226,13 +229,6 @@ std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int 
 			break;
 	}
 	return std::make_pair(parent,depth);
-}
-
-const SgNode *getForStatmentTest( const SgNode *node ) {
-	if( const SgForStatement *forStatement = isSgForStatement(node) )
-		return forStatement->get_test();
-	else
-		return 0;
 }
 
 bool isCompilerGeneratedNode( const SgNode *node ) {
@@ -492,122 +488,6 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 
 	assert(*i);
 	return *i;
-}
-
-/**
- * Takes a Value node and tries to extract the numeric value from it.  The
- * need for this exists because size_t are expressed as both UnsignedIntVal's
- * and UnsignedLongVal's.
- */
-bool getSizetVal(const SgExpression *node, size_t *value) {
-	if(!node)
-		return false;
-	if (isSgUnsignedIntVal(node)) {
-		*value = isSgUnsignedIntVal(node)->get_value();
-	} else if (isSgUnsignedLongVal(node)) {
-		*value = isSgUnsignedLongVal(node)->get_value();
-	} else {
-		return false;
-	}
-	return true;
-}
-
-bool getIntegerVal(const SgExpression *node, intmax_t *n) {
-	if(!node)
-		return false;
-	if (isSgUnsignedIntVal(node)) {
-		*n = isSgUnsignedIntVal(node)->get_value();
-	} else if (isSgIntVal(node)) {
-		*n = isSgIntVal(node)->get_value();
-	} else if (isSgUnsignedLongVal(node)) {
-		*n = (intmax_t) (isSgUnsignedLongVal(node)->get_value());
-	} else if (isSgLongIntVal(node)) {
-		*n = isSgLongIntVal(node)->get_value();
-	} else if (isSgUnsignedLongLongIntVal(node)) {
-		*n = (intmax_t) isSgUnsignedLongLongIntVal(node)->get_value();
-	} else if (isSgLongLongIntVal(node)) {
-		*n = isSgLongLongIntVal(node)->get_value();
-	} else if (isSgUnsignedShortVal(node)) {
-		*n = isSgUnsignedShortVal(node)->get_value();
-	} else if (isSgShortVal(node)) {
-		*n = isSgShortVal(node)->get_value();
-	} else {
-		return false;
-	}
-	return true;
-}
-
-bool getFloatingVal(const SgExpression *node, long double *n) {
-	if(!node)
-		return false;
-	if (isSgFloatVal(node)) {
-		*n = isSgFloatVal(node)->get_value();
-	} else if (isSgDoubleVal(node)) {
-		*n = isSgDoubleVal(node)->get_value();
-	} else if (isSgLongDoubleVal(node)) {
-		*n = isSgLongDoubleVal(node)->get_value();
-	} else {
-		return false;
-	}
-	return true;
-}
-
-bool isVal(const SgExpression *node, const intmax_t n) {
-	if (!node)
-		return false;
-	intmax_t x;
-	if (!getIntegerVal(node, &x))
-		return false;
-	return x == n;
-}
-
-/**
- * Takes a Value node and tries to make sure it is 0
- */
-bool isZeroVal(const SgExpression *node) {
-	if (!node)
-		return false;
-	if (node->get_type()->isIntegerType()) {
-		return isVal(node,0);
-	} else if (node->get_type()->isFloatType()) {
-		long double x;
-		if (!getFloatingVal(node, &x))
-			return false;
-		return x == 0.0l;
-	} else {
-		return false;
-	}
-}
-
-/**
- * Takes a Value node and tries to make sure it is the minimum
- */
-bool isMinVal(const SgExpression *node) {
-	if(!node)
-		return false;
-	if (isSgUnsignedIntVal(node)) {
-		return 0 == isSgUnsignedIntVal(node)->get_value();
-	} else if (isSgIntVal(node)) {
-		return INT_MIN == isSgIntVal(node)->get_value();
-	} else if (isSgUnsignedLongVal(node)) {
-		return 0 == isSgUnsignedLongVal(node)->get_value();
-	} else if (isSgLongIntVal(node)) {
-		return LONG_MIN == isSgLongIntVal(node)->get_value();
-	} else if (isSgUnsignedLongLongIntVal(node)) {
-		return 0 == isSgUnsignedLongLongIntVal(node)->get_value();
-	} else if (isSgLongLongIntVal(node)) {
-		return std::numeric_limits<long long>::min() == isSgLongLongIntVal(node)->get_value();
-	} else if (isSgUnsignedShortVal(node)) {
-		return 0 == isSgUnsignedShortVal(node)->get_value();
-	} else if (isSgShortVal(node)) {
-		return SHRT_MIN == isSgShortVal(node)->get_value();
-	} else if (isSgUnsignedCharVal(node)) {
-		return 0 == isSgUnsignedCharVal(node)->get_value();
-	} else if (isSgCharVal(node)) {
-		return CHAR_MIN == isSgCharVal(node)->get_value();
-	} else {
-		return false;
-	}
 }
 
 /**
@@ -1140,3 +1020,23 @@ bool valueVerified(const SgExpression *expr) {
 	return false;
 }
 
+bool isConstType(const SgType *t) {
+	assert(t);
+	t = t->stripType( SgType::STRIP_TYPEDEF_TYPE );
+	const SgModifierType *mt = isSgModifierType(t);
+	if (!mt)
+		return false;
+	return mt->get_typeModifier().get_constVolatileModifier().isConst();
+}
+
+bool isVolatileType(const SgType *t) {
+	assert(t);
+	t = t->stripType( SgType::STRIP_TYPEDEF_TYPE );
+	const SgModifierType *mt = isSgModifierType(t);
+	if (!mt)
+		return false;
+	return mt->get_typeModifier().get_constVolatileModifier().isVolatile();
+}
+
+
+// \todo add isAnyAssignOp /etc

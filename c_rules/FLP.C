@@ -45,8 +45,8 @@ bool FLP02_C( const SgNode *node ) {
 	const SgExpression *rhs = op->get_rhs_operand();
 	assert(rhs);
 
-	if (Type(lhs->get_type()).isFloatingPoint()
-	  ||Type(rhs->get_type()).isFloatingPoint()) {
+	if (lhs->get_type()->isFloatType()
+	  ||rhs->get_type()->isFloatType()) {
 		if (isZeroVal(removeCasts(lhs))
 		||  isZeroVal(removeCasts(rhs)))
 			return false;
@@ -74,12 +74,12 @@ bool FLP03_C( const SgNode *node ) {
 	if (isSgBinaryOp(node)) {
 		const SgBinaryOp *op = isSgBinaryOp(node);
 		assert(op);
-		const Type lhsT(removeCasts(op->get_lhs_operand())->get_type());
-		const Type rhsT(removeCasts(op->get_rhs_operand())->get_type());
-		if (!(lhsT.isFloatingPoint() || rhsT.isFloatingPoint()))
+		const SgType *lhsT = removeCasts(op->get_lhs_operand())->get_type();
+		const SgType *rhsT = removeCasts(op->get_rhs_operand())->get_type();
+		if (!(lhsT->isFloatType() || rhsT->isFloatType()))
 			return false;
-		bool lhsKnown = isSgValueExp(removeCasts(op->get_lhs_operand())) || lhsT.isConst();
-		bool rhsKnown = isSgValueExp(removeCasts(op->get_rhs_operand())) || rhsT.isConst();
+		bool lhsKnown = isSgValueExp(removeCasts(op->get_lhs_operand())) || isConstType(lhsT);
+		bool rhsKnown = isSgValueExp(removeCasts(op->get_rhs_operand())) || isConstType(rhsT);
 		if (isSgDivideOp(op)) {
 			if (rhsKnown)
 				return false;
@@ -102,14 +102,27 @@ bool FLP03_C( const SgNode *node ) {
 	} else if (isSgCastExp(node)) {
 		const SgCastExp *cast = isSgCastExp(node);
 		assert(cast);
-		const Type lhsT(cast->get_type());
-		const Type rhsT(cast->get_operand()->get_type());
-		if (!(lhsT.isDouble() && rhsT.isFloat()))
+		const SgType *lhsT = cast->get_type();
+		const SgType *rhsT = cast->get_operand()->get_type();
+		/**
+		 * \todo add LongDouble->Double && LongDouble->Float
+		 */
+		if (!(isSgTypeDouble(lhsT) && isSgTypeFloat(rhsT)))
 			return false;
 	} else {
 		return false;
 	}
 
+	/**
+	 * Could be a cast or something at global scope
+	 *
+	 * \todo Remove this debugging stuff
+	 */
+	if(!findParentNodeOfType(node, V_SgBasicBlock).first) {
+		print_error(node, "FLP03-C", "DEBUG");
+		return false;
+	}
+	assert(findParentNodeOfType(node, V_SgBasicBlock).first);
 	const SgStatement *prevSt = findInBlockByOffset(node, -1);
 	bool no_feclearexcept = true;
 	if (prevSt) {
@@ -145,7 +158,7 @@ bool FLP30_C( const SgNode *node ) {
 		return false;
 
 	FOREACH_SUBNODE(forSt->get_increment(), nodes, i, V_SgVarRefExp) {
-		if (Type(isSgVarRefExp(*i)->get_type()).isFloatingPoint()) {
+		if (isSgVarRefExp(*i)->get_type()->isFloatType()) {
 			print_error(*i, "FLP30-C", "Do not use floating point variables as loop counters");
 			return true;
 		}
@@ -219,8 +232,8 @@ bool FLP31_C( const SgNode *node ) {
 bool FLP33_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
 	const SgInitializedName *var = isSgInitializedName(node);
-	const SgType *lhsSgType;
-	const SgType *rhsSgType;
+	const SgType *lhsT;
+	const SgType *rhsT;
 
 	if(binOp) {
 		/**
@@ -232,36 +245,32 @@ bool FLP33_C( const SgNode *node ) {
 		if (isCompilerGeneratedNode(binOp))
 			return false;
 
-		if (!Type(binOp->get_type()).isFloatingPoint())
+		if (!binOp->get_type()->isFloatType())
 			return false;
 		if (isSgPntrArrRefExp(binOp))
 			return false;
 
-		lhsSgType = binOp->get_lhs_operand()->get_type();
+		lhsT = binOp->get_lhs_operand()->get_type()->stripTypedefsAndModifiers();
 		/**
 		 * Let's leave those casts in place to allow for macros like isnan
 		 */
-		rhsSgType = binOp->get_rhs_operand()->get_type();
-//		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
-		assert(lhsSgType);
-		assert(rhsSgType);
-		const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
-		const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
-		if(lhsType.isFloatingPoint() || rhsType.isFloatingPoint()) {
+		rhsT = binOp->get_rhs_operand()->get_type()->stripTypedefsAndModifiers();
+//		rhsT = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
+		assert(lhsT);
+		assert(rhsT);
+		if(lhsT->isFloatType() || rhsT->isFloatType()) {
 			return false;
 		}
 	} else if(var) {
-		lhsSgType = var->get_type();
+		lhsT = var->get_type()->stripTypedefsAndModifiers();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
 		if(!init)
 			return false;
-		rhsSgType = removeImplicitPromotions(init->get_operand())->get_type();
+		rhsT = removeImplicitPromotions(init->get_operand())->get_type()->stripTypedefsAndModifiers();
 
-		assert(lhsSgType);
-		assert(rhsSgType);
-		const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
-		const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
-		if(!(lhsType.isFloatingPoint() && rhsType.isIntegral()))
+		assert(lhsT);
+		assert(rhsT);
+		if(!(lhsT->isFloatType() && rhsT->isIntegerType()))
 			return false;
 	} else
 		return false;
@@ -299,11 +308,9 @@ bool FLP34_C( const SgNode *node ) {
 	assert(lhsType && rhs);
 	const SgType *rhsType = rhs->get_type()->stripTypedefsAndModifiers();
 	assert(rhsType);
-	const Type lhsT(lhsType);
-	const Type rhsT(rhsType);
-	if (!rhsT.isFloatingPoint())
+	if (!rhsType->isFloatType())
 		return false;
-	if (lhsT.isFloatingPoint() && (sizeOfType(lhsType) >= sizeOfType(rhsType)))
+	if (lhsType->isFloatType() && (sizeOfType(lhsType) >= sizeOfType(rhsType)))
 		return false;
 
 	if (valueVerified(removeCasts(rhs)))

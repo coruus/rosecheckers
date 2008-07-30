@@ -37,7 +37,7 @@ bool EXP01_C( const SgNode *node ) {
 	if (arg0 == NULL)
 		return false;
 
-	const SgType* sg_t1 = NULL;
+	const SgType* t1 = NULL;
 	FOREACH_SUBNODE(arg0, nodes, i, V_SgSizeOfOp) {
 		const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( *i);
 		assert(sizeOfOp != NULL);
@@ -48,25 +48,29 @@ bool EXP01_C( const SgNode *node ) {
 		const SgVarRefExp* sizeOfVar = isSgVarRefExp(sizeOfExpr);
 		if (!sizeOfVar)
 			continue;
-		sg_t1 = sizeOfVar->get_type();
-		assert(sg_t1 != NULL);
+		t1 = sizeOfVar->get_type();
+		assert(t1 != NULL);
 		break;
 	}
-	if (sg_t1 == NULL)
+	if (t1 == NULL)
 		return false; // no sizeof() op in malloc call
-	if (isSgArrayType(sg_t1))
+	if (isSgArrayType(t1))
 		return false; // explicit arrays are OK
-	Type t1(sg_t1);
+//	Type t1(sg_t1);
 
 	const SgNode* parent = node->get_parent();
 	assert( parent != NULL);
 	const SgCastExp* typecast = isSgCastExp( parent->get_parent());
 	if (typecast == NULL)
 		return false;
-	Type t2_ptr_type( typecast->get_type());
-	if (!t2_ptr_type.isPointer() && !t2_ptr_type.isArray())
+//	Type t2_ptr_type( typecast->get_type());
+	const SgType *t2_ptr_type = typecast->get_type();
+	if (!isSgPointerType(t2_ptr_type) && !isSgArrayType(t2_ptr_type))
 		return false; // memory not allocated for array
-	Type t2( t2_ptr_type.dereference().dereference());
+	/**
+	 * \bug ROSE is missing const derefence()
+	 */
+	const SgType *t2 = const_cast<SgType*>(t2_ptr_type)->dereference()->dereference();
 
 	if (t1 == t2) {
 		return false;
@@ -122,12 +126,12 @@ bool EXP05_C( const SgNode *node ) {
 	/**
 	 * This allows things like a = (int) b, where b is const and is not
 	 */
-	const Type exprType(expr->get_type());
-	if (!(exprType.isPointer() || exprType.isArray()))
+	const SgType *exprType = expr->get_type();
+	if (!(isSgPointerType(exprType) || isSgArrayType(exprType)))
 		return false;
 
-	bool castIsConst = Type(cast->get_type()).isConst();
-	bool exprIsConst = Type(expr->get_type()->dereference()).isConst();
+	bool castIsConst = isConstType(cast->get_type());
+	bool exprIsConst = isConstType(expr->get_type()->dereference());
 
 	if(exprIsConst && !castIsConst) {
 		print_error(node, "EXP05-C", "Do not cast away a const qualification", true);
@@ -195,8 +199,13 @@ bool EXP09_C( const SgNode *node ) {
 
 	const SgCastExp* typecast = isSgCastExp( parent->get_parent());
 	if (typecast != NULL) {
-		Type alloc_type = Type( typecast->get_type()).stripInitialPointersReferencesAndArrays();
-		if (alloc_type.isAnyChar())
+		const SgType *alloc_type = typecast->get_type()->stripType(
+			 SgType::STRIP_REFERENCE_TYPE
+			|SgType::STRIP_POINTER_TYPE
+			|SgType::STRIP_ARRAY_TYPE);
+		if (isSgTypeChar(alloc_type)
+		  ||isSgTypeSignedChar(alloc_type)
+		  ||isSgTypeUnsignedChar(alloc_type))
 			return false;
 	}
 
@@ -426,8 +435,8 @@ bool EXP32_C( const SgNode *node ) {
 	const SgExpression *expr = cast->get_operand();
 	assert(expr);
 
-	bool castIsVolatile = Type(cast->get_type()).isVolatile();
-	bool exprIsVolatile = Type(expr->get_type()->dereference()).isVolatile();
+	bool castIsVolatile = isVolatileType(cast->get_type());
+	bool exprIsVolatile = isVolatileType(expr->get_type()->dereference());
 
 	if(exprIsVolatile && !castIsVolatile) {
 		print_error(node, "EXP32-C", "Do not cast away a volatile qualification");

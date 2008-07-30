@@ -50,12 +50,12 @@ bool DCL00_C( const SgNode *node ) {
 	 * Ignore variables that are already const, are function pointers, or are
 	 * declared inside of a struct, enum, or as an argument to a function
 	 */
-	Type varType(varName->get_type());
-	if (varType.isConst()
-	|| varType.dereference().isConst()
-	|| varType.dereference().dereference().isConst()
-	|| varType.isFunction()
-	|| isSgClassType(varName->get_type())
+	SgType *varType = varName->get_type();
+	if (isConstType(varType)
+	|| isConstType(varType->dereference())
+	|| isConstType(varType->dereference()->dereference())
+	|| isSgFunctionType(varType)
+	|| isSgClassType(varType)
 	|| findParentNodeOfType(varName, V_SgEnumDeclaration).first
 	|| findParentNodeOfType(varName, V_SgClassDeclaration).first)
 		return false;
@@ -72,8 +72,8 @@ bool DCL00_C( const SgNode *node ) {
 		assert(fnDecl);
 		if (!fnDecl->get_definition())
 			return false;
-		if (Type(varName->get_type()).isPointer()
-		||  Type(varName->get_type()).isArray()) {
+		if (isSgPointerType(varName->get_type())
+		||  isSgArrayType(varName->get_type())) {
 			ruleStr = "DCL13-C";
 			errStr = "Declare function parameters that are pointers to values not changed by the function as const: ";
 		} else {
@@ -120,7 +120,7 @@ bool DCL00_C( const SgNode *node ) {
 		 * or as an argument to pointer arithmetic, or assign it's value
 		 * somewhere, we can longer be sure it should be const
 		 */
-		if ((varType.isPointer() || varType.isArray())
+		if ((isSgPointerType(varType) || isSgArrayType(varType))
 		&& (findParentNodeOfType(iVar, V_SgFunctionCallExp).first
 			|| isSgAddOp(parent)
 			|| isSgSubtractOp(parent)

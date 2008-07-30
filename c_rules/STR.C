@@ -187,9 +187,13 @@ bool STR31_C(const SgNode *node ) {
 	if (!isCallOfFunctionNamed( node, "strcpy")) return false;
 
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
-	if (ref == NULL) return false; // strcpy() not copying into simple var
-	if (!Type( getRefDecl( ref)->get_type()).isArray()) return false;
-	if (Type( getFnArg( isSgFunctionRefExp(node), 1)->get_type()).isArray()) return false;
+ 	// strcpy() not copying into simple var
+	if (ref == NULL)
+		return false;
+	if (!isSgArrayType(getRefDecl(ref)->get_type()))
+		return false;
+	if (isSgArrayType(getFnArg(isSgFunctionRefExp(node), 1)->get_type()))
+		return false;
 
 	print_error( node, "STR31-C", "String copy destination must contain sufficient storage");
 	return true;

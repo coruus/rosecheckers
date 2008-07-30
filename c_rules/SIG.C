@@ -200,7 +200,7 @@ bool SIG31_C( const SgNode *node ) {
 		const SgNamedType* named_type = isSgNamedType( var_type->stripType( SgType::STRIP_MODIFIER_TYPE));
 
 		bool compliant = true;
-		if (!Type(var_type).isVolatile())
+		if (!isVolatileType(var_type))
 			compliant = false;
 		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
 			compliant = false;

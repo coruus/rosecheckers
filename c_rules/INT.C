@@ -162,24 +162,27 @@ bool INT06_C( const SgNode *node ) {
 bool INT07_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
 	const SgInitializedName *var = isSgInitializedName(node);
-	const SgType *lhsSgType;
-	const SgType *rhsSgType;
+	const SgType *lhsT;
+	const SgType *rhsT;
 
 	if(binOp) {
-		lhsSgType = binOp->get_lhs_operand()->get_type();
-		rhsSgType = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
+		lhsT = binOp->get_lhs_operand()->get_type();
+		rhsT = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
 	} else if(var) {
-		lhsSgType = var->get_type();
+		lhsT = var->get_type();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
 		if(!init)
 			return false;
-		rhsSgType = removeCasts(init->get_operand())->get_type();
+		rhsT = removeCasts(init->get_operand())->get_type();
 	} else return false;
 
-	const Type &lhsType = Type(lhsSgType).stripTypedefsAndModifiers();
-	const Type &rhsType = Type(rhsSgType).stripTypedefsAndModifiers();
+	lhsT = lhsT->stripTypedefsAndModifiers();
+	rhsT = rhsT->stripTypedefsAndModifiers();
+//	const Type &lhsType = Type(lhsT).stripTypedefsAndModifiers();
+//	const Type &rhsType = Type(rhsT).stripTypedefsAndModifiers();
 
-	if(lhsType.isPlainChar() && (rhsType.isSigned()||rhsType.isUnsigned())) {
+	if (isSgTypeChar(lhsT) && !isSgTypeChar(rhsT)) {
+//	if(lhsType.isPlainChar() && (rhsType.isSigned()||rhsType.isUnsigned())) {
 		/**
 		 * Most of our false positives will come from getchar et al
 		 * However, there is no good way to find those cases... there's just
@@ -350,7 +353,7 @@ bool INT13_C( const SgNode *node ) {
 		if(isSgValueExp(bitOp->get_operand())) {
 			return false;
 		}
-		if(!Type(bitOp->get_operand()->get_type()).isUnsigned()) {
+		if(!bitOp->get_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType()) {
 			violation = true;
 		}
 	} else if(isSgBinaryOp(node)) {
@@ -372,8 +375,8 @@ bool INT13_C( const SgNode *node ) {
 		|| isSgIorAssignOp(binOp)
 		|| isSgXorAssignOp(binOp)
 		|| isSgBitOrOp(binOp)) {
-			if((!Type(binOp->get_lhs_operand()->get_type()).isUnsigned())
-			|| (!Type(binOp->get_rhs_operand()->get_type()).isUnsigned())) {
+			if((!binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType())
+			|| (!binOp->get_rhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType())) {
 				violation = true;
 			}
 		} else if(isSgLshiftOp(binOp)
@@ -385,7 +388,7 @@ bool INT13_C( const SgNode *node ) {
 			|| isSgValueExp(binOp->get_rhs_operand())) {
 				return false;
 			}
-			if(!Type(binOp->get_lhs_operand()->get_type()).isUnsigned()) {
+			if(!binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType()) {
 				violation = true;
 			}
 		}
@@ -518,8 +521,7 @@ bool INT33_C( const SgNode *node ) {
 	 * If the variable is constant, it's likely that the programmer already
 	 * knows the value and a check is not necessary
 	 */
-	Type varType(varRef->get_type());
-	if (varType.isConst())
+	if (isConstType(varRef->get_type()))
 		return false;
 
 	/**
