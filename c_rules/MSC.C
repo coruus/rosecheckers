@@ -99,19 +99,10 @@ bool MSC03_C( const SgNode *node ) {
 		if(isSgFunctionCallExp(expr)
 		|| isSgAssignOp(expr)
 		|| isSgConditionalExp(expr)
-		|| isSgAndAssignOp(expr)
-		|| isSgDivAssignOp(expr)
-		|| isSgIorAssignOp(expr)
-		|| isSgXorAssignOp(expr)
-		|| isSgLshiftAssignOp(expr)
-		|| isSgRshiftAssignOp(expr)
-		|| isSgMinusAssignOp(expr)
-		|| isSgModAssignOp(expr)
-		|| isSgMultAssignOp(expr)
+		|| isAnyAssignOp(expr)
 		|| isSgPointerDerefExp(expr)
 		|| isSgPlusPlusOp(expr)
-		|| isSgMinusMinusOp(expr)
-		|| isSgPlusAssignOp(expr))
+		|| isSgMinusMinusOp(expr))
 			return false;
 	}
 
@@ -123,37 +114,15 @@ bool MSC03_C( const SgNode *node ) {
  * Do not manipulate time_t typed values directly 
  */
 bool MSC05_C( const SgNode *node ) {
-	if (isSgAddOp(node)
-	  ||isSgAndAssignOp(node)
-	  ||isSgAndOp(node)
-	  ||isSgBitAndOp(node)
-	  ||isSgBitOrOp(node)
-	  ||isSgBitXorOp(node)
-	  ||isSgDivAssignOp(node)
-	  ||isSgDivideOp(node)
-	  ||isSgGreaterOrEqualOp(node)
-	  ||isSgGreaterThanOp(node)
-	  ||isSgIntegerDivideOp(node)
-	  ||isSgIorAssignOp(node)
-	  ||isSgLessOrEqualOp(node)
-	  ||isSgLessThanOp(node)
-	  ||isSgLshiftAssignOp(node)
-	  ||isSgLshiftOp(node)
-	  ||isSgRshiftAssignOp(node)
-	  ||isSgRshiftOp(node)
-	  ||isSgMinusAssignOp(node)
-	  ||isSgModAssignOp(node)
-	  ||isSgModOp(node)
-	  ||isSgMultAssignOp(node)
-	  ||isSgMultiplyOp(node)
-	  ||isSgOrOp(node)
-	  ||isSgPlusAssignOp(node)
-	  ||isSgSubtractOp(node)
-	  ||isSgXorAssignOp(node)) {
+	if (isAnyBinArithOp(node)
+	  ||isAnyBinArithAssignOp(node)
+	  ||isAnyBinBitOp(node)
+	  ||isAnyBinBitAssignOp(node)
+	  ||isAnyRelationalOp(node)) {
 		const SgBinaryOp *binOp = isSgBinaryOp(node);
 		assert(binOp);
-		std::string lhsName = binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
-		std::string rhsName = binOp->get_rhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+		std::string lhsName = stripModifiers(binOp->get_lhs_operand()->get_type())->unparseToString();
+		std::string rhsName = stripModifiers(binOp->get_rhs_operand()->get_type())->unparseToString();
 		if (!(lhsName == "time_t" || rhsName == "time_t"))
 			return false;
 	} else if(isSgBitComplementOp(node)
@@ -164,7 +133,7 @@ bool MSC05_C( const SgNode *node ) {
 	  ||isSgMinusOp(node)) {
 		const SgUnaryOp *op = isSgUnaryOp(node);
 		assert(op);
-		std::string opName = op->get_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
+		std::string opName = stripModifiers(op->get_operand()->get_type())->unparseToString();
 		if (opName != "time_t")
 			return false;
 	} else {
@@ -247,8 +216,8 @@ bool MSC31_C( const SgNode *node ) {
 			break;
 	}
 	assert(lhs && rhs);
-	const SgType *lhsType = lhs->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE);
-	const SgType *rhsType = rhs->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE);
+	const SgType *lhsType = stripModifiers(lhs->get_type());
+	const SgType *rhsType = stripModifiers(rhs->get_type());
 	assert(lhsType && rhsType);
 	/**
 	 * \todo We should not be using unparseToString, there should be a better

@@ -28,129 +28,10 @@
 #include "rose.h"
 #include "utilities.h"
 
-/**
- * Return the type of the n-th argument to fdec
- *
- * \param[in] fdec Function Declaration to check
- * \param[in] n Index of argument, first arg is 1 (not 0)
- * \return SgType of the n-th argument to fdec
- */
-const SgType *getArgType( const SgFunctionDeclaration *fdec, unsigned int n ) {
-	const SgFunctionParameterList *plist = fdec->get_parameterList();
-	const SgInitializedNamePtrList &parms = plist->get_args();
-	if( n == 0 || parms.size() < n )
-		return 0;
-	SgInitializedNamePtrList::const_iterator i = parms.begin();
-	std::advance( i, n-1 );
-	const SgInitializedName *arg = *i;
-	const SgType *argType = arg->get_type();
-	return argType;
-}
-
-int argCount( const SgFunctionDeclaration *fdec ) {
-	const SgFunctionParameterList *plist = fdec->get_parameterList();
-	const SgInitializedNamePtrList &parms = plist->get_args();
-	return parms.size();
-}
-
-/**
- * \note result is single arg function or function that has defaults for trailing arguments
- */
-bool isSingleArgFunctionDeclaration( const SgNode *node ) {
-	if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
-		const SgFunctionParameterList *plist = fdec->get_parameterList();
-		const SgInitializedNamePtrList &parms = plist->get_args();
-		switch( parms.size() ) {
-		case 0: // no args
-			return false;
-		case 1:
-			return true;
-		default: // check to see if 2nd arg on have default inits
-			SgInitializedNamePtrList::const_iterator i = parms.begin();
-			return (*++i)->get_initptr() != 0; // need to check just 2nd arg...
-		}
-	}
-	return false;
-}
-
-/**
- * \note result is single arg function or function that has defaults for trailing arguments
- */
-bool isZeroArgFunctionDeclaration( const SgNode *node ) {
-	if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
-		const SgFunctionParameterList *plist = fdec->get_parameterList();
-		const SgInitializedNamePtrList &parms = plist->get_args();
-		switch( parms.size() ) {
-		case 0: // no args
-			return true;
-		default: // check to see if 2nd arg on have default inits
-			SgInitializedNamePtrList::const_iterator i = parms.begin();
-			return (*i)->get_initptr() != 0; // need to check just 1st arg...
-		}
-	}
-	return false;
-}
-
-/**
- * Returns true if \c node is declared inside a \c SgFunctionDefinition
- */
-bool isLocalDeclaration( const SgNode *node ) {
-	if( node )
-		do {
-			if( isSgFunctionDefinition( node ) )
-				return true;
-		} while ((node = node->get_parent()) != NULL);
-	return false;
-}
-
-/**
- * \bug DOESN'T WORK
- */
-bool isMemberStatement( const SgNode *node ) {
-/*	if( const SgStatement *stat = isSgStatement( node ) ) {
-		if( const SgScopeStatement *scope = stat->get_scope() ) {
-			std::cout << "\tSCOPE:  " << scope->get_qualified_name().getString();
-#if 0
-			if ((const SgSymbolTable *tab = scope->get_symbol_table()) != NULL) {
-				std::cout << "\ttable name: " << tab->get_name().getString();
-			}
-#endif
-		}
-	}*/
-	return false;
-}
-
 const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
 	if( const SgCastExp *cast = isSgCastExp( e ) ) {
 		if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
 			e = cast->get_operand();
-		}
-	}
-	return e;
-}
-
-const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
-	const SgType *t = e->get_type();
-	if( isSgTypeInt(t) || isSgTypeUnsignedInt(t) ) {
-		if( const SgCastExp *cast = isSgCastExp( e ) ) {
-			if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
-				e = cast->get_operand();
-			}
-		}
-	}
-	return e;
-}
-
-const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpression *e ) {
-	const SgType *t = e->get_type();
-	if (isSgTypeInt(t)
-	  ||isSgTypeUnsignedInt(t)
-	  ||isSgTypeFloat(t)
-	  ||isSgTypeDouble(t) ) {
-		if( const SgCastExp *cast = isSgCastExp( e ) ) {
-			if( isCompilerGeneratedNode( cast ) ) {
-				e = cast->get_operand();
-			}
 		}
 	}
 	return e;
@@ -195,20 +76,11 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	return sawDefault;
 }
 
-bool isEqRelop( const SgNode *e ) {
-	return
-		isSgEqualityOp( e ) ||
-		isSgGreaterOrEqualOp( e ) ||
-		isSgGreaterThanOp( e ) ||
-		isSgLessOrEqualOp( e ) ||
-		isSgLessThanOp( e ) ||
-		isSgNotEqualOp( e );
-}
-
 const SgFunctionSymbol *isCallOfFunctionNamed( const SgNode *node, const std::string &name ) { 
 	if( const SgFunctionRefExp *f = isSgFunctionRefExp(node)) {
 		const SgFunctionSymbol *sym = f->get_symbol();
-		if( sym->get_name().getString() == name ) {//XXX what about qualified names?
+		if( sym->get_name().getString() == name ) {
+			//XXX what about qualified names?
 			if (!isSgFunctionCallExp(f->get_parent()))
 				return false;
 			return sym;
@@ -238,15 +110,6 @@ bool isCompilerGeneratedNode( const SgNode *node ) {
 	return false;
 }
 
-
-bool isInlineFunctionDeclaration( const SgNode *node ) {
-	if( const SgFunctionDeclaration *fdecl = isSgFunctionDeclaration( node ) ) {
-		const SgFunctionModifier mod = fdecl->get_functionModifier();
-		return mod.isInline();
-	}
-	return false;
-}
-
 size_t CountLinesInFunction( const SgFunctionDeclaration *funcDecl ) {
 	if( const SgFunctionDefinition *funcDef = funcDecl->get_definition() ) {
 		const Sg_File_Info *start = funcDef->get_body()->get_startOfConstruct();
@@ -258,16 +121,6 @@ size_t CountLinesInFunction( const SgFunctionDeclaration *funcDecl ) {
 	}
 	else
 		return 0;
-}
-
-bool switchHasDefault( const SgSwitchStatement *theSwitch ) {
-	if( const SgBasicBlock *block = theSwitch->get_body() ) {
-		const SgStatementPtrList &stmts = block->get_statements();
-		for( SgStatementPtrList::const_iterator i = stmts.begin(); i != stmts.end(); ++i )
-			if( isSgDefaultOptionStmt( *i ) )
-				return true;
-	}
-	return false;
 }
 
 /**
@@ -287,7 +140,6 @@ void print_error(const SgNode* node, const char* rule, const char* desc, bool wa
 	    << ": " << (warning ? "warning" : "error")
 	    << ": " << rule << ": " << desc << std::endl;
 }
-
 
 /**
  * Returns True if node is inside an expression that tests its value to see if
@@ -311,7 +163,6 @@ bool isTestForNullOp(const SgNode* node) {
   const SgAssignOp* assignment = isSgAssignOp( parent);
   return (assignment != NULL) ? isTestForNullOp( assignment) : false;
 }
-
 
 /**
  * Returns reference to ith argument of function call. Dives through
@@ -351,7 +202,6 @@ const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
 				  V_SgVarRefExp);
 }
 
-
 /**
  * Returns a variable's declaration, given a reference to that var
  */
@@ -361,7 +211,6 @@ const SgInitializedName* getRefDecl(const SgVarRefExp* ref) {
   assert(sym != NULL);
   return sym->get_declaration();
 }
-
 
 /**
  * Returns iterator of next node that refers to same variable as ref.
@@ -508,16 +357,16 @@ const SgExpression* removeCasts(const SgExpression * expr) {
 
 /**
  * Remove all modifiers such as const or volatile, but leave the typedefs
- *
- * \todo port this into type.C
  */
 const SgType *stripModifiers(const SgType *type) {
-//	const SgModifierType *mt;
-//	while((mt = isSgModifierType(type)) != NULL) {
-//		type = mt->get_base_type();
-//	}
-//	return type;
 	return type->stripType(SgType::STRIP_MODIFIER_TYPE);
+}
+
+/**
+ * Remove all typedefs, but leave the modifiers
+ */
+const SgType *stripTypedefs(const SgType *type) {
+	return type->stripType(SgType::STRIP_TYPEDEF_TYPE);
 }
 
 /**
@@ -742,6 +591,8 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
 /**
  * Checks to see if the variable is being written to by some kind of
  * assignment or ++/-- operator
+ *
+ * \todo Consider merging this with isAssignToVar
  */
 bool varWrittenTo(const SgNode* var) {
 	assert(var);
@@ -757,17 +608,7 @@ bool varWrittenTo(const SgNode* var) {
 		if (isSgCastExp(parent)
 		|| isSgAddressOfOp(parent)) {
 			continue;
-		} else if (isSgAndAssignOp(parent)
-		|| isSgAssignOp(parent)
-		|| isSgDivAssignOp(parent)
-		|| isSgIorAssignOp(parent)
-		|| isSgLshiftAssignOp(parent)
-		|| isSgMinusAssignOp(parent)
-		|| isSgModAssignOp(parent)
-		|| isSgMultAssignOp(parent)
-		|| isSgPlusAssignOp(parent)
-		|| isSgRshiftAssignOp(parent)
-		|| isSgXorAssignOp(parent)) {
+		} else if (isAnyAssignOp(parent)) {
 			if (isSgBinaryOp(parent)->get_lhs_operand() == child)
 				return true;
 		} else if(isSgMinusMinusOp(parent)
@@ -775,10 +616,8 @@ bool varWrittenTo(const SgNode* var) {
 			return true;
 		}
 		return false;
-
 	}
 }
-
 
 /// NextVisitor code
 
@@ -919,6 +758,9 @@ void NextValueReferred::visit_next(SgNode* node) {
 
 /**
  * Takes a statement and sees if a variable is being compared to 0 inside
+ *
+ * \todo merge this with isTestForNull
+ * \todo merge this with valueVerified
  */
 bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef) {
 	if (!stat)
@@ -1002,10 +844,7 @@ bool valueVerified(const SgExpression *expr) {
 			const SgBinaryOp *iOp = isSgBinaryOp(*i);
 			if (!iOp)
 				continue;
-			if (!(isSgGreaterOrEqualOp(iOp)
-				||isSgGreaterThanOp(iOp)
-				||isSgLessOrEqualOp(iOp)
-				||isSgLessThanOp(iOp)))
+			if (!isAnyRelationalOp(iOp))
 				continue;
 
 			const SgVarRefExp *iVar = isSgVarRefExp(removeCasts(iOp->get_lhs_operand()));
@@ -1022,8 +861,7 @@ bool valueVerified(const SgExpression *expr) {
 
 bool isConstType(const SgType *t) {
 	assert(t);
-	t = t->stripType( SgType::STRIP_TYPEDEF_TYPE );
-	const SgModifierType *mt = isSgModifierType(t);
+	const SgModifierType *mt = isSgModifierType(stripTypedefs(t));
 	if (!mt)
 		return false;
 	return mt->get_typeModifier().get_constVolatileModifier().isConst();
@@ -1031,12 +869,8 @@ bool isConstType(const SgType *t) {
 
 bool isVolatileType(const SgType *t) {
 	assert(t);
-	t = t->stripType( SgType::STRIP_TYPEDEF_TYPE );
-	const SgModifierType *mt = isSgModifierType(t);
+	const SgModifierType *mt = isSgModifierType(stripTypedefs(t));
 	if (!mt)
 		return false;
 	return mt->get_typeModifier().get_constVolatileModifier().isVolatile();
 }
-
-
-// \todo add isAnyAssignOp /etc

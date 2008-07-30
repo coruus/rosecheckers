@@ -197,7 +197,7 @@ bool SIG31_C( const SgNode *node ) {
 
 		// We assume that sig_atomic_t is a typedef (not a macro)
 		static const string sig_atomic_typename = "sig_atomic_t";
-		const SgNamedType* named_type = isSgNamedType( var_type->stripType( SgType::STRIP_MODIFIER_TYPE));
+		const SgNamedType* named_type = isSgNamedType(stripModifiers(var_type));
 
 		bool compliant = true;
 		if (!isVolatileType(var_type))
@@ -205,8 +205,7 @@ bool SIG31_C( const SgNode *node ) {
 		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
 			compliant = false;
 
-		if (!isSgGlobal( decl->get_parent()->get_parent()) && 
-	!(decl->get_declaration()->get_declarationModifier().get_storageModifier().isStatic()))
+		if (!isGlobalVar(decl) && !isStaticVar(decl))
 			compliant = false;
 #if 0
 		const SgAssignOp* assignment = isSgAssignOp( var_ref->get_parent());

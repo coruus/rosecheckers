@@ -286,10 +286,10 @@ static unsigned int DCL05_score(const SgType *t) {
 		/** score modifiers because they add clutter */
 		if (t->get_modifiers())
 			modifiers += t->get_modifiers()->get_nodes().size();
-		t = t->stripType(SgType::STRIP_MODIFIER_TYPE);
+		t = stripModifiers(t);
 
 		/** obviously, typedefs should break us out */
-		if (t != t->stripType(SgType::STRIP_TYPEDEF_TYPE))
+		if (t != stripTypedefs(t))
 			break;
 		/** Count functions as two points */
 		if (isSgFunctionType(t)) {

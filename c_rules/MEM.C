@@ -178,12 +178,7 @@ bool MEM07_C( const SgNode *node ) {
 			FOREACH_SUBNODE(prevStat, nodes, i, V_SgBinaryOp) {
 				const SgBinaryOp *binOp = isSgBinaryOp(*i);
 				assert(binOp);
-				if (!(isSgEqualityOp(binOp)
-					||isSgGreaterOrEqualOp(binOp)
-					||isSgGreaterThanOp(binOp)
-					||isSgLessOrEqualOp(binOp)
-					||isSgLessThanOp(binOp)
-					||isSgNotEqualOp(binOp)))
+				if (!isAnyComparisonOp(binOp))
 					continue;
 				const SgVarRefExp *lhs = isSgVarRefExp(binOp->get_lhs_operand());
 				const SgVarRefExp *rhs = isSgVarRefExp(binOp->get_rhs_operand());

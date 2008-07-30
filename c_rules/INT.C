@@ -353,7 +353,7 @@ bool INT13_C( const SgNode *node ) {
 		if(isSgValueExp(bitOp->get_operand())) {
 			return false;
 		}
-		if(!bitOp->get_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType()) {
+		if(!stripModifiers(bitOp->get_operand()->get_type())->isUnsignedType()) {
 			violation = true;
 		}
 	} else if(isSgBinaryOp(node)) {
@@ -375,8 +375,8 @@ bool INT13_C( const SgNode *node ) {
 		|| isSgIorAssignOp(binOp)
 		|| isSgXorAssignOp(binOp)
 		|| isSgBitOrOp(binOp)) {
-			if((!binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType())
-			|| (!binOp->get_rhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType())) {
+			if((!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType())
+			|| (!stripModifiers(binOp->get_rhs_operand()->get_type())->isUnsignedType())) {
 				violation = true;
 			}
 		} else if(isSgLshiftOp(binOp)
@@ -388,7 +388,7 @@ bool INT13_C( const SgNode *node ) {
 			|| isSgValueExp(binOp->get_rhs_operand())) {
 				return false;
 			}
-			if(!binOp->get_lhs_operand()->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE)->isUnsignedType()) {
+			if(!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType()) {
 				violation = true;
 			}
 		}

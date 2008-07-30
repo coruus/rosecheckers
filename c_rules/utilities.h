@@ -26,6 +26,8 @@
 #include <list>
 #include <string>
 #include "rose.h"
+#include "categories.h"
+#include "value.h"
 
 /**
  * Iterate over all initializers "i" in a list of variables
@@ -48,10 +50,6 @@
 	for (; (i) != (nodes).end(); ++(i) )
 
 
-/**
- * Questions about switch statements
- */
-bool switchHasDefault( const SgSwitchStatement *theSwitch );
 /**
  * \return value indicates whether there was a default case.
  */
@@ -88,10 +86,7 @@ const SgFunctionSymbol *isCallOfFunctionNamedAnyOf( const SgNode *node, In b, In
  * Miscellaneous questions and manipulations.
  */
 bool isCompilerGeneratedNode( const SgNode *node );
-bool isLocalDeclaration( const SgNode *node );
 const SgExpression *removeImplicitPromotions( const SgExpression *e );
-const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e );
-const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpression *e );
 
 class IsFunctionDeclarationNamed : public std::unary_function<SgFunctionDeclaration *,bool> {
   public:
@@ -112,7 +107,6 @@ class IsFunctionDeclarationNamed : public std::unary_function<SgFunctionDeclarat
  * \todo do a version with a vector of nodeTypes, or just overload
  */
 std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int nodeType );
-const SgNode *getForStatmentTest( const SgNode *node );
 
 void print_error(const SgNode* node, const char* rule, const char* desc,bool warning = false);
 
@@ -168,6 +162,7 @@ bool isZeroVal(const SgExpression *node);
 bool isMinVal(const SgExpression *node);
 const SgExpression* removeCasts(const SgExpression * expr);
 const SgType *stripModifiers(const SgType *type);
+const SgType *stripTypedefs(const SgType *type);
 const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p);
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node);
 SgValueExp* computeValueTree(SgValueExp* node);
@@ -204,7 +199,6 @@ protected:
  * the rhs
  */
 bool isAssignToVar( const SgNode *node, const SgVarRefExp *var);
-
 
 class NextValueReferred : public NextVisitor {
 public:
