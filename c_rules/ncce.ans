@@ -147,6 +147,7 @@ MSC_NCCE.c:69: warning: MSC01-C: Strive for logical completeness
 MSC_NCCE.c:105: warning: MSC03-C: Avoid errors of addition
 MSC_NCCE.c:198: warning: MSC03-C: Avoid errors of addition
 MSC_NCCE.c:243: error: MSC30-C: Do not use rand()
+MSC_NCCE.c:253: error: MSC31-C: Ensure that return values are compared against the proper type
 POS_NCCE.c:41: error: POS30-C: Use the readlink() function properly
 POS_NCCE.c:51: error: POS33-C: Do not use vfork()
 POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable

@@ -512,39 +512,71 @@ bool getSizetVal(const SgExpression *node, size_t *value) {
 	return true;
 }
 
-bool isVal(const SgExpression *node, const intmax_t n) {
+bool getIntegerVal(const SgExpression *node, intmax_t *n) {
 	if(!node)
 		return false;
 	if (isSgUnsignedIntVal(node)) {
-		return n == isSgUnsignedIntVal(node)->get_value();
+		*n = isSgUnsignedIntVal(node)->get_value();
 	} else if (isSgIntVal(node)) {
-		return n == isSgIntVal(node)->get_value();
+		*n = isSgIntVal(node)->get_value();
 	} else if (isSgUnsignedLongVal(node)) {
-		return n == (intmax_t) (isSgUnsignedLongVal(node)->get_value());
+		*n = (intmax_t) (isSgUnsignedLongVal(node)->get_value());
 	} else if (isSgLongIntVal(node)) {
-		return n == isSgLongIntVal(node)->get_value();
+		*n = isSgLongIntVal(node)->get_value();
 	} else if (isSgUnsignedLongLongIntVal(node)) {
-		return n == (intmax_t) isSgUnsignedLongLongIntVal(node)->get_value();
+		*n = (intmax_t) isSgUnsignedLongLongIntVal(node)->get_value();
 	} else if (isSgLongLongIntVal(node)) {
-		return n == isSgLongLongIntVal(node)->get_value();
+		*n = isSgLongLongIntVal(node)->get_value();
 	} else if (isSgUnsignedShortVal(node)) {
-		return n == isSgUnsignedShortVal(node)->get_value();
+		*n = isSgUnsignedShortVal(node)->get_value();
 	} else if (isSgShortVal(node)) {
-		return n == isSgShortVal(node)->get_value();
-	} else if (isSgFloatVal(node)) {
-		return n == isSgFloatVal(node)->get_value();
-	} else if (isSgDoubleVal(node)) {
-		return n == isSgDoubleVal(node)->get_value();
+		*n = isSgShortVal(node)->get_value();
 	} else {
 		return false;
 	}
+	return true;
+}
+
+bool getFloatingVal(const SgExpression *node, long double *n) {
+	if(!node)
+		return false;
+	if (isSgFloatVal(node)) {
+		*n = isSgFloatVal(node)->get_value();
+	} else if (isSgDoubleVal(node)) {
+		*n = isSgDoubleVal(node)->get_value();
+	} else if (isSgLongDoubleVal(node)) {
+		*n = isSgLongDoubleVal(node)->get_value();
+	} else {
+		return false;
+	}
+	return true;
+}
+
+bool isVal(const SgExpression *node, const intmax_t n) {
+	if (!node)
+		return false;
+	intmax_t x;
+	if (!getIntegerVal(node, &x))
+		return false;
+	return x == n;
 }
 
 /**
  * Takes a Value node and tries to make sure it is 0
  */
 bool isZeroVal(const SgExpression *node) {
-	return isVal(node,0);
+	if (!node)
+		return false;
+	if (node->get_type()->isIntegerType()) {
+		return isVal(node,0);
+	} else if (node->get_type()->isFloatType()) {
+		long double x;
+		if (!getFloatingVal(node, &x))
+			return false;
+		return x == 0.0l;
+	} else {
+		return false;
+	}
 }
 
 /**

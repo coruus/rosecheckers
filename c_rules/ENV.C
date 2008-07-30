@@ -25,6 +25,8 @@
 
 /**
  * Do not store the pointer to the string returned by getenv()
+ *
+ * \todo Do we also need to check for putenv/setenv in the loop?
  */
 bool ENV00_C( const SgNode *node ) {
 	// find call of getenv

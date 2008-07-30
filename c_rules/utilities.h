@@ -162,6 +162,8 @@ bool isAnyCharType(const SgType *type);
 
 const SgStatement * findInBlockByOffset(const SgNode *node, int delta);
 bool getSizetVal(const SgExpression *node, size_t *value);
+bool getIntegerVal(const SgExpression *node, intmax_t *n);
+bool getFloatingVal(const SgExpression *node, long double *n);
 bool isVal(const SgExpression *node, const intmax_t n);
 bool isZeroVal(const SgExpression *node);
 bool isMinVal(const SgExpression *node);

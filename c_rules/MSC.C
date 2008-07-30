@@ -128,10 +128,58 @@ bool MSC30_C( const SgNode *node ) {
   return true;
 }
 
+/**
+ * Ensure that return values are compared against the proper type
+ */
+bool MSC31_C( const SgNode *node ) {
+	const SgBinaryOp *op = isSgBinaryOp(node);
+	if (!op || isCompilerGeneratedNode(node))
+		return false;
+	if (!(isSgEqualityOp(op) || isSgNotEqualOp(op)))
+		return false;
+	const SgExpression *lhs = op->get_lhs_operand();
+	const SgValueExp *val = NULL;
+	intmax_t n;
+	while((val = isSgValueExp(lhs)) != NULL) {
+		if (!getIntegerVal(val, &n) || (n >= 0))
+			return false;
+		if (val->get_originalExpressionTree())
+			lhs = removeImplicitPromotions(val->get_originalExpressionTree());
+		else
+			break;
+	}
+	const SgExpression *rhs = op->get_rhs_operand();
+	while((val = isSgValueExp(rhs)) != NULL) {
+		if (!getIntegerVal(val, &n) || (n >= 0))
+			return false;
+		if (val->get_originalExpressionTree())
+			rhs = removeImplicitPromotions(val->get_originalExpressionTree());
+		else
+			break;
+	}
+	assert(lhs && rhs);
+	const SgType *lhsType = lhs->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE);
+	const SgType *rhsType = rhs->get_type()->stripType(SgType::STRIP_MODIFIER_TYPE);
+	assert(lhsType && rhsType);
+	/**
+	 * \todo We should not be using unparseToString, there should be a better
+	 * way to get the name of a typedef type
+	 */
+	std::string lhsName = lhsType->unparseToString();
+	std::string rhsName = rhsType->unparseToString();
+	if ((lhsName == "time_t" || lhsName == "size_t")
+	 && (lhsName != rhsName)) {
+		print_error(node, "MSC31-C", "Ensure that return values are compared against the proper type");
+		return true;
+	}
+	return false;
+}
+
 bool MSC(const SgNode *node) {
   bool violation = false;
   violation |= MSC01_C(node);
   violation |= MSC03_C(node);
   violation |= MSC30_C(node);
+  violation |= MSC31_C(node);
   return violation;
 }
