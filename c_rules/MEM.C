@@ -31,7 +31,6 @@ bool MEM01_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
 		return false;
-	//	bool violation = false;
 
 	// Figure out which variable is being freed
 	const SgExpression *argExp = getFnArg(fnRef, 0);
@@ -53,10 +52,10 @@ bool MEM01_C( const SgNode *node ) {
 	assert(block);
 
 	while (nextStat == NULL) {
-		// If the we're in a for-loop and imediately assign in the increment,
+		// If we're in a for-loop and imediately assign in the increment,
 		// that is OK
 		const SgForStatement *forLoop = isSgForStatement(block->get_parent());
-		if (forLoop && isAssignToVar(forLoop->get_increment(), argVar))
+		if (forLoop && isAssignToVar(forLoop->get_increment(), argVarName))
 			return false;
 		// If this block is the one in which the variable is defined, that is
 		// OK
@@ -74,7 +73,7 @@ bool MEM01_C( const SgNode *node ) {
 	} else {
 		// Assignments to the pointer are OK
 		const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
-		if(nextExpr && isAssignToVar(nextExpr->get_expression(), argVar))
+		if(nextExpr && isAssignToVar(nextExpr->get_expression(), argVarName))
 			return false;
 	}
 
@@ -84,7 +83,6 @@ bool MEM01_C( const SgNode *node ) {
 }
 
 /**
- * Immediately cast the result of a memory allocation function call into a
  * pointer to the allocated type
  *
  * \see EXP36-C which catches this
@@ -261,33 +259,25 @@ bool MEM31_C( const SgNode *node ) {
 		return false;
 
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
-		
-	//	const SgVarRefExp* ref2 = NULL;
 
 	if (ref == NULL) return false;
 	const SgInitializedName* ref_var = getRefDecl( ref);
-	//	const SgInitializedName* ref2_var = NULL;
 
-	/**
-	 * \todo clean up this mess
-	 */
+	bool before = true;
+	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgNode) {
+		if (before) {
+			if (*i == node)
+				before = false;
+			continue;
+		}
 
-	const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
-	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);
-
-	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
-	Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
-
-	while(*i != node) i++;
-	i++;
-
-	while(i != end) {
 		/**
 		 * Checking for return statements lowers the false positive rate by
 		 * allowing conditional frees followed by returns
 		 */
 		if(isSgReturnStmt(*i))
 			return false;
+
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		if(iFn && isCallOfFunctionNamed(iFn, "free")) {
 			const SgVarRefExp* ref2 = isSgVarRefExp(getFnArg(iFn, 0));
@@ -297,17 +287,13 @@ bool MEM31_C( const SgNode *node ) {
 				print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
 				return true;
 			}
-		}
-
-		if(isSgAssignOp(*i) != NULL) {
+		} else if(isSgAssignOp(*i)) {
 			const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
 			const SgInitializedName* ref2_var = getRefDecl( ref2);
 
 			if (ref_var == ref2_var)
 				return false;
 		}
-
-		i++;
 	}
 
 	return false;
@@ -362,7 +348,7 @@ bool MEM34_C( const SgNode *node ) {
 	const SgInitializedName *var = getRefDecl(varRef);
 	assert(var);
 	/**
-	 * It's much to hard to analyze these kinds of variables
+	 * It's much too hard to analyze these kinds of variables
 	 */
 	if (isGlobalVar(var) || isStaticVar(var))
 		return false;
@@ -387,10 +373,8 @@ bool MEM34_C( const SgNode *node ) {
 		if (block) {
 			if (block == *i)
 				block = NULL;
-//			std::cerr << "skipping" << std::endl;
 			continue;
 		} else if (isSgReturnStmt(*i)) {
-//			std::cerr << "found return" << std::endl;
 			block = findParentNodeOfType(*i, V_SgBasicBlock).first;
 		}
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);

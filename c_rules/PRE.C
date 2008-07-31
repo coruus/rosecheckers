@@ -30,18 +30,9 @@
  *
  * \todo BROKEN, NEEDS ROSE SUPPPORT
  */
-bool PRE04_C( const SgNode *node ) {
-/*	const SgIncludeDirectiveStatement *inc = isSgIncludeDirectiveStatement(node);
-	std::cerr << " boo " << std::endl;
-	if(isSgC_PreprocessorDirectiveStatement(node))
-		std::cerr << "yay!" << std::endl;
-	print_error(node,"PRE04","debug");
-	if(!inc)
-		return false;
-	std::cerr << "1 " << (const_cast<SgIncludeDirectiveStatement*>(inc))->unparseToCompleteString() << std::endl;*/
-//SgDeclarationStatement * 	get_definingDeclaration ()
-	return false;
-}
+//bool PRE04_C( const SgNode *node ) {
+//	return false;
+//}
 
 /**
  * \note we have to call this PREPRO because of a namespace clash with PRE

@@ -170,7 +170,7 @@ protected:
  * Checks to see if node is an assignment with var as the lhs and not in
  * the rhs
  */
-bool isAssignToVar( const SgNode *node, const SgVarRefExp *var);
+bool isAssignToVar( const SgNode *node, const SgInitializedName *var);
 
 class NextValueReferred : public NextVisitor {
 public:

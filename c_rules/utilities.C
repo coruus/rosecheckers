@@ -355,8 +355,11 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
 		ref = isSgVarRefExp( assignment->get_lhs_operand());
 		if (ref == NULL)
 			return NULL; 
-		// LHS is more complex than variable, it might be array ref
-		// or struct member or pointer; we're only handling variables (for now)!!!
+		/**
+		 * \todo LHS is more complex than variable, it might be array ref or
+		 * struct member or pointer; we're only handling variables (for
+		 * now)
+		 */
 		var = getRefDecl( ref);
 	} else {
 		const SgAssignInitializer* ass_init = isSgAssignInitializer( findParentNodeOfType(fnRef, V_SgAssignInitializer).first);
@@ -668,33 +671,27 @@ void NextVisitor::visit_next(SgNode* node) {
 /**
  * Checks to see if node is an assignment with var as the lhs and not in
  * the rhs
+ *
+ * \todo node should be limited to SgExpression
  */
-bool isAssignToVar( const SgNode *node, const SgVarRefExp *var) {
-	const SgAssignOp *assignOp = isSgAssignOp(node);
+bool isAssignToVar( const SgNode *node, const SgInitializedName *var) {
+	const SgBinaryOp *assignOp = isAnyAssignOp(node);
 	if (!assignOp)
 		return false;
 
 	// Ensure that we are assigning to the variable in the LHS
 	const SgVarRefExp *lhsVar = isSgVarRefExp(assignOp->get_lhs_operand());
 	/**
-	 * LHS Could be more complicated than a variable
-	 *
-	 * \todo FIXME
+	 * \todo LHS Could be more complicated than a variable
 	 */
-	if (!lhsVar)
-		return false;
-	if (getRefDecl(var) != getRefDecl(lhsVar))
+	if (!lhsVar || (var != getRefDecl(lhsVar)))
 		return false;
 
 	// Ensure variable does not appear in RHS
-	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgVarRefExp);
-	Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
-	Rose_STL_Container<SgNode *>::const_iterator end = nodes.end();
-	SgVarRefExp *rhsVar;
-	for (++i; i < end; i++) {
-		rhsVar = isSgVarRefExp(*i);
+	FOREACH_SUBNODE(assignOp->get_rhs_operand(), nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp *rhsVar = isSgVarRefExp(*i);
 		assert(rhsVar);
-		if (getRefDecl(var) == getRefDecl(rhsVar))
+		if (var == getRefDecl(rhsVar))
 			return false;
 	}
 	return true;
@@ -716,7 +713,7 @@ void NextValueReferred::visit_next(SgNode* node) {
 	skip_ = node; // disables all visits hereafter
 
 	if (isTestForNullOp(ref) ||
-			isAssignToVar(findParentNodeOfType( ref, V_SgAssignOp).first, ref))
+			isAssignToVar(findParentNodeOfType( ref, V_SgAssignOp).first, getRefDecl(ref)))
 		return;
 
 	next_ref_ = ref;

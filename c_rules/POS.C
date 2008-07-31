@@ -202,11 +202,9 @@ bool POS35_C( const SgNode *node ) {
 
 		if (after && need_fileno && !fstat
 		&& isCallOfFunctionNamed(iFn, "fileno")) {
-			std::cerr << "fileno" << std::endl;
 			if (getRefDecl(iVar) == fd) {
 				fd = getVarAssignedTo(iFn, NULL);
 				if (!fd) break;
-				std::cerr << ":)" << std::endl;
 				need_fileno = false;
 			}
 			continue;
