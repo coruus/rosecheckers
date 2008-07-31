@@ -203,8 +203,7 @@ bool EXP09_C( const SgNode *node ) {
 	 */
 	const SgType *t = stripModifiers(exp->get_type());
 	if (isSgTypedefType(t)
-	&& ((t->unparseToString() == "size_t")
-	||  (t->unparseToString() == "rsize_t")))
+	&& (isTypeSizeT(t) || isTypeRSizeT(t)))
 		return false;
 
 	// Find a sizeof operator inside argument
@@ -301,7 +300,7 @@ bool EXP12_C( const SgNode *node ) {
 	if (!fn)
 		return false;
 
-	if (fn->get_type()->unparseToString() == "void")
+	if (isTypeVoid(fn->get_type()))
 		return false;
 
 	const SgNode *parent = fn;
@@ -313,7 +312,7 @@ bool EXP12_C( const SgNode *node ) {
 			 * \bug Due to a bug in ROSE which ignores these casts, this
 			 * condition will always be false :(
 			 */
-			if (isSgCastExp(parent)->get_type()->unparseToString() == "void")
+			if (isTypeVoid(isSgCastExp(parent)->get_type()))
 				return false;
 		} else if (isSgExprStatement(parent)) {
 			print_error(node, "EXP12-C", "Do not ignore values returned by functions", true);
@@ -500,15 +499,6 @@ bool EXP34_C( const SgNode *node ) {
 }
 
 /**
- * \todo find a way to do this w/o unparseToString()
- */
-static bool isVoidStar(const SgType *t) {
-	/** \bug ROSE is missing const dereference */
-	std::string str = const_cast<SgType *>(t)->dereference()->stripType(SgType::STRIP_MODIFIER_TYPE)->unparseToString();
-	return str == "void";
-}
-
-/**
  * Do not convert pointers into more strictly aligned pointer types
  */
 bool EXP36_C( const SgNode *node ) {
@@ -533,7 +523,7 @@ bool EXP36_C( const SgNode *node ) {
 	/*
 	 * \bug ROSE is missing const dereference
 	 */
-	if (isVoidStar(lhsP) || isZeroVal(removeCasts(cast)))
+	if (isTypeVoidStar(lhsP) || isZeroVal(removeCasts(cast)))
 		return false;
 	const unsigned int lhsSize = sizeOfType(const_cast<SgPointerType *>(lhsP)->dereference());
 	const unsigned int rhsSize = sizeOfType(const_cast<SgPointerType *>(rhsP)->dereference());
@@ -545,8 +535,8 @@ bool EXP36_C( const SgNode *node ) {
 	/**
 	 * If we see a void * and the cast is implicit, then also flag
 	 */
-	if ((!isVoidStar(rhsP) && (lhsSize > rhsSize))
-	|| (isVoidStar(rhsP) && isCompilerGeneratedNode(cast))) {
+	if ((!isTypeVoidStar(rhsP) && (lhsSize > rhsSize))
+	|| (isTypeVoidStar(rhsP) && isCompilerGeneratedNode(cast))) {
 		print_error(cast->get_operand(), "EXP36-C", "Do not convert pointers into more strictly aligned pointer types");
 		return true;
 	}

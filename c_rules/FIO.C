@@ -365,8 +365,7 @@ bool FIO38_C( const SgNode *node) {
 	if (!rhs)
 		return false;
 
-	if ((rhs->get_type()->unparseToString() == "FILE")
-	||  (rhs->get_type()->unparseToString() == "struct _IO_FILE")) {
+	if (isTypeFile(rhs->get_type())) {
 		print_error(node, "FIO38-C", "Do not use a copy of a FILE object for input and output");
 		return true;
 	}

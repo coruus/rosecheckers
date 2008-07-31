@@ -29,10 +29,6 @@
 #include "utilities.h"
 
 /**
- * \todo move all uses of unparseToString() into some helper function here
- */
-
-/**
  * \todo inline this sucker
  */
 const SgExpression *removeImplicitPromotions( const SgExpression *e ) {

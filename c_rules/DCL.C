@@ -131,7 +131,7 @@ bool DCL00_C( const SgNode *node ) {
 			return false;
 	}
 
-	const std::string msg =  errStr + varName->unparseToString();
+	const std::string msg =  errStr + varName->get_name().getString();
 	print_error(node, ruleStr.c_str(), msg.c_str(), true);
 	return true;
 }

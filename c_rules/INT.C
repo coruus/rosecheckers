@@ -58,11 +58,11 @@ bool INT01_C( const SgNode *node ) {
 	 * pointer type
 	 */
 	if(isSgPointerType(lhsType)
-			|| isSgPointerType(rhsType)
-			|| (lhsType->unparseToString() == "uintptr_t")
-			|| (rhsType->unparseToString() == "uintptr_t")
-			|| isSgArrayType(lhsType)
-			|| isSgArrayType(rhsType)) {
+	|| isSgPointerType(rhsType)
+	|| isTypeUintptrT(lhsType)
+	|| isTypeUintptrT(rhsType)
+	|| isSgArrayType(lhsType)
+	|| isSgArrayType(rhsType)) {
 		return false;
 	}
 
@@ -73,10 +73,10 @@ bool INT01_C( const SgNode *node ) {
 	|| isSgValueExp(op->get_rhs_operand()))
 		return false;
 
-	bool lhsIsSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "size_t");
-	bool lhsIsRSize = isSgTypedefType(lhsType) && (lhsType->unparseToString() == "rsize_t");
-	bool rhsIsSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "size_t");
-	bool rhsIsRSize = isSgTypedefType(rhsType) && (rhsType->unparseToString() == "rsize_t");
+	bool lhsIsSize = isTypeSizeT(lhsType);
+	bool lhsIsRSize = isTypeRSizeT(lhsType);
+	bool rhsIsSize = isTypeSizeT(rhsType);
+	bool rhsIsRSize = isTypeRSizeT(rhsType);
 
 	// Treat SizeOfOp as having type size_t even though compiler will assign
 	// some kind of unsigned integer type to it
@@ -263,7 +263,7 @@ bool INT11_isPointer(const SgType *type) {
 		||  isSgTypeString(type)
 		||  isSgPointerType(type)
 		||  isSgFunctionType(type)
-		||  (type->unparseToString() == "uintptr_t")
+		||  isTypeUintptrT(type)
 		||  isSgArrayType(base)
 		||  isSgTypeString(base)
 		||  isSgFunctionType(base)

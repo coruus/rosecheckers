@@ -40,9 +40,8 @@ bool STR04_C( const SgNode *node ) {
 
 	/**
 	 * \bug Rose is missing const dereference
-	 * \bug Rose fails at handling wchar_t
 	 */
-	if (const_cast<SgType *>(var->get_type())->dereference()->unparseToString() == "wchar_t")
+	if (isTypeWcharT(const_cast<SgType *>(var->get_type())->dereference()))
 		return false;
 
 	print_error(node, "STR04-C", "Use plain char for characters in the basic character set", true);

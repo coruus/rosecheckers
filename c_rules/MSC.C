@@ -121,9 +121,9 @@ bool MSC05_C( const SgNode *node ) {
 	  ||isAnyRelationalOp(node)) {
 		const SgBinaryOp *binOp = isSgBinaryOp(node);
 		assert(binOp);
-		std::string lhsName = stripModifiers(binOp->get_lhs_operand()->get_type())->unparseToString();
-		std::string rhsName = stripModifiers(binOp->get_rhs_operand()->get_type())->unparseToString();
-		if (!(lhsName == "time_t" || rhsName == "time_t"))
+		const SgType *lhsT = binOp->get_lhs_operand()->get_type();
+		const SgType *rhsT = binOp->get_rhs_operand()->get_type();
+		if (!(isTypeTimeT(lhsT) || isTypeTimeT(rhsT)))
 			return false;
 	} else if(isSgBitComplementOp(node)
 	  ||isSgMinusMinusOp(node)
@@ -133,8 +133,8 @@ bool MSC05_C( const SgNode *node ) {
 	  ||isSgMinusOp(node)) {
 		const SgUnaryOp *op = isSgUnaryOp(node);
 		assert(op);
-		std::string opName = stripModifiers(op->get_operand()->get_type())->unparseToString();
-		if (opName != "time_t")
+		const SgType *opT = op->get_operand()->get_type();
+		if (!isTypeTimeT(opT))
 			return false;
 	} else {
 		return false;
