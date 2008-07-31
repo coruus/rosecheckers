@@ -60,10 +60,10 @@ diagnose: diagnose.o \
 		categories.o\
 		value.o\
 		utilities.o
-	libtool --mode=link g++ -Wall -g -p -o diagnose -L$(ROSE)/lib $(ROSE_LIBS) $^
+	libtool --mode=link g++ -Wall -g -o diagnose -L$(ROSE)/lib $(ROSE_LIBS) $^
 
 %.o: %.C
-	libtool --mode=compile g++ -Wall -c -g -p -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) -o $@ $<
+	libtool --mode=compile g++ -Wall -c -g -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) -o $@ $<
 
 tests:	cce.test ncce.test
 
