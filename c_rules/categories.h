@@ -24,6 +24,7 @@
 #define CATEGORIES_H
 
 #include "rose.h"
+#include "utilities.h"
 
 const SgBinaryOp *isAnyBinArithOp(const SgNode *node);
 const SgBinaryOp *isAnyBinArithAssignOp(const SgNode *node);
@@ -34,5 +35,8 @@ const SgBinaryOp *isAnyAssignOp(const SgNode *node);
 const SgBinaryOp *isAnyEqualityOp(const SgNode *node);
 const SgBinaryOp *isAnyRelationalOp(const SgNode *node);
 const SgBinaryOp *isAnyComparisonOp(const SgNode *node);
+
+bool isAnyCharType(const SgType *type);
+bool isAnyPointerType(const SgType *type);
 
 #endif

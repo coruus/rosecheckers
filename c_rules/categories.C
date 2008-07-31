@@ -122,3 +122,23 @@ const SgBinaryOp *isAnyComparisonOp(const SgNode *node) {
 	  ||isSgDotStarOp(node)
 	  ||isSgPntrArrRefExp(node)
 */
+
+/**
+ * Checks to see if the type is some kind of char or wchar_t
+ *
+ * \note we return false on [un]signed chars since they are numbers not
+ * characters
+ */
+bool isAnyCharType(const SgType *type) {
+	const SgType *t = type->stripTypedefsAndModifiers();
+	return isSgTypeChar(t)
+		|| isSgTypeWchar(t)
+		|| isTypeWcharT(type);
+}
+
+bool isAnyPointerType(const SgType *type) {
+	const SgType *t = type->stripTypedefsAndModifiers();
+	return isSgPointerType(t)
+		|| isSgArrayType(t)
+		|| isTypeUintptrT(type);
+}

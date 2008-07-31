@@ -47,7 +47,7 @@ bool ENV00_C( const SgNode *node ) {
 	 */
 
 	// traverse down, searching for copy functions (break)
-	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgExpression) {
+	FOREACH_SUBNODE(findParentOfType(fnRef, SgFunctionDefinition), nodes, i, V_SgExpression) {
 		const SgExpression * expr = isSgExpression(*i);
 		const SgFunctionRefExp *iFnRef = isSgFunctionRefExp(*i);
 		assert(expr);
@@ -69,7 +69,7 @@ bool ENV00_C( const SgNode *node ) {
 		const SgVarRefExp *iVar = isSgVarRefExp(expr);
 		if (!iVar || (getRefDecl(iVar) != var))
 			continue;
-		const SgFunctionCallExp *iFnCall = isSgFunctionCallExp(findParentNodeOfType(iVar, V_SgFunctionCallExp).first);
+		const SgFunctionCallExp *iFnCall = findParentOfType(iVar, SgFunctionCallExp);
 		if (!iFnCall) {
 			if (varWrittenTo(iVar))
 				return false;

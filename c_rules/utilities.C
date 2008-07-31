@@ -29,6 +29,19 @@
 #include "utilities.h"
 
 /**
+ * Spin up the AST until we find a parent of the given type, if not, return
+ * NULL
+ */
+const SgNode *findParentNodeOfType(const SgNode *node, VariantT t) {
+	const SgNode *parent = (node)->get_parent();
+	for (; parent; parent = parent->get_parent() ) {
+		if( parent->variantT() == t)
+			break;
+	}
+	return parent;
+}
+
+/**
  * \todo inline this sucker
  */
 const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
@@ -66,7 +79,6 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	bool sawDefault = false;
 	values.clear();
 	const SgStatementPtrList &stats = body->get_statements();
-	// const SgDefaultOptionStmt *defaultopt;
 	for( SgStatementPtrList::const_iterator i = stats.begin(); i != stats.end(); ++i ) {
 		if( const SgCaseOptionStmt *caseopt = isSgCaseOptionStmt( *i ) ) {
 			const SgExpression *key = caseopt->get_key();
@@ -80,37 +92,10 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	return sawDefault;
 }
 
-const SgFunctionSymbol *isCallOfFunctionNamed( const SgFunctionRefExp *f, const std::string &name ) { 
+bool isCallOfFunctionNamed( const SgFunctionRefExp *f, const std::string &name ) { 
 	assert(f);
-	const SgFunctionSymbol *sym = f->get_symbol();
-	if( sym->get_name().getString() == name ) {
-		//XXX what about qualified names?
-		if (!isSgFunctionCallExp(f->get_parent()))
-			return false;
-		return sym;
-	}
-	return 0;
-}
-
-/**
- * \todo and do a version with a vector of nodeTypes, or just overload
- */
-std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int nodeType ) {
-	size_t depth = 0;
-	const SgNode *parent = start->get_parent();
-	for( ; parent; parent = parent->get_parent() ) {
-		++depth;
-		if( parent->variantT() == nodeType )
-			break;
-	}
-	return std::make_pair(parent,depth);
-}
-
-bool isCompilerGeneratedNode( const SgNode *node ) {
-	if( const Sg_File_Info *info = node->get_file_info() )
-		if( info->isCompilerGenerated() )
-			return true;
-	return false;
+	return isSgFunctionCallExp(f->get_parent())
+		&& (f->get_symbol()->get_name().getString() == name);
 }
 
 size_t CountLinesInFunction( const SgFunctionDeclaration *funcDecl ) {
@@ -176,9 +161,9 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i) {
 	const SgExpressionPtrList exprs = fnCall->get_args()->get_expressions();
 	assert(i < exprs.size());
 	const SgExpression *fnArg = exprs[i];
-	assert( fnArg != NULL);
-	const SgCastExp* castArg = isSgCastExp( fnArg);
-	return (castArg != NULL) ? castArg->get_operand() : fnArg;
+	assert(fnArg);
+	const SgCastExp* castArg = isSgCastExp(fnArg);
+	return castArg ? castArg->get_operand() : fnArg;
 }
 
 /**
@@ -186,7 +171,7 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i) {
  * typecasts. Returns NULL if no such parm
  */
 const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
-	if (node == NULL) return NULL;
+	assert(node);
 	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(node->get_parent());
 	assert(fnCall);
 	return getFnArg(fnCall, i);
@@ -196,7 +181,7 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
  * Fills list with all nodes of type \c SgVarRefExp in enclosing function
  */
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
-	const SgFunctionDefinition* block = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
+	const SgFunctionDefinition* block = findParentOfType(node, SgFunctionDefinition);
 
 	assert( block != NULL);
 	return NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( block), V_SgVarRefExp);
@@ -207,9 +192,7 @@ const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
  *
  * \return nodes.end() if unsuccessful
  */
-Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container<SgNode *>& nodes,
-					       Rose_STL_Container<SgNode *>::const_iterator i,
-					       const SgInitializedName* var) {
+Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container<SgNode *>& nodes, Rose_STL_Container<SgNode *>::const_iterator i, const SgInitializedName* var) {
   for (++i; i != nodes.end(); ++i ) {
     const SgVarRefExp* ref = isSgVarRefExp(*i);
     assert( ref != NULL);
@@ -236,8 +219,7 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
   // Now to future variable references, find one with bad usage
   for (i = nextVarRef( nodes, i, var); i != nodes.end();
        i = nextVarRef( nodes, i, var)) {
-    const SgFunctionCallExp* fn
-      = isSgFunctionCallExp( findParentNodeOfType( *i, V_SgFunctionCallExp).first);
+    const SgFunctionCallExp* fn = findParentOfType(*i, SgFunctionCallExp);
     if (fn == NULL) continue;
     const SgFunctionRefExp* fn_ref = isSgFunctionRefExp( fn->get_function());
     assert( fn_ref != NULL);
@@ -247,21 +229,6 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
   }
 
   return false;
-}
-
-/**
- * Checks to see if the type is some kind of char or wchar_t
- *
- * \bug doesn't catch wchar_t + modifiers
- * \note since wchar_t is actually a long, we check for it explicitly
- * \note we return false on [un]signed chars since they are numbers not
- * characters
- */
-bool isAnyCharType(const SgType *type) {
-	const SgType *innerType = type->stripTypedefsAndModifiers();
-	if (type->unparseToString() == "wchar_t")
-		return true;
-	return isSgTypeChar(innerType) || isSgTypeWchar(innerType);
 }
 
 /**
@@ -349,8 +316,7 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
 	// The node in the function where the variable first gets referred to
 	const SgVarRefExp* ref = NULL;
 
-	const SgAssignOp* assignment
-		= isSgAssignOp( findParentNodeOfType(fnRef, V_SgAssignOp).first);
+	const SgAssignOp* assignment = findParentOfType(fnRef, SgAssignOp);
 	if (assignment != NULL) {
 		ref = isSgVarRefExp( assignment->get_lhs_operand());
 		if (ref == NULL)
@@ -362,7 +328,7 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
 		 */
 		var = getRefDecl( ref);
 	} else {
-		const SgAssignInitializer* ass_init = isSgAssignInitializer( findParentNodeOfType(fnRef, V_SgAssignInitializer).first);
+		const SgAssignInitializer* ass_init = findParentOfType(fnRef, SgAssignInitializer);
 		if (ass_init == NULL)
 			return NULL; // malloc ptr not assigned.
 
@@ -526,6 +492,8 @@ SgValueExp* computeValueTree(SgValueExp* node) {
  * If node is a function reference to scanf, or any of its derivitaves,
  * returns the argument number of the format string (eg 0 for scanf, 1 for fscanf, etc)
  * Otherwise, returns -1
+ *
+ * \todo inline this sucker
  */
 int getScanfFormatString(const SgFunctionRefExp *node) {
 	if (!node) return -1;
@@ -603,7 +571,7 @@ void NextVisitor::traverse_next(const SgNode* node) {
 	sentinel_ = node;
 	after_ = false;
 	skip_ = NULL;
-	traverse(const_cast<SgNode*>( findParentNodeOfType( node, V_SgFunctionDefinition).first));
+	traverse(const_cast<SgFunctionDefinition *>( findParentOfType(node, SgFunctionDefinition)));
 }
 
 void NextVisitor::preOrderVisit(SgNode *node) {
@@ -713,7 +681,7 @@ void NextValueReferred::visit_next(SgNode* node) {
 	skip_ = node; // disables all visits hereafter
 
 	if (isTestForNullOp(ref) ||
-			isAssignToVar(findParentNodeOfType( ref, V_SgAssignOp).first, getRefDecl(ref)))
+			isAssignToVar(findParentOfType(ref, SgAssignOp), getRefDecl(ref)))
 		return;
 
 	next_ref_ = ref;

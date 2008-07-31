@@ -48,7 +48,7 @@ bool ARR01_C( const SgNode *node ) {
 	if(!arrT)
 		return false;
 
-	const SgFunctionDeclaration *fnRef = isSgFunctionDeclaration(findParentNodeOfType( node,V_SgFunctionDeclaration).first);
+	const SgFunctionDeclaration *fnRef = findParentOfType( node,SgFunctionDeclaration);
 	if (!fnRef)
 		return false;
 

@@ -31,75 +31,12 @@
 #include "value.h"
 
 /**
- * \todo clean up this file
+ * Do not use this function directly, use the findParentOfType macro
  */
+const SgNode *findParentNodeOfType(const SgNode *node, VariantT t);
 
-
-/**
- * \return value indicates whether there was a default case.
- */
-bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values );
-
-/**
- * Questions having to do with function declarations.
- * \note first arg is arg 1, not arg 0.
- */
-const SgType *getArgType( const SgFunctionDeclaration *fdec, int n );
-int argCount( const SgFunctionDeclaration *fdec );
-size_t CountLinesInFunction( const SgFunctionDeclaration *funcDecl );
-bool isSingleArgFunctionDeclaration( const SgNode *node );
-
-/**
- * Questions about function calls.
- */
-const SgFunctionSymbol *isCallOfFunctionNamed( const SgFunctionRefExp *node, const std::string &name );
-
-/**
- * The two function templates below simply execute the same operations as the
- * two non-template functions above, but will accept a sequence of names
- * instead of a single name.
- */
-template <typename In>
-const SgFunctionSymbol *isCallOfFunctionNamedAnyOf( const SgNode *node, In b, In e ) {
-	while( b != e )
-		if( SgFunctionSymbol *f = isCallOfFunctionNamed( *b++ ) )
-			return f;
-	return 0;
-}
-
-/**
- * Miscellaneous questions and manipulations.
- */
-bool isCompilerGeneratedNode( const SgNode *node );
+bool isCallOfFunctionNamed(const SgFunctionRefExp *node, const std::string &name);
 const SgExpression *removeImplicitPromotions( const SgExpression *e );
-
-class IsFunctionDeclarationNamed : public std::unary_function<SgFunctionDeclaration *,bool> {
-  public:
-	IsFunctionDeclarationNamed( const std::string &id )
-		: id_(id) {}
-	bool operator ()( SgNode *node ) const {
-		if( SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
-			std::string fid = fd->get_name().getString();
-			return fid == id_;
-		}
-		return false;
-	}
-  private:
-	std::string id_;
-};
-
-/**
- * \todo do a version with a vector of nodeTypes, or just overload
- */
-std::pair<const SgNode *,size_t> findParentNodeOfType( const SgNode *start, int nodeType );
-
-void print_error(const SgNode* node, const char* rule, const char* desc,bool warning = false);
-
-/**
- * \return True if node is inside an expression that tests its value to see if
- * it is NULL
- */
-bool isTestForNullOp(const SgNode* node);
 
 /**
  * \return reference to ith argument of function reference. Dives through
@@ -125,23 +62,46 @@ Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container
  */
 bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref);
 
-bool isAnyCharType(const SgType *type);
-
 const SgStatement * findInBlockByOffset(const SgNode *node, int delta);
-bool getSizetVal(const SgExpression *node, size_t *value);
-bool getIntegerVal(const SgExpression *node, intmax_t *n);
-bool getFloatingVal(const SgExpression *node, long double *n);
-bool isVal(const SgExpression *node, const intmax_t n);
-bool isZeroVal(const SgExpression *node);
-bool isMinVal(const SgExpression *node);
 const SgExpression* removeCasts(const SgExpression * expr);
-const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p);
+
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node);
 SgValueExp* computeValueTree(SgValueExp* node);
 int getScanfFormatString(const SgFunctionRefExp *node);
 int getPrintfFormatString(const SgFunctionRefExp *node);
-bool varWrittenTo(const SgNode* var);
 
+/**
+ * Returns the number of bytes that an object of this type should take up
+ */
+size_t sizeOfType(const SgType *type);
+
+/**
+ * Use this to report errors and warnings
+ */
+void print_error(const SgNode* node, const char* rule, const char* desc,bool warning = false);
+
+/****************************************************************************
+ * Variable assignment functions                                            *
+ ****************************************************************************/
+bool varWrittenTo(const SgNode* var);
+const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p);
+bool valueVerified(const SgExpression *expr);
+bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
+/**
+ * \return True if node is inside an expression that tests its value to see if
+ * it is NULL
+ */
+bool isTestForNullOp(const SgNode* node);
+
+/**
+ * Checks to see if node is an assignment with var as the lhs and not in
+ * the rhs
+ */
+bool isAssignToVar( const SgNode *node, const SgInitializedName *var);
+
+/****************************************************************************
+ * Next Visitor                                                             *
+ ****************************************************************************/
 class NextVisitor : public AstPrePostProcessing {
 public:
 	// Visits nodes that will be executed after this one
@@ -166,12 +126,6 @@ protected:
 	const SgNode* skip_;
 };
 
-/**
- * Checks to see if node is an assignment with var as the lhs and not in
- * the rhs
- */
-bool isAssignToVar( const SgNode *node, const SgInitializedName *var);
-
 class NextValueReferred : public NextVisitor {
 public:
 	// Returns next instance where ref's value is used, or NULL if none
@@ -181,9 +135,5 @@ protected:
 	const SgInitializedName* var_;
 	virtual void visit_next(SgNode* node);
 };
-
-bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
-size_t sizeOfType(const SgType *type);
-bool valueVerified(const SgExpression *expr);
 
 #endif

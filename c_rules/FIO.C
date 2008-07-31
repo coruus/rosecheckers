@@ -69,7 +69,7 @@ bool FIO01_C( const SgNode *node ) {
 	 * See if the file was opened inside this function, if so, we have a
 	 * problem
 	 */
-	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(fnRef, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 
@@ -123,7 +123,7 @@ bool FIO08_C( const SgNode *node ) {
 	/* File descriptor return by *open */
 	const SgInitializedName *fd = NULL;
 
-	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) {
 		iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 
@@ -231,7 +231,7 @@ bool FIO13_C( const SgNode *node ) {
 
 	bool before = true;
 
-	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgBasicBlock).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(fnRef, SgBasicBlock), nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 
@@ -395,7 +395,7 @@ bool FIO39_C( const SgNode *node) {
 
 	bool before = true;
 
-	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgBasicBlock).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(fnRef, SgBasicBlock), nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 
@@ -453,7 +453,7 @@ bool FIO42_C( const SgNode *node ) {
 		return false;
 
 	bool before = true;
-	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp * iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 		if (before) {

@@ -49,7 +49,7 @@ bool SIG00_C( const SgNode *node ) {
   const SgFunctionSymbol* symbol = handler->get_symbol();
 
   // We can excuse any 1-arg function assigning itself as a handler
-  const SgNode* encloser = findParentNodeOfType( node, V_SgFunctionDefinition).first;
+  const SgNode* encloser = findParentOfType(node, SgFunctionDefinition);
   if (encloser == handler->get_symbol()->get_declaration()->get_definition()) {
     const SgVarRefExp* signal_var = isSgVarRefExp( getFnArg( sig_fn, 0));
     const SgFunctionParameterList *plist = handler->get_symbol()->get_declaration()->get_parameterList();
@@ -184,7 +184,7 @@ bool SIG31_C( const SgNode *node ) {
 		SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
 		assert( var_decl != NULL);
 
-		const SgNode* encloser = findParentNodeOfType( var_decl, V_SgFunctionParameterList).first;
+		const SgNode* encloser = findParentOfType(var_decl, SgFunctionParameterList);
 		if (encloser != NULL)
 			continue; // variable is function arg
 
@@ -334,7 +334,7 @@ bool SIG34_C( const SgNode *node ) {
 	 * where the "node" is the same as the iCall that we will find later,
 	 * otherwise we will report the same line twice
 	 */
-	if (isSgFunctionDefinition(findParentNodeOfType(sigRef, V_SgFunctionDefinition).first) == handlerDef)
+	if (findParentOfType(sigRef, SgFunctionDefinition) == handlerDef)
 		return false;
 
 	const SgInitializedName *signum = handlerDecl->get_args().front();

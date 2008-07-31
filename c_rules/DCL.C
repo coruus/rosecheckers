@@ -26,9 +26,6 @@
 #include "utilities.h"
 #include <boost/regex.hpp>
 
-static bool isExtern(const SgInitializedName * var) {
-	return const_cast<SgInitializedName*>(var)->get_declaration()->get_declarationModifier().get_storageModifier().isExtern();
-}
 
 /**
  * Const-qualify immutable objects
@@ -56,8 +53,8 @@ bool DCL00_C( const SgNode *node ) {
 	|| isConstType(varType->dereference()->dereference())
 	|| isSgFunctionType(varType)
 	|| isSgClassType(varType)
-	|| findParentNodeOfType(varName, V_SgEnumDeclaration).first
-	|| findParentNodeOfType(varName, V_SgClassDeclaration).first)
+	|| findParentOfType(varName, SgEnumDeclaration)
+	|| findParentOfType(varName, SgClassDeclaration))
 		return false;
 
 	/**
@@ -66,9 +63,9 @@ bool DCL00_C( const SgNode *node ) {
 	 */
 	std::string ruleStr;
 	std::string errStr;
-	if (findParentNodeOfType(varName, V_SgFunctionParameterList).first) {
+	if (findParentOfType(varName, SgFunctionParameterList)) {
 		/** ignore function prototypes, just worry about the definitions */
-		const SgFunctionDeclaration *fnDecl = isSgFunctionDeclaration(findParentNodeOfType(varName, V_SgFunctionDeclaration).first);
+		const SgFunctionDeclaration *fnDecl = findParentOfType(varName, SgFunctionDeclaration);
 		assert(fnDecl);
 		if (!fnDecl->get_definition())
 			return false;
@@ -88,7 +85,7 @@ bool DCL00_C( const SgNode *node ) {
 	 * Ignore global variables or variables declared as extern
 	 */
 	const SgScopeStatement *varScope = varName->get_scope();
-	if (isSgGlobal(varScope) || isExtern(varName))
+	if (isSgGlobal(varScope) || isExternVar(varName))
 		return false;
 
 	FOREACH_SUBNODE(varScope, nodes, i, V_SgVarRefExp) {
@@ -112,7 +109,7 @@ bool DCL00_C( const SgNode *node ) {
 		 */
 		if (varWrittenTo(iVar)
 		||  isSgArrowExp(parent)
-		||  findParentNodeOfType(iVar, V_SgAddressOfOp).first)
+		||  findParentOfType(iVar, SgAddressOfOp))
 			return false;
 
 		/**
@@ -121,7 +118,7 @@ bool DCL00_C( const SgNode *node ) {
 		 * somewhere, we can longer be sure it should be const
 		 */
 		if ((isSgPointerType(varType) || isSgArrayType(varType))
-		&& (findParentNodeOfType(iVar, V_SgFunctionCallExp).first
+		&& (findParentOfType(iVar, SgFunctionCallExp)
 			|| isSgAddOp(parent)
 			|| isSgSubtractOp(parent)
 			|| isSgAssignOp(parent)
@@ -180,7 +177,7 @@ std::string normalize_string(std::string str, bool isExtern) {
 }
 
 void DCL02_report_error(const SgInitializedName *var) {
-	unsigned int len = isExtern(var) ? 31 : 63;
+	unsigned int len = isExternVar(var) ? 31 : 63;
 	std::string varStr = var->get_name().str();
 	std::string ruleStr;
 	std::string errStr;
@@ -225,12 +222,12 @@ bool DCL02_C( const SgNode *node ) {
 				continue;
 
 			/** Ignore function prototypes */
-			const SgFunctionDeclaration * fnDecl = isSgFunctionDeclaration(findParentNodeOfType(var, V_SgFunctionDeclaration).first);
+			const SgFunctionDeclaration * fnDecl = findParentOfType(var, SgFunctionDeclaration);
 			if (fnDecl && !fnDecl->get_definition())
 				continue;
 
 			const SgScopeStatement *varScope = var->get_scope();
-			std::string str (normalize_string(var->get_name().str(), isExtern(var)));
+			std::string str (normalize_string(var->get_name().str(), isExternVar(var)));
 			if (scopeMap[varScope].find(str) != scopeMap[varScope].end()) {
 				DCL02_report_error(var);
 				violation = true;

@@ -162,7 +162,7 @@ bool MSC13_C( const SgNode *node ) {
 		const SgVarRefExp *iVar = isSgVarRefExp(*i);
 		if (!iVar || (getRefDecl(iVar) != var))
 			continue;
-		if (varWrittenTo(iVar) && (!findParentNodeOfType(iVar, V_SgPointerDerefExp).first)) {
+		if (varWrittenTo(iVar) && (!findParentOfType(iVar, SgPointerDerefExp))) {
 			if (unused) {
 				print_error(prev, "MSC13-C", "Detect and remove unused values", true);
 				violation = true;

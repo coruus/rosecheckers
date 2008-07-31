@@ -57,12 +57,8 @@ bool INT01_C( const SgNode *node ) {
 	 * uintptr_t because it in a typedef to unsigned int and is not actually a
 	 * pointer type
 	 */
-	if(isSgPointerType(lhsType)
-	|| isSgPointerType(rhsType)
-	|| isTypeUintptrT(lhsType)
-	|| isTypeUintptrT(rhsType)
-	|| isSgArrayType(lhsType)
-	|| isSgArrayType(rhsType)) {
+	if(isAnyPointerType(lhsType)
+	|| isAnyPointerType(rhsType)) {
 		return false;
 	}
 
@@ -191,7 +187,7 @@ bool INT07_C( const SgNode *node ) {
 		 * However, there is no good way to find those cases... there's just
 		 * too many ways a getchar can get called
 		 */
-/*		const SgNode * parent = isSgBasicBlock(findParentNodeOfType(node, V_SgBasicBlock).first)->get_parent();
+/*		const SgNode * parent = findParentOfType(node, SgBasicBlock)->get_parent();
 		const SgStatement *stat =
 			isSgIfStmt(parent)? isSgIfStmt(parent)->get_conditional():
 			isSgWhileStmt(parent)? isSgWhileStmt(parent)->get_condition():
@@ -255,19 +251,17 @@ bool INT09_C( const SgNode *node ) {
 }
 
 /**
- * helper function for INT11, this should eventually be merged in with type.C
+ * helper function for INT11, this should eventually be merged into
+ * categories.C
  */
 bool INT11_isPointer(const SgType *type) {
 	const SgType *base = type->findBaseType();
-	return (isSgArrayType(type)
+	return (isAnyPointerType(type)
 		||  isSgTypeString(type)
-		||  isSgPointerType(type)
 		||  isSgFunctionType(type)
-		||  isTypeUintptrT(type)
-		||  isSgArrayType(base)
+		||  isAnyPointerType(base)
 		||  isSgTypeString(base)
-		||  isSgFunctionType(base)
-		||  isSgPointerType(base));
+		||  isSgFunctionType(base));
 }
 
 /**
@@ -323,7 +317,7 @@ bool INT12_C( const SgNode *node ) {
 	if (!varName)
 		return false;
 
-	if (!findParentNodeOfType(varName, V_SgClassDefinition).first)
+	if (!findParentOfType(varName, SgClassDefinition))
 		return false;
 
 	const SgVariableDefinition *varDef = isSgVariableDefinition(varName->get_definition());
@@ -509,7 +503,7 @@ bool INT33_C( const SgNode *node ) {
 	 * maybe we're in an if statement or something that has the check in the
 	 * conditional
 	 */
-	const SgNode * parent = isSgBasicBlock(findParentNodeOfType(node, V_SgBasicBlock).first)->get_parent();
+	const SgNode * parent = findParentOfType(node, SgBasicBlock)->get_parent();
 	const SgStatement *stat =
 		isSgIfStmt(parent)? isSgIfStmt(parent)->get_conditional():
 		isSgWhileStmt(parent)? isSgWhileStmt(parent)->get_condition():

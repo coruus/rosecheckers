@@ -42,13 +42,12 @@ bool MEM01_C( const SgNode *node ) {
 	assert(argVarName);
 	bool longlifetime = isGlobalVar(argVarName) || isStaticVar(argVarName);
 	/* Block where the variable is defined */
-	const SgBasicBlock* defBlock = isSgBasicBlock(findParentNodeOfType(
-		argVar->get_symbol()->get_declaration(),V_SgBasicBlock).first);
+	const SgBasicBlock* defBlock = findParentOfType(argVar->get_symbol()->get_declaration(),SgBasicBlock);
 
 	// Pop up to the BasicBlock so that we can find the next line of code
 	const SgStatement* nextStat = findInBlockByOffset(node,1);
 	// block in which the free statement is enclosed
-	const SgBasicBlock* block = isSgBasicBlock(findParentNodeOfType(node,V_SgBasicBlock).first);
+	const SgBasicBlock* block = findParentOfType(node,SgBasicBlock);
 	assert(block);
 
 	while (nextStat == NULL) {
@@ -63,7 +62,7 @@ bool MEM01_C( const SgNode *node ) {
 			return false;
 		// Pop up to the next block
 		nextStat = findInBlockByOffset(block,1);
-		block = isSgBasicBlock(findParentNodeOfType(block,V_SgBasicBlock).first);
+		block = findParentOfType(block, SgBasicBlock);
 		assert(block);
 	}
 
@@ -105,7 +104,7 @@ bool MEM04_C( const SgNode *node ) {
 	const SgInitializedName *var = getRefDecl(varRef);
 	const SgValueExp *val = isSgValueExp(allocArg);
 	if (var) {
-		const SgFunctionDefinition *fn = isSgFunctionDefinition((findParentNodeOfType(node,V_SgFunctionDefinition).first));
+		const SgFunctionDefinition *fn = findParentOfType(node,SgFunctionDefinition);
 		const SgVarRefExp *ref = NULL;
 		/**
 		 * First try, just look for a check against NULL
@@ -264,7 +263,7 @@ bool MEM31_C( const SgNode *node ) {
 	const SgInitializedName* ref_var = getRefDecl( ref);
 
 	bool before = true;
-	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgNode) {
+	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgNode) {
 		if (before) {
 			if (*i == node)
 				before = false;
@@ -356,7 +355,7 @@ bool MEM34_C( const SgNode *node ) {
 	/**
 	 * Ignore arguments to a function
 	 */
-	const SgFunctionDefinition *parent = isSgFunctionDefinition(findParentNodeOfType(node, V_SgFunctionDefinition).first);
+	const SgFunctionDefinition *parent = findParentOfType(node, SgFunctionDefinition);
 	FOREACH_INITNAME(parent->get_declaration()->get_args(), p) {
 		if(var == *p)
 			return false;
@@ -375,7 +374,7 @@ bool MEM34_C( const SgNode *node ) {
 				block = NULL;
 			continue;
 		} else if (isSgReturnStmt(*i)) {
-			block = findParentNodeOfType(*i, V_SgBasicBlock).first;
+			block = findParentOfType(*i, SgBasicBlock);
 		}
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		const SgVarRefExp *iVar = isSgVarRefExp(*i);

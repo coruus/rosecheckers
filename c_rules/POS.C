@@ -48,9 +48,9 @@ bool POS30_C( const SgNode *node ) {
 	 * First, let's see if we are checking the return value as part of a
 	 * complicated expression
 	 */
-	const SgBinaryOp *compOp = isSgBinaryOp(findParentNodeOfType(fnRef, V_SgEqualityOp).first);
+	const SgBinaryOp *compOp = findParentOfType(fnRef, SgEqualityOp);
 	if (!compOp)
-		compOp = isSgBinaryOp(findParentNodeOfType(fnRef, V_SgNotEqualOp).first);
+		compOp = findParentOfType(fnRef, SgNotEqualOp);
 	/**
 	 * If not, let's try to look for it on the next line
 	 */
@@ -177,7 +177,7 @@ bool POS35_C( const SgNode *node ) {
 	bool after = false;
 	bool fstat = false;
 
-	FOREACH_SUBNODE(findParentNodeOfType(node, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) { 
+	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) { 
 		iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 

@@ -102,7 +102,7 @@ bool STR06_C( const SgNode *node ) {
 		if (varWrittenTo(iVar))
 			return false;
 
-		const SgFunctionCallExp* iFn = isSgFunctionCallExp(findParentNodeOfType(iVar, V_SgFunctionCallExp).first);
+		const SgFunctionCallExp* iFn = findParentOfType(iVar, SgFunctionCallExp);
 		if (iFn) {
 			const SgFunctionRefExp *iRef = isSgFunctionRefExp(iFn->get_function());
 			assert(iRef);

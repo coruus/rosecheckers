@@ -482,12 +482,11 @@ bool EXP34_C( const SgNode *node ) {
 		 * Allow references inside sizeof() since no actual memory derefencing
 		 * happens
 		 */
-		if (findParentNodeOfType(i_ref, V_SgSizeOfOp).first)
+		if (findParentOfType(i_ref, SgSizeOfOp))
 			continue;
 
 		if (isTestForNullOp( i_ref)) return false;
-		const SgAssignOp* next_assignment
-			= isSgAssignOp( findParentNodeOfType( i_ref, V_SgAssignOp).first);
+		const SgAssignOp* next_assignment = findParentOfType( i_ref, SgAssignOp);
 		if (next_assignment == NULL) {
 			print_error( node, "EXP34-C", "Ensure pointer is valid before dereferencing it");
 			return true;

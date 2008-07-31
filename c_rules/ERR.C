@@ -35,7 +35,7 @@ bool ERR06_C( const SgNode *node ) {
 
 	std::set<const SgInitializedName *> fds;
 
-	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(findParentOfType(fnRef, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 		if (iFn == fnRef)
