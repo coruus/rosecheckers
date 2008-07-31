@@ -73,10 +73,7 @@ bool STR05_C( const SgNode *node ) {
  */
 bool STR06_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!fnRef)
-		return false;
-
-	if(!isCallOfFunctionNamed(fnRef, "strtok"))
+	if(!(fnRef && isCallOfFunctionNamed(fnRef, "strtok")))
 		return false;
 
 	const SgVarRefExp* str = isSgVarRefExp(removeImplicitPromotions(getFnArg(fnRef, 0)));
@@ -184,7 +181,9 @@ bool STR30_C(const SgNode *node ) {
  * This just ensures that strcpy is copying into a pointer
  */
 bool STR31_C(const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "strcpy")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "strcpy")))
+		return false;
 
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
  	// strcpy() not copying into simple var
@@ -207,9 +206,9 @@ bool STR31_C(const SgNode *node ) {
  * other string-copying functions.
  */
 bool STR32_C(const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "strncpy")) return false;
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	assert(fnRef);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "strncpy")))
+		return false;
 	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef,0));
 	const SgExpression *srcExp = removeImplicitPromotions(getFnArg(fnRef,1));
 	const SgExpression *lenExp = getFnArg(fnRef,2);
@@ -287,12 +286,14 @@ bool STR32_C(const SgNode *node ) {
  * Check if there is a gets or if sscanf/scanf has a "%s"
  */
 bool STR35_C(const SgNode *node) {
-	if(isCallOfFunctionNamed(node, "gets")) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if(isCallOfFunctionNamed(fnRef, "gets")) {
 		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
 		return true;
 	}
 
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	int argNum;
 	if((argNum = getScanfFormatString(fnRef)) == -1) {
 		return false;

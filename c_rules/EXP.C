@@ -83,10 +83,9 @@ bool EXP01_C( const SgNode *node ) {
  * Do not perform byte-by-byte comparisons between structures
  */
 bool EXP04_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "memcmp"))
-		return false;
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	assert(fnRef);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "memcmp")))
+		return false;
 	const SgType *dstT = getFnArg(fnRef, 0)->get_type();
 	assert(dstT);
 	const SgType *srcT = getFnArg(fnRef, 1)->get_type();
@@ -254,8 +253,8 @@ bool EXP11_C( const SgNode *node ) {
 	const SgExpression* castExpr = cast->get_operand();
 
 	/**
-	 * XXX all this hackery would be a lot simpler if we could just check for
-	 * void *
+	 * \todo XXX all this hackery would be a lot simpler if we could just
+	 * check for void *
 	 */
 
 	/// Exception b/c MEM02_C
@@ -559,14 +558,12 @@ bool EXP36_C( const SgNode *node ) {
  * Call functions with the arguments intended by the API
  */
 bool EXP37_C( const SgNode *node ) {
-	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(node);
-	if (!fnCall)
-		return false;
-	if (!isCallOfFunctionNamed(fnCall->get_function(), "open"))
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "open")))
 		return false;
 
 	bool o_creat = false;
-	FOREACH_SUBNODE(getFnArg(fnCall, 1), nodes, i, V_SgExpression) {
+	FOREACH_SUBNODE(getFnArg(fnRef, 1), nodes, i, V_SgExpression) {
 		/**
 		 * If there's a variable present, we have no idea what the flags could
 		 * be
@@ -577,6 +574,8 @@ bool EXP37_C( const SgNode *node ) {
 			o_creat = true;
 	}
 
+	const SgFunctionCallExp *fnCall = isSgFunctionCallExp(fnRef->get_parent());
+	assert(fnCall);
 	int numArgs = fnCall->get_args()->get_expressions().size();
 	if ((o_creat && (numArgs == 3))
 	|| (!o_creat && (numArgs == 2)))

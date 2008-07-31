@@ -24,6 +24,11 @@
 
 using namespace std;
 
+/**
+ * \todo We need to figure out what this is all about and either finish or
+ * delete it
+ */
+
 // Build a synthesized attribute for the tree traversal
 class SynthesizedAttribute
    {

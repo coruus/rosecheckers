@@ -116,8 +116,8 @@ bool FLP03_C( const SgNode *node ) {
 	const SgStatement *prevSt = findInBlockByOffset(node, -1);
 	bool no_feclearexcept = true;
 	if (prevSt) {
-		FOREACH_SUBNODE(prevSt, nodes, i, V_SgFunctionCallExp) {
-			if (isCallOfFunctionNamed(*i, "feclearexcept"))
+		FOREACH_SUBNODE(prevSt, nodes, i, V_SgFunctionRefExp) {
+			if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "feclearexcept"))
 				no_feclearexcept = false;
 		}
 	}
@@ -125,8 +125,8 @@ bool FLP03_C( const SgNode *node ) {
 	const SgStatement *nextSt = findInBlockByOffset(node,  1);
 	bool no_fetestexcept = true;
 	if (nextSt) {
-		FOREACH_SUBNODE(nextSt, nodes, i, V_SgFunctionCallExp) {
-			if (isCallOfFunctionNamed(*i, "fetestexcept"))
+		FOREACH_SUBNODE(nextSt, nodes, i, V_SgFunctionRefExp) {
+			if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "fetestexcept"))
 				no_fetestexcept = false;
 		}
 	}
@@ -162,50 +162,56 @@ bool FLP30_C( const SgNode *node ) {
  */
 bool FLP31_C( const SgNode *node ) {
 	bool violation = false;;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!isSgFunctionCallExp(fnRef->get_parent()))
+		return false;
+	std::string str = fnRef->get_symbol()->get_name().getString();
 	/* one arg */
-	if (isCallOfFunctionNamed(node, "cbrt")
-	||  isCallOfFunctionNamed(node, "ceil")
-	||  isCallOfFunctionNamed(node, "erf")
-	||  isCallOfFunctionNamed(node, "erfc")
-	||  isCallOfFunctionNamed(node, "exp2")
-	||  isCallOfFunctionNamed(node, "expm1")
-	||  isCallOfFunctionNamed(node, "floor")
-	||  isCallOfFunctionNamed(node, "frexp")
-	||  isCallOfFunctionNamed(node, "ilogb")
-	||  isCallOfFunctionNamed(node, "ldexp")
-	||  isCallOfFunctionNamed(node, "lgamma")
-	||  isCallOfFunctionNamed(node, "llrint")
-	||  isCallOfFunctionNamed(node, "llround")
-	||  isCallOfFunctionNamed(node, "log10")
-	||  isCallOfFunctionNamed(node, "log1p")
-	||  isCallOfFunctionNamed(node, "log2")
-	||  isCallOfFunctionNamed(node, "logb")
-	||  isCallOfFunctionNamed(node, "lrint")
-	||  isCallOfFunctionNamed(node, "lround")
-	||  isCallOfFunctionNamed(node, "nearbyint")
-	||  isCallOfFunctionNamed(node, "rint")
-	||  isCallOfFunctionNamed(node, "round")
-	||  isCallOfFunctionNamed(node, "tgamma")
-	||  isCallOfFunctionNamed(node, "trunc")) {
+	if ((str == "cbrt")
+	||  (str == "ceil")
+	||  (str == "erf")
+	||  (str == "erfc")
+	||  (str == "exp2")
+	||  (str == "expm1")
+	||  (str == "floor")
+	||  (str == "frexp")
+	||  (str == "ilogb")
+	||  (str == "ldexp")
+	||  (str == "lgamma")
+	||  (str == "llrint")
+	||  (str == "llround")
+	||  (str == "log10")
+	||  (str == "log1p")
+	||  (str == "log2")
+	||  (str == "logb")
+	||  (str == "lrint")
+	||  (str == "lround")
+	||  (str == "nearbyint")
+	||  (str == "rint")
+	||  (str == "round")
+	||  (str == "tgamma")
+	||  (str == "trunc")) {
 		violation = isSgTypeComplex(getFnArg(isSgFunctionRefExp(node), 0)->get_type());
 	} else
 	/* two args */
-	if (isCallOfFunctionNamed(node, "atan2")
-	||  isCallOfFunctionNamed(node, "copysign")
-	||  isCallOfFunctionNamed(node, "fdim")
-	||  isCallOfFunctionNamed(node, "fmax")
-	||  isCallOfFunctionNamed(node, "fmin")
-	||  isCallOfFunctionNamed(node, "fmod")
-	||  isCallOfFunctionNamed(node, "hypot")
-	||  isCallOfFunctionNamed(node, "nextafter")
-	||  isCallOfFunctionNamed(node, "nexttoward")
-	||  isCallOfFunctionNamed(node, "remainder")
-	||  isCallOfFunctionNamed(node, "remquo")
-	||  isCallOfFunctionNamed(node, "scalbn")
-	||  isCallOfFunctionNamed(node, "scalbln")) {
+	if ((str == "atan2")
+	||  (str == "copysign")
+	||  (str == "fdim")
+	||  (str == "fmax")
+	||  (str == "fmin")
+	||  (str == "fmod")
+	||  (str == "hypot")
+	||  (str == "nextafter")
+	||  (str == "nexttoward")
+	||  (str == "remainder")
+	||  (str == "remquo")
+	||  (str == "scalbn")
+	||  (str == "scalbln")) {
 	} else
 	/* three args */
-	if (isCallOfFunctionNamed(node, "fma")) {
+	if ((str == "fma")) {
 	}
 	if (violation) {
 		print_error(node, "FLP31-C", "Do not call functions expecting real values with complex values");

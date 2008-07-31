@@ -28,9 +28,17 @@
 #include "rose.h"
 #include "utilities.h"
 
+/**
+ * \todo move all uses of unparseToString() into some helper function here
+ */
+
+/**
+ * \todo inline this sucker
+ */
 const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
 	if( const SgCastExp *cast = isSgCastExp( e ) ) {
-		if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
+		if( isCompilerGeneratedNode( cast ) ) {
+		// implicit promotions seem to be implemented as casts
 			e = cast->get_operand();
 		}
 	}
@@ -76,15 +84,14 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	return sawDefault;
 }
 
-const SgFunctionSymbol *isCallOfFunctionNamed( const SgNode *node, const std::string &name ) { 
-	if( const SgFunctionRefExp *f = isSgFunctionRefExp(node)) {
-		const SgFunctionSymbol *sym = f->get_symbol();
-		if( sym->get_name().getString() == name ) {
-			//XXX what about qualified names?
-			if (!isSgFunctionCallExp(f->get_parent()))
-				return false;
-			return sym;
-		}
+const SgFunctionSymbol *isCallOfFunctionNamed( const SgFunctionRefExp *f, const std::string &name ) { 
+	assert(f);
+	const SgFunctionSymbol *sym = f->get_symbol();
+	if( sym->get_name().getString() == name ) {
+		//XXX what about qualified names?
+		if (!isSgFunctionCallExp(f->get_parent()))
+			return false;
+		return sym;
 	}
 	return 0;
 }
@@ -193,23 +200,10 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
  * Fills list with all nodes of type \c SgVarRefExp in enclosing function
  */
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
-  const SgFunctionDefinition* block
-    = isSgFunctionDefinition( findParentNodeOfType( node,
-						    V_SgFunctionDefinition).first);
+	const SgFunctionDefinition* block = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
 
-  assert( block != NULL);
-  return NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( block),
-				  V_SgVarRefExp);
-}
-
-/**
- * Returns a variable's declaration, given a reference to that var
- */
-const SgInitializedName* getRefDecl(const SgVarRefExp* ref) {
-  if (ref == NULL) return NULL;
-  const SgVariableSymbol* sym = ref->get_symbol();
-  assert(sym != NULL);
-  return sym->get_declaration();
+	assert( block != NULL);
+	return NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( block), V_SgVarRefExp);
 }
 
 /**
@@ -257,20 +251,6 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
   }
 
   return false;
-}
-
-/**
- * Checks to see if the variable was declared static
- */
-bool isStaticVar(const SgInitializedName *var) {
-	return const_cast<SgInitializedName*>(var)->get_declaration()->get_declarationModifier().get_storageModifier().isStatic();
-}
-
-/**
- * Checks the scope of the variable to see if it is global or not
- */
-bool isGlobalVar(const SgInitializedName *var) {
-	return isSgGlobal(var->get_scope());
 }
 
 /**
@@ -342,6 +322,8 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 /**
  * Strips casts, preferering to take the originalExpressionTree branch when
  * possible
+ *
+ * \todo inline this sucker
  */
 const SgExpression* removeCasts(const SgExpression * expr) {
 	const SgCastExp * cast;
@@ -353,20 +335,6 @@ const SgExpression* removeCasts(const SgExpression * expr) {
 		assert(expr);
 	}
 	return expr;
-}
-
-/**
- * Remove all modifiers such as const or volatile, but leave the typedefs
- */
-const SgType *stripModifiers(const SgType *type) {
-	return type->stripType(SgType::STRIP_MODIFIER_TYPE);
-}
-
-/**
- * Remove all typedefs, but leave the modifiers
- */
-const SgType *stripTypedefs(const SgType *type) {
-	return type->stripType(SgType::STRIP_TYPEDEF_TYPE);
 }
 
 /**
@@ -414,6 +382,8 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
  *
  * \note As written, these tests catch template declarations only if
  * instantiated.
+ *
+ * \todo inline this sucker
  */
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
 	if (!node) return NULL;
@@ -859,18 +829,3 @@ bool valueVerified(const SgExpression *expr) {
 	return false;
 }
 
-bool isConstType(const SgType *t) {
-	assert(t);
-	const SgModifierType *mt = isSgModifierType(stripTypedefs(t));
-	if (!mt)
-		return false;
-	return mt->get_typeModifier().get_constVolatileModifier().isConst();
-}
-
-bool isVolatileType(const SgType *t) {
-	assert(t);
-	const SgModifierType *mt = isSgModifierType(stripTypedefs(t));
-	if (!mt)
-		return false;
-	return mt->get_typeModifier().get_constVolatileModifier().isVolatile();
-}

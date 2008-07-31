@@ -26,28 +26,13 @@
 #include <list>
 #include <string>
 #include "rose.h"
+#include "utilities-inline.h"
 #include "categories.h"
 #include "value.h"
 
 /**
- * Iterate over all initializers "i" in a list of variables
- * nodes should be something like SgVariableDeclaration->get_variables()
+ * \todo clean up this file
  */
-#define FOREACH_INITNAME(nodes,i) \
-	for(SgInitializedNamePtrList::const_iterator (i) = (nodes).begin(); (i) < (nodes).end(); (i)++)
-
-/** Iterate over all nodes of type type below node, name the collection nodes
- * and name the iteroator i
- * 
- * \param[in] node Root node of the tree
- * \param[out] nodes What to call the collection
- * \param[out] i What to call the iterator
- * \param[in] type Only iterate over nodes of this type
- */
-#define FOREACH_SUBNODE(node, nodes, i, type) \
-	Rose_STL_Container<SgNode *> (nodes) = NodeQuery::querySubTree( const_cast<SgNode*>((const SgNode *) (node)), (type) ); \
-	Rose_STL_Container<SgNode *>::iterator (i) = (nodes).begin(); \
-	for (; (i) != (nodes).end(); ++(i) )
 
 
 /**
@@ -67,7 +52,7 @@ bool isSingleArgFunctionDeclaration( const SgNode *node );
 /**
  * Questions about function calls.
  */
-const SgFunctionSymbol *isCallOfFunctionNamed( const SgNode *node, const std::string &name );
+const SgFunctionSymbol *isCallOfFunctionNamed( const SgFunctionRefExp *node, const std::string &name );
 
 /**
  * The two function templates below simply execute the same operations as the
@@ -130,11 +115,6 @@ const SgExpression* getFnArg(const SgFunctionCallExp* fnCall, unsigned int i);
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node);
 
 /**
- * \return a variable's declaration, given a reference to that var
- */
-const SgInitializedName* getRefDecl(const SgVarRefExp* ref);
-
-/**
  * \return iterator of next node that refers to same variable as ref.
  * \return nodes.end() if unsuccessful
  */
@@ -144,12 +124,6 @@ Rose_STL_Container<SgNode *>::const_iterator nextVarRef(const Rose_STL_Container
  * \return true if function( ref) appears in code somewhere after ref
  */
 bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref);
-
-/**
- * \return true if the variable has global scope
- */
-bool isGlobalVar(const SgInitializedName *var);
-bool isStaticVar(const SgInitializedName *var);
 
 bool isAnyCharType(const SgType *type);
 
@@ -161,8 +135,6 @@ bool isVal(const SgExpression *node, const intmax_t n);
 bool isZeroVal(const SgExpression *node);
 bool isMinVal(const SgExpression *node);
 const SgExpression* removeCasts(const SgExpression * expr);
-const SgType *stripModifiers(const SgType *type);
-const SgType *stripTypedefs(const SgType *type);
 const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const SgVarRefExp **varRef_p);
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node);
 SgValueExp* computeValueTree(SgValueExp* node);
@@ -213,7 +185,5 @@ protected:
 bool isCheckForZero(const SgStatement *stat, const SgVarRefExp *varRef);
 size_t sizeOfType(const SgType *type);
 bool valueVerified(const SgExpression *expr);
-bool isConstType(const SgType *t);
-bool isVolatileType(const SgType *t);
 
 #endif

@@ -41,17 +41,23 @@ bool ENV00_C( const SgNode *node ) {
 		return false;
 	bool getenv_found = false;
 	bool after = false;
+
+	/**
+	 * \todo this is kind of a mess, clean it up
+	 */
+
 	// traverse down, searching for copy functions (break)
 	FOREACH_SUBNODE(findParentNodeOfType(fnRef, V_SgFunctionDefinition).first, nodes, i, V_SgExpression) {
 		const SgExpression * expr = isSgExpression(*i);
+		const SgFunctionRefExp *iFnRef = isSgFunctionRefExp(*i);
 		assert(expr);
 		if (!after) {
-			if (isSgFunctionRefExp(expr) == fnRef)
+			if (iFnRef == fnRef)
 				after = true;
 			continue;
 		}
 		// search for another call to getenv
-		if (isCallOfFunctionNamed(expr, "getenv")) {
+		if (iFnRef && isCallOfFunctionNamed(iFnRef, "getenv")) {
 			getenv_found = true;
 			if (var == getVarAssignedTo(isSgFunctionRefExp(expr), NULL))
 				return false;
@@ -133,10 +139,14 @@ bool ENV02_C( const SgNode *node ) {
  * \note As written, these tests catch template declarations only if instantiated.
  */
 bool ENV04_C( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "system") &&
-      !isCallOfFunctionNamed( node, "popen")) return false;
-  print_error( node, "ENV04-C", "Do not use system() or popen() unless you need a command interpreter", true);
-  return true;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!(isCallOfFunctionNamed(fnRef, "system")
+		||isCallOfFunctionNamed(fnRef, "popen")))
+		return false;
+	print_error( node, "ENV04-C", "Do not use system() or popen() unless you need a command interpreter", true);
+	return true;
 }
 
 /**
@@ -192,10 +202,11 @@ bool ENV31_C( const SgNode *node ) {
  * siglongjmp
  */
 bool ENV32_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "atexit")) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "atexit")))
 		return false;
-	}
-	const SgFunctionRefExp* ref = isSgFunctionRefExp( getFnArg ( isSgFunctionRefExp(node), 0));
+
+	const SgFunctionRefExp* ref = isSgFunctionRefExp(getFnArg(fnRef, 0));
 	assert(ref);
 
 	const SgFunctionDeclaration *fnDecl = ref->get_symbol()->get_declaration();
@@ -203,16 +214,15 @@ bool ENV32_C( const SgNode *node ) {
 
 	bool violation = false;
 
-	const SgExpression *fnCall;
-	FOREACH_SUBNODE((SgExpression *) fnDecl,nodes,i,V_SgFunctionCallExp) {
-		assert(*i);
-		fnCall = isSgFunctionCallExp(*i)->get_function();
-		if(isCallOfFunctionNamed( fnCall, "exit")
-		|| isCallOfFunctionNamed( fnCall, "_exit")
-		|| isCallOfFunctionNamed( fnCall, "abort")
-		|| isCallOfFunctionNamed( fnCall, "_Exit")
-		|| isCallOfFunctionNamed( fnCall, "longjmp")
-		|| isCallOfFunctionNamed( fnCall, "siglongjmp")) {
+	FOREACH_SUBNODE(fnDecl,nodes,i,V_SgFunctionRefExp) {
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		assert(iFn);
+		if(isCallOfFunctionNamed( iFn, "exit")
+		|| isCallOfFunctionNamed( iFn, "_exit")
+		|| isCallOfFunctionNamed( iFn, "abort")
+		|| isCallOfFunctionNamed( iFn, "_Exit")
+		|| isCallOfFunctionNamed( iFn, "longjmp")
+		|| isCallOfFunctionNamed( iFn, "siglongjmp")) {
 			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning");
 			violation = true;
 		}

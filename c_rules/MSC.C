@@ -181,9 +181,11 @@ bool MSC13_C( const SgNode *node ) {
  * Do not use rand()
  */
 bool MSC30_C( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "rand")) return false;
-  print_error( node, "MSC30-C", "Do not use rand()");
-  return true;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "rand")))
+		return false;
+	print_error( node, "MSC30-C", "Do not use rand()");
+	return true;
 }
 
 /**

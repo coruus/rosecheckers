@@ -105,10 +105,9 @@ bool ARR02_C( const SgNode *node ) {
  * * N > destination array index
  */
 bool ARR33_C( const SgNode *node ) {
-	if(!isCallOfFunctionNamed(node, "memcpy"))
-		return false;
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	assert(fnRef);
+	if(!(fnRef && isCallOfFunctionNamed(fnRef, "memcpy")))
+		return false;
 	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef,0));
 	const SgExpression *lenExp = getFnArg(fnRef,2);
 	assert(dstExp && lenExp);

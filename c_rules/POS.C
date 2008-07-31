@@ -102,19 +102,23 @@ bool POS30_C( const SgNode *node ) {
  * Do not use vfork (was overload operator&&)
  */
 bool POS33_C( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "vfork")) return false;
-  print_error( node, "POS33-C", "Do not use vfork()");
-  return true;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "vfork")))
+		return false;
+	print_error( node, "POS33-C", "Do not use vfork()");
+	return true;
 }
 
 /**
  * Do not call putenv() with auto var
  */
 bool POS34_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "putenv")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "putenv")))
+		return false;
 
 	// ok, bail iff putenv's arg is a char* (not char[])
-	const SgExpression *arg0 = getFnArg( isSgFunctionRefExp( node), 0);
+	const SgExpression *arg0 = getFnArg(fnRef, 0);
 	assert( arg0 != NULL);
 	/**
 	 * \todo We only know how to deal with arrays for now
@@ -139,14 +143,15 @@ bool POS34_C( const SgNode *node ) {
  * Avoid race conditions while checking for the existence of a symbolic link
  */
 bool POS35_C( const SgNode *node ) {
-	bool need_fileno = false;
-	if (isCallOfFunctionNamed(node, "fopen"))
-		need_fileno = true;
-	else if (!isCallOfFunctionNamed(node, "open"))
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
 		return false;
 
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	assert(fnRef);
+	bool need_fileno = false;
+	if (isCallOfFunctionNamed(fnRef, "fopen"))
+		need_fileno = true;
+	else if (!isCallOfFunctionNamed(fnRef, "open"))
+		return false;
 
 	const SgExpression *fnExp = removeImplicitPromotions(getFnArg(fnRef,0));
 	assert(fnExp);
@@ -233,16 +238,16 @@ bool POS35_C( const SgNode *node ) {
  * statement, and see if it contains a call to setuid()
  */
 bool POS36_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "setgid"))
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "setgid")))
 		return false;
 
-	const SgStatement *prevStat = findInBlockByOffset(node, -1);
+	const SgStatement *prevStat = findInBlockByOffset(fnRef, -1);
 	if (!prevStat)
 		return false;
 
 	FOREACH_SUBNODE(prevStat, nodes, i, V_SgFunctionRefExp) {
-		assert(*i);
-		if (isCallOfFunctionNamed(*i, "setuid")) {
+		if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "setuid")) {
 			print_error(node, "POS36-C", "Observe correct revocation order while relinquishing privileges");
 			return true;
 		}

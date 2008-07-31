@@ -145,19 +145,20 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
  * Call only async-safe functions in a signal handler
  */
 bool SIG30_C( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "signal")) return false;
-  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-  assert(sig_fn);
-  const SgExpression* ref = getFnArg(sig_fn, 1);
-  if (!ref)
-	return false;
-  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
-  if (handler == NULL) return false; // no signal handler
-  const SgNode* bad_node = non_async_fn( handler);
-  if (bad_node == NULL)
-    return false;
-  print_error( bad_node, "SIG30-C", "Call only asynchronous-safe functions within signal handlers");
-  return true;
+	const SgFunctionRefExp* fnRef = isSgFunctionRefExp( node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "signal")))
+		return false;
+	const SgExpression* ref = getFnArg(fnRef, 1);
+	if (!ref)
+		return false;
+	const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+	if (handler == NULL)
+		return false; // no signal handler
+	const SgNode* bad_node = non_async_fn( handler);
+	if (bad_node == NULL)
+		return false;
+	print_error( bad_node, "SIG30-C", "Call only asynchronous-safe functions within signal handlers");
+	return true;
 }
 
 /**
@@ -167,10 +168,10 @@ bool SIG30_C( const SgNode *node ) {
  * local or is static volatile sig_atomic_t
  */
 bool SIG31_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "signal"))
-		return false;
 	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-	assert(sig_fn != NULL);
+	if (!(sig_fn && isCallOfFunctionNamed(sig_fn, "signal")))
+		return false;
+
 	const SgFunctionRefExp* handler = isSgFunctionRefExp(getFnArg(sig_fn,1));
 	if (handler == NULL)
 		return false; // no signal handler
@@ -227,22 +228,22 @@ bool SIG31_C( const SgNode *node ) {
  * Do not call longjmp() from within a signal handler
  */
 bool SIG32_C( const SgNode *node ) {
-  if (!isCallOfFunctionNamed( node, "signal")) return false;
-  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-  assert(sig_fn != NULL);
-  const SgExpression* ref = getFnArg( sig_fn, 1);
-  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
-  if (handler == NULL) return false; // no signal handler
-  const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+	if (!(sig_fn && isCallOfFunctionNamed(sig_fn, "signal")))
+		return false;
+	const SgExpression* ref = getFnArg( sig_fn, 1);
+	const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+	if (handler == NULL)
+		return false; // no signal handler
+	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
 
-  Rose_STL_Container<SgNode *> nodes
-    = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>( def), V_SgFunctionRefExp );
-  for (Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i )
-    if (isCallOfFunctionNamed( *i, "longjmp")) {
-      print_error( *i, "SIG32-C", "Do not call longjmp() from within a signal handler");
-      return true;
-    }
-  return false;
+	FOREACH_SUBNODE(def,nodes, i, V_SgFunctionRefExp ) {
+		if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "longjmp")) {
+			print_error( *i, "SIG32-C", "Do not call longjmp() from within a signal handler");
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -250,7 +251,7 @@ bool SIG32_C( const SgNode *node ) {
  */
 bool SIG33_C( const SgNode *node ) {
 	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
-	if (!isCallOfFunctionNamed(sigRef, "signal"))
+	if (!(sigRef && isCallOfFunctionNamed(sigRef, "signal")))
 		return false;
 
 	/**
@@ -273,7 +274,7 @@ bool SIG33_C( const SgNode *node ) {
 	 */
 	bool raise = false;
 	FOREACH_SUBNODE(fnDecl, nodes1, i, V_SgFunctionRefExp) {
-		if (isCallOfFunctionNamed(*i, "raise"))
+		if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "raise"))
 			raise = true;
 	}
 	if (!raise)
@@ -303,11 +304,9 @@ bool SIG33_C( const SgNode *node ) {
  * Do not call signal() from within interruptible signal handlers
  */
 bool SIG34_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "signal"))
-		return false;
-
 	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
-	assert(sigRef);
+	if (!(sigRef && isCallOfFunctionNamed(sigRef, "signal")))
+		return false;
 
 	const SgFunctionCallExp *sigCall = isSgFunctionCallExp(sigRef->get_parent());
 	if (!sigCall)

@@ -142,10 +142,13 @@ bool INT05_C( const SgNode *node ) {
  * \todo catch sscanf conversions
  */
 bool INT06_C( const SgNode *node ) {
-	if(isCallOfFunctionNamed(node,"atoi")
-			|| isCallOfFunctionNamed(node,"atol")
-			|| isCallOfFunctionNamed(node,"atoll")
-			|| isCallOfFunctionNamed(node,"atoq")) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if(isCallOfFunctionNamed(fnRef,"atoi")
+			|| isCallOfFunctionNamed(fnRef,"atol")
+			|| isCallOfFunctionNamed(fnRef,"atoll")
+			|| isCallOfFunctionNamed(fnRef,"atoq")) {
 		print_error(node,"INT01-C", "Use strtol() or a related function to convert a string token to an integer", true);
 		return true;
 	}

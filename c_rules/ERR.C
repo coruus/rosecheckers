@@ -30,9 +30,7 @@
  */
 bool ERR06_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!node)
-		return false;
-	if (!isCallOfFunctionNamed(fnRef, "abort"))
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "abort")))
 		return false;
 
 	std::set<const SgInitializedName *> fds;

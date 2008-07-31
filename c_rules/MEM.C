@@ -28,11 +28,13 @@
  * Store a new value in pointers immediately after free()
  */
 bool MEM01_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "free")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
+		return false;
 	//	bool violation = false;
 
 	// Figure out which variable is being freed
-	const SgExpression *argExp = getFnArg(isSgFunctionRefExp(node), 0);
+	const SgExpression *argExp = getFnArg(fnRef, 0);
 	assert(argExp);
 	const SgVarRefExp *argVar = isSgVarRefExp(argExp);
 	if (!argVar)
@@ -99,7 +101,10 @@ bool MEM04_C( const SgNode *node ) {
 	if (!allocArg)
 		return false;
 
-	const SgInitializedName *var = getRefDecl(isSgVarRefExp(allocArg));
+	const SgVarRefExp *varRef = isSgVarRefExp(allocArg);
+	if (!varRef)
+		return false;
+	const SgInitializedName *var = getRefDecl(varRef);
 	const SgValueExp *val = isSgValueExp(allocArg);
 	if (var) {
 		const SgFunctionDefinition *fn = isSgFunctionDefinition((findParentNodeOfType(node,V_SgFunctionDefinition).first));
@@ -149,10 +154,9 @@ bool MEM04_C( const SgNode *node ) {
  * a size_t
  */
 bool MEM07_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "calloc"))
-		return false;
 	const SgFunctionRefExp* fnRef = isSgFunctionRefExp(node);
-	assert(fnRef);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "calloc")))
+		return false;
 
 	const SgExpression* nmembExp = getFnArg(fnRef, 0);
 	const SgExpression* sizeExp = getFnArg(fnRef, 1);
@@ -202,10 +206,9 @@ bool MEM07_C( const SgNode *node ) {
  * Use realloc() only to resize dynamically allocated arrays
  */
 bool MEM08_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed(node, "realloc"))
-		return false;
-
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "realloc")))
+		return false;
 
 	const SgExpression *arg = removeImplicitPromotions(getFnArg(fnRef, 0));
 	assert(arg);
@@ -228,7 +231,9 @@ bool MEM08_C( const SgNode *node ) {
  * \bug Need to check for conditional return statements
  */
 bool MEM30_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "free")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
+		return false;
 
 	// Get variable as first arg
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
@@ -251,7 +256,10 @@ bool MEM30_C( const SgNode *node ) {
  * If the variable is freed multiple times by a single loop this could throw a false negative.
  */
 bool MEM31_C( const SgNode *node ) {
-	if (!isCallOfFunctionNamed( node, "free")) return false;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
+		return false;
+
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
 		
 	//	const SgVarRefExp* ref2 = NULL;
@@ -259,6 +267,10 @@ bool MEM31_C( const SgNode *node ) {
 	if (ref == NULL) return false;
 	const SgInitializedName* ref_var = getRefDecl( ref);
 	//	const SgInitializedName* ref2_var = NULL;
+
+	/**
+	 * \todo clean up this mess
+	 */
 
 	const SgFunctionDefinition* top = isSgFunctionDefinition( findParentNodeOfType( node, V_SgFunctionDefinition).first);
 	const Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( top), V_SgNode);
@@ -276,9 +288,10 @@ bool MEM31_C( const SgNode *node ) {
 		 */
 		if(isSgReturnStmt(*i))
 			return false;
-		if(isCallOfFunctionNamed(*i, "free")) {
-			const SgVarRefExp* ref2 = isSgVarRefExp( getFnArg( isSgFunctionRefExp( *i), 0));
-			const SgInitializedName* ref2_var = getRefDecl( ref2);
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		if(iFn && isCallOfFunctionNamed(iFn, "free")) {
+			const SgVarRefExp* ref2 = isSgVarRefExp(getFnArg(iFn, 0));
+			const SgInitializedName* ref2_var = getRefDecl(ref2);
 
 			if (ref_var == ref2_var) {
 				print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
