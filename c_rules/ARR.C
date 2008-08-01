@@ -95,6 +95,65 @@ bool ARR02_C( const SgNode *node ) {
 }
 
 /**
+ * Guarantee that array indices are within the valid range 
+ *
+ * \note Without tainting, the only thing we can really do is ensure that if a
+ * value is already getting checked and is signed, that it's also being
+ * checked against 0
+ */
+bool ARR30_C( const SgNode *node ) {
+	const SgPntrArrRefExp *deref = isSgPntrArrRefExp(node);
+	if (!deref)
+		return false;
+
+	const SgVarRefExp *varRef = isSgVarRefExp(removeCasts(deref->get_rhs_operand()));
+	if (!varRef)
+		return false;
+	if (varRef->get_type()->stripTypedefsAndModifiers()->isUnsignedType())
+		return false;
+	const SgInitializedName *var = getRefDecl(varRef);
+	assert(var);
+
+	const SgStatement *prevSt = findInBlockByOffset(varRef, -1);
+	if (!prevSt || isSgForStatement(prevSt))
+		return false;
+
+	if (isSgIfStmt(prevSt)) {
+		prevSt = isSgIfStmt(prevSt)->get_conditional();
+	} else if (isSgWhileStmt(prevSt)) {
+		prevSt = isSgWhileStmt(prevSt)->get_condition();
+	}
+
+	bool check = false;
+	FOREACH_SUBNODE(prevSt, nodes, i, V_SgBinaryOp) {
+		const SgBinaryOp *op = isAnyComparisonOp(*i);
+		if (!op)
+			continue;
+		const SgExpression *lhs = removeCasts(op->get_lhs_operand());
+		const SgExpression *rhs = removeCasts(op->get_rhs_operand());
+		assert(lhs && rhs);
+		const SgVarRefExp *lhsVar = isSgVarRefExp(lhs);
+		const SgVarRefExp *rhsVar = isSgVarRefExp(rhs);
+		if (lhsVar && (getRefDecl(lhsVar) == var)) {
+			if (isZeroVal(rhs))
+				return false;
+			check = true;
+		} else if (rhsVar && (getRefDecl(rhsVar) == var)) {
+			if (isZeroVal(lhs))
+				return false;
+			check = true;
+		}
+	}
+
+	if (check) {
+		print_error(node, "ARR30-C", "Guarantee that array indices are within the valid range");
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Guarantee that copies are made into storage of sufficient size
  *
  * We make sure that the length argument to memcpy is at most the size
@@ -225,6 +284,7 @@ bool ARR(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_C(node);
   violation |= ARR02_C(node);
+  violation |= ARR30_C(node);
   violation |= ARR33_C(node);
   violation |= ARR34_C(node);
   violation |= ARR37_C(node);

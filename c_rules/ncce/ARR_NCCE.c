@@ -71,7 +71,7 @@ void ARR02(void) {
 
 int *table2 = NULL;
 
-int ARR30_NCCE_insert_in_table(size_t pos, int value){
+int ARR30_NCCE_insert_in_table(int pos, int value){
 enum { TABLESIZE = 100 };
   if (!table2) {
     table2 = (int *)malloc(sizeof(int) * TABLESIZE);
