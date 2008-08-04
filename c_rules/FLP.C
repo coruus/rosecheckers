@@ -105,9 +105,13 @@ bool FLP03_C( const SgNode *node ) {
 		const SgType *lhsT = cast->get_type();
 		const SgType *rhsT = cast->get_operand()->get_type();
 		/**
-		 * \todo add LongDouble->Double && LongDouble->Float
+		 * Bail if we're not dealing with floating point, or if the types are
+		 * compatible
 		 */
-		if (!(isSgTypeDouble(lhsT) && isSgTypeFloat(rhsT)))
+		if (!lhsT->isFloatType() || !rhsT->isFloatType())
+			return false;
+		if (!((isSgTypeDouble(lhsT) && isSgTypeFloat(rhsT))
+			||(isSgTypeLongDouble(rhsT) && !isSgTypeLongDouble(lhsT))))
 			return false;
 	} else {
 		return false;
@@ -233,7 +237,7 @@ bool FLP33_C( const SgNode *node ) {
 
 	if(binOp) {
 		/**
-		 * \todo Does this rule even make sense for binory ops?
+		 * \todo Does this rule even make sense for binary ops?
 		 */
 		/**
 		 * This should allow macros like isnan

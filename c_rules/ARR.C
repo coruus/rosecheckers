@@ -87,7 +87,7 @@ bool ARR02_C( const SgNode *node ) {
 			continue;
 		if (!varType->get_index()) {
 			print_error(*i, "ARR02-C", "Explicitly specify array dimensions, even if implicitly defined by an initializer", true);
-		return true;
+			return true;
 		}
 	}
 
@@ -111,6 +111,13 @@ bool ARR30_C( const SgNode *node ) {
 		return false;
 	if (varRef->get_type()->stripTypedefsAndModifiers()->isUnsignedType())
 		return false;
+
+	/**
+	 * \note Technically we should throw a violation here since there's no
+	 * excuse to have signed array indices, but that would cause too many
+	 * false positives
+	 */
+
 	const SgInitializedName *var = getRefDecl(varRef);
 	assert(var);
 
@@ -215,14 +222,15 @@ bool ARR37_C( const SgNode *node ) {
 	if (!parent)
 		return false;
 
-	/* See if we have a case of pointer arithmetic */
 	/**
-	 * \todo XXX consider checking +=/-=
+	 *  See if we have a case of pointer arithmetic
 	 */
 	if (!(isSgPlusPlusOp(parent)
 	||  isSgMinusMinusOp(parent)
 	||  isSgAddOp(parent)
-	||  isSgSubtractOp(parent)))
+	||  isSgSubtractOp(parent)
+	||  isSgPlusAssignOp(parent)
+	||  isSgMinusAssignOp(parent)))
 		return false;
 
 	/* Search forward to find the varRef */

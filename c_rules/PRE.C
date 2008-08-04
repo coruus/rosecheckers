@@ -28,7 +28,7 @@
 /**
  * Do not reuse a standard header file name
  *
- * \todo BROKEN, NEEDS ROSE SUPPPORT
+ * \bug BROKEN, NEEDS ROSE SUPPPORT
  */
 //bool PRE04_C( const SgNode *node ) {
 //	return false;

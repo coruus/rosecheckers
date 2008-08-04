@@ -52,8 +52,6 @@ bool MSC01_C( const SgNode *node ) {
  * \note Because of a problem with the expansion of isnan/isless/etc, this
  * rule is disabled, ROSE catches most of this on it's own, so this should not
  * be a problem
- *
- * \todo Catch if statements with empty BasicBlocks
  */
 bool MSC03_C( const SgNode *node ) {
 	const SgExprStatement *exprStmt = isSgExprStatement(node);

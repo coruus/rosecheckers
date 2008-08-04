@@ -104,8 +104,6 @@ bool DCL00_C( const SgNode *node ) {
 		 * If the variable is written to or it's address is taken, we can no
 		 * longer be sure it should be const, if it's a struct and gets
 		 * dereferenced, who knows what's getting written there :/
-		 *
-		 * \todo Is this address thing correct?
 		 */
 		if (varWrittenTo(iVar)
 		||  isSgArrowExp(parent)

@@ -135,7 +135,7 @@ bool INT05_C( const SgNode *node ) {
 /**
  * Use strtol() or a related function to convert a string token to an integer
  *
- * \todo catch sscanf conversions
+ * \note sscanf conversions are caught by INT05_C
  */
 bool INT06_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);

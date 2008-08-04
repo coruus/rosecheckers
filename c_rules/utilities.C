@@ -41,9 +41,6 @@ const SgNode *findParentNodeOfType(const SgNode *node, VariantT t) {
 	return parent;
 }
 
-/**
- * \todo inline this sucker
- */
 const SgExpression *removeImplicitPromotions( const SgExpression *e ) {
 	if( const SgCastExp *cast = isSgCastExp( e ) ) {
 		if( isCompilerGeneratedNode( cast ) ) {
@@ -135,6 +132,8 @@ void print_error(const SgNode* node, const char* rule, const char* desc, bool wa
  *
  * \bug This doesn't actually check for NULL, just the existence of a
  * comparison
+ *
+ * \todo merge this with valueVerified
  */
 bool isTestForNullOp(const SgNode* node) {
   if (node == NULL) return false;
@@ -285,8 +284,6 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 /**
  * Strips casts, preferering to take the originalExpressionTree branch when
  * possible
- *
- * \todo inline this sucker
  */
 const SgExpression* removeCasts(const SgExpression * expr) {
 	const SgCastExp * cast;
@@ -347,8 +344,6 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
  *
  * \note As written, these tests catch template declarations only if
  * instantiated.
- *
- * \todo inline this sucker
  */
 const SgExpression* getAllocFunctionExpr(const SgFunctionRefExp *node) {
 	if (!node) return NULL;
@@ -492,8 +487,6 @@ SgValueExp* computeValueTree(SgValueExp* node) {
  * If node is a function reference to scanf, or any of its derivitaves,
  * returns the argument number of the format string (eg 0 for scanf, 1 for fscanf, etc)
  * Otherwise, returns -1
- *
- * \todo inline this sucker
  */
 int getScanfFormatString(const SgFunctionRefExp *node) {
 	if (!node) return -1;

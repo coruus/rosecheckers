@@ -165,10 +165,19 @@ bool EXP06_C( const SgNode *node ) {
 /**
  * Ensure pointer arithmetic is used correctly
  *
- * \todo NOT DONE
+ * \todo Finish writing this
  */
 bool EXP08_C( const SgNode *node ) {
 	// get inside of a *alloc, [], or pointer arith
+	const SgExpression *pntrMath = getAllocFunctionExpr(isSgFunctionRefExp(node));
+	if (!pntrMath) {
+		const SgBinaryOp *op = isSgPntrArrRefExp(node);
+		if (!op)
+			op = isSgPntrArrRefExp(node);
+		if (op)
+			pntrMath = op->get_rhs_operand();
+	}
+
 	// Evaluate the number, make sure it has type byte 
 	return false;
 }
@@ -247,30 +256,27 @@ bool EXP11_C( const SgNode *node ) {
 	if (!(isSgPointerType(lhsSgType->stripTypedefsAndModifiers()) && cast))
 		return false;
 
+	/**
+	 * \todo Find a better way to do this w/o unparseToString()
+	 */
 	const std::string lhsBase = stripModifiers(lhsSgType->findBaseType())->unparseToString();
 
 	const SgExpression* castExpr = cast->get_operand();
 
-	/**
-	 * \todo XXX all this hackery would be a lot simpler if we could just
-	 * check for void *
-	 */
+	/// Exception b/c NULL is an int *
+	if (isZeroVal(castExpr))
+		return false;
 
 	/// Exception b/c MEM02_C
-	const SgFunctionRefExp *fnRef = isSgFunctionCallExp(castExpr) ? isSgFunctionRefExp(isSgFunctionCallExp(castExpr)->get_function()) : NULL;
-	const bool castIsAlloc = fnRef
-		&& (isCallOfFunctionNamed(fnRef, "malloc")
-		|| isCallOfFunctionNamed(fnRef, "calloc")
-		|| isCallOfFunctionNamed(fnRef, "realloc"));
-
-	/// Exception b/c NULL is an int *
-	const bool castIsZero = isZeroVal(castExpr);
-	std::string castBase = stripModifiers(castExpr->get_type()->findBaseType())->unparseToString();
+	if (isTypeVoidStar(castExpr->get_type()))
+		return false;
 
 	/// Exception b/c strings are not pointers but can be assigned to them
+	std::string castBase = stripModifiers(castExpr->get_type()->findBaseType())->unparseToString();
 	if(castBase == "char*") castBase = "char";
 
-	if(!castIsZero && !castIsAlloc && (lhsBase != castBase)) {
+
+	if(lhsBase != castBase) {
 		print_error(cast, "EXP11-C", "Do not apply operators expecting one type to data of an incompatible type", true);
 		return true;
 	}

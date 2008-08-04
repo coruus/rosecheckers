@@ -40,11 +40,8 @@ bool ENV00_C( const SgNode *node ) {
 	if (!var)
 		return false;
 	bool getenv_found = false;
+	bool write = false;
 	bool after = false;
-
-	/**
-	 * \todo this is kind of a mess, clean it up
-	 */
 
 	// traverse down, searching for copy functions (break)
 	FOREACH_SUBNODE(findParentOfType(fnRef, SgFunctionDefinition), nodes, i, V_SgExpression) {
@@ -65,15 +62,17 @@ bool ENV00_C( const SgNode *node ) {
 		}
 		if (!getenv_found)
 			continue;
+
 		// search for write (break)
 		const SgVarRefExp *iVar = isSgVarRefExp(expr);
 		if (!iVar || (getRefDecl(iVar) != var))
 			continue;
+
 		const SgFunctionCallExp *iFnCall = findParentOfType(iVar, SgFunctionCallExp);
 		if (!iFnCall) {
 			if (varWrittenTo(iVar))
 				return false;
-			// search for read
+			write = true;
 			break;
 		}
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(iFnCall->get_function());
@@ -82,10 +81,12 @@ bool ENV00_C( const SgNode *node ) {
 		  ||isCallOfFunctionNamed(iFn, "memset")
 		  ||isCallOfFunctionNamed(iFn, "strdup"))
 			return false;
+		write = true;
 		break;
 	}
+
 	// if read & getenv then error
-	if (getenv_found) {
+	if (getenv_found && write) {
 		print_error(node, "ENV00-C", "Do not store the pointer to the string returned by getenv()", true);
 		return true;
 	}
