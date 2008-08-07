@@ -53,6 +53,7 @@ bool DCL00_C( const SgNode *node ) {
 	|| isConstType(varType->dereference()->dereference())
 	|| isSgFunctionType(varType)
 	|| isSgClassType(varType)
+	|| findParentOfType(varName, SgCtorInitializerList)
 	|| findParentOfType(varName, SgEnumDeclaration)
 	|| findParentOfType(varName, SgClassDeclaration))
 		return false;
@@ -215,6 +216,8 @@ bool DCL02_C( const SgNode *node ) {
 			assert(var);
 			if (isCompilerGeneratedNode(var)
 			|| !isSgDeclarationStatement(var->get_parent())
+			|| findParentOfType(var, SgCtorInitializerList)
+			|| findParentOfType(var, SgClassDeclaration) // Might be too strong
 			|| var->get_name().getString().empty()
 			|| (var->get_name().getString().substr(0,2) == "__"))
 				continue;

@@ -570,14 +570,15 @@ void NextVisitor::traverse_next(const SgNode* node) {
 void NextVisitor::preOrderVisit(SgNode *node) {
 	if (node == skip_) skip_ = NULL;
 	else if (skip_ != NULL) return;
-			
+
 	const SgForStatement *forLoop;
 	if (after_) {
-		// TODO: for loops visited in AST order, not execution order
-		// TODO: handle break, continue, return, goto
+		/// \todo for loops visited in AST order, not execution order
+		/// \todo handle break, continue, return, goto
 		visit_next( node);
-	} else if (node == sentinel_) after_ = true;
-	else if (!after_) {
+	} else if (node == sentinel_) {
+		after_ = true;
+	} else if (!after_) {
 		if ((forLoop = isSgForStatement( node)) != NULL) {
 			// for loops must be treated specially, since the statements
 			// are not executed in the AST order. 
