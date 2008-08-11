@@ -100,7 +100,8 @@ bool MSC03_C( const SgNode *node ) {
 		|| isAnyAssignOp(expr)
 		|| isSgPointerDerefExp(expr)
 		|| isSgPlusPlusOp(expr)
-		|| isSgMinusMinusOp(expr))
+		|| isSgMinusMinusOp(expr)
+		|| isSgDeleteExp(expr))
 			return false;
 	}
 

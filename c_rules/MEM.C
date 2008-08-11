@@ -307,7 +307,12 @@ bool MEM33_C( const SgNode *node ) {
 		return false;
 
 	const SgVariableDeclaration* varDecl = isSgVariableDeclaration(def->get_members().back());
-	assert(varDecl);
+	/**
+	 * Disabling assertion due to C++ code
+	 */
+	if (!varDecl)
+		return false;
+//	assert(varDecl);
 
 	if (varDecl->get_variables().size() != 1)
 		return false;

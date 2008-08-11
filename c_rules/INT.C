@@ -321,7 +321,12 @@ bool INT12_C( const SgNode *node ) {
 		return false;
 
 	const SgVariableDefinition *varDef = isSgVariableDefinition(varName->get_definition());
-	assert(varDef);
+	/**
+	 * Disabling assertion due to C++ code
+	 */
+	if (!varDef)
+		return false;
+//	assert(varDef);
 
 	if (!varDef->get_bitfield())
 		return false;

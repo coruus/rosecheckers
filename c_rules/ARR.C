@@ -178,6 +178,9 @@ bool ARR33_C( const SgNode *node ) {
 	const SgExpression *lenExp = getFnArg(fnRef,2);
 	assert(dstExp && lenExp);
 
+	if(isSgAddressOfOp(dstExp))
+		dstExp = isSgAddressOfOp(dstExp)->get_operand();
+
 	const SgArrayType *arrT = isSgArrayType(dstExp->get_type());
 	if (!arrT)
 		return false;

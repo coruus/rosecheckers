@@ -391,7 +391,12 @@ bool FIO39_C( const SgNode *node) {
 		return false;
 
 	const SgVarRefExp* fd = isSgVarRefExp(getFnArg(fnRef, argNum));
-	assert(fd);
+	/**
+	 * Disabling assertion due to C++ code
+	 */
+	if (!fd)
+		return false;
+//	assert(fd);
 
 	bool before = true;
 
