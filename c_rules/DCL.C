@@ -157,7 +157,7 @@ bool DCL01_C( const SgNode *node ) {
 	while(!isSgGlobal(varScope)) {
 		varScope = varScope->get_scope();
 		if(varScope->symbol_exists(varName)) {
-			print_error(node, "DCL01-C", "Do not reuse variable names in subscopes", true);
+			print_error(node, "DCL01-C", ("Do not reuse variable names in subscopes: " + varName.getString()).c_str(), true);
 			return true;
 		}
 	}

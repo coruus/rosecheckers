@@ -12,7 +12,7 @@ DCL_NCCE.c:197: error: DCL31-C: Guarantee that mutually visible identifiers are 
 DCL_NCCE.c:55: warning: DCL00-C: Const-qualify immutable objects: pi
 DCL_NCCE.c:59: warning: FLP03-C: Detect and handle floating point errors
 DCL_NCCE.c:69: warning: DCL02-C: Use visually distinct identifiers: DCL01_msg
-DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes
+DCL_NCCE.c:69: warning: DCL01-C: Do not reuse variable names in subscopes: DCL01_msg
 DCL_NCCE.c:103: warning: DCL05-C: Use typedefs to improve code readability
 ENV_NCCE.c:49: warning: ENV00-C: Do not store the pointer to the string returned by getenv()
 ENV_NCCE.c:69: error: STR31-C: String copy destination must contain sufficient storage
@@ -28,7 +28,7 @@ ENV_NCCE.c:153: error: ENV32-C: No atexit handler should terminate in any way ot
 ENV_NCCE.c:178: error: ENV32-C: No atexit handler should terminate in any way other than by returning
 ERR_NCCE.c:56: error: FIO42-C: Ensure files are properly closed when they are no longer needed
 ERR_NCCE.c:62: warning: ERR06-C: Understand the termination behavior of assert() and abort()
-ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+ERR_NCCE.c:116: error: SIG30-C: Call only asynchronous-safe functions within signal handlers: perror
 "./ncce/EXP_NCCE.c", line 283: warning: 
           a value of type "int **" cannot be assigned to an entity of type
           "volatile int **"
@@ -55,21 +55,21 @@ EXP_NCCE.c:205: warning: EXP09-C: malloc called using something other than sizeo
 EXP_NCCE.c:211: warning: EXP09-C: malloc called using something other than sizeof()
 EXP_NCCE.c:242: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 EXP_NCCE.c:243: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:254: warning: EXP12-C: Do not ignore values returned by functions:puts
+EXP_NCCE.c:254: warning: EXP12-C: Do not ignore values returned by functions: puts
 EXP_NCCE.c:261: error: EXP30-C: Do not depend on order of evaluation between sequence points
 EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:322: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:347: error: EXP36-C: Do not convert pointers into more strictly aligned pointer types
 EXP_NCCE.c:364: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names for identification
-FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions:fseek
+FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions: fseek
 FIO_NCCE.c:236: error: EXP37-C: Call functions with the arguments intended by the API
 FIO_NCCE.c:265: warning: FIO07-C: Prefer fseek() to rewind()
 FIO_NCCE.c:286: warning: FIO08-C: Take care when calling remove() on an open file
 FIO_NCCE.c:333: warning: FIO12-C: Prefer setvbuf() to setbuf()
 FIO_NCCE.c:352: warning: FIO13-C: Never push back anything other than one read character
 FIO_NCCE.c:432: error: FIO30-C: Exclude user input from format strings
-FIO_NCCE.c:495: warning: EXP12-C: Do not ignore values returned by functions:fgets
+FIO_NCCE.c:495: warning: EXP12-C: Do not ignore values returned by functions: fgets
 FIO_NCCE.c:506: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
 FIO_NCCE.c:506: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO_NCCE.c:556: error: FIO38-C: Do not use a copy of a FILE object for input and output
@@ -157,11 +157,11 @@ POS_NCCE.c:70: error: POS34-C: Do not call putenv() with an automatic variable
 POS_NCCE.c:93: error: POS35-C: Avoid race conditions while checking for the existence of a symbolic link
 POS_NCCE.c:113: error: POS36-C: Observe correct revocation order while relinquishing privileges
 SIG_NCCE.c:74: error: SIG34-C: Do not call signal() from within interruptible signal handlers
-SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:96: error: SIG30-C: Call only asynchronous-safe functions within signal handlers: free
 SIG_NCCE.c:96: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:123: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:123: error: SIG30-C: Call only asynchronous-safe functions within signal handlers: strcpy
 SIG_NCCE.c:123: error: SIG31-C: Do not access or modify shared objects in a signal handler
-SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers
+SIG_NCCE.c:147: error: SIG30-C: Call only asynchronous-safe functions within signal handlers: longjmp
 SIG_NCCE.c:144: error: SIG31-C: Do not access or modify shared objects in a signal handler
 SIG_NCCE.c:147: error: SIG32-C: Do not call longjmp() from within a signal handler
 SIG_NCCE.c:211: error: SIG33-C: Do not recursively invoke the raise() function

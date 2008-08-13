@@ -107,7 +107,7 @@ vector<SgName> Async_Stack;
  * Returns node of a non-async fn in the definition of handler or NULL if
  * none. Descends recursively through function calls.
  */
-const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
+const SgFunctionRefExp* non_async_fn(const SgFunctionRefExp* handler) {
 	const SgName name = handler->get_symbol()->get_name();
 
 	if (Async_Fns.find( name) != Async_Fns.end())
@@ -123,7 +123,7 @@ const SgNode* non_async_fn(const SgFunctionRefExp* handler) {
 
 	/// Walk through definition ensuring that all function calls are async-safe
 	Async_Stack.push_back( name);
-	const SgNode* result = NULL;
+	const SgFunctionRefExp* result = NULL;
 	FOREACH_SUBNODE( def, nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
 		assert( fn_ref != NULL);
@@ -154,10 +154,10 @@ bool SIG30_C( const SgNode *node ) {
 	const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
 	if (handler == NULL)
 		return false; // no signal handler
-	const SgNode* bad_node = non_async_fn( handler);
+	const SgFunctionRefExp* bad_node = non_async_fn( handler);
 	if (bad_node == NULL)
 		return false;
-	print_error( bad_node, "SIG30-C", "Call only asynchronous-safe functions within signal handlers");
+	print_error( bad_node, "SIG30-C", ("Call only asynchronous-safe functions within signal handlers: " + bad_node->get_symbol()->get_name().getString()).c_str());
 	return true;
 }
 
