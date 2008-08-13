@@ -69,8 +69,8 @@ bool ERR01_A( const SgNode *node ) { // Prefer special-purpose types for excepti
 
 bool doTryCatch( const SgTryStmt *trystmt ) {
 	bool result = false;
-	const SgBasicBlock *trybody = trystmt->get_body();
-	const SgStatementPtrList &stats = trybody->get_statements();
+	//	const SgStatement *trybody = trystmt->get_body();
+	//	const SgStatementPtrList &stats = trybody->get_statements();
 	const SgCatchStatementSeq *catchseq = trystmt->get_catch_statement_seq_root();
 	const SgStatementPtrList &clauses = catchseq->get_catch_statement_seq();
 	size_t clauseNumber = 0;
@@ -83,7 +83,7 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
 			const SgInitializedName *arg = vars.front();
 			Type argType( arg->get_type() );
 			const std::string argName = arg->get_name().getString();
-			const SgBasicBlock *body = clause->get_body();
+			// const SgBasicBlock *body = clause->get_body();
 			if( argType.isEllipsis() ) {
 				if( ellipsisClause ) {
 					// Note:  The compiler seems to catch this one, typically.
