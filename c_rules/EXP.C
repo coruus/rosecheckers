@@ -300,6 +300,8 @@ bool EXP12_C( const SgNode *node ) {
 	|| isCallOfFunctionNamed(ref, "memmove")
 	|| isCallOfFunctionNamed(ref, "strcpy")
 	|| isCallOfFunctionNamed(ref, "strncpy")
+	|| isCallOfFunctionNamed(ref, "pthread_mutex_lock")
+	|| isCallOfFunctionNamed(ref, "pthread_mutex_unlock")
 	|| (getPrintfFormatString(ref) != -1))
 		return false;
 	const SgFunctionCallExp *fn = isSgFunctionCallExp(ref->get_parent());
