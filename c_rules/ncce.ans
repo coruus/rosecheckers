@@ -55,21 +55,21 @@ EXP_NCCE.c:205: warning: EXP09-C: malloc called using something other than sizeo
 EXP_NCCE.c:211: warning: EXP09-C: malloc called using something other than sizeof()
 EXP_NCCE.c:242: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 EXP_NCCE.c:243: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
-EXP_NCCE.c:254: warning: EXP12-C: Do not ignore values returned by functions
+EXP_NCCE.c:254: warning: EXP12-C: Do not ignore values returned by functions:puts
 EXP_NCCE.c:261: error: EXP30-C: Do not depend on order of evaluation between sequence points
 EXP_NCCE.c:320: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:322: error: EXP34-C: Ensure pointer is valid before dereferencing it
 EXP_NCCE.c:347: error: EXP36-C: Do not convert pointers into more strictly aligned pointer types
 EXP_NCCE.c:364: warning: EXP11-C: Do not apply operators expecting one type to data of an incompatible type
 FIO_NCCE.c:109: warning: FIO01-C: Be careful using functions that use file names for identification
-FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:156: warning: EXP12-C: Do not ignore values returned by functions:fseek
 FIO_NCCE.c:236: error: EXP37-C: Call functions with the arguments intended by the API
 FIO_NCCE.c:265: warning: FIO07-C: Prefer fseek() to rewind()
 FIO_NCCE.c:286: warning: FIO08-C: Take care when calling remove() on an open file
 FIO_NCCE.c:333: warning: FIO12-C: Prefer setvbuf() to setbuf()
 FIO_NCCE.c:352: warning: FIO13-C: Never push back anything other than one read character
 FIO_NCCE.c:432: error: FIO30-C: Exclude user input from format strings
-FIO_NCCE.c:495: warning: EXP12-C: Do not ignore values returned by functions
+FIO_NCCE.c:495: warning: EXP12-C: Do not ignore values returned by functions:fgets
 FIO_NCCE.c:506: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
 FIO_NCCE.c:506: error: FIO34-C: Use int to capture the return value of character I/O functions
 FIO_NCCE.c:556: error: FIO38-C: Do not use a copy of a FILE object for input and output
