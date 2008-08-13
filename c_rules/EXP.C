@@ -321,7 +321,8 @@ bool EXP12_C( const SgNode *node ) {
 			if (isTypeVoid(isSgCastExp(parent)->get_type()))
 				return false;
 		} else if (isSgExprStatement(parent)) {
-			print_error(node, "EXP12-C", "Do not ignore values returned by functions", true);
+			std::string msg = "Do not ignore values returned by functions:" + ref->unparseToString();
+			print_error(node, "EXP12-C", msg.c_str(), true);
 			return true;
 		} else {
 			return false;

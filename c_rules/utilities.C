@@ -553,6 +553,7 @@ bool varWrittenTo(const SgNode* var) {
 
 void add_dfs_to_stack(Rose_STL_Container< SgNode*>& stack, const SgNode *node) {
 	Rose_STL_Container<SgNode *> list;
+	assert(node);
 	list = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgNode);
 	stack.insert( stack.end(), list.begin(), list.end());
 }

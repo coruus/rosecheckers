@@ -177,6 +177,11 @@ bool SIG31_C( const SgNode *node ) {
 		return false; // no signal handler
 	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
 
+	/**
+	 * Added because of C++ code
+	 */
+	if (!def)
+		return false;
 	FOREACH_SUBNODE(def, nodes, i, V_SgVarRefExp) {
 		const SgVarRefExp* var_ref = isSgVarRefExp(*i);
 		assert( var_ref != NULL);
@@ -237,6 +242,11 @@ bool SIG32_C( const SgNode *node ) {
 		return false; // no signal handler
 	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
 
+	/**
+	 * Added because of C++ code
+	 */
+	if (!def)
+		return false;
 	FOREACH_SUBNODE(def,nodes, i, V_SgFunctionRefExp ) {
 		if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "longjmp")) {
 			print_error( *i, "SIG32-C", "Do not call longjmp() from within a signal handler");
@@ -327,7 +337,11 @@ bool SIG34_C( const SgNode *node ) {
 	assert(handlerDecl);
 
 	const SgFunctionDefinition *handlerDef = handlerDecl->get_definition();
-	assert(handlerDef);
+	/**
+	 * Assertion removed b/c of C++ code
+	 */
+	if(! handlerDef)
+		return false;
 
 	/**
 	 * Because we are looking at a recursive call, we should ignore the case

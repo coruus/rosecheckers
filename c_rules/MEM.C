@@ -366,6 +366,7 @@ bool MEM34_C( const SgNode *node ) {
 			return false;
 	}
 
+	assert(parent);
 	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>(parent), V_SgNode );
 	Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
 	while(fnRef != isSgFunctionRefExp(*i)) {
