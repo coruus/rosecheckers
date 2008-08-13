@@ -222,6 +222,8 @@ bool DCL02_C( const SgNode *node ) {
 	bool violation = false;
 
 	if (isSgGlobal(scope)) {
+		std::set<std::string> externNames;
+
 		/** populate scopeMap */
 		FOREACH_SUBNODE(scope, nodes, i, V_SgInitializedName) {
 			SgInitializedName *var = isSgInitializedName(*i);
@@ -238,6 +240,13 @@ bool DCL02_C( const SgNode *node ) {
 			const SgFunctionDeclaration * fnDecl = findParentOfType(var, SgFunctionDeclaration);
 			if (fnDecl && !fnDecl->get_definition())
 				continue;
+
+			if (isExternVar(var)) {
+				if (externNames.find(var->get_name().getString()) != externNames.end())
+					continue;
+
+				externNames.insert(var->get_name().getString());
+			}
 
 			const SgScopeStatement *varScope = var->get_scope();
 			std::string str (normalize_string(var->get_name().str(), isExternVar(var)));
