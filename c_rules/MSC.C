@@ -37,7 +37,7 @@ bool MSC01_C( const SgNode *node ) {
 	if (!swch)
 		return false;
 
-	const SgStatementPtrList &stats = swch->get_body()->get_statements();
+	const SgStatementPtrList &stats = swch->getStatementList();
 	if ((stats.size() > 0)
 	&& isSgDefaultOptionStmt(stats.back()))
 		return false;
@@ -47,7 +47,7 @@ bool MSC01_C( const SgNode *node ) {
 }
 
 /**
- * Avoid errors of addition 
+ * Avoid errors of addition
  *
  * \note Because of a problem with the expansion of isnan/isless/etc, this
  * rule is disabled, ROSE catches most of this on it's own, so this should not
@@ -110,7 +110,7 @@ bool MSC03_C( const SgNode *node ) {
 }
 
 /**
- * Do not manipulate time_t typed values directly 
+ * Do not manipulate time_t typed values directly
  */
 bool MSC05_C( const SgNode *node ) {
 	if (isAnyBinArithOp(node)
