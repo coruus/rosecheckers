@@ -268,6 +268,9 @@ bool INT11_isPointer(const SgType *type) {
  * Take care when converting from pointer to integer or integer to pointer
  */
 bool INT11_C( const SgNode *node ) {
+	if (isCompilerGeneratedNode(node))
+		return false;
+
 	const SgCastExp *cast = isSgCastExp(node);
 	if (!cast)
 		return false;

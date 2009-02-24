@@ -102,6 +102,9 @@ bool ARR02_C( const SgNode *node ) {
  * checked against 0
  */
 bool ARR30_C( const SgNode *node ) {
+	if (isCompilerGeneratedNode(node))
+		return false;
+
 	const SgPntrArrRefExp *deref = isSgPntrArrRefExp(node);
 	if (!deref)
 		return false;

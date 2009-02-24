@@ -425,6 +425,9 @@ bool EXP30_C( const SgNode *node ) {
  * \see EXP05_C
  */
 bool EXP32_C( const SgNode *node ) {
+	if (isCompilerGeneratedNode(node))
+		return false;
+
 	const SgCastExp * cast = isSgCastExp(node);
 	if(!cast)
 		return false;
