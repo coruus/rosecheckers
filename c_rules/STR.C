@@ -263,14 +263,16 @@ bool STR32_C(const SgNode *node ) {
 			// ... that is the same as dstRef ...
 			const SgVarRefExp *varRef = isSgVarRefExp(arrRef->get_lhs_operand());
 			assert(varRef);
-			if (getRefDecl(varRef) != getRefDecl(dstRef))
+			if (getRefDecl(varRef) != getRefDecl(dstRef)) {
 				break;
+			}
 			// ... and must have an index ...
-			size_t dst_idx;
-			if (!getSizetVal(arrRef->get_rhs_operand(), &dst_idx))
+			intmax_t dst_idx;
+			if (!getIntegerVal(arrRef->get_rhs_operand(), &dst_idx)) {
 				break;
-			// ... that is equal to len - 1
-			if (len > 0 && dst_idx == len - 1) {
+			}
+			// ... that is equal to len (since len will be the array size, not max index)
+			if (len > 0 && dst_idx == len ) {
 				return false;
 			}
 		} while(0);
@@ -332,7 +334,15 @@ bool STR36_C(const SgNode *node) {
 		if (!varInitializer)
 			continue;
 		if (varType->get_index()) {
-			print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal");
+
+		  const SgStringVal *stringVal = isSgStringVal(varInitializer->get_operand());
+		  if(!stringVal)
+		    continue;
+		  
+		  if(!stringVal->get_value().compare(""))
+		    continue;
+		  
+		  print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal");
 		return true;
 		}
 	}

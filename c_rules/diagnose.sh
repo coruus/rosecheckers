@@ -1,2 +1,2 @@
 #!/bin/sh
-libtool --mode=execute /home/svoboda/Desktop/Documents/Work/c_rules/diagnose $* || true
+libtool --mode=execute ~jpincar/repository/trunk/c_rules/diagnose $* || true

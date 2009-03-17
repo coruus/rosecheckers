@@ -39,7 +39,7 @@ ROSE_LIBS = -lrose $(MYSQL_DATABASE_LIBS) $(LIB_QT)
 
 
 # Default make rule to use
-all: pgms tests
+all: pgms
 
 pgms: diagnose 
 diagnose: diagnose.o \
