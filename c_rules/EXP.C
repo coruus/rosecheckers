@@ -315,6 +315,7 @@ bool EXP12_C( const SgNode *node ) {
 	while(1) {
 		parent = parent->get_parent();
 		assert(parent);
+
 		if (isSgCastExp(parent)) {
 			/**
 			 * \bug Due to a bug in ROSE which ignores these casts, this
@@ -323,6 +324,10 @@ bool EXP12_C( const SgNode *node ) {
 			if (isTypeVoid(isSgCastExp(parent)->get_type()))
 				return false;
 		} else if (isSgExprStatement(parent)) {
+		  if (isSgSwitchStatement(parent->get_parent()))
+		    return false;
+
+
 			std::string msg = "Do not ignore values returned by functions: " + ref->unparseToString();
 			print_error(node, "EXP12-C", msg.c_str(), true);
 			return true;

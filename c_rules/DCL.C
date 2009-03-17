@@ -25,7 +25,7 @@
 #include "rose.h"
 #include "utilities.h"
 #include <boost/regex.hpp>
-
+#include <math.h>
 
 /**
  * Const-qualify immutable objects
@@ -299,6 +299,7 @@ bool DCL04_C( const SgNode *node ) {
 
 static unsigned int DCL05_score(const SgType *t) {
 	unsigned int score = 0;
+	float var_points = 0;
 	unsigned int modifiers = 0;
 	const SgType *d = NULL;
 	do {
@@ -323,22 +324,20 @@ static unsigned int DCL05_score(const SgType *t) {
 //			score;
 		/** score all other pointers as one point */
 		if (isSgPointerType(t)) {
-			score++;
+			var_points += 0.5;
 		}
 		/**
 		 * \bug ROSE is missing the const version of derefence()
 		 */
 		d = const_cast<SgType *>(t)->dereference();
 	} while ((t != d) && (t = d));
-	return score + modifiers;
+
+	return score + lrintf(var_points) + modifiers;
 //	return score;
 }
 
 /**
  * Use typedefs to improve code readability
- *
- * \note our algorithm is to count open parens/brackets... if there are more
- * than 2, we flag
  */
 bool DCL05_C( const SgNode *node ) {
 	const SgInitializedName *var = isSgInitializedName(node);
@@ -356,7 +355,7 @@ bool DCL05_C( const SgNode *node ) {
 
 	const SgType *t = var ? var->get_type() : fn->get_type();
 	assert(t);
-	const unsigned int threshold = 5;
+	const unsigned int threshold = 4;
 	unsigned int score = DCL05_score(t);
 	if (score  >= threshold) {
 		print_error(node, "DCL05-C", "Use typedefs to improve code readability", true);

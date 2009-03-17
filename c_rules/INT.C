@@ -156,7 +156,10 @@ bool INT06_C( const SgNode *node ) {
  * Use only explicitly signed or unsigned char type for numeric values
  *
  * \bug (char c = 'a') will trigger a false positive, work around by
- * using (char c; c = 'a')
+ * using (char c; c = 'a') 
+ *
+ * The AST trees for char c = 'a' and char c = '3' are the same... 
+ * Don't know how to solve this issue currently.
  */
 bool INT07_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
