@@ -458,7 +458,12 @@ bool FIO42_C( const SgNode *node ) {
 		return false;
 
 	bool before = true;
-	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgFunctionRefExp) {
+
+	const SgNode *parent = findParentOfType(node, SgFunctionDefinition); 
+	if(parent == NULL) 
+	  return false;
+
+	FOREACH_SUBNODE(parent, nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp * iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 		if (before) {
