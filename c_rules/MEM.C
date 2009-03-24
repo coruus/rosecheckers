@@ -263,7 +263,12 @@ bool MEM31_C( const SgNode *node ) {
 	const SgInitializedName* ref_var = getRefDecl( ref);
 
 	bool before = true;
-	FOREACH_SUBNODE(findParentOfType(node, SgFunctionDefinition), nodes, i, V_SgNode) {
+
+	const SgNode *parent = findParentOfType(node, SgFunctionDefinition);
+	if(parent == NULL)
+	  return false;
+
+	FOREACH_SUBNODE(parent, nodes, i, V_SgNode) {
 		if (before) {
 			if (*i == node)
 				before = false;
@@ -337,6 +342,8 @@ bool MEM33_C( const SgNode *node ) {
 
 /**
  * Only free memory allocated dynamically
+ *
+ * \bug Doesn't correctly ignore members inside struct fn arguments
  */
 bool MEM34_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
@@ -373,29 +380,36 @@ bool MEM34_C( const SgNode *node ) {
 		assert(i != nodes.end());
 		i++;
 	}
+	
 	const SgNode *block = NULL;
 	do {
-		if (block) {
-			if (block == *i)
-				block = NULL;
-			continue;
-		} else if (isSgReturnStmt(*i)) {
-			block = findParentOfType(*i, SgBasicBlock);
-		}
-		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
-		const SgVarRefExp *iVar = isSgVarRefExp(*i);
-		if (iFn) {
+	  if (block) {
+	    if (block == *i) {
+	      block = NULL;
+	    }
+	    continue;
+	  } 
+	  else if (isSgReturnStmt(*i)) {
+	    block = popBlock(*i);
+	  }
+
+	  const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+	  const SgVarRefExp *iVar = isSgVarRefExp(*i);
+		
+	  if (iFn) {
 			if (!(isCallOfFunctionNamed(iFn, "malloc")
 				||isCallOfFunctionNamed(iFn, "calloc")
 				||isCallOfFunctionNamed(iFn, "realpath")
 				||isCallOfFunctionNamed(iFn, "strdup")
 				||isCallOfFunctionNamed(iFn, "realloc")))
 				continue;
-			if (var == getVarAssignedTo(iFn, NULL))
+
+			if (var == getVarAssignedTo(iFn, NULL)) 
 				return false;
 		} else if (iVar && (getRefDecl(iVar) == var)) {
-			if (varWrittenTo(iVar))
-				break;
+		  if (varWrittenTo(iVar)) { 
+		    break;
+		  }
 		}
 	} while ((i--) != nodes.begin());
 

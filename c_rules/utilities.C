@@ -31,6 +31,8 @@
 /**
  * Spin up the AST until we find a parent of the given type, if not, return
  * NULL
+ *
+ * 
  */
 const SgNode *findParentNodeOfType(const SgNode *node, VariantT t) {
 	const SgNode *parent = (node)->get_parent();
@@ -181,6 +183,9 @@ const SgExpression* getFnArg(const SgFunctionRefExp* node, unsigned int i) {
  */
 const Rose_STL_Container<SgNode*> getNodesInFn( const SgNode* node) {
 	const SgFunctionDefinition* block = findParentOfType(node, SgFunctionDefinition);
+
+	if(block == NULL)
+	  return *(new Rose_STL_Container<SgNode*>());
 
 	assert( block != NULL);
 	return NodeQuery::querySubTree( const_cast< SgFunctionDefinition*>( block), V_SgVarRefExp);
@@ -783,5 +788,40 @@ bool valueVerified(const SgExpression *expr) {
 	}
 
 	return false;
+}
+
+
+/**
+ * Given a node in a block, returns the node at the top of the block.
+ *
+ * \note This looks for a lot of blocks, but maybe not all of them?
+ */
+const SgNode *popBlock(const SgNode *node) {
+  if(node == NULL)
+    return NULL;
+  const SgNode *parent = (node)->get_parent();
+  for (; parent; parent = parent->get_parent() ) {
+    VariantT variant = parent->variantT();
+
+    //Fall through if we catch something    
+    switch(variant) {
+    case V_SgIfStmt:
+    case V_SgBasicBlock:
+    case V_SgWhileStmt:
+    case V_SgDoWhileStmt:
+    case V_SgSwitchStatement:
+    case V_SgTryStmt:
+    case V_SgCatchOptionStmt:
+    case V_SgCaseOptionStmt:
+    case V_SgForAllStatement:
+
+      return parent;
+
+    default:
+      break;      
+    }
+  }
+
+  return parent;
 }
 
