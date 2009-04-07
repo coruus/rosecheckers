@@ -137,4 +137,11 @@ protected:
 	virtual void visit_next(SgNode* node);
 };
 
+/**
+ * Given a node in a block, returns the node at the top of the block.
+ *
+ * \note This looks for a lot of blocks, but maybe not all of them?
+ */
+const SgNode *popBlock(const SgNode *node);
+
 #endif

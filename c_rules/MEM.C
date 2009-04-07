@@ -62,6 +62,7 @@ bool MEM01_C( const SgNode *node ) {
 			return false;
 		// Pop up to the next block
 		nextStat = findInBlockByOffset(block,1);
+		if (nextStat == NULL) break;
 		block = findParentOfType(block, SgBasicBlock);
 		assert(block);
 	}
