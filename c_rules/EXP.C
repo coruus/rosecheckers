@@ -183,51 +183,6 @@ bool EXP08_C( const SgNode *node ) {
 }
 
 /**
- * Use sizeof to determine the size of a type or variable -jp
- *
- * If this alloc expr is being cast to a type char* or char[], bail, it's OK
- */
-bool EXP09_C( const SgNode *node ) {
-	const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
-	if (exp == NULL)
-		return false;
-
-	const SgNode* parent = node->get_parent();
-	assert( parent != NULL);
-
-	const SgCastExp* typecast = isSgCastExp( parent->get_parent());
-	if (typecast != NULL) {
-		const SgType *alloc_type = typecast->get_type()->stripType(
-			 SgType::STRIP_REFERENCE_TYPE
-			|SgType::STRIP_POINTER_TYPE
-			|SgType::STRIP_ARRAY_TYPE);
-		if (isSgTypeChar(alloc_type)
-		  ||isSgTypeSignedChar(alloc_type)
-		  ||isSgTypeUnsignedChar(alloc_type))
-			return false;
-	}
-
-	/**
-	 * We should allow size_t or rsize_t arguments
-	 */
-	const SgType *t = stripModifiers(exp->get_type());
-	if (isSgTypedefType(t)
-	&& (isTypeSizeT(t) || isTypeRSizeT(t)))
-		return false;
-
-	// Find a sizeof operator inside argument
-	if (isSgSizeOfOp(exp))
-		return false;
-
-	FOREACH_SUBNODE(exp, nodes, i, V_SgSizeOfOp) {
-		return false;
-	}
-
-	print_error(node, "EXP09-C", "malloc called using something other than sizeof()", true);
-	return true;
-}
-
-/**
  * Do not apply operators expecting one type to data of an incompatible type
  *
  * \see FLP33_C
@@ -598,7 +553,6 @@ bool EXP(const SgNode *node) {
   violation |= EXP05_C(node);
   violation |= EXP06_C(node);
   violation |= EXP08_C(node);
-  violation |= EXP09_C(node);
   violation |= EXP11_C(node);
   violation |= EXP12_C(node);
   violation |= EXP30_C(node);

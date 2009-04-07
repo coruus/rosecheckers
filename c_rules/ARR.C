@@ -23,48 +23,6 @@
 #include "utilities.h"
 
 /**
- * Do not apply the sizeof operator to a pointer when taking the size of an
- * array
- *
- * We find cases of sizeof(var) where var is an array and is also a function
- * parameter
- */
-bool ARR01_C( const SgNode *node ) {
-	const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( node);
-	if(!sizeOfOp)
-		return false;
-
-	const SgExpression *expr = removeImplicitPromotions(sizeOfOp->get_operand_expr());
-	if(!expr)
-		return false;
-
-	if(isSgUnaryOp(expr)) expr = isSgUnaryOp(expr)->get_operand();
-
-	const SgVarRefExp* var = isSgVarRefExp(removeImplicitPromotions(expr));
-	if(!var)
-		return false;
-
-	const SgArrayType *arrT = isSgArrayType(var->get_type());
-	if(!arrT)
-		return false;
-
-	const SgFunctionDeclaration *fnRef = findParentOfType( node,SgFunctionDeclaration);
-	if (!fnRef)
-		return false;
-
-	const SgName &varName = var->get_symbol()->get_name();
-
-	FOREACH_INITNAME(fnRef->get_args(), i) {
-		if((*i)->get_name() == varName) {
-			print_error( node, "ARR01-C", "Do not apply the sizeof operator to a pointer when taking the size of an array", true);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
  * Explicitly specify array dimensions, even if implicitly defined by an
  * initializer
  *
@@ -296,7 +254,6 @@ bool ARR38_C( const SgNode *node ) {
 
 bool ARR(const SgNode *node) {
   bool violation = false;
-  violation |= ARR01_C(node);
   violation |= ARR02_C(node);
   violation |= ARR30_C(node);
   violation |= ARR33_C(node);

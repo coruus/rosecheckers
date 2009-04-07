@@ -110,36 +110,6 @@ bool POS33_C( const SgNode *node ) {
 }
 
 /**
- * Do not call putenv() with auto var
- */
-bool POS34_C( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "putenv")))
-		return false;
-
-	// ok, bail iff putenv's arg is a char* (not char[])
-	const SgExpression *arg0 = getFnArg(fnRef, 0);
-	assert( arg0 != NULL);
-	/**
-	 * \todo We only know how to deal with arrays for now
-	 */
-	if (!isSgArrayType(arg0->get_type()))
-		return false;
-
-	// bail iff putenv's arg is a static variable
-	const SgVarRefExp* var = isSgVarRefExp( arg0);
-	if (var == NULL) return false; // we don't handle non-var putenv args
-
-	const SgInitializedName* decl = getRefDecl(var);
-	assert(decl);
-	if (isGlobalVar(decl) || isStaticVar(decl))
-		return false;
-
-	print_error( node, "POS34-C", "Do not call putenv() with an automatic variable");
-	return true;
-}
-
-/**
  * Avoid race conditions while checking for the existence of a symbolic link
  */
 bool POS35_C( const SgNode *node ) {
@@ -257,7 +227,6 @@ bool POS(const SgNode *node) {
   bool violation = false;
   violation |= POS30_C(node);
   violation |= POS33_C(node);
-  violation |= POS34_C(node);
   violation |= POS35_C(node);
   violation |= POS36_C(node);
   return violation;

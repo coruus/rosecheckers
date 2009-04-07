@@ -224,30 +224,6 @@ bool MEM08_C( const SgNode *node ) {
 }
 
 /**
- * Ensure that freed pointers are not reused
- *
- * \bug Need to check for conditional return statements
- */
-bool MEM30_C( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
-		return false;
-
-	// Get variable as first arg
-	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
-	if (ref == NULL) return false;
-	const SgInitializedName* var = getRefDecl( ref);
-	assert(var != NULL);
-
-	if (NextValueReferred().next_value_referred( ref)) {
-		print_error( node, "MEM30-C", "Do not access freed memory");
-		return true;
-	}
-
-	return false;
-}
-
-/**
  * Free dynamically allocated memory exactly once
  *
  * If the variable is passed by reference to a function which allocates memory this could throw a false positive.
@@ -425,7 +401,6 @@ bool MEM(const SgNode *node) {
   violation |= MEM04_C(node);
   violation |= MEM07_C(node);
   violation |= MEM08_C(node);
-  violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   violation |= MEM33_C(node);
   violation |= MEM34_C(node);
