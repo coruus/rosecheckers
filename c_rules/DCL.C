@@ -364,12 +364,20 @@ bool DCL05_C( const SgNode *node ) {
 	return false;
 }
 
-bool DCL(const SgNode *node) {
+bool DCL_C(const SgNode *node) {
   bool violation = false;
   violation |= DCL00_C(node);
   violation |= DCL01_C(node);
   violation |= DCL02_C(node);
   violation |= DCL04_C(node);
   violation |= DCL05_C(node);
+  return violation;
+}
+
+
+/// C++ checkers
+
+bool DCL_CPP(const SgNode *node) {
+  bool violation = false;
   return violation;
 }

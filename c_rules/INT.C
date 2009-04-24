@@ -552,7 +552,7 @@ bool INT34_C( const SgNode *node ) {
 	return true;
 }
 
-bool INT(const SgNode *node) {
+bool INT_C(const SgNode *node) {
   bool violation = false;
   violation |= INT01_C(node);
   violation |= INT05_C(node);
@@ -568,3 +568,12 @@ bool INT(const SgNode *node) {
   violation |= INT34_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool INT_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

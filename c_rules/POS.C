@@ -253,7 +253,7 @@ bool POS36_C( const SgNode *node ) {
 	return false;
 }
 
-bool POS(const SgNode *node) {
+bool POS_C(const SgNode *node) {
   bool violation = false;
   violation |= POS30_C(node);
   violation |= POS33_C(node);

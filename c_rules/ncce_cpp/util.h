@@ -1,3 +1,6 @@
+#ifndef UTIL_H
+#define UTIL_H
+
 /*
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
@@ -15,34 +18,15 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "PRE_NCCE.C"
-#include "DCL_NCCE.C"
-#include "EXP_NCCE.C"
-#include "INT_NCCE.C"
-#include "FLP_NCCE.C"
-#include "ARR_NCCE.C"
-#include "STR_NCCE.C"
-#include "MEM_NCCE.C"
-#include "ENV_NCCE.C"
-#include "SIG_NCCE.C"
-#include "ERR_NCCE.C"
-#include "OBJ_NCCE.C"
-#include "MSC_NCCE.C"
+#include <string>
+#include <stdexcept>
 
-int main(int argc, char const *argv[], char const *envp[]) {
-  PRE();
-  DCL();
-  EXP();
-  INT();
-  FLP();
-  ARR();
-  STR();
-  MEM();
-  ENV(envp);
-  SIG();
-  ERR();
-  OBJ();
-  MSC();
+extern char **environ;
 
-  return 0;
-}
+/* This is for the case where we just want to run it through a static
+ * analysis tool and don't care about runtime errors. This is not 
+ * specified as a #define to avoid being ignored by the tools.
+*/
+#define RUNTIME_IGNORE 1
+
+#endif

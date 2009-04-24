@@ -1,0 +1,6 @@
+
+ERR_NCCE.C:38: warning: ERR08-CPP: Only catch or throw special-purpose exception objects.
+ERR_NCCE.C:40: warning: ERR08-CPP: Do not catch or throw pointers.
+ERR_NCCE.C:42: warning: ERR08-CPP: Only catch or throw special-purpose exception objects.
+ERR_NCCE.C:44: warning: ERR08-CPP: Do not catch or throw pointers.
+ERR_NCCE.C:46: warning: ERR08-CPP: Do not catch or throw classes (except standard exceptions).

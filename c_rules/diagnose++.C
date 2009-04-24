@@ -1,5 +1,5 @@
 /**
- * \file diagnose.C
+ * \file diagnose++.C
  *
  * Copyright (c) 2007 Carnegie Mellon University.
  * All rights reserved.
@@ -24,39 +24,40 @@
 #include "rose.h"
 #include "utilities.h"
 
-extern bool PRE_C(const SgNode *node);
-extern bool DCL_C(const SgNode *node);
-extern bool EXP_C(const SgNode *node);
-extern bool ARR_C(const SgNode *node);
-extern bool FLP_C(const SgNode *node);
-extern bool INT_C(const SgNode *node);
-extern bool STR_C(const SgNode *node);
-extern bool MEM_C(const SgNode *node);
-extern bool FIO_C(const SgNode *node);
-extern bool ENV_C(const SgNode *node);
-extern bool SIG_C(const SgNode *node);
-extern bool ERR_C(const SgNode *node);
-extern bool MSC_C(const SgNode *node);
-extern bool POS_C(const SgNode *node);
+
+extern bool PRE_CPP(const SgNode *node);
+extern bool DCL_CPP(const SgNode *node);
+extern bool EXP_CPP(const SgNode *node);
+extern bool ARR_CPP(const SgNode *node);
+extern bool FLP_CPP(const SgNode *node);
+extern bool INT_CPP(const SgNode *node);
+extern bool STR_CPP(const SgNode *node);
+extern bool MEM_CPP(const SgNode *node);
+extern bool FIO_CPP(const SgNode *node);
+extern bool ENV_CPP(const SgNode *node);
+extern bool SIG_CPP(const SgNode *node);
+extern bool ERR_CPP(const SgNode *node);
+extern bool OBJ_CPP(const SgNode *node);
+extern bool MSC_CPP(const SgNode *node);
 
 class visitorTraversal : public AstSimpleProcessing {
 public :
   visitorTraversal () {}
   virtual void visit(SgNode* node) {
-    PRE_C(node);
-    DCL_C(node);
-    EXP_C(node);
-    ARR_C(node);
-    FLP_C(node);
-    INT_C(node);
-    STR_C(node);
-    MEM_C(node);
-    FIO_C(node);
-    ENV_C(node);
-    SIG_C(node);
-    ERR_C(node);
-    MSC_C(node);
-    POS_C(node);
+    PRE_CPP(node);
+    DCL_CPP(node);
+    EXP_CPP(node);
+    ARR_CPP(node);
+    FLP_CPP(node);
+    INT_CPP(node);
+    STR_CPP(node);
+    MEM_CPP(node);
+    FIO_CPP(node);
+    ENV_CPP(node);
+    SIG_CPP(node);
+    ERR_CPP(node);
+    OBJ_CPP(node);
+    MSC_CPP(node);
   }
 };
 

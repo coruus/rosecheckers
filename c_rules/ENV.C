@@ -232,7 +232,7 @@ bool ENV32_C( const SgNode *node ) {
 	return violation;
 }
 
-bool ENV(const SgNode *node) {
+bool ENV_C(const SgNode *node) {
 	bool violation = false;
 	violation |= ENV00_C(node);
 	violation |= ENV02_C(node);
@@ -242,3 +242,12 @@ bool ENV(const SgNode *node) {
 	violation |= ENV32_C(node);
 	return violation;
 }
+
+
+/// C++ checkers
+
+bool ENV_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

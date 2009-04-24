@@ -234,7 +234,7 @@ bool MSC31_C( const SgNode *node ) {
 	return false;
 }
 
-bool MSC(const SgNode *node) {
+bool MSC_C(const SgNode *node) {
   bool violation = false;
   violation |= MSC01_C(node);
   violation |= MSC03_C(node);
@@ -244,3 +244,12 @@ bool MSC(const SgNode *node) {
   violation |= MSC31_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool MSC_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

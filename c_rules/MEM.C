@@ -418,7 +418,7 @@ bool MEM34_C( const SgNode *node ) {
 	return true;
 }
 
-bool MEM(const SgNode *node) {
+bool MEM_C(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_C(node);
   violation |= MEM02_C(node);
@@ -431,3 +431,12 @@ bool MEM(const SgNode *node) {
   violation |= MEM34_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool MEM_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

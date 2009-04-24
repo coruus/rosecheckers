@@ -1,10 +1,7 @@
 /**
- * \file PRE.C
+ * \file OBJ.C
  *
- * \note As written, these tests catch template declarations only if
- * instantiated.
- *
- * Copyright (c) 2007 Carnegie Mellon University.
+ * Copyright (c) 2009 Carnegie Mellon University.
  * All rights reserved.
 
  * Permission to use this software and its documentation for any purpose is
@@ -25,29 +22,8 @@
 #include "rose.h"
 #include "utilities.h"
 
-/**
- * Do not reuse a standard header file name
- *
- * \bug BROKEN, NEEDS ROSE SUPPPORT
- */
-//bool PRE04_C( const SgNode *node ) {
-//	return false;
-//}
 
-/**
- * \note we have to call this PREPRO because of a namespace clash with PRE
- */
-bool PRE_C(const SgNode *node) {
-  bool violation = false;
-//  violation |= PRE04_C(node);
-  return violation;
-}
-
-
-/// C++ checkers
-
-bool PRE_CPP(const SgNode *node) {
+bool OBJ_CPP(const SgNode *node) {
   bool violation = false;
   return violation;
 }
-

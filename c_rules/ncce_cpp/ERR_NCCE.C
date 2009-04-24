@@ -15,34 +15,35 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "PRE_NCCE.C"
-#include "DCL_NCCE.C"
-#include "EXP_NCCE.C"
-#include "INT_NCCE.C"
-#include "FLP_NCCE.C"
-#include "ARR_NCCE.C"
-#include "STR_NCCE.C"
-#include "MEM_NCCE.C"
-#include "ENV_NCCE.C"
-#include "SIG_NCCE.C"
-#include "ERR_NCCE.C"
-#include "OBJ_NCCE.C"
-#include "MSC_NCCE.C"
+#include "util.h"
 
-int main(int argc, char const *argv[], char const *envp[]) {
-  PRE();
-  DCL();
-  EXP();
-  INT();
-  FLP();
-  ARR();
-  STR();
-  MEM();
-  ENV(envp);
-  SIG();
-  ERR();
-  OBJ();
-  MSC();
+void ERR08();
 
-  return 0;
+
+void ERR() {
+  ERR08();
 }
+
+
+/* ERR08_CPP */
+
+extern void doSomething();
+
+class X {};
+
+void ERR08() {
+  try {
+    doSomething();
+  }
+  catch (std::string& xp) // diagnostic
+    {}
+  catch (char const *msg) // diagnostic
+    {}
+  catch (int x) // diagnostic
+    {}
+  catch (int (*doSomething)()) // diagnostic
+    {}
+  catch (X& xp) // diagnostic
+    {}
+}
+

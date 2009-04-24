@@ -390,7 +390,7 @@ bool STR37_C(const SgNode *node) {
 	return true;
 }
 
-bool STR(const SgNode *node) {
+bool STR_C(const SgNode *node) {
   bool violation = false;
   violation |= STR04_C(node);
   violation |= STR05_C(node);
@@ -403,3 +403,12 @@ bool STR(const SgNode *node) {
 //  violation |= STR37_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool STR_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

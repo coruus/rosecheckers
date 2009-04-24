@@ -391,7 +391,7 @@ bool SIG34_C( const SgNode *node ) {
 	return violation;
 }
 
-bool SIG(const SgNode *node) {
+bool SIG_C(const SgNode *node) {
   bool violation = false;
   //  violation |= SIG00_C(node);
   violation |= SIG30_C(node);
@@ -401,3 +401,12 @@ bool SIG(const SgNode *node) {
   violation |= SIG34_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool SIG_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

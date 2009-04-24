@@ -595,7 +595,7 @@ bool FIO44_C( const SgNode *node) {
 	return true;
 }
 
-bool FIO(const SgNode *node) {
+bool FIO_C(const SgNode *node) {
   bool violation = false;
   violation |= FIO01_C(node);
   violation |= FIO07_C(node);
@@ -615,3 +615,12 @@ bool FIO(const SgNode *node) {
   violation |= FIO44_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool FIO_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

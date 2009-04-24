@@ -319,7 +319,7 @@ bool FLP34_C( const SgNode *node ) {
 	return true;
 }
 
-bool FLP(const SgNode *node) {
+bool FLP_C(const SgNode *node) {
   bool violation = false;
   violation |= FLP02_C(node);
   violation |= FLP03_C(node);
@@ -329,3 +329,12 @@ bool FLP(const SgNode *node) {
   violation |= FLP34_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool FLP_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

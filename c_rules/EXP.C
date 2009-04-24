@@ -591,7 +591,7 @@ bool EXP37_C( const SgNode *node ) {
 	return true;
 }
 
-bool EXP(const SgNode *node) {
+bool EXP_C(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_C(node);
   violation |= EXP04_C(node);
@@ -608,3 +608,12 @@ bool EXP(const SgNode *node) {
   violation |= EXP37_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool EXP_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

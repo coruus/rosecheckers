@@ -294,7 +294,7 @@ bool ARR38_C( const SgNode *node ) {
 	return false;
 }
 
-bool ARR(const SgNode *node) {
+bool ARR_C(const SgNode *node) {
   bool violation = false;
   violation |= ARR01_C(node);
   violation |= ARR02_C(node);
@@ -305,3 +305,12 @@ bool ARR(const SgNode *node) {
   violation |= ARR38_C(node);
   return violation;
 }
+
+
+/// C++ checkers
+
+bool ARR_CPP(const SgNode *node) {
+  bool violation = false;
+  return violation;
+}
+

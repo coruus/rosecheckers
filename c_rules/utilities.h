@@ -144,4 +144,16 @@ protected:
  */
 const SgNode *popBlock(const SgNode *node);
 
+
+/// C++ utiltiies
+
+/* Returns a declaration of the given class */
+const SgClassDeclaration *getClassDeclaration(const SgType* t);
+
+/* Returns true if class is std */
+bool isClassDeclaredInStdNamespace(const SgClassDeclaration *decl);
+
+/* Returns true if class inherits from std::exception */
+bool inheritsFromStdException(const SgClassDeclaration *cdecl);
+
 #endif
