@@ -54,14 +54,20 @@ bool inheritsFromStdException(const SgClassDeclaration *cdecl) {
       return true;
   }
 
-  const SgClassDefinition *cdef = cdecl->get_definition();
-  if (cdef != NULL) {
-    const SgBaseClassPtrList &bases = cdef->get_inheritances();
-    for (SgBaseClassPtrList::const_iterator i = bases.begin(); i != bases.end(); ++i) {
-      const SgClassDeclaration *baseDecl = (*i)->get_base_class();
-      if (baseDecl != NULL) {
-	if (inheritsFromStdException( baseDecl))
-	  return true;
+  const SgDeclarationStatement *cdeclstmt = cdecl->get_definingDeclaration();
+  if (cdeclstmt != NULL) {
+    const SgClassDeclaration *cdecl = isSgClassDeclaration( cdeclstmt);
+    if (cdecl != NULL) {
+      const SgClassDefinition *cdef = cdecl->get_definition();
+      if (cdef != NULL) {
+	const SgBaseClassPtrList &bases = cdef->get_inheritances();
+	for (SgBaseClassPtrList::const_iterator i = bases.begin(); i != bases.end(); ++i) {
+	  const SgClassDeclaration *baseDecl = (*i)->get_base_class();
+	  if (baseDecl != NULL) {
+	    if (inheritsFromStdException( baseDecl))
+	      return true;
+	  }
+	}
       }
     }
   }
