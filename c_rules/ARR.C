@@ -99,7 +99,10 @@ bool ARR02_C( const SgNode *node ) {
  *
  * \note Without tainting, the only thing we can really do is ensure that if a
  * value is already getting checked and is signed, that it's also being
- * checked against 0
+ * checked against 0.
+ *
+ * \bug This doesn't work with if statement blocks (i.e. with {}) because
+ * of the SgBasicBlock that is thrown in.
  */
 bool ARR30_C( const SgNode *node ) {
 	if (isCompilerGeneratedNode(node))

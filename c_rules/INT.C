@@ -390,10 +390,14 @@ bool INT13_C( const SgNode *node ) {
 			}
 		} else if(isAnyBinBitOp(binOp)
 		|| isAnyBinBitAssignOp(binOp)) {
-			if((!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType())
-			|| (!stripModifiers(binOp->get_rhs_operand()->get_type())->isUnsignedType())) {
+		  if((!stripModifiers(binOp->get_lhs_operand()->get_type())->isUnsignedType())) {
+		    if(isSgValueExp(binOp->get_rhs_operand()))
+		      return false;
+		    else
+		      if(!stripModifiers(binOp->get_rhs_operand()->get_type())->isUnsignedType()) {
 				violation = true;
-			}
+		      }
+		  }
 		}
 	}
 

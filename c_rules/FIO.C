@@ -314,6 +314,9 @@ bool FIO30_C( const SgNode *node) {
 
 /**
  * Use int to capture the return value of character IO functions
+ *
+ * \note We don't look through typedefs. That's ok though because
+ * we're using a whitelist.
  */
 bool FIO34_C( const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
@@ -438,6 +441,8 @@ bool FIO39_C( const SgNode *node) {
 
 /**
  * Ensure files are properly closed when they are no longer needed
+ *
+ * \note This doesn't check across functions.
  */
 bool FIO42_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
