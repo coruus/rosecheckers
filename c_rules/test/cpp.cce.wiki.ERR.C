@@ -1,8 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
-
 /*
- * Copyright (c) 2007 Carnegie Mellon University.
+ * Copyright (c) 2009 Carnegie Mellon University.
  * All rights reserved.
 
  * Permission to use this software and its documentation for any purpose is hereby granted,
@@ -18,15 +15,27 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <string>
-#include <stdexcept>
+#include "cpp.util.h"
 
-extern char **environ;
+void ERR08();
 
-/* This is for the case where we just want to run it through a static
- * analysis tool and don't care about runtime errors. This is not 
- * specified as a #define to avoid being ignored by the tools.
-*/
-#define RUNTIME_IGNORE 1
 
-#endif
+void ERR() {
+  ERR08();
+}
+
+
+/* ERR08_CPP */
+
+extern void doSomething();
+
+class StackUnderflow : public std::runtime_error {};
+
+void ERR08() {
+  try {
+    doSomething();
+  }
+  catch (StackUnderflow& xr) // no diagnostic
+    {}
+}
+

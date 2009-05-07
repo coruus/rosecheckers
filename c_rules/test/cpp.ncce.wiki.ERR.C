@@ -15,7 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "util.h"
+#include "cpp.util.h"
 
 void ERR08();
 
