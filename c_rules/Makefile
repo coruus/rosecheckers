@@ -76,30 +76,6 @@ tests:	$(TESTS)
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 
-
-#tests:	cce.test cce_cpp.test ncce_cpp.test
-
-cce.output:	diagnose
-	@echo > $@
-	@for file in cce/*_CS.c ; do ${DIAGNOSE_CMD} $$file >> $@ 2>&1 ; echo Ran $$file; done
-	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
-	@perl -n -i -e 'print if (!/Aborted/);' $@
-
-ncce_cpp.output:	diagnose++
-	@echo > $@
-	@for file in ncce_cpp/*_NCCE.C ; do ${DIAGNOSE_CMD}++ $$file >> $@ 2>&1 ; echo Ran $$file; done
-	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
-	@perl -n -i -e 'print if (!/Aborted/);' $@
-
-cce_cpp.output:	diagnose++
-	@echo > $@
-	@for file in cce_cpp/*_CS.C ; do ${DIAGNOSE_CMD}++ $$file >> $@ 2>&1 ; echo Ran $$file; done
-	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
-	@perl -n -i -e 'print if (!/Aborted/);' $@
-
 clean:
 	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o test/*.output *~ *# */*.o *.lo .libs nul */*~ */*#
 
