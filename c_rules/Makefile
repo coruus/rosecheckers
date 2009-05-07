@@ -89,7 +89,7 @@ cce_cpp.output:	diagnose++
 	fi
 
 clean:
-	-libtool --mode=clean rm $(PGMS) a.out *flymake.ti *flymake.C *.o *.output *~ *# */*.o *.lo .libs nul */*~ */*#
+	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o *.output *~ *# */*.o *.lo .libs nul */*~ */*#
 
 doc:
 	@echo "bulding documentation..."
