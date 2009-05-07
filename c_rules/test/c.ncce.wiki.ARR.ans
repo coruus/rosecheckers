@@ -1,0 +1,9 @@
+"./test/c.ncce.wiki.ARR.c", line 183: warning: 
+          subscript out of range
+  	for (ip = &ar[0]; ip < &ar[21]; ip++) {
+  	                          ^
+
+c.ncce.wiki.ARR.c:50: warning: ARR01-C: Do not apply the sizeof operator to a pointer when taking the size of an array
+c.ncce.wiki.ARR.c:82: error: ARR30-C: Guarantee that array indices are within the valid range
+c.ncce.wiki.ARR.c:146: warning: EXP05-C: Do not cast away a const qualification
+c.ncce.wiki.ARR.c:164: error: ARR37-C: Do not add or subtract an integer to a pointer to a non-array object

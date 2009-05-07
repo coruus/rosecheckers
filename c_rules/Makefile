@@ -17,11 +17,9 @@
 
 
 # You should have ROSE predefined to point to ROSE
-# and you should have BOOST defined to point to BOOST
-# To run 'diagnose' you should set LD_LIBRARY_PATH as shown below.
 
 # Change this to your own installation of ROSE
-DIAGNOSE_CMD = env LD_LIBRARY_PATH=${ROSE}/lib:${BOOST}/lib ./diagnose
+DIAGNOSE_CMD = ./diagnose
 
 # Location of include directory after "make install"
 ROSE_INCLUDE_DIR = $(ROSE)/include
@@ -42,6 +40,12 @@ SRCS = PRE.C DCL.C EXP.C ARR.C FLP.C INT.C STR.C MEM.C FIO.C ENV.C SIG.C ERR.C O
 OBJS = $(SRCS:.C=.o)
 PGMS = diagnose diagnose++
 
+ANSWERS = $(wildcard test/*.ans)
+OUTPUTS = $(ANSWERS:.ans=.output)
+TESTS = $(ANSWERS:.ans=.test)
+
+.PRECIOUS: $(OUTPUTS)
+
 # Default make rule to use
 all: pgms tests
 
@@ -51,7 +55,29 @@ $(PGMS): %: %.o $(OBJS)
 %.o: %.C
 	libtool --mode=compile g++ -Wall -c -g -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) -o $@ $<
 
-tests:	cce.test ncce.test cce_cpp.test ncce_cpp.test
+tests:	$(TESTS)
+
+%.test:	%.output %.ans
+	@echo "Checking $*"
+	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
+		echo "WARNING: $* failure" ;\
+		diff -u $*.ans $*.output ;\
+	fi
+
+%.output:	%.c diagnose
+	@${DIAGNOSE_CMD} $*.c >> $@ 2>&1
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+
+%.output:	%.C diagnose++
+	@${DIAGNOSE_CMD}++ $*.C >> $@ 2>&1
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+
+
+#tests:	cce.test ncce.test cce_cpp.test ncce_cpp.test
 
 ncce.output:	diagnose
 	@echo > $@
@@ -81,15 +107,8 @@ cce_cpp.output:	diagnose++
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 
-%.test:	%.output %.ans
-	@echo "Checking $*"
-	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
-		echo "WARNING: $* failure" ;\
-		diff -u $*.ans $*.output ;\
-	fi
-
 clean:
-	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o *.output *~ *# */*.o *.lo .libs nul */*~ */*#
+	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o test/*.output *~ *# */*.o *.lo .libs nul */*~ */*#
 
 doc:
 	@echo "bulding documentation..."
