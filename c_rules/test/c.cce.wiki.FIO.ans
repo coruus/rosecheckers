@@ -1,0 +1,2 @@
+c.cce.wiki.FIO.c:712: warning: INT07-C: Use only explicitly signed or unsigned char type for numeric values
+c.cce.wiki.FIO.c:865: warning: ENV04-C: Do not use system() or popen() unless you need a command interpreter
