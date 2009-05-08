@@ -57,24 +57,26 @@ $(PGMS): %: %.o $(OBJS)
 
 tests:	$(TESTS)
 
+%.output:	%.c diagnose
+	@echo -n > $@
+	@${DIAGNOSE_CMD} $*.c >> $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+
+%.output:	%.C diagnose++
+	@echo -n > $@
+	@${DIAGNOSE_CMD}++ $*.C >> $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+
 %.test:	%.output %.ans
 	@echo "Checking $*"
 	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
 		echo "WARNING: $* failure" ;\
 		diff -u $*.ans $*.output ;\
 	fi
-
-%.output:	%.c diagnose
-	@${DIAGNOSE_CMD} $*.c >> $@ 2>&1
-	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
-	@perl -n -i -e 'print if (!/Aborted/);' $@
-
-%.output:	%.C diagnose++
-	@${DIAGNOSE_CMD}++ $*.C >> $@ 2>&1
-	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
-	@perl -n -i -e 'print if (!/Aborted/);' $@
 
 clean:
 	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o test/*.output *~ *# */*.o *.lo .libs nul */*~ */*#

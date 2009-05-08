@@ -315,8 +315,22 @@ void MEM09(void) {
 
 /* TODO */
 
-/* MEM30 v.68 */
-void MEM30_A(char const *arg) {
+struct list_s {
+  struct list_s* next;
+  int data;
+};
+
+void MEM30_1(struct list_s *head) {
+  struct list_s* p;
+  struct list_s* q;
+  for (p = head; p != NULL; p = q) {
+    q = p->next;
+    free(p);
+  }
+  head = NULL;
+}
+
+void MEM30_2(char const *arg) {
   char *buff;
 
   buff = (char *)malloc(BUFSIZ);
@@ -330,8 +344,11 @@ void MEM30_A(char const *arg) {
 }
 
 void MEM30(void) {
-  MEM30_A("lul");
+  MEM30_1(0);
+  MEM30_2("lul");
 }
+
+
 /* MEM31 v.61 */
 
 void MEM31(void) {

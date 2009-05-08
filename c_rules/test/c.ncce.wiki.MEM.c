@@ -37,23 +37,23 @@ void MEM34();
 void MEM35();
 
 void MEM(void){
-	MEM00();
-	MEM01();
-//	MEM02();
-	MEM03();
-	MEM04();
-	MEM05();
-	MEM06();
-	MEM07();
-	MEM08();
-	MEM09();
-//	MEM10();
-	MEM30();
-	MEM31();
-	MEM32();
-	MEM33();
-	MEM34();
-	MEM35();
+  MEM00();
+  MEM01();
+  //	MEM02();
+  MEM03();
+  MEM04();
+  MEM05();
+  MEM06();
+  MEM07();
+  MEM08();
+  MEM09();
+  //	MEM10();
+  MEM30();
+  MEM31();
+  MEM32();
+  MEM33();
+  MEM34();
+  MEM35();
 }
 
 /* MEM00 v.48 */
@@ -75,8 +75,8 @@ void MEM00() {
   }
 
   if (verify_size(list, number) == -1) {
-      free(list);
-      return;
+    free(list);
+    return;
   }
 
   /* Continue Processing list */
@@ -85,91 +85,91 @@ void MEM00() {
 }
 /* MEM01 v.47 */
 void MEM01(void) {
-char *message = (char *)malloc(10);
-	if(message == NULL) {
-		return;
-	}
-	int message_type = 1;
-	if (message_type == 1) {
-	  /* Process message type 1 */
-	  free(message);
-	}
-	message_type = 2;
-	/* ...*/
-	if (message_type == 2) {
-	   /* Process message type 2 */
-	  free(message);
-	}
+  char *message = (char *)malloc(10);
+  if(message == NULL) {
+    return;
+  }
+  int message_type = 1;
+  if (message_type == 1) {
+    /* Process message type 1 */
+    free(message);
+  }
+  message_type = 2;
+  /* ...*/
+  if (message_type == 2) {
+    /* Process message type 2 */
+    free(message);
+  }
 }
 
 /* MEM02 v.51 */
 /* TODO */
 /* MEM03 v.95 */
 void ncce_free_example(char *secret) {
-const size_t secret_size = strlen(secret);
-char *new_secret;
-const size_t size = strlen(secret);
-if (size == SIZE_MAX) {
-  /* Handle Error */
-}
+  const size_t secret_size = strlen(secret);
+  char *new_secret;
+  const size_t size = strlen(secret);
+  if (size == SIZE_MAX) {
+    /* Handle Error */
+  }
 
-new_secret = (char *)malloc(size+1);
-if (!new_secret) {
-  /* Handle Error */
-}
-strcpy(new_secret, secret);
+  new_secret = (char *)malloc(size+1);
+  if (!new_secret) {
+    /* Handle Error */
+  }
+  strcpy(new_secret, secret);
 
-/* Process new_secret... */
+  /* Process new_secret... */
 
-free(new_secret);
-new_secret = NULL;
+  free(new_secret);
+  new_secret = NULL;
 }
 
 void ncce_realloc_example(char *secret) {
-const size_t secret_size = strlen(secret);
-/* ... */
-if (secret_size > SIZE_MAX/2) {
-   /* handle error condition */
-}
+  const size_t secret_size = strlen(secret);
+  /* ... */
+  if (secret_size > SIZE_MAX/2) {
+    /* handle error condition */
+  }
 
-secret = (char *)realloc(secret, secret_size * 2);
+  secret = (char *)realloc(secret, secret_size * 2);
 }
 
 void MEM03(void) {
-	char *ptr = (char *)malloc(10);
-	if(ptr == NULL) {
-		return;
-	}
-	ncce_free_example(ptr);
-	ncce_realloc_example(ptr);
+  char *ptr = (char *)malloc(10);
+  if(ptr == NULL) {
+    return;
+  }
+  ncce_free_example(ptr);
+  ncce_realloc_example(ptr);
 }
 /* MEM04 v.70 */
 void MEM04_list2(size_t size) {
-	int *list = (int *)malloc(size);
-	if (list == NULL) {
-	  /* Handle Allocation Error */
-	}
-	free(list);
+  int *list = (int *)malloc(size);
+  if (list == NULL) {
+    /* Handle Allocation Error */
+  }
+  free(list);
 }
 
 void MEM04(void) {
-	char *p2;
-	char *p = (char *)malloc(100);
+  char *p2;
+  char *p = (char *)malloc(100);
 
-	if (p == NULL) {
-	  /* Handle Error */
-	}
+  if (p == NULL) {
+    /* Handle Error */
+  }
 
-	/* ... */
-	const int nsize = 0;
+  /* ... */
+  const int nsize = 0;
 
-	if ((p2 = (char *)realloc(p, nsize)) == NULL) {
-	  free(p);
-	  p = NULL;
-	  return;
-	}
-	p = p2;
-	MEM04_list2(0);
+  if ((p2 = (char *)realloc(p, nsize)) == NULL) {
+    free(p);
+    p = NULL;
+    return;
+  }
+  p = p2;
+  MEM04_list2(0);
 }
 
 /* MEM05 v.47 */
@@ -180,7 +180,7 @@ static int copy_file(FILE *src, FILE *dst, size_t bufsize) {
   while (fgets(buf, bufsize, src)) {
     if(fputs(buf, dst) == EOF) {
       /* handle error */
-	}
+    }
   }
 
   return 0;
@@ -205,29 +205,29 @@ void MEM05(void) {
 }
 /* MEM06 v.22 */
 void MEM06(void) {
-char *secret;
+  char *secret;
 
-secret = (char *)malloc(111);
-if (!secret) {
-  /* Handle Error */
-}
+  secret = (char *)malloc(111);
+  if (!secret) {
+    /* Handle Error */
+  }
 
-/* Perform operations using secret... */
+  /* Perform operations using secret... */
 
-free(secret);
-secret = NULL;
+  free(secret);
+  secret = NULL;
 }
 
 /* MEM07 v.55 */
 void MEM07(void) {
-const size_t num_elements = 10;
-long *buffer = (long *)calloc(num_elements, sizeof(long));
-if (buffer == NULL) {
-  /* handle error condition */
-}
-/*...*/
-free(buffer);
-buffer = NULL;
+  const size_t num_elements = 10;
+  long *buffer = (long *)calloc(num_elements, sizeof(long));
+  if (buffer == NULL) {
+    /* handle error condition */
+  }
+  /*...*/
+  free(buffer);
+  buffer = NULL;
 }
 
 /* MEM08 v.12 */
@@ -246,52 +246,62 @@ struct widget {
 };
 
 void MEM08(void) {
-	gadget *gp = (gadget *) malloc(sizeof(gadget)); if (gp ==NULL) {/* ... */};
-	widget *wp;
+  gadget *gp = (gadget *) malloc(sizeof(gadget)); if (gp ==NULL) {/* ... */};
+  widget *wp;
 
-	/* ... */
+  /* ... */
 
-	wp = (widget *)realloc(gp, sizeof(widget));
-	if (wp == NULL) {
-		/* Handle Error */
-	}
-	printf("MEM08 %p\n", wp);
+  wp = (widget *)realloc(gp, sizeof(widget));
+  if (wp == NULL) {
+    /* Handle Error */
+  }
+  printf("MEM08 %p\n", wp);
 }
 
 /* MEM09 v.62 */
 void MEM09(void) {
-	enum { MAX_BUF_SIZE = 256 };
+  enum { MAX_BUF_SIZE = 256 };
 
-	char *str = NULL;
+  char *str = NULL;
 
-	/* initialize string to be copied */
+  /* initialize string to be copied */
 
-	const size_t len = strlen(str);
-	if (len >= MAX_BUF_SIZE)  {
-	  /* handle string too long error */
-	}
-	char *buf = (char *)malloc(MAX_BUF_SIZE);
-	if (buf == NULL) {
-	  /* handle Allocation Error */
-	}
-	strncpy(buf, str, len);
+  const size_t len = strlen(str);
+  if (len >= MAX_BUF_SIZE)  {
+    /* handle string too long error */
+  }
+  char *buf = (char *)malloc(MAX_BUF_SIZE);
+  if (buf == NULL) {
+    /* handle Allocation Error */
+  }
+  strncpy(buf, str, len);
 
-	/* process buf */
+  /* process buf */
 
-	free(buf);
-	buf = NULL;
+  free(buf);
+  buf = NULL;
 }
 /* MEM10 v.08 */
 
 /* TODO */
 
-/* MEM30 v.68 */
-void MEM30_A(char const *arg) {
+struct list_s {
+  struct list_s* next;
+  int data;
+};
+
+void MEM30_1(struct list_s *head) {
+  struct list_s* p;
+  for (p = head; p != NULL; p = p->next)
+    free(p);
+}
+
+void MEM30_2(char const *arg) {
   char *buff;
 
   buff = (char *)malloc(BUFSIZ);
   if (!buff) {
-     /* handle error condition */
+    /* handle error condition */
   }
   /* ... */
   free(buff);
@@ -300,48 +310,50 @@ void MEM30_A(char const *arg) {
 }
 
 void MEM30(void) {
-  MEM30_A("lul");
+  MEM30_1(0);
+  MEM30_2("lul");
 }
+
 /* MEM31 v.61 */
 
 void MEM31(void) {
-const size_t number = 10;
-const int error_condition = 0;
-int *x = (int *)malloc (number * sizeof(int));
-if (x == NULL) {
-  /* Handle Allocation Error */
-}
-/* ... */
-if (error_condition == 1) {
-  /* Handle Error Condition*/
+  const size_t number = 10;
+  const int error_condition = 0;
+  int *x = (int *)malloc (number * sizeof(int));
+  if (x == NULL) {
+    /* Handle Allocation Error */
+  }
+  /* ... */
+  if (error_condition == 1) {
+    /* Handle Error Condition*/
+    free(x);
+  }
+  /* ... */
   free(x);
-}
-/* ... */
-free(x);
 }
 
 /* MEM32 v.63 */
 void MEM32(void) {
-	const char *input_string = "Awefajgae";
-	void *p = NULL;
-	const size_t new_size = 10;
+  const char *input_string = "Awefajgae";
+  void *p = NULL;
+  const size_t new_size = 10;
 
-	/* initialize input_string */
+  /* initialize input_string */
 
-	const size_t size = strlen(input_string) + 1;
-	char *str = (char *)malloc(size);
-	strcpy(str, input_string);
-	/* ... */
-	free(str);
-	str = NULL;
+  const size_t size = strlen(input_string) + 1;
+  char *str = (char *)malloc(size);
+  strcpy(str, input_string);
+  /* ... */
+  free(str);
+  str = NULL;
 
-	/* initialize new_size */
+  /* initialize new_size */
 
-	p = realloc(p, new_size);
-	if (p == NULL)   {
-	 /* handle error */
-	}
-	free(p);
+  p = realloc(p, new_size);
+  if (p == NULL)   {
+    /* handle error */
+  }
+  free(p);
 }
 
 /* MEM33 v.28 */
@@ -354,24 +366,24 @@ struct flexArrayStruct {
 /* ... */
 
 void MEM33(void) {
-	const size_t array_size = 0;
-	size_t i;
+  const size_t array_size = 0;
+  size_t i;
 
-	/* space is allocated for the struct */
-	struct flexArrayStruct *structP 
-	  = (struct flexArrayStruct *) 
-		 malloc(sizeof(struct flexArrayStruct) 
-			  + sizeof(int) * (array_size - 1));
-	if (structP == NULL) {
-	  /* handle malloc failure */
-	}
-	structP->num = 0;
+  /* space is allocated for the struct */
+  struct flexArrayStruct *structP 
+    = (struct flexArrayStruct *) 
+    malloc(sizeof(struct flexArrayStruct) 
+	   + sizeof(int) * (array_size - 1));
+  if (structP == NULL) {
+    /* handle malloc failure */
+  }
+  structP->num = 0;
 
-	/* access data[] as if it had been allocated
-	 *  * as data[array_size] */
-	for (i = 0; i < array_size; i++) {
-	  structP->data[i] = 1;
-	}
+  /* access data[] as if it had been allocated
+   *  * as data[array_size] */
+  for (i = 0; i < array_size; i++) {
+    structP->data[i] = 1;
+  }
 }
 
 /* MEM34 v.49 */
@@ -416,8 +428,8 @@ static void *alloc_blocks(size_t num_blocks) {
   }
   const unsigned long long alloc = num_blocks * BLOCKSIZE ;
   return (alloc < UINT_MAX)
-     ? malloc(num_blocks * BLOCKSIZE )
-     : NULL;
+    ? malloc(num_blocks * BLOCKSIZE )
+    : NULL;
 }
 
 void MEM35(void) {
