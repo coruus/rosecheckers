@@ -57,7 +57,7 @@ $(PGMS): %: %.o $(OBJS)
 
 tests:	$(TESTS)
 
-%.output:	%.c pgms
+%.output:	%.c $(PGMS)
 	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
@@ -65,7 +65,7 @@ tests:	$(TESTS)
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
 
-%.output:	%.C pgms
+%.output:	%.C $(PGMS)
 	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
