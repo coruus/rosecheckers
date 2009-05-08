@@ -1,5 +1,4 @@
-"./test/c.ncce.wiki.ARR.c", line 183: warning: 
-          subscript out of range
+"./test/c.ncce.wiki.ARR.c", line 183: warning: subscript out of range
   	for (ip = &ar[0]; ip < &ar[21]; ip++) {
   	                          ^
 

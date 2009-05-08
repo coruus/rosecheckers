@@ -1,5 +1,4 @@
-"./test/c.ncce.wiki.INT.c", line 132: warning: 
-          integer conversion resulted in a change of sign
+"./test/c.ncce.wiki.INT.c", line 132: warning: integer conversion resulted in a change of sign
     const char c = 200;
                    ^
 

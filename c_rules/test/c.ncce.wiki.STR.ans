@@ -1,12 +1,8 @@
-"./test/c.ncce.wiki.STR.c", line 67: warning: 
-          argument of type "signed char *" is incompatible with parameter of
-          type "const char *"
+"./test/c.ncce.wiki.STR.c", line 67: warning: argument of type "signed char *" is incompatible with parameter of type "const char *"
     len = strlen(scstr);  /* warns when char is unsigned */
                  ^
 
-"./test/c.ncce.wiki.STR.c", line 69: warning: 
-          argument of type "unsigned char *" is incompatible with parameter of
-          type "const char *"
+"./test/c.ncce.wiki.STR.c", line 69: warning: argument of type "unsigned char *" is incompatible with parameter of type "const char *"
     len = strlen(ucstr);  /* warns when char is signed */
                  ^
 

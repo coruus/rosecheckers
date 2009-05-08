@@ -58,18 +58,20 @@ $(PGMS): %: %.o $(OBJS)
 tests:	$(TESTS)
 
 %.output:	%.c pgms
-	@echo -n > $@
-	@${DIAGNOSE_CMD} $*.c >> $@ 2>&1 || true
+	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/\n {10}(\S)/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
 
 %.output:	%.C pgms
-	@echo -n > $@
-	@${DIAGNOSE_CMD} $*.C >> $@ 2>&1 || true
+	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/\n {10}(\S)/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
 
 %.test:	%.output %.ans
 	@echo "Checking $*"

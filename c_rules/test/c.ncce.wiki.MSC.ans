@@ -1,20 +1,16 @@
-"./test/c.ncce.wiki.MSC.c", line 107: warning: 
-          expression has no effect
+"./test/c.ncce.wiki.MSC.c", line 107: warning: expression has no effect
     a == b;
     ^
 
-"./test/c.ncce.wiki.MSC.c", line 122: warning: 
-          nested comment is not allowed
+"./test/c.ncce.wiki.MSC.c", line 122: warning: nested comment is not allowed
        /* some other comment */
        ^
 
-"./test/c.ncce.wiki.MSC.c", line 172: warning: 
-          statement is unreachable
+"./test/c.ncce.wiki.MSC.c", line 172: warning: statement is unreachable
       if (s) {
       ^
 
-"./test/c.ncce.wiki.MSC.c", line 200: warning: 
-          expression has no effect
+"./test/c.ncce.wiki.MSC.c", line 200: warning: expression has no effect
     a == b;
     ^
 

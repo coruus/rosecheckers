@@ -1,17 +1,12 @@
-"./test/c.ncce.wiki.EXP.c", line 283: warning: 
-          a value of type "int **" cannot be assigned to an entity of type
-          "volatile int **"
+"./test/c.ncce.wiki.EXP.c", line 283: warning: a value of type "int **" cannot be assigned to an entity of type "volatile int **"
     ipp = &ip; /* produces warnings in modern compilers */
         ^
 
-"./test/c.ncce.wiki.EXP.c", line 285: warning: 
-          a value of type "int **" cannot be assigned to an entity of type
-          "volatile int **"
+"./test/c.ncce.wiki.EXP.c", line 285: warning: a value of type "int **" cannot be assigned to an entity of type "volatile int **"
     ipp = (int**) &ip; /* constraint violation */
         ^
 
-"./test/c.ncce.wiki.EXP.c", line 347: warning: 
-          return value type does not match the function type
+"./test/c.ncce.wiki.EXP.c", line 347: warning: return value type does not match the function type
     return v_pointer;
            ^
 
