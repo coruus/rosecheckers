@@ -20,9 +20,8 @@
  */
 
 
-#include <iostream>
+//#include <iostream>
 #include "rose.h"
-#include "utilities.h"
 
 extern bool PRE_C(const SgNode *node);
 extern bool DCL_C(const SgNode *node);
@@ -39,9 +38,9 @@ extern bool ERR_C(const SgNode *node);
 extern bool MSC_C(const SgNode *node);
 extern bool POS_C(const SgNode *node);
 
-class visitorTraversal : public AstSimpleProcessing {
+class CVisitorTraversal : public AstSimpleProcessing {
 public :
-  visitorTraversal () {}
+  CVisitorTraversal () {}
   virtual void visit(SgNode* node) {
     PRE_C(node);
     DCL_C(node);
@@ -61,10 +60,52 @@ public :
 };
 
 
+extern bool PRE_CPP(const SgNode *node);
+extern bool DCL_CPP(const SgNode *node);
+extern bool EXP_CPP(const SgNode *node);
+extern bool ARR_CPP(const SgNode *node);
+extern bool FLP_CPP(const SgNode *node);
+extern bool INT_CPP(const SgNode *node);
+extern bool STR_CPP(const SgNode *node);
+extern bool MEM_CPP(const SgNode *node);
+extern bool FIO_CPP(const SgNode *node);
+extern bool ENV_CPP(const SgNode *node);
+extern bool SIG_CPP(const SgNode *node);
+extern bool ERR_CPP(const SgNode *node);
+extern bool OBJ_CPP(const SgNode *node);
+extern bool MSC_CPP(const SgNode *node);
+
+class CPPVisitorTraversal : public AstSimpleProcessing {
+public :
+  CPPVisitorTraversal () {}
+  virtual void visit(SgNode* node) {
+    PRE_CPP(node);
+    DCL_CPP(node);
+    EXP_CPP(node);
+    ARR_CPP(node);
+    FLP_CPP(node);
+    INT_CPP(node);
+    STR_CPP(node);
+    MEM_CPP(node);
+    FIO_CPP(node);
+    ENV_CPP(node);
+    SIG_CPP(node);
+    ERR_CPP(node);
+    OBJ_CPP(node);
+    MSC_CPP(node);
+  }
+};
+
+
 int main( int argc, char* argv[]) {
   SgProject* project = frontend(argc,argv);
   ROSE_ASSERT( project );
-  visitorTraversal exampleTraversal;
-  exampleTraversal.traverseInputFiles( project, preorder);
+  AstSimpleProcessing* visitorTraversal;
+  if (project->get_C_only())
+    visitorTraversal = new CVisitorTraversal();
+  else
+    visitorTraversal = new CPPVisitorTraversal();
+  visitorTraversal->traverseInputFiles( project, preorder);
   return 0;
 }
+

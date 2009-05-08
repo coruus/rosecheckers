@@ -38,7 +38,7 @@ ROSE_LIBS = -lrose $(MYSQL_DATABASE_LIBS) $(LIB_QT)
 SRCS = PRE.C DCL.C EXP.C ARR.C FLP.C INT.C STR.C MEM.C FIO.C ENV.C SIG.C ERR.C OBJ.C MSC.C POS.C \
 	categories.C value.C utilities.C utilities_cpp.C
 OBJS = $(SRCS:.C=.o)
-PGMS = diagnose diagnose++
+PGMS = diagnose
 
 ANSWERS = $(wildcard test/*.ans)
 OUTPUTS = $(ANSWERS:.ans=.output)
@@ -57,16 +57,16 @@ $(PGMS): %: %.o $(OBJS)
 
 tests:	$(TESTS)
 
-%.output:	%.c diagnose
+%.output:	%.c pgms
 	@echo -n > $@
 	@${DIAGNOSE_CMD} $*.c >> $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 
-%.output:	%.C diagnose++
+%.output:	%.C pgms
 	@echo -n > $@
-	@${DIAGNOSE_CMD}++ $*.C >> $@ 2>&1 || true
+	@${DIAGNOSE_CMD} $*.C >> $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
 	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
