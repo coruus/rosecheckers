@@ -16,32 +16,24 @@
  */
 
 #include "util.h"
+#include <sys/resource.h>
 
-void EXP06() {
-   const int a = 14;
-   const unsigned char b = 'r';
-   const int c = sizeof(*((&a)+1));
-   printf("%d %c %d", a, b, c);
-}
 
-void EXP09_1() {
-  const char** random2 = (const char**) malloc(4);
-  int **matrix = (int**) malloc(10*sizeof(int*));
-  matrix[0] = (int*)realloc( matrix[0], 10*4);
-}
-
-void EXP09_2() {
-  size_t i;
-  int **triarray = (int**) malloc(100 * 4);
-
-  if (!triarray) {
-    /* handle error */
+void MEM31(void) {
+  typedef struct ll {
+    struct ll *next;
+  } ll_t;
+  
+  ll_t *head = (ll_t*) malloc(sizeof(ll_t)); // initialize
+  ll_t *temp;
+  
+  //free elements of linked list
+  while(head != NULL) {
+    temp=head->next;
+    free(head);
+    head=temp;
   }
-
-  for (i = 0; i < 100; i++) {
-    triarray[i] = (int*) malloc(20 * 4);
-    if (!triarray[i]) {
-      /* handle error */
-    }
-  }
+  
+  //error deleting temporary variable
+  free(temp);
 }

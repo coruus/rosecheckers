@@ -17,31 +17,18 @@
 
 #include "util.h"
 
-void EXP06() {
-   const int a = 14;
-   const unsigned char b = 'r';
-   const int c = sizeof(*((&a)+1));
-   printf("%d %c %d", a, b, c);
-}
+/* MSC03_A v.26 */
 
-void EXP09_1() {
-  const char** random2 = (const char**) malloc(4);
-  int **matrix = (int**) malloc(10*sizeof(int*));
-  matrix[0] = (int*)realloc( matrix[0], 10*4);
-}
+void MSC03() {
+  unsigned int a = 0;
+  const unsigned int b = 0;
 
-void EXP09_2() {
-  size_t i;
-  int **triarray = (int**) malloc(100 * 4);
-
-  if (!triarray) {
-    /* handle error */
+  while (b == 4) {
+    /* Do while b == 4 */
   }
 
-  for (i = 0; i < 100; i++) {
-    triarray[i] = (int*) malloc(20 * 4);
-    if (!triarray[i]) {
-      /* handle error */
-    }
+  for (a=5; a < 10; a++) {
+    /* Do while a < 10 */
   }
 }
+

@@ -1,4 +1,5 @@
-c.ncce.xtra.EXP.c:21: warning: EXP09-C: malloc called using something other than sizeof()
-c.ncce.xtra.EXP.c:23: warning: EXP09-C: malloc called using something other than sizeof()
+c.ncce.xtra.EXP.c:23: warning: EXP06-C: Operands to the sizeof operator should not contain side effects
 c.ncce.xtra.EXP.c:28: warning: EXP09-C: malloc called using something other than sizeof()
+c.ncce.xtra.EXP.c:30: warning: EXP09-C: malloc called using something other than sizeof()
 c.ncce.xtra.EXP.c:35: warning: EXP09-C: malloc called using something other than sizeof()
+c.ncce.xtra.EXP.c:42: warning: EXP09-C: malloc called using something other than sizeof()

@@ -17,6 +17,15 @@
 
 #include "util.h"
 
+void DCL01_1(void) {
+  int tmp=1;
+  while(1) {
+    int tmp=0;
+    /* use tmp */
+    printf("tmp=%d\n", tmp);
+  }
+}
+
 void DCL02_1(void) {
   const int notel = 6;
   const int note1 = 4;
