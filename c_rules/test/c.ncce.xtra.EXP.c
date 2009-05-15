@@ -17,13 +17,6 @@
 
 #include "util.h"
 
-void EXP06() {
-   const int a = 14;
-   const unsigned char b = 'r';
-   const int c = sizeof(*((&a)+1));
-   printf("%d %c %d", a, b, c);
-}
-
 void EXP09_1() {
   const char** random2 = (const char**) malloc(4);
   int **matrix = (int**) malloc(10*sizeof(int*));

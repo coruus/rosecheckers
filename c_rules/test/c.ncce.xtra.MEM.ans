@@ -1,2 +1,1 @@
-c.ncce.xtra.MEM.c:38: error: MEM31-C: Free dynamically allocated memory exactly once.
 c.ncce.xtra.MEM.c:38: error: MEM34-C: Only free memory allocated dynamically

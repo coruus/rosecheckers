@@ -3,8 +3,7 @@
         ^
 
 c.ncce.xtra.DCL.c:31: warning: DCL02-C: Use visually distinct identifiers: note1
-c.ncce.xtra.DCL.c:39: warning: DCL02-C: Use visually distinct identifiers: note1
-c.ncce.xtra.DCL.c:47: warning: DCL02-C: Use visually distinct identifiers: note1
+c.ncce.xtra.DCL.c:39: warning: DCL02-C: Use visually distinct identifiers: nome
 c.ncce.xtra.DCL.c:21: warning: DCL00-C: Const-qualify immutable objects: tmp
 c.ncce.xtra.DCL.c:23: warning: DCL02-C: Use visually distinct identifiers: tmp
 c.ncce.xtra.DCL.c:23: warning: DCL00-C: Const-qualify immutable objects: tmp
