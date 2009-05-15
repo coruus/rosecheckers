@@ -224,6 +224,7 @@ void ENV30() {
     copy_of_env[0] = 'a';
 
     free(copy_of_env);
+    copy_of_env = NULL;
   }
 }
 

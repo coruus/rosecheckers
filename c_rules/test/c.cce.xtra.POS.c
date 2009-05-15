@@ -22,7 +22,7 @@ int POS34_1(char const *var) {
   static char *oldenv;
   char const *env_format = "TEST=%s";
   size_t const len = strlen(var) + strlen(env_format);
-  char *environment = (char *) calloc( len, 1);
+  char *environment = (char *) calloc( len, 256);
   if (environment == NULL) {
     return -1;
   }

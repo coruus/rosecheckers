@@ -140,7 +140,7 @@ void STR32() {
   char ntbs[12];
   char source[12];
   
-  strncpy(ntbs, source, sizeof(ntbs));
+  strncpy(ntbs, source, sizeof(ntbs)-1);
   ntbs[sizeof(ntbs) - 1] = '\0';
 }
 

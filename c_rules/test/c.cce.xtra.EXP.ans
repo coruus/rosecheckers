@@ -1,0 +1,1 @@
+c.cce.xtra.EXP.c:26: warning: EXP01-C: Do not take the sizeof a pointer to determine the sizeof a type
