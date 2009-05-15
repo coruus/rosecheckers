@@ -170,6 +170,8 @@ std::string normalize_string(std::string str, bool isExtern) {
 
 	while((found = str.find_first_of("1")) != std::string::npos)
 		str[found] = 'l';
+	while((found = str.find_first_of("n")) != std::string::npos)
+		str[found] = 'h';
 	while((found = str.find_first_of("0")) != std::string::npos)
 		str[found] = 'O';
 	while((found = str.find_first_of("2")) != std::string::npos)

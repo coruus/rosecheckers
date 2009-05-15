@@ -41,11 +41,3 @@ void DCL02_2(void) {
     printf("We found home to be wrong");
   }
 }
-
-void DCL02_3(void) {
-  const int home = 6;
-  const int horne = 4;
-  if (home == horne) {
-    printf("We found home to be wrong");
-  }
-}
