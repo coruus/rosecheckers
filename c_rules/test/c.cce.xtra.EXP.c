@@ -61,3 +61,9 @@ void EXP09_2() {
     }
   }
 }
+
+void EXP05(const char *str, size_t slen) {
+  const char *p = (const char *) str;
+
+  printf("%p", p);
+}

@@ -37,3 +37,24 @@ void MEM31(void) {
   //error deleting temporary variable
   free(temp);
 }
+
+
+enum { LEN = 1000 };
+
+void MEM34(int argc, char const *argv[]) {
+  char *str = NULL;
+  if (argc == 2) {
+    str = (char *)malloc(LEN);
+  }
+  else if(argc == 3){
+    str = "usage: $>a.exe [string]";
+  }
+  else{
+    str = (char *)malloc(LEN / 2);
+  }
+
+  if(str == NULL){
+    /* Handle error*/
+  }
+  free(str);
+}

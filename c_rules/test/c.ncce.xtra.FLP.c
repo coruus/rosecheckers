@@ -17,31 +17,8 @@
 
 #include "util.h"
 
-void EXP09_1() {
-  const char** random2 = (const char**) malloc(4);
-  int **matrix = (int**) malloc(10*sizeof(int*));
-  matrix[0] = (int*)realloc( matrix[0], 10*4);
-}
-
-void EXP09_2() {
-  size_t i;
-  int **triarray = (int**) malloc(100 * 4);
-
-  if (!triarray) {
-    /* handle error */
-  }
-
-  for (i = 0; i < 100; i++) {
-    triarray[i] = (int*) malloc(20 * 4);
-    if (!triarray[i]) {
-      /* handle error */
-    }
-  }
-}
-
-void EXP30() {
-  int i;
-  for(i = 0; i < 10; i = i++ + 1){
-    /* Loop */
+void FLP30() {
+  for (float x = 0.1f; x <= 1.0f;) {
+    x += 0.1f;
   }
 }
