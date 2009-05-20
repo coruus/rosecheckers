@@ -700,7 +700,7 @@ else {
 /* FIO34 v.78 */
 
 void FIO34(void) {
-	char buf[BUFSIZ];
+	unsigned char buf[BUFSIZ];
 	int c;
 	int i = 0;
 

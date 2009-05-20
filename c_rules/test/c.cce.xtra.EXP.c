@@ -23,7 +23,7 @@ void EXP09_1() {
   const signed char* random3 = (signed char*)malloc(5);
   int **matrix = (int**) malloc( 10 * sizeof( int*));
   matrix[0] = (int*)realloc( matrix[0], sizeof(int)*10);
-  char* random4 = (char *)malloc(sizeof(random4));
+  const char* random4 = (char *)malloc(sizeof(char));
 }
 
 

@@ -22,6 +22,7 @@
 
 #include "rose.h"
 #include "utilities.h"
+#include <boost/regex.hpp>
 
 /**
  * Do not store the pointer to the string returned by getenv()
@@ -146,6 +147,16 @@ bool ENV04_C( const SgNode *node ) {
 	if (!(isCallOfFunctionNamed(fnRef, "system")
 		||isCallOfFunctionNamed(fnRef, "popen")))
 		return false;
+
+	const SgStringVal *command = isSgStringVal(removeCasts(getFnArg(fnRef,0)));
+	if (command) {
+	  const std::string commandStr = command->get_value();
+	  boost::regex r("`.*`");
+	  if (regex_search(commandStr,r)) {
+	    return false;
+	  }
+	}
+
 	print_error( node, "ENV04-C", "Do not use system() or popen() unless you need a command interpreter", true);
 	return true;
 }
