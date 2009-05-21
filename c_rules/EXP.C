@@ -406,12 +406,16 @@ class traverseSequencePoints: public AstPrePostProcessing {
  * class above, right now many of them are implicit in the ExprStatement match
  */
 bool EXP30_C( const SgNode *node ) {
-	if (!isSgExprStatement(node))
-		return false;
+  if (!isSgExprStatement(node) && !isSgForStatement(node))
+    return false;
 
 	traverseSequencePoints traversal;
 
-	traversal.traverse(const_cast<SgNode *>(node));
+	if(isSgExprStatement(node))
+	  traversal.traverse(const_cast<SgNode *>(node));
+	else if(isSgForStatement(node)) {
+	  traversal.traverse(const_cast<SgExpression *>(isSgForStatement(node)->get_increment()));
+	}
 
 	if (traversal.violation) {
 		print_error(node, "EXP30-C", "Do not depend on order of evaluation between sequence points");
