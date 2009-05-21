@@ -506,7 +506,7 @@ bool INT32_C( const SgNode *node ) {
  */
 bool INT33_C( const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
-	if (!(isSgModOp(binOp) || isSgDivideOp(binOp))) {
+	if (!(isSgModOp(binOp) || isSgModAssignOp(binOp) || isSgDivideOp(binOp) || isSgDivAssignOp(binOp))) {
 		return false;
 	}
 

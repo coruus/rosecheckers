@@ -151,9 +151,18 @@ bool FLP30_C( const SgNode *node ) {
 	if (!forSt)
 		return false;
 
-	FOREACH_SUBNODE(forSt->get_increment(), nodes, i, V_SgVarRefExp) {
+	/* Check test */
+	FOREACH_SUBNODE(forSt->get_test(), nodes, i, V_SgVarRefExp) {
 		if (isSgVarRefExp(*i)->get_type()->isFloatType()) {
 			print_error(*i, "FLP30-C", "Do not use floating point variables as loop counters");
+			return true;
+		}
+	}
+
+	/* Check increment */
+	FOREACH_SUBNODE(forSt->get_increment(), nodes2, i2, V_SgVarRefExp) {
+		if (isSgVarRefExp(*i2)->get_type()->isFloatType()) {
+			print_error(*i2, "FLP30-C", "Do not use floating point variables as loop counters");
 			return true;
 		}
 	}
