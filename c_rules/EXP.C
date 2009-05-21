@@ -104,6 +104,8 @@ bool EXP04_C( const SgNode *node ) {
  * We check cast expressions to make sure that if they don't posses a const
  * tag, then neither does the operand.
  *
+ * \bug Rose does intermediate casts behind our back so we might get false positives
+ *
  * \note GCC catches implicit casts, we just focus on explicit ones because
  * GCC assumes the programmer is right in those cases
  *
