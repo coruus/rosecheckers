@@ -225,6 +225,7 @@ bool INT09_C( const SgNode *node ) {
 		return false;
 
 	bool violation = false;
+	bool implicit = false;
 	int base = 1;
 	std::map<int, const SgInitializedName*> m;
 
@@ -238,9 +239,13 @@ bool INT09_C( const SgNode *node ) {
 			const SgIntVal *val = isSgIntVal(init->get_operand());
 			assert(val);
 			base = val->get_value();
-		} else if (m[base]) {
+		}
+		else {
+		  implicit = true;
+		}
+
+		if (m[base]) {
 			/** Collision */
-			print_error(node, "INT09-C", "Ensure enumeration constants map to unique values", true);
 			violation = true;
 		} else {
 			/** First time we've seen this implicit value */
@@ -250,6 +255,9 @@ bool INT09_C( const SgNode *node ) {
 		base++;
 	}
 
+	/* We allow double values if all initializations are explicit */
+	if(implicit && violation)
+	  print_error(node, "INT09-C", "Ensure enumeration constants map to unique values", true);
 	return violation;
 }
 
