@@ -1,4 +1,3 @@
-c.ncce.wiki.MEM.c:78: error: MEM30-C: Do not access freed memory
 c.ncce.wiki.MEM.c:95: warning: MEM01-C: Store a new value in pointers immediately after free()
 c.ncce.wiki.MEM.c:95: error: MEM30-C: Do not access freed memory
 c.ncce.wiki.MEM.c:95: error: MEM31-C: Free dynamically allocated memory exactly once.

@@ -1,3 +1,2 @@
-c.cce.wiki.MEM.c:77: error: MEM30-C: Do not access freed memory
 c.cce.wiki.MEM.c:328: error: MEM30-C: Do not access freed memory
 c.cce.wiki.MEM.c:328: error: MEM34-C: Only free memory allocated dynamically

@@ -231,22 +231,56 @@ bool MEM08_C( const SgNode *node ) {
  * \bug Throws errors in loops as well.
  */
 bool MEM30_C( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
-		return false;
+  const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+  if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
+    return false;
+  
+  // Get variable as first arg
+  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
+  if (ref == NULL) return false;
+  const SgInitializedName* var = getRefDecl( ref);
+  assert(var != NULL);
 
-	// Get variable as first arg
-	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
-	if (ref == NULL) return false;
-	const SgInitializedName* var = getRefDecl( ref);
-	assert(var != NULL);
+  const SgNode *next_ref = NextValueReferred().next_value_referred( ref);
 
-	if (NextValueReferred().next_value_referred( ref)) {
-		print_error( node, "MEM30-C", "Do not access freed memory");
-		return true;
-	}
+  if(next_ref) {
+    /**
+     * Ignore arguments to a function
+     */
 
+    const SgFunctionDefinition *top = findParentOfType(node, SgFunctionDefinition);
+
+    assert(top);
+
+    Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>(top), V_SgNode );
+    Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
+    while(fnRef != isSgFunctionRefExp(*i)) {
+      assert(i != nodes.end());
+      i++;
+    }
+
+    while(*i != next_ref) {    
+      if(i == nodes.end())
+	break;
+        
+      //If they return immediately after it's ok.
+      if(isSgReturnStmt(*i))
 	return false;
+
+      //If there's an if statement we don't check further.
+      if(isSgIfStmt(*i)) {
+	print_error( node, "MEM30-C", "Do not access freed memory");
+	return true;
+      }
+
+      i++;
+    }
+	    
+    print_error( node, "MEM30-C", "Do not access freed memory");
+    return true;
+  }
+	
+  return false;
 }
 
 /**
