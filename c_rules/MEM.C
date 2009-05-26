@@ -226,7 +226,7 @@ bool MEM08_C( const SgNode *node ) {
 /**
  * Ensure that freed pointers are not reused
  *
- * \bug Need to check for conditional return statements
+ * \bug Need to check for conditional return statements 
  * 
  * \bug Throws errors in loops as well.
  */

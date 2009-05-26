@@ -39,8 +39,8 @@ bool INT01_C( const SgNode *node ) {
 	if(!op)
 		return false;
 
-	/* Ignore commas */
-	if(isSgCommaOpExp(op))
+	/* Ignore commas and dots */
+	if(isSgCommaOpExp(op) || isSgDotExp(op))
 		return false;
 
 	/* Ignore array derefences */
