@@ -438,7 +438,8 @@ bool MEM34_C( const SgNode *node ) {
 				||isCallOfFunctionNamed(iFn, "calloc")
 				||isCallOfFunctionNamed(iFn, "realpath")
 				||isCallOfFunctionNamed(iFn, "strdup")
-				||isCallOfFunctionNamed(iFn, "realloc")))
+				||isCallOfFunctionNamed(iFn, "realloc")
+				||isCallOfFunctionNamed(iFn, "getline")))
 				continue;
 
 			if (var == getVarAssignedTo(iFn, NULL)) 
