@@ -442,6 +442,16 @@ bool MEM34_C( const SgNode *node ) {
 				||isCallOfFunctionNamed(iFn, "getline")))
 				continue;
 
+			if(isCallOfFunctionNamed(iFn, "getline")) {
+			  const SgExpression *argExp = getFnArg(fnRef, 0);
+			  const SgVarRefExp *varRefExp = isSgVarRefExp(argExp);
+			  if(!varRefExp)
+			    continue;
+
+			  if(var == getRefDecl(varRefExp))
+			    return false;
+			}
+
 			if (var == getVarAssignedTo(iFn, NULL)) 
 				return false;
 		} else if (iVar && (getRefDecl(iVar) == var)) {
