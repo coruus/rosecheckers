@@ -531,6 +531,7 @@ bool EXP36_C( const SgNode *node ) {
 	const SgPointerType *lhsP = isSgPointerType(cast->get_type());
 	if (!lhsP)
 		return false;
+
 	const SgType *rhsT = cast->get_operand()->get_type();
 	assert(rhsT);
 	const SgPointerType *rhsP = isSgPointerType(rhsT);
@@ -555,6 +556,14 @@ bool EXP36_C( const SgNode *node ) {
 	 */
 	if (lhsSize == 1)
 		return false;
+
+	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgNode*>(node), V_SgFunctionRefExp );
+	Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
+	if(i != nodes.end()) {
+	  if(isCallOfFunctionNamed(isSgFunctionRefExp(*i), "malloc"))
+	    return false;
+	}
+
 	/**
 	 * If we see a void * and the cast is implicit, then also flag
 	 */
