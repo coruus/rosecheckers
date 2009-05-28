@@ -74,6 +74,7 @@ extern bool SIG_CPP(const SgNode *node);
 extern bool ERR_CPP(const SgNode *node);
 extern bool OBJ_CPP(const SgNode *node);
 extern bool MSC_CPP(const SgNode *node);
+extern bool RES_CPP(const SgNode *node);
 
 class CPPVisitorTraversal : public AstSimpleProcessing {
 public :
@@ -93,6 +94,7 @@ public :
     ERR_CPP(node);
     OBJ_CPP(node);
     MSC_CPP(node);
+    RES_CPP(node);
   }
 };
 
