@@ -244,10 +244,6 @@ bool MEM30_C( const SgNode *node ) {
   const SgNode *next_ref = NextValueReferred().next_value_referred( ref);
 
   if(next_ref) {
-    /**
-     * Ignore arguments to a function
-     */
-
     const SgFunctionDefinition *top = findParentOfType(node, SgFunctionDefinition);
 
     assert(top);

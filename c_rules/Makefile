@@ -38,7 +38,7 @@ ROSE_LIBS = -lrose $(MYSQL_DATABASE_LIBS) $(LIB_QT)
 SRCS = PRE.C DCL.C EXP.C ARR.C FLP.C INT.C STR.C MEM.C FIO.C ENV.C SIG.C ERR.C OBJ.C MSC.C POS.C \
 	categories.C value.C utilities.C utilities_cpp.C
 OBJS = $(SRCS:.C=.o)
-PGMS = diagnose
+PGMS = diagnose virtualCFG
 
 ANSWERS = $(wildcard test/*.ans)
 OUTPUTS = $(ANSWERS:.ans=.output)
