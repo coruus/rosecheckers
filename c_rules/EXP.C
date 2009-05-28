@@ -22,7 +22,12 @@
 
 #include "rose.h"
 #include "utilities.h"
+#include "utilities_cpp.h"
 #include <fcntl.h>
+#include <list>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 /**
  * Do not mistake sizeof( type*) for sizeof( type)
@@ -607,6 +612,297 @@ bool EXP37_C( const SgNode *node ) {
 	return true;
 }
 
+
+
+
+/*************
+ * CPP Rules *
+ *************/
+
+// Note:  As written, these tests catch template declarations only if instantiated.
+
+//XXX other casting advice, not reint if const, etc.
+bool EXP00_CPP( const SgNode *node ) { // Do not use C-style casts
+	//XXX This doesn't work when the type being casted to is a class. X(12) or (X)12, for instance.
+	//XXX ROSE seems to recognize only reinterpret_cast as new; others are old.
+	return false; //XXX Disabled due to false positives
+	bool result = false;
+	if( const SgCastExp *cast = isSgCastExp( node ) ) {
+		switch( cast->get_cast_type() ) {
+		case SgCastExp::e_unknown:
+		case SgCastExp::e_default:
+			break;
+		case SgCastExp::e_C_style_cast:
+			// Note that a cast node might be an impicit promotion.
+			if( !isCompilerGeneratedNode( node ) ) {
+			  print_error(node, "EXP00-CPP", "Avoid old-style casts.", false);
+				result = true;
+			}
+			break;
+		case SgCastExp::e_const_cast:
+		case SgCastExp::e_static_cast:
+		case SgCastExp::e_dynamic_cast:
+		case SgCastExp::e_reinterpret_cast:
+			break;
+		}
+	}
+	//XXX probably should check for "call" of a ctor here...
+	return result;
+}
+
+bool EXP02_CPP( const SgNode *node ) { // Do not overload the logical AND and OR operators
+	if( const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
+		const std::string n = fd->get_name().getString();
+		if( n == "operator&&" || n == "operator||" ) {
+		  print_error(fd, "EXP02-CPP", "Overloaded && or || operator.", false);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool EXP03_CPP( const SgNode *node ) { // Do not overload the & operator
+	// Note this is for the unary & operator only, not binary.
+	if( const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
+		const std::string n = fd->get_name().getString();
+		if( n == "operator&" ) {
+			int args = argCount( fd );
+			bool isMember = isSgMemberFunctionDeclaration( fd );
+			if( (isMember && args == 0) || (!isMember && args == 1) ) {
+			  print_error(fd, "EXP03-CPP", "Overloaded unary & operator.", false);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool EXP04_CPP( const SgNode *node ) { // Do not overload the comma operator
+	if( const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
+		const std::string n = fd->get_name().getString();
+		if( n == "operator," ) {
+		  print_error(fd, "EXP04-CPP", "Overloaded , operator.", false);
+			return  true;
+		}
+	}
+	return false;
+}
+
+
+/*
+bool EXP08_CPP( const SgNode *node ) { // A switch statement should have a default clause unless every enumeration value is tested
+	// Synopsis:  If the switch expression has enum type, get the values of all the enumerators and ensure
+	// that each value is used by a case label.  (Note that we are going by the enum and label values, not names.)
+	// If that test fails, check for a default.
+
+	bool result = false;
+
+	if( const SgSwitchStatement *s = isSgSwitchStatement( node ) ) {
+		const SgStatement *stat = s->get_item_selector();
+		ROSE_ASSERT( stat );
+		const SgExprStatement *estat = isSgExprStatement( stat );
+		//XXXINFO it seems that expression statements (and returns?) no longer have a pointer to a wrapper class.
+		//XXXINFO also, not all valid switch syntaxes are handled by ROSE, like "switch( x ) while( a ) case 1: a = 12;"
+		const SgExpression *expr = estat->get_expression();
+		expr = removeImplicitIntegralPromotions( expr );
+		SgType et = *(expr->get_type());
+		if( const SgEnumDeclaration *edecl = et.getEnumDeclaration() ) {
+			// Get the set of enumerator values, and the set of case label values, and see if
+			// the intersection is complete.  If not, check for a default label.
+			std::vector<int> evalues; // values of enumerators
+			getEnumeratorValues( edecl, evalues );
+			const SgBasicBlock *body = s->get_body();
+			std::vector<int> cvalues; // values of case labels
+			bool defaultExists = getCaseValues( body, cvalues );
+			std::sort( evalues.begin(), evalues.end() );
+			std::sort( cvalues.begin(), cvalues.end() ); // this one can't have duplicates (if the compiler's working!)
+
+			size_t original_esize = evalues.size();
+			evalues.erase( std::unique( evalues.begin(), evalues.end() ), evalues.end() );
+			if( original_esize != evalues.size() ) {
+				// duplicate enumerator values
+				result = true;
+				print_error(node, "EXP08-CPP", "Switching over an enum that has duplicate enumerator values.", true);
+			}
+
+			std::vector<int> difference; // temp for set operation results
+			std::set_difference( cvalues.begin(), cvalues.end(),
+						evalues.begin(), evalues.end(), back_inserter(difference) );
+			if( !difference.empty() ) {
+				// there are cases that do not correspond to enumerator
+				result = true;
+				const std::string msg = "Cases for values that do not correspond to any enumerator value: " + utostring( difference.size() );
+				print_error(node, "EXP08-CPP", msg.c_str(), true);
+			}
+			if( evalues.size() > cvalues.size() ) {
+				// fewer case labels than enumerators
+				if( !defaultExists ) {
+					result = true;
+					print_error(node, "EXP08-CPP", "Not all enumerator values have corresponding cases.", false);
+				}
+			}
+			else if( evalues.size() == cvalues.size() ) {
+				// same size, see if the values match up
+				if( !std::equal( evalues.begin(), evalues.end(), cvalues.begin() ) ) {
+					result = true;
+					print_error(node, "EXP08-CPP", "Case labels do not match enumerator values.", false);
+				}
+			}
+		}
+	}
+	return result;
+}
+
+*/
+
+
+/*XXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
+bool EXP09_CPP( const SgNode *node ) { // Treat relational and equality operators as if they were nonassociative
+	// Here, we examine only predefined relational and equality operators, because who knows what an
+	// overloaded operator might intend?
+	if( const SgBinaryOp *bop = isSgBinaryOp( node ) ) {
+		if( isEqRelop( bop ) ) {
+			const SgExpression *lhs = bop->get_lhs_operand();
+			lhs = removeImplicitIntegralOrFloatingPromotions( lhs );
+			const SgExpression *rhs = bop->get_rhs_operand();
+			rhs = removeImplicitIntegralOrFloatingPromotions( rhs );
+			if( isEqRelop( lhs ) || isEqRelop( rhs ) ) {
+			  print_error(node, "EXP09-CPP", "Associative treatment of equality or relational operators.", false);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+*/
+
+bool EXP10_CPP( const SgNode *node ) { // Prefer the prefix forms of ++ and --.
+	return false; //XXXXXXXXXXXX this needs work
+	const SgUnaryOp *uop = 0;
+	if( (uop = isSgPlusPlusOp( node )) || (uop = isSgMinusMinusOp( node )) ) {
+		// Predefined ++ or --.
+	}
+	else if( const SgFunctionCallExp *fcall = isSgFunctionCallExp( node ) ) {
+		// Function call; see if user-defined ++ or --.
+		bool postfix = false;
+		const SgExpression *fexpr = fcall->get_function();
+		const size_t numArgs = fcall->get_args()->get_expressions().size();
+		if( const SgFunctionRefExp *fref = isSgFunctionRefExp( fexpr ) ) {
+			const SgFunctionSymbol *fsym = fref->get_symbol();
+			const SgFunctionDeclaration *fdecl = fsym->get_declaration();
+			const std::string n = fdecl->get_name().getString();
+			if( n == "operator++" || n == "operator--" ) {
+				if( fref )
+					postfix = (numArgs == 2);
+				const SgMemberFunctionRefExp *mfref = isSgMemberFunctionRefExp( fexpr );
+				if( !mfref ) {
+					const SgBinaryOp *bop = 0;
+					if( (bop = isSgArrowExp( fexpr )) || (bop = isSgDotExp( fexpr )) ) {
+						const SgExpression *rhs = bop->get_rhs_operand();
+						if( mfref = isSgMemberFunctionRefExp( rhs ) )
+							postfix = numArgs == 1;
+					}
+				}
+				if( postfix ) {
+					// Postfix use of user-defined ++ or --.  Issue print_error if not part of a
+					// larger expression.
+					const SgNode *parent = fcall->get_parent();
+					if( !isSgExpression( parent ) ) {
+					  print_error(node, "EXP10-CPP", "Unnecessary use of postfix increment or decrement.", true);
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool EXP36_CPP( const SgNode *node ) { // Do not cast or delete pointers to incomplete classes
+	//XXX problems with determingin whether a declaration is complete or incomplete.
+	//XXX punt for now.
+	return false; //XXX
+	if( const SgCastExp *cexp = isSgCastExp( node ) ) {
+		const SgExpression *expr = cexp->get_operand();
+		if( expressionIsPointerToIncompleteClass( expr ) ) {
+		  print_error(node, "EXP36-CPP", "Cast involving pointer to incomplete class.", false);
+			return true;
+		}
+	}
+	else if( const SgDeleteExp *dexp = isSgDeleteExp( node ) ) {
+		if( expressionIsPointerToIncompleteClass( dexp->get_variable() ) ) {
+			//if( isSgThisExp(dexp->get_variable()) ) return false; //XXX hack
+		  print_error(node, "EXP36-CPP", "Deletion of pointer to incomplete class.", false);
+			return true;
+		}
+	}
+	return false;
+}
+
+void handleCallToVirtualMemberOfThisClass( const SgFunctionCallExp *fcall, const SgClassDefinition *cdtorClassDef ) {
+	const SgExpression *function = fcall->get_function();
+	const SgMemberFunctionRefExp *mfre = 0;
+	const SgBinaryOp *bop = 0;
+	if( mfre = isSgMemberFunctionRefExp( function ) )
+		/* nothing */;
+	else if( (bop = isSgArrowExp( function )) || (bop = isSgDotExp( function )) ) {
+		const SgExpression *lhs = bop->get_lhs_operand();
+		if( isSgThisExp( lhs ) ) {
+			const SgExpression *rhs = bop->get_rhs_operand();
+			mfre = isSgMemberFunctionRefExp( rhs );
+		}
+	}
+	//if( SgPointerDerefExp *ptrderef = isSgPointerDerefExp( function ) )
+	//	std::cout << "PTR DEREF" << fcall->get_file_info()->get_line() << std::endl;
+	if( mfre ) {
+		const SgMemberFunctionSymbol *mfs = mfre->get_symbol();
+		const SgMemberFunctionDeclaration *mfd = mfs->get_declaration();
+		const SgClassDefinition *functionCallClassDef = mfd->get_class_scope();
+		bool isVirtual = mfd->get_functionModifier().isVirtual();
+		if(isVirtual) {
+			//XXX not quite right:  non-virtual call of virtual incorrectly flagged.
+			//XXX How to find out if the function name is qualified?  These do nothing:
+			//int vc = mfre->get_virtual_call();
+			//int nq = mfre->get_need_qualifier();
+			// XXXcan't seem to find a use of SgQualifiedName anywhere either...
+			if( functionCallClassDef == cdtorClassDef ) {
+			  print_error(fcall, "EXP38-CPP", "Calling base class virtual in constructor or destructor", false);
+			}
+			else if( isBaseOf( cdtorClassDef, functionCallClassDef ) ) {
+			  print_error(fcall, "EXP38-CPP", "Calling base class virtual in constructor or destructor", false);
+			}
+		}
+	}
+}
+
+
+/*
+bool EXP38_CPP( const SgNode *node ) { // Avoid calling your own virtual functions in constructors and destructors.
+	if( const SgFunctionDefinition *fdef = isSgFunctionDefinition( node ) ) {
+		const SgFunctionDeclaration *fdec = fdef->get_declaration();
+		if( fdec->get_specialFunctionModifier().isConstructor() || fdec->get_specialFunctionModifier().isDestructor() ) {
+			if( const SgMemberFunctionDeclaration *mfdec = isSgMemberFunctionDeclaration( fdec ) ) {
+				// get the type of the class to which ctor or dtor belongs
+				const SgClassDefinition *cdef = mfdec->get_class_scope();
+				const SgClassDeclaration *cdecl = cdef->get_declaration();
+				//SgClassType *ctype = cdecl->get_type();
+				const SgBasicBlock *body = fdef->get_body();
+				//SgStatementPtrList &stats = body->get_statements();
+				FunctionBodyTraversal bt( cdef );
+				bt.traverse( const_cast<SgBasicBlock *>(body), postorder );
+			}
+		}
+	}
+	return false;
+}
+*/
+
+
+
+/***************************
+ * Violation checking code *
+ ***************************/
+
 bool EXP_C(const SgNode *node) {
   bool violation = false;
   violation |= EXP01_C(node);
@@ -625,11 +921,16 @@ bool EXP_C(const SgNode *node) {
   return violation;
 }
 
-
 /// C++ checkers
 
 bool EXP_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= EXP00_CPP(node);
+  violation |= EXP02_CPP(node);
+  violation |= EXP03_CPP(node);
+  violation |= EXP04_CPP(node);
+  violation |= EXP10_CPP(node);
+  violation |= EXP36_CPP(node);
   return violation;
 }
 
