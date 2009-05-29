@@ -296,7 +296,7 @@ bool isMemberDeclaration( const SgNode *node ) {
 		do {
 			if( isSgClassDefinition( node ) )
 				return true;
-		} while( node = node->get_parent() );
+		} while( (node = node->get_parent()) != 0 );
 	return false;
 }
 
@@ -305,7 +305,7 @@ bool isLocalDeclaration( const SgNode *node ) {
 		do {
 			if( isSgFunctionDefinition( node ) )
 				return true;
-		} while( node = node->get_parent() );
+		} while( (node = node->get_parent()) != 0 );
 	return false;
 }
 

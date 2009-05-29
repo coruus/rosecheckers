@@ -799,7 +799,7 @@ bool EXP10_CPP( const SgNode *node ) { // Prefer the prefix forms of ++ and --.
 					const SgBinaryOp *bop = 0;
 					if( (bop = isSgArrowExp( fexpr )) || (bop = isSgDotExp( fexpr )) ) {
 						const SgExpression *rhs = bop->get_rhs_operand();
-						if( mfref = isSgMemberFunctionRefExp( rhs ) )
+						if( (mfref = isSgMemberFunctionRefExp( rhs )) != 0 )
 							postfix = numArgs == 1;
 					}
 				}
@@ -843,7 +843,7 @@ void handleCallToVirtualMemberOfThisClass( const SgFunctionCallExp *fcall, const
 	const SgExpression *function = fcall->get_function();
 	const SgMemberFunctionRefExp *mfre = 0;
 	const SgBinaryOp *bop = 0;
-	if( mfre = isSgMemberFunctionRefExp( function ) )
+	if( (mfre = isSgMemberFunctionRefExp( function )) != 0 )
 		/* nothing */;
 	else if( (bop = isSgArrowExp( function )) || (bop = isSgDotExp( function )) ) {
 		const SgExpression *lhs = bop->get_lhs_operand();
