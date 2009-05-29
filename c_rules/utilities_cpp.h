@@ -21,6 +21,7 @@
 #define UTILITIES_CPP_H
 
 #include "rose.h"
+#include "type.h"
 
 #include <list>
 #include <string>
@@ -91,7 +92,7 @@ bool isStdExceptionOrTypeDerivedFromStdException( const SgClassDeclaration *decl
 //
 // Questions having to do with function declarations.
 //
-const SgType *getArgType( const SgFunctionDeclaration *fdec, int n ); // note: first arg is arg 1, not arg 0.
+const SgType *getArgType( const SgFunctionDeclaration *fdec, unsigned int n ); // note: first arg is arg 1, not arg 0.
 int argCount( const SgFunctionDeclaration *fdec );
 bool isVirtualFunctionDeclaration( const SgNode *node );
 bool isPureVirtualFunctionDeclaration( const SgNode *node );

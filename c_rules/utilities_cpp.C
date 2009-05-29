@@ -232,11 +232,10 @@ bool isDefaultCtorDeclaration( const SgNode *node ) {
 inline bool isSameClassDeclaration( const SgClassDeclaration *a, const SgClassDeclaration *b )
 	{ return a == b; } // pull out test, in case it's wrong!
 
-/*XXXXXXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
 bool isReferenceToThisClass( const SgClassType *thisClassType, const SgType *argType ) {
 	// see if it's a reference or reference to const to this class type
-	const SgType *t = argType;
-	if( isAnyPointerType(t)) {
+	Type t( argType );
+	if( t.isReference() ) {
 		t = t.dereference();
 		if( const SgClassDeclaration *argClassDeclaration = t.getClassDeclaration() ) {
 			const SgClassDeclaration *thisClassDeclaration = Type(thisClassType).getClassDeclaration();
@@ -245,9 +244,7 @@ bool isReferenceToThisClass( const SgClassType *thisClassType, const SgType *arg
 	}
 	return false;
 }
-*/
 
-/*XXXXXXXXXXXXXXXXXXX BROKEN
 bool isCopyCtorDeclaration( const SgNode *node ) {
 	if( isSingleArgCtorDeclaration( node ) ) {
 		if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
@@ -269,9 +266,7 @@ bool isCopyCtorDeclaration( const SgNode *node ) {
 	}
 	return false;
 }
-*/
 
-/*XXXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
 bool isCopyAssignmentDeclaration( const SgNode *node ) {
 	if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(node) ) {
 		const std::string n = fdec->get_name().getString();
@@ -290,7 +285,7 @@ bool isCopyAssignmentDeclaration( const SgNode *node ) {
 	}
 	return false;
 }
-*/
+
 
 bool isTemplateCopyLikeCtorDeclaration( const SgNode *node ) {
 	return false; //XXXXXXXXXXXXXXXXXXXXXx
@@ -329,9 +324,8 @@ bool isMemberStatement( const SgNode *node ) { //XXXXXXXXXXXXXX This doesn't wor
 	return false;
 }
 
-/*XXXXXXXXXXXXXXXXXXXXXXXXXXX BROKEN 
 const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
-	SgType *t = e->get_type();
+	Type t( e->get_type() );
 	if( t.isInt() || t.isUnsignedInt() ) {
 		if( const SgCastExp *cast = isSgCastExp( e ) ) {
 			if( isCompilerGeneratedNode( cast ) ) { // implicit promotions seem to be implemented as casts
@@ -341,10 +335,8 @@ const SgExpression *removeImplicitIntegralPromotions( const SgExpression *e ) {
 	}
 	return e;
 }
-*/
 
 
-/*XXXXXXXXXXXXXXXXXXXXXXX BROKEN
 const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpression *e ) {
 	Type t( e->get_type() );
 	if( t.isInt() || t.isUnsignedInt() || t.isFloat() || t.isDouble() ) {
@@ -356,7 +348,7 @@ const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpressi
 	}
 	return e;
 }
-*/
+
 
 bool isEqRelop( const SgNode *e ) {
 	return
@@ -368,7 +360,6 @@ bool isEqRelop( const SgNode *e ) {
 		isSgNotEqualOp( e );
 }
 
-/*XXXXXXXXXXXXXXXXXXXXXXX BROKEN
 bool expressionIsPointerToIncompleteClass( const SgExpression *expr ) {
 	//std::cout << "isExpressionToIncompleteClass: line" << expr->get_file_info()->get_line() << std::endl; //XXX
 	Type et( expr->get_type() );
@@ -395,7 +386,7 @@ bool expressionIsPointerToIncompleteClass( const SgExpression *expr ) {
 	}
 	return false;
 }
-*/
+
 
 class IsSameClassDefinitionAs {
   public:
@@ -753,7 +744,6 @@ ClassMemberAnalysis::ClassMemberAnalysis()
 	{}
 
 
-/*XXXXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
 void ClassMemberAnalysis::operator ()( const SgNode *node ) {
 	if( const SgMemberFunctionDeclaration *mf = isSgMemberFunctionDeclaration( node ) ) {
 		if( isConstructorDeclaration( mf ) ) {
@@ -853,7 +843,7 @@ void ClassMemberAnalysis::operator ()( const SgNode *node ) {
 		}
 	}
 }
-*/
+
 
 class SuperClassMemberAnalysis {
   public:
@@ -866,7 +856,7 @@ class SuperClassMemberAnalysis {
 	ClassMemberAnalysis &dop_;
 };
 
-/*XXXXXXXXXXXXXXXXXX BROKEN
+
 void SuperClassMemberAnalysis::operator ()( const SgNode *node ) {
 	if( const SgClassDefinition *base = isSgClassDefinition( node ) ) {
 		const ClassMemberAnalysis &bop = classMemberAnalysis( base ); // recurse here
@@ -892,9 +882,8 @@ void SuperClassMemberAnalysis::operator ()( const SgNode *node ) {
 		++dop_.immediateBaseClasses_;
 	}
 }
-*/
 
-/*XXXXXXXXXXXXXXXX BROKEN
+
 const ClassMemberAnalysis &classMemberAnalysis( const SgClassDefinition *cdef ) {
 	typedef std::map<const SgClassDefinition *, ClassMemberAnalysis> Map; // store analysis by value; avoid heap
 	typedef Map::iterator I;
@@ -987,7 +976,6 @@ bool hasPointerMember( const SgClassDefinition *cdef ) {
 	const ClassMemberAnalysis &op = classMemberAnalysis( cdef );
 	return op.hasPointerMember();
 }
-*/
 
 bool isVirtualFunctionDeclaration( const SgNode *node ) {
 	if( const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
@@ -1030,17 +1018,12 @@ bool isCppFile( const SgNode *node ) {
 	return false;
 }
 
-/*XXXXXXXXXXXXXXXXXXXXXX BROKEN
-bool switchHasDefault( const SgSwitchStatement *theSwitch ) {
-	if( const SgBasicBlock *block = theSwitch->get_body() ) {
-		const SgStatementPtrList &stmts = block->get_statements();
-		for( SgStatementPtrList::const_iterator i = stmts.begin(); i != stmts.end(); ++i )
-			if( isSgDefaultOptionStmt( *i ) )
-				return true;
-	}
+bool switchHasDefault( const SgSwitchStatement *swch ) {
+	const SgStatementPtrList &stats = swch->getStatementList();
+	if ((stats.size() > 0) && isSgDefaultOptionStmt(stats.back()))
+		return true;
 	return false;
 }
-*/
 
 bool isOperatorDeclaration( const SgNode *node ) {
 	const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node );
@@ -1063,7 +1046,6 @@ bool isConversionOperatorDeclaration( const SgNode *node ) {
 }
 
 
-/*XXXXXXXXXXXXXXXX BROKEN
 bool isMemberFunctionReturningPtrOrRef( const SgFunctionDefinition *fd ) {
 	if( isSgMemberFunctionDeclaration( fd->get_declaration() ) ) {
 		const SgFunctionType *ft = fd->get_declaration()->get_type();
@@ -1074,7 +1056,6 @@ bool isMemberFunctionReturningPtrOrRef( const SgFunctionDefinition *fd ) {
 	}
 	return false;
 }
-*/
 
 // should pass two more arguments to this function: 1) a flag to tell it whether or not to stop recursion on a path where
 // the name is found, and 2) a predicate to be applied to the member declaration before adding to the result list
