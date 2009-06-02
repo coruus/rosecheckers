@@ -26,6 +26,7 @@ void ARR04();
 void ARR30();
 //void ARR31();
 void ARR32();
+void ARR33();
 
 
 void ARR() {
@@ -37,6 +38,7 @@ void ARR() {
   ARR30();
   //ARR31();
   ARR32();
+  ARR33();
 }
 
 /*use for all such standard array lengths*/
@@ -255,4 +257,37 @@ void ARR32_0() {
 void ARR32() {
   ARR32_0();
   //ARR32_1();
+}
+
+/* ARR_33_CPP */
+
+enum { WORKSPACE_SIZE = 256 };
+
+void ARR33_0(const int src[], size_t len) {
+  int dest[WORKSPACE_SIZE];
+  if (len > WORKSPACE_SIZE) {
+    /* Handle Error */
+  }
+  memcpy(dest, src, sizeof(int)*len);
+  /* ... */
+}
+
+
+#include <algorithm>
+
+void ARR33_1(const vector<int> src) {
+  vector<int> dest;
+  dest.resize( src.size());
+  copy( src.begin(), src.end(), dest.begin());
+  /* ... */
+}
+
+void ARR33_2(const vector<int> src) {
+  vector<int> dest;
+  copy( src.begin(), src.end(), back_inserter( dest));
+  /* ... */
+}
+
+void ARR33() {
+  //XXX consider making a basic run for ARR33_{0,1,2}
 }

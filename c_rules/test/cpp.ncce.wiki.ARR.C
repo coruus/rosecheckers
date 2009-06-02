@@ -26,6 +26,7 @@ void ARR04();
 void ARR30();
 //void ARR31();
 void ARR32();
+void ARR33();
 
 void ARR() {
   ARR00();
@@ -36,6 +37,7 @@ void ARR() {
   ARR30();
   //ARR31();
   ARR32();
+  ARR33();
 }
 
 enum {ARR_LEN = 100};
@@ -151,12 +153,34 @@ void ARR30() {
 using std::deque;
 
 void ARR32() {
-double data[5] = { 2.3, 3.7, 1.4, 0.8, 9.6 };
+  double data[5] = { 2.3, 3.7, 1.4, 0.8, 9.6 };
 
-deque<double> d;
-deque<double>::iterator pos = d.begin();
+  deque<double> d;
+  deque<double>::iterator pos = d.begin();
 
-for (size_t i = 0; i < 5; ++i) {
-  d.insert(pos++, data[i] + 41);
+  for (size_t i = 0; i < 5; ++i) {
+    d.insert(pos++, data[i] + 41);
+  }
 }
+
+/* ARR_33_CPP */
+
+enum { WORKSPACE_SIZE = 256 };
+
+void ARR33_0(const int src[], size_t len) {
+  int dest[WORKSPACE_SIZE];
+  memcpy(dest, src, len * sizeof(int));
+  /* ... */
+}
+
+#include <algorithm>
+
+void ARR33_1(const vector<int> src) {
+  vector<int> dest;
+  copy( src.begin(), src.end(), dest.begin());
+  /* ... */
+}
+
+void ARR33() {
+  //XXX consider making a basic run for ARR33_{0,1}
 }
