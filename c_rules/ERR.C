@@ -100,7 +100,6 @@ bool ERR_C(const SgNode *node) {
 
 /// C++ checkers
 
-
 enum Exp { ExpAppropriate = 0, ExpPointer, ExpStd, ExpOtherBad };
 
 Exp isNotAppropriateExceptionType( Type t ) {
@@ -120,7 +119,8 @@ Exp isNotAppropriateExceptionType( Type t ) {
   return ExpAppropriate;
 }
 
-bool ERR01_CPP( const SgNode *node ) { // Prefer special-purpose types for exceptions
+/* ERR08-CPP. Prefer special-purpose types for exceptions */
+bool ERR08_CPP( const SgNode *node ) {
   bool result = false;
   if( const SgThrowOp *throwop = isSgThrowOp( node ) ) {
     if( throwop->get_throwKind() == SgThrowOp::throw_expression ) { // not a rethrow or exception-specification
@@ -131,15 +131,15 @@ bool ERR01_CPP( const SgNode *node ) { // Prefer special-purpose types for excep
         break;
       case ExpPointer:
         result = true;
-        print_error(node, "ERR01-CPP", "Should throw a special-purpose exception object, not a pointer.", true);
+        print_error(node, "ERR08-CPP", "Should throw a special-purpose exception object, not a pointer.", true);
         break;
       case ExpStd:
         result = true;
-        print_error(node, "ERR01-CPP", "Do not throw standard types (except standard exceptions)." , true);
+        print_error(node, "ERR08-CPP", "Do not throw standard types (except standard exceptions)." , true);
         break;
       case ExpOtherBad:
         result = true;
-        print_error(node, "ERR01-CPP", "Should throw a special-purpose exception object.", true);
+        print_error(node, "ERR08-CPP", "Should throw a special-purpose exception object.", true);
         break;
       }
     }
@@ -168,14 +168,14 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
         if( ellipsisClause ) {
           // Note:  The compiler seems to catch this one, typically.
           result = true;
-          print_error(clause, "ERR02-CPP", "Repeated ellipsis catch-clause.", true);
+          print_error(clause, "ERR09-CPP", "Repeated ellipsis catch-clause.", true);
         }
         ellipsisClause = clauseNumber;
       }
       else {
         if( !argType.isReference() ) {
           result = true;
-          print_error(clause, "ERR02-CPP", "Should catch by reference.", true);
+          print_error(clause, "ERR09-CPP", "Should catch by reference.", true);
         }
         else {
           // even if it is a reference, it may be a ref to an inappropriate type
@@ -184,15 +184,15 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
             break;
           case ExpPointer:
             result = true;
-            print_error(clause, "ERR02-CPP", "Should catch objects, not pointers.", true);
+            print_error(clause, "ERR09-CPP", "Should catch objects, not pointers.", true);
             break;
           case ExpStd:
             result = true;
-            print_error(clause, "ERR02-CPP", "Do not catch standard types (except standard exceptions).", true);
+            print_error(clause, "ERR09-CPP", "Do not catch standard types (except standard exceptions).", true);
             break;
           case ExpOtherBad:
             result = true;
-            print_error(clause, "ERR02-CPP", "Should catch a special-purpose exception object.", true);
+            print_error(clause, "ERR09-CPP", "Should catch a special-purpose exception object.", true);
             break;
           }
         }
@@ -202,12 +202,13 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
   if( ellipsisClause && (ellipsisClause != clauseNumber) ) {
     // Note:  The compiler seems to catch this one, typically.
     result = true;
-    print_error(catchseq, "ERR02-CPP", "Ellipsis should be last catch-clause.", true);
+    print_error(catchseq, "ERR09-CPP", "Ellipsis should be last catch-clause.", true);
   }
   return result;
 }
 
-bool ERR02_CPP(const SgNode *node ) { // Throw anonymous temporaries and catch by reference
+/* ERR09-CPP. Throw anonymous temporaries and catch by reference */
+bool ERR09_CPP(const SgNode *node ) {
   if( const SgThrowOp *throwop = isSgThrowOp( node ) ) {
     if( throwop->get_throwKind() == SgThrowOp::throw_expression ) { // not a rethrow or exception-specification
       const SgExpression *expr = throwop->get_operand();
@@ -224,61 +225,10 @@ bool ERR02_CPP(const SgNode *node ) { // Throw anonymous temporaries and catch b
   return false;
 }
 
-bool isNotAppropriateExceptionType(const SgNode* node, const SgType* t) {
-  const char* msg = NULL;
-  if (const SgClassDeclaration *classdecl = getClassDeclaration(t)) {
-    // only type thrown from std namespace should be derived from std::exception
-    if (inheritsFromStdException(classdecl)) {
-      return false;
-    } else {msg = "Do not catch or throw classes (except standard exceptions).";}
-  } else if (isSgPointerType(t) != 0) { // it's a pointer to something: bad
-    msg = "Do not catch or throw pointers.";
-  } else { // it's not a class or a pointer, violation of rule
-    msg = "Only catch or throw special-purpose exception objects.";
-  }
-
-  print_error(node, "ERR08-CPP", msg, true);
-  return true;
-}
-
-
-/**
- * Prefer special-purpose types for exceptions
- */
-bool ERR08_CPP(const SgNode *node) {
-  // check for invalid type in catch clause
-  const SgCatchOptionStmt *clause = isSgCatchOptionStmt(node);
-  if (clause != NULL) {
-    const SgVariableDeclaration *decl = clause->get_condition();
-    const SgInitializedNamePtrList &vars = decl->get_variables();
-    const SgInitializedName *arg = vars.front();
-    const SgType *t = arg->get_type();
-    if (isSgReferenceType(t)) {
-      SgType *t2 = const_cast<SgType *>(t); // SgType::dereference should be const
-      t = t2->dereference();
-    }
-    if (isNotAppropriateExceptionType(node, t)) return true;
-  }
-
-  // check for invalid type in throw statement
-  const SgThrowOp *throwop = isSgThrowOp( node);
-  if ((throwop != NULL) &&
-      (throwop->get_throwKind() == SgThrowOp::throw_expression)) {
-    // not a rethrow or exception-specification
-    const SgExpression *expr = throwop->get_operand();
-    const SgType *t = expr->get_type();
-    if (isNotAppropriateExceptionType(node, t)) return true;
-  }
-
-  return false;
-}
-
-
 bool ERR_CPP(const SgNode *node) {
   bool violation = false;
-  violation |= ERR01_CPP(node);
-  violation |= ERR02_CPP(node);
   violation |= ERR08_CPP(node);
+  violation |= ERR09_CPP(node);
   return violation;
 }
 
