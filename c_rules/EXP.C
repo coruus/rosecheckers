@@ -688,75 +688,6 @@ bool EXP04_CPP( const SgNode *node ) { // Do not overload the comma operator
 	return false;
 }
 
-
-/*
-bool EXP08_CPP( const SgNode *node ) { // A switch statement should have a default clause unless every enumeration value is tested
-	// Synopsis:  If the switch expression has enum type, get the values of all the enumerators and ensure
-	// that each value is used by a case label.  (Note that we are going by the enum and label values, not names.)
-	// If that test fails, check for a default.
-
-	bool result = false;
-
-	if( const SgSwitchStatement *s = isSgSwitchStatement( node ) ) {
-		const SgStatement *stat = s->get_item_selector();
-		ROSE_ASSERT( stat );
-		const SgExprStatement *estat = isSgExprStatement( stat );
-		//XXXINFO it seems that expression statements (and returns?) no longer have a pointer to a wrapper class.
-		//XXXINFO also, not all valid switch syntaxes are handled by ROSE, like "switch( x ) while( a ) case 1: a = 12;"
-		const SgExpression *expr = estat->get_expression();
-		expr = removeImplicitIntegralPromotions( expr );
-		SgType et = *(expr->get_type());
-		if( const SgEnumDeclaration *edecl = et.getEnumDeclaration() ) {
-			// Get the set of enumerator values, and the set of case label values, and see if
-			// the intersection is complete.  If not, check for a default label.
-			std::vector<int> evalues; // values of enumerators
-			getEnumeratorValues( edecl, evalues );
-			const SgBasicBlock *body = s->get_body();
-			std::vector<int> cvalues; // values of case labels
-			bool defaultExists = getCaseValues( body, cvalues );
-			std::sort( evalues.begin(), evalues.end() );
-			std::sort( cvalues.begin(), cvalues.end() ); // this one can't have duplicates (if the compiler's working!)
-
-			size_t original_esize = evalues.size();
-			evalues.erase( std::unique( evalues.begin(), evalues.end() ), evalues.end() );
-			if( original_esize != evalues.size() ) {
-				// duplicate enumerator values
-				result = true;
-				print_error(node, "EXP08-CPP", "Switching over an enum that has duplicate enumerator values.", true);
-			}
-
-			std::vector<int> difference; // temp for set operation results
-			std::set_difference( cvalues.begin(), cvalues.end(),
-						evalues.begin(), evalues.end(), back_inserter(difference) );
-			if( !difference.empty() ) {
-				// there are cases that do not correspond to enumerator
-				result = true;
-				const std::string msg = "Cases for values that do not correspond to any enumerator value: " + utostring( difference.size() );
-				print_error(node, "EXP08-CPP", msg.c_str(), true);
-			}
-			if( evalues.size() > cvalues.size() ) {
-				// fewer case labels than enumerators
-				if( !defaultExists ) {
-					result = true;
-					print_error(node, "EXP08-CPP", "Not all enumerator values have corresponding cases.", false);
-				}
-			}
-			else if( evalues.size() == cvalues.size() ) {
-				// same size, see if the values match up
-				if( !std::equal( evalues.begin(), evalues.end(), cvalues.begin() ) ) {
-					result = true;
-					print_error(node, "EXP08-CPP", "Case labels do not match enumerator values.", false);
-				}
-			}
-		}
-	}
-	return result;
-}
-
-*/
-
-
-/*XXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
 bool EXP09_CPP( const SgNode *node ) { // Treat relational and equality operators as if they were nonassociative
 	// Here, we examine only predefined relational and equality operators, because who knows what an
 	// overloaded operator might intend?
@@ -774,7 +705,6 @@ bool EXP09_CPP( const SgNode *node ) { // Treat relational and equality operator
 	}
 	return false;
 }
-*/
 
 bool EXP10_CPP( const SgNode *node ) { // Prefer the prefix forms of ++ and --.
 	return false; //XXXXXXXXXXXX this needs work
@@ -875,8 +805,20 @@ void handleCallToVirtualMemberOfThisClass( const SgFunctionCallExp *fcall, const
 	}
 }
 
+class FunctionBodyTraversal : public AstSimpleProcessing {
+  public:
+	FunctionBodyTraversal( const SgClassDefinition *classdef )
+		: classdef_(classdef) {}
+	virtual void visit( SgNode *node ); // base class abstract takes ptr to non-const...
+  private:
+	const SgClassDefinition *classdef_;
+};
 
-/*
+void FunctionBodyTraversal::visit( SgNode *node ) {
+	if( const SgFunctionCallExp *fcall = isSgFunctionCallExp( const_cast<const SgNode *>(node) ) )
+		handleCallToVirtualMemberOfThisClass( fcall, classdef_ );
+}
+
 bool EXP38_CPP( const SgNode *node ) { // Avoid calling your own virtual functions in constructors and destructors.
 	if( const SgFunctionDefinition *fdef = isSgFunctionDefinition( node ) ) {
 		const SgFunctionDeclaration *fdec = fdef->get_declaration();
@@ -884,7 +826,7 @@ bool EXP38_CPP( const SgNode *node ) { // Avoid calling your own virtual functio
 			if( const SgMemberFunctionDeclaration *mfdec = isSgMemberFunctionDeclaration( fdec ) ) {
 				// get the type of the class to which ctor or dtor belongs
 				const SgClassDefinition *cdef = mfdec->get_class_scope();
-				const SgClassDeclaration *cdecl = cdef->get_declaration();
+				//const SgClassDeclaration *cdecl = cdef->get_declaration();
 				//SgClassType *ctype = cdecl->get_type();
 				const SgBasicBlock *body = fdef->get_body();
 				//SgStatementPtrList &stats = body->get_statements();
@@ -895,8 +837,6 @@ bool EXP38_CPP( const SgNode *node ) { // Avoid calling your own virtual functio
 	}
 	return false;
 }
-*/
-
 
 
 /***************************
@@ -929,8 +869,10 @@ bool EXP_CPP(const SgNode *node) {
   violation |= EXP02_CPP(node);
   violation |= EXP03_CPP(node);
   violation |= EXP04_CPP(node);
+  violation |= EXP09_CPP(node);
   violation |= EXP10_CPP(node);
   violation |= EXP36_CPP(node);
+  violation |= EXP38_CPP(node);
   return violation;
 }
 

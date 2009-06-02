@@ -58,8 +58,6 @@ class IsPublicData {
 	const SgVariableDeclaration *lastPublicVarDecl_;
 };
 
-/*XXX no isPODClass method
- 
 bool OBJ00_CPP( const SgNode *node ) { // Declare data members private
 	// This works for unions too...
 	if( const SgClassDefinition *classdef = isSgClassDefinition( node ) ) {
@@ -75,7 +73,6 @@ bool OBJ00_CPP( const SgNode *node ) { // Declare data members private
 	}
 	return false;
 }
-*/
 
 class ConvOpCount {
   public:
@@ -110,8 +107,6 @@ bool OBJ01_CPP( const SgNode *node ) { // Be careful with the definition of conv
 	return false;
 }
 
-/*XXX No isCopyAssignment() function
- 
 bool OBJ02_CPP( const SgNode *node ) { // Do not hide inherited non-virtual member functions
 	bool result = false;
 	if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
@@ -131,7 +126,6 @@ bool OBJ02_CPP( const SgNode *node ) { // Do not hide inherited non-virtual memb
 	}
 	return result;
 }
-*/
 
 bool OBJ03_CPP( const SgNode *node ) { // Prefer not to overload virtual functions
 	bool result = false;
@@ -184,8 +178,6 @@ bool OBJ04_CPP( const SgNode *node ) { // Prefer not to give virtual functions d
 	return result;
 }
 
-/* XXX No isCopyCtorDeclaration() function
- *
 bool OBJ32_CPP( const SgNode *node ) { // Ensure that single-argument constructors are marked "explicit"
 	//XXX Check for templates and member templates as well!
 	// Note:  skip check for copy ctors and member template copy-like ctors.
@@ -200,18 +192,21 @@ bool OBJ32_CPP( const SgNode *node ) { // Ensure that single-argument constructo
 	}
 	return false;
 }
-*/
 
-bool OBJ( SgProject *project ) {
-	bool violation = false;
-	Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( project, V_SgNode ); // all nodes.  should do visit
-	for( Rose_STL_Container<SgNode *>::iterator i = nodes.begin(); i != nodes.end(); ++i ) {
-		//violation |= OBJ00_CPP( *i );
-		violation |= OBJ01_CPP( *i );
-		//violation |= OBJ02_CPP( *i );
-		violation |= OBJ03_CPP( *i );
-		violation |= OBJ04_CPP( *i );
-		//violation |= OBJ32_CPP( *i );
-	}
-	return violation;
+
+/***************************
+ * Violation checking code *
+ ***************************/
+
+/// C++ checkers
+
+bool OBP_CPP(const SgNode *node) {
+  bool violation = false;
+  violation |= OBJ00_CPP(node);
+  violation |= OBJ01_CPP(node);
+  violation |= OBJ02_CPP(node);
+  violation |= OBJ03_CPP(node);
+  violation |= OBJ04_CPP(node);
+  violation |= OBJ32_CPP(node);
+  return violation;
 }

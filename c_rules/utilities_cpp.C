@@ -349,7 +349,6 @@ const SgExpression *removeImplicitIntegralOrFloatingPromotions( const SgExpressi
 	return e;
 }
 
-
 bool isEqRelop( const SgNode *e ) {
 	return
 		isSgEqualityOp( e ) ||
