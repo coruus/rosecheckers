@@ -287,7 +287,7 @@ bool OBJ32_CPP( const SgNode *node ) {
 
 /// C++ checkers
 
-bool OBP_CPP(const SgNode *node) {
+bool OBJ_CPP(const SgNode *node) {
   bool violation = false;
   violation |= OBJ00_CPP(node);
   violation |= OBJ01_CPP(node);
