@@ -173,28 +173,6 @@ bool OBJ04_CPP( const SgNode *node ) {
   return result;
 }
 
-/* OBJ06-CPP. Create a copy constructor and assignment operator for non copyable objects */
-bool OBJ06_CPP( const SgNode *node ) { 
-	bool ret = false;
-	if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
-		// Skip the check if this is a POD (like a C struct).
-		if( !isPODClass( cdef ) ) {
-			// First, see which of these three functions the class has.
-			size_t count = hasExplicitCopyCtor( cdef ) + hasExplicitCopyAssignment( cdef ) + hasExplicitDtor( cdef );
-			if( count > 0 && count < 3 ) {
-			  print_error(node, "OBJ06-CPP", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", true);
-				ret = true;
-			}
-			//XXX more...how do we know if a class manages resources?  Punt and just check for a pointer member?
-			if( hasPointerMember( cdef ) && count < 3 ) { //XXX should omit this check for unions
-			  print_error(node, "OBJ06-CPP", "A class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", true);
-				ret = true;
-			}
-		}
-	}
-	return ret;
-}
-
 void handleCallToVirtualMemberOfThisClass( const SgFunctionCallExp *fcall, const SgClassDefinition *cdtorClassDef ) {
   const SgExpression *function = fcall->get_function();
   const SgMemberFunctionRefExp *mfre = 0;
@@ -294,7 +272,6 @@ bool OBJ_CPP(const SgNode *node) {
   violation |= OBJ02_CPP(node);
   violation |= OBJ03_CPP(node);
   violation |= OBJ04_CPP(node);
-  violation |= OBJ06_CPP(node);
   violation |= OBJ30_CPP(node);
   violation |= OBJ32_CPP(node);
   return violation;

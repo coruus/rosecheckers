@@ -21,6 +21,7 @@
 
 #include "rose.h"
 #include "utilities.h"
+#include "utilities_cpp.h"
 #include <algorithm>
 
 
@@ -461,6 +462,29 @@ bool MEM34_C( const SgNode *node ) {
 	return true;
 }
 
+
+/* MEM41-CPP. Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources */
+bool MEM41_CPP( const SgNode *node ) { 
+	bool ret = false;
+	if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
+		// Skip the check if this is a POD (like a C struct).
+		if( !isPODClass( cdef ) ) {
+			// First, see which of these three functions the class has.
+			size_t count = hasExplicitCopyCtor( cdef ) + hasExplicitCopyAssignment( cdef ) + hasExplicitDtor( cdef );
+			if( count > 0 && count < 3 ) {
+			  print_error(node, "MEM41-CPP", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", true);
+				ret = true;
+			}
+			//XXX more...how do we know if a class manages resources?  Punt and just check for a pointer member?
+			if( hasPointerMember( cdef ) && count < 3 ) { //XXX should omit this check for unions
+			  print_error(node, "MEM41-CPP", "A class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", true);
+				ret = true;
+			}
+		}
+	}
+	return ret;
+}
+
 bool MEM_C(const SgNode *node) {
   bool violation = false;
   violation |= MEM01_C(node);
@@ -480,6 +504,7 @@ bool MEM_C(const SgNode *node) {
 
 bool MEM_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= MEM41_CPP(node);
   return violation;
 }
 

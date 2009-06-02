@@ -41,8 +41,12 @@ OBJS = $(SRCS:.C=.o)
 PGMS = diagnose virtualCFG
 
 ANSWERS = $(wildcard test/*.ans)
+ANSWERS_C = $(wildcard test/c.*.ans)
+ANSWERS_CPP = $(wildcard test/cpp.*.ans)
 OUTPUTS = $(ANSWERS:.ans=.output)
 TESTS = $(ANSWERS:.ans=.test)
+TESTS_C = $(ANSWERS_C:.ans=.test)
+TESTS_CPP = $(ANSWERS_CPP:.ans=.test)
 
 .PRECIOUS: $(OUTPUTS)
 
@@ -79,6 +83,57 @@ tests:	$(TESTS)
 		echo "WARNING: $* failure" ;\
 		diff -u $*.ans $*.output ;\
 	fi
+
+tests_c:	$(TESTS_C)
+
+%.output:	%.c $(PGMS)
+	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
+
+%.output:	%.C $(PGMS)
+	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
+
+%.test:	%.output %.ans
+	@echo "Checking $*"
+	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
+		echo "WARNING: $* failure" ;\
+		diff -u $*.ans $*.output ;\
+	fi
+
+tests_cpp:	$(TESTS_CPP)
+
+%.output:	%.c $(PGMS)
+	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
+
+%.output:	%.C $(PGMS)
+	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
+	@perl -p -i -e "s|${PWD}|\.|;" $@
+	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -n -i -e 'print if (!/Aborted/);' $@
+	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
+	@mv /tmp/testdata $@
+
+%.test:	%.output %.ans
+	@echo "Checking $*"
+	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
+		echo "WARNING: $* failure" ;\
+		diff -u $*.ans $*.output ;\
+	fi
+
 
 clean:
 	-libtool --mode=clean rm $(PGMS) a.out *.ti *.loT *flymake.C *.o test/*.output *~ *# */*.o *.lo .libs nul */*~ */*#
