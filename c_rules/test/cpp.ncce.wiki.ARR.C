@@ -79,6 +79,7 @@ void ARR01() {
 
 void ARR02() {
   int a[] = {1, 2, 3, 4};
+  a[0] = a[1];
 }
 
 class Widget {/* ... */};

@@ -84,6 +84,8 @@ void ARR01() {
 /* ARR_02_CPP */
 void ARR02() {
   int a[4] = {1, 2, 3, 4};
+  //to satisfy the warnings
+  a[0] = a[1];
 }
 
 /* ARR_03_CPP */
@@ -106,7 +108,9 @@ void ARR04_0() {
   /* frees container */
 }
 
+#include <utility>
 /*XXX CANT GET UNIQUE PTR TO WORK:*/
+//using std::unique_ptr;
 //void ARR04_1() {
 //  vector< unique_ptr<Widget> > container;
 //  for (size_t i = 0; i < WIDGET_SIZE; i++) {
