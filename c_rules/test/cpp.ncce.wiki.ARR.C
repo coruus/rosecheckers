@@ -23,6 +23,9 @@ void ARR01();
 void ARR02();
 //void ARR03();
 void ARR04();
+void ARR30();
+//void ARR31();
+void ARR32();
 
 void ARR() {
   ARR00();
@@ -30,6 +33,9 @@ void ARR() {
   ARR02();
   //ARR03();
   ARR04();
+  ARR30();
+  //ARR31();
+  ARR32();
 }
 
 enum {ARR_LEN = 100};
@@ -92,3 +98,65 @@ void ARR04() {
   /* Work with container */
 } /* frees container */
 
+
+/* ARR_30_CPP */
+enum { TABLESIZE = 100 };
+
+int *ARR30_0_table = NULL;
+
+int ARR30_0_insert_in_table(int pos, int value){
+  if (!ARR30_0_table) {
+    ARR30_0_table = new int[TABLESIZE];
+  }
+  if (pos >= TABLESIZE) {
+    return -1;
+  }
+  ARR30_0_table[pos] = value;
+  return 0;
+}
+
+vector<int> ARR30_1_table;
+
+int ARR30_1_insert_in_table(int pos, int value){
+  if (pos >= ARR30_1_table.size()) {
+    return -1;
+  }
+  ARR30_1_table[pos] = value;
+  return 0;
+}
+
+void ARR30() {
+  ARR30_0_insert_in_table(0, 0);
+  ARR30_1_insert_in_table(0, 0);
+}
+
+/* ARR_31_CPP */
+
+//#include "cpp.ncce.wiki.ARR30_helper.h"
+//enum { ARRAYSIZE = 100 };
+//
+//extern char a[];
+//
+//void insert_a(void) {
+//  a[0] = 'a';
+//}
+//
+//void ARR31(void) {
+//  a = new char [ARRAYSIZE];
+//  insert_a();
+//}
+
+/* ARR_32_CPP */
+#include <deque>
+using std::deque;
+
+void ARR32() {
+double data[5] = { 2.3, 3.7, 1.4, 0.8, 9.6 };
+
+deque<double> d;
+deque<double>::iterator pos = d.begin();
+
+for (size_t i = 0; i < 5; ++i) {
+  d.insert(pos++, data[i] + 41);
+}
+}

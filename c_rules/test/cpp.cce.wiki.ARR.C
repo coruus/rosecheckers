@@ -23,6 +23,9 @@ void ARR01();
 void ARR02();
 //void ARR03();
 void ARR04();
+void ARR30();
+//void ARR31();
+void ARR32();
 
 
 void ARR() {
@@ -31,6 +34,9 @@ void ARR() {
   ARR02();
   //ARR03();
   ARR04();
+  ARR30();
+  //ARR31();
+  ARR32();
 }
 
 /*use for all such standard array lengths*/
@@ -139,4 +145,114 @@ void ARR04_0() {
 
 void ARR04() {
   ARR04_0();
+}
+
+/*RULES*/
+
+/* ARR_30_CPP */
+enum { TABLESIZE = 100 };
+
+int *ARR30_0_table = NULL;
+
+int ARR30_0_insert_in_table(size_t pos, int value){
+  if (!ARR30_0_table) {
+    ARR30_0_table = new int[TABLESIZE];
+  }
+  if (pos >= TABLESIZE) {
+    return -1;
+  }
+  ARR30_0_table[pos] = value;
+  return 0;
+}
+
+template <typename T>
+void ARR30_1_clear(T array[], size_t n) {
+  for (size_t i = 0; i < n; ++i) {
+    array[i] = 0;
+  }
+}
+template <typename T, size_t n>
+inline void ARR30_1_clear(T (&array)[n]) {
+  ARR30_1_clear(array, n);
+}
+void ARR30_1() {
+  int int_array[12];
+  ARR30_1_clear(int_array); // deduce T is int, and that n is 12
+}
+
+vector<int> ARR30_2_table;
+
+int ARR30_2_insert_in_table(size_t pos, int value){
+  if (pos >= ARR30_2_table.size()) {
+    return -1;
+  }
+  ARR30_2_table[pos] = value;
+  return 0;
+}
+
+vector<int> ARR30_3_table;
+
+int ARR30_3_insert_in_table(size_t pos, int value){
+  ARR30_3_table.at(pos) = value;
+  return 0;
+}
+
+void ARR30() {
+  ARR30_0_insert_in_table(0, 0);
+  ARR30_1();
+  ARR30_2_insert_in_table(0, 0);
+  ARR30_3_insert_in_table(0, 0);
+}
+
+/* ARR_31_CPP */
+/*XXX How would we detect something across
+ * multiple files?*/
+/* insert_a.hpp include file */
+//enum { ARRAYSIZE = 100 };
+//
+//extern char *a;
+//void insert_a(void);
+///* end include file */
+//
+//char *a;
+//void insert_a(void) {
+//   a[0] = 'a';
+//}
+//
+//void ARR31(void) {
+//  a = new char [ARRAYSIZE];
+//  insert_a();
+//}
+
+
+/* ARR_32_CPP */
+#include <deque>
+using std::deque;
+#include <algorithm>
+
+void ARR32_0() {
+  double data[5] = { 2.3, 3.7, 1.4, 0.8, 9.6 };
+
+  deque<double> d;
+  deque<double>::iterator pos = d.begin();
+
+  for (size_t i = 0; i < 5; ++i) {
+    pos = d.insert(pos, data[i] + 41);
+    ++pos;
+  }
+}
+
+/*XXX Not sure how to get this example to work*/
+//void ARR32_1() {
+//  double data[5] = { 2.3, 3.7, 1.4, 0.8, 9.6 };
+//  deque<double> d;
+//
+//  transform(data, data+5,
+//      inserter(d, d.begin()),
+//      bind2nd(plus<int>(), 41));
+//}
+
+void ARR32() {
+  ARR32_0();
+  //ARR32_1();
 }
