@@ -23,8 +23,7 @@
 #include "utilities.h"
 #include "utilities_cpp.h"
 
-/*XXXXXXXXXXXXXXXXXXXXXXXXXXX BROKEN
-bool RES35_C( const SgNode *node ) { // Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources
+bool RES35_CPP( const SgNode *node ) { // Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources
 	bool ret = false;
 	if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
 		// Skip the check if this is a POD (like a C struct).
@@ -32,22 +31,18 @@ bool RES35_C( const SgNode *node ) { // Declare a copy constructor, a copy assig
 			// First, see which of these three functions the class has.
 			size_t count = hasExplicitCopyCtor( cdef ) + hasExplicitCopyAssignment( cdef ) + hasExplicitDtor( cdef );
 			if( count > 0 && count < 3 ) {
-				diagnostic( "RES35-C", node, 
-					"if any of copy constructor, copy assignment, and destructor are declared, all three should be." );
+			  print_error(node, "RES35-C", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", false);
 				ret = true;
 			}
 			//XXX more...how do we know if a class manages resources?  Punt and just check for a pointer member?
 			if( hasPointerMember( cdef ) && count < 3 ) { //XXX should omit this check for unions
-				diagnostic( "RES35-C", node,
-					"a class with a pointer data member should probably "
-					"define a copy constructor, copy assignment, and destructor." );
+			  print_error(node, "RES35-C", "a class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", false);
 				ret = true;
 			}
 		}
 	}
 	return ret;
 }
-*/
 
 /*=========================
 class PrintMember {
@@ -90,10 +85,11 @@ bool RESMISC_A( const SgNode *node ) { // misc things that haven't found a home 
 /***************************
  * Violation checking code *
  ***************************/
+
 /// C++ checkers
 
 bool RES_CPP(const SgNode *node) {
   bool violation = false;
-
+  violation |= RES35_CPP(node);
   return violation;
 }

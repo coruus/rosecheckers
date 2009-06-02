@@ -400,7 +400,7 @@ bool STR_C(const SgNode *node) {
   violation |= STR32_C(node);
   violation |= STR35_C(node);
   violation |= STR36_C(node);
-//  violation |= STR37_C(node);
+  violation |= STR37_C(node);
   return violation;
 }
 

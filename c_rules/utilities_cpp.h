@@ -27,7 +27,6 @@
 #include <string>
 #include <iosfwd>
 
-std::ostream &diagnostic( const char *rule, const SgNode *node, const std::string &message, std::ostream &os = std::cout );
 std::string utostring( unsigned int );
 
 //

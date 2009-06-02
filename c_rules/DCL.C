@@ -375,7 +375,6 @@ bool DCL05_C( const SgNode *node ) {
  * CPP Rules *
  *************/
 
-
 namespace {
 // A list of all reserved names.  This is not so good.
 // Maybe better to do a test on the namespace in which the declaration occurs?
