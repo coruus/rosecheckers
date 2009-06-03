@@ -35,6 +35,8 @@ void ARR39();
 void ARR40();
 //void ARR41();
 void ARR42();
+void ARR43();
+void ARR44();
 
 void ARR() {
   ARR00();
@@ -55,6 +57,8 @@ void ARR() {
   ARR40();
   //ARR41();
   ARR42();
+  ARR43();
+  ARR44();
 }
 
 enum {ARR_LEN = 100};
