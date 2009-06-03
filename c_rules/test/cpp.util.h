@@ -18,10 +18,25 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <iostream>
+//using std::cout;
+//using std::endl;
 #include <string>
 #include <stdexcept>
-
+#include <vector>
+//using std::vector;
+#include <deque>
+//using std::deque;
+#include <algorithm>
 extern char **environ;
+#include <set>
+//using std::set;
+#include <functional>
+//using std::less_equal;
+#include <utility>
+#include <map>
+
+using namespace std;
 
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
