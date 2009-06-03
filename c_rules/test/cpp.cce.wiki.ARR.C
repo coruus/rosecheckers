@@ -396,9 +396,9 @@ int ARR37_sum_numbers(const int *numb, size_t dim) {
 void ARR37_1(void) {
   int my_numbers[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
   ARR37_sum_numbers(
-    my_numbers, 
-    sizeof(my_numbers)/sizeof(my_numbers[0])
-  );
+      my_numbers, 
+      sizeof(my_numbers)/sizeof(my_numbers[0])
+      );
 }
 
 void ARR37() {
@@ -411,14 +411,14 @@ void ARR38_0() {
   int ar[20];
 
   for (int *ip = &ar[0]; ip < &ar[sizeof(ar)/sizeof(ar[0])]; ip++) {
-      *ip = 0;
+    *ip = 0;
   }
 }
 
 void ARR38_1() {
   vector<int> ar( 20, 0);
   for (vector<int>::iterator ip = ar.begin(); ip < ar.end(); ip++) {
-      *ip++ = 1;
+    *ip++ = 1;
   }
 }
 
@@ -428,12 +428,12 @@ void ARR38_2() {
 
   /* Check for overflow */
   if ((size_t)buf+len < (size_t)buf) {
-      len = -(size_t)buf-1;
+    len = -(size_t)buf-1;
   }
 }
 
 int ARR38_3_process_array(char *buf, size_t n) {
-    return n < 100;
+  return n < 100;
 }
 
 void ARR38() {
@@ -462,32 +462,32 @@ class ARR39_Derived : public ARR39_Base {
 };
 
 void ARR39_0_walk(class ARR39_Base *bar [], int count) {
-	for (int i = 0; i < count; i++) {
-		(bar[i])->func();
-	}
+  for (int i = 0; i < count; i++) {
+    (bar[i])->func();
+  }
 }
 
 void ARR39_0() {
-	ARR39_Base* dis[3] = {new ARR39_Base, new ARR39_Base, new ARR39_Base};
-	ARR39_Base* dat[3] = {new ARR39_Derived, new ARR39_Derived, new ARR39_Derived};
+  ARR39_Base* dis[3] = {new ARR39_Base, new ARR39_Base, new ARR39_Base};
+  ARR39_Base* dat[3] = {new ARR39_Derived, new ARR39_Derived, new ARR39_Derived};
 
-	ARR39_0_walk(dis, 3);
-	ARR39_0_walk(dat, 3);
+  ARR39_0_walk(dis, 3);
+  ARR39_0_walk(dat, 3);
 }
 
 void ARR39_1_walk(vector<ARR39_Base*>bar) {
-	for_each (bar.begin(), bar.end(), std::mem_fun(&ARR39_Base::func));
+  for_each (bar.begin(), bar.end(), std::mem_fun(&ARR39_Base::func));
 }
 
 int ARR39_1() {
-	vector<ARR39_Base*> dis(3);
-        for (int i=0; i<3; i++) dis[i] = new ARR39_Base;
+  vector<ARR39_Base*> dis(3);
+  for (int i=0; i<3; i++) dis[i] = new ARR39_Base;
 
-	vector<ARR39_Base*> dat(3);
-        for (int i=0; i<3; i++) dat[i] = new ARR39_Derived;
+  vector<ARR39_Base*> dat(3);
+  for (int i=0; i<3; i++) dat[i] = new ARR39_Derived;
 
-	ARR39_1_walk(dis);
-	ARR39_1_walk(dat);
+  ARR39_1_walk(dis);
+  ARR39_1_walk(dat);
 }
 
 void ARR39() {
@@ -518,9 +518,9 @@ void ARR40_0() {
 
 struct DereferenceLess {
   template <typename PtrType>
-  bool operator()(PtrType pl1, PtrType pl2) const {
-    return *pl1 < *pl2;
-  }
+    bool operator()(PtrType pl1, PtrType pl2) const {
+      return *pl1 < *pl2;
+    }
 };
 
 typedef set<int*, DereferenceLess> IntPtrSet;
@@ -593,4 +593,37 @@ void ARR42_1() {
 void ARR42() {
   ARR42_0();
   ARR42_1();
+}
+
+
+/* ARR_43_CPP */
+
+void ARR43() {
+  vector<int> container;
+  /* fill container with integers */
+  int value = 42;
+  container.erase( remove( container.begin(), container.end(), value), container.end());
+  for (vector<int>::iterator i = container.begin(); i != container.end(); ++i) {
+    cout << "Container element: " << *i << endl;
+  }
+}
+
+
+/* ARR_44_CPP */
+
+void ARR44() {
+  vector<int> v;
+  for (int i = 0; i < 10; i++) v.push_back(i);
+
+  cout << "Vector contains:";
+  for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    cout << " " << *it;
+  cout << endl;
+
+  v.erase( v.begin() + 3);
+
+  cout << "Vector contains:";
+  for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    cout << " " << *it;
+  cout << endl;
 }

@@ -449,11 +449,55 @@ void ARR42() {
       abort();
     }
     //XXX doesn't compile on linux-- how should we test it then?
-    *x = 'a' + c - '0' - 1; // directly changes set contents!
+    //*x = 'a' + c - '0' - 1; // directly changes set contents!
 
     cout << "chars: ";
     for (set<char>::iterator i = container.begin(); i != container.end(); ++i)
       cout << *i;
     cout << endl;
   }
+}
+
+
+/* ARR_43_CPP */
+
+vector<int> container;
+/* fill container with integers */
+void ARR43() {
+  int value = 42;
+  vector<int>::iterator end = remove( container.begin(), container.end(), value);
+  for (vector<int>::iterator i = container.begin(); i != container.end(); ++i) {
+    cout << "Container element: " << *i << endl;
+  }
+}
+
+
+/* ARR_44_CPP */
+
+class BadPredicate: public unary_function< int, bool> {
+public:
+  BadPredicate() : timesCalled(0) {}
+
+  bool operator()(const int&) {
+    return ++timesCalled == 3;
+  }
+private:
+  size_t timesCalled;
+};
+
+void ARR44() {
+  vector<int> v;
+  for (int i = 0; i < 10; i++) v.push_back(i);
+
+  cout << "Vector contains:";
+  for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    cout << " " << *it;
+  cout << endl;
+
+  v.erase( remove_if ( v.begin(), v.end(), BadPredicate()), v.end());
+
+  cout << "Vector contains:";
+  for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    cout << " " << *it;
+  cout << endl;
 }
