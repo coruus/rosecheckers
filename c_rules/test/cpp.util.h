@@ -35,6 +35,7 @@ extern char **environ;
 //using std::less_equal;
 #include <utility>
 #include <map>
+#include <cassert>
 
 using namespace std;
 
