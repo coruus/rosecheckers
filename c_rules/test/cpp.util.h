@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef UTIL_CPP_H
+#define UTIL_CPP_H
 
 /*
  * Copyright (c) 2007 Carnegie Mellon University.
