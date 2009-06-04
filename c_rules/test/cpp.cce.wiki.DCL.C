@@ -33,6 +33,7 @@ void DCL13();
 //void DCL14();
 void DCL15();
 void DCL16();
+void DCL17();
 
 void DCL() {
   DCL00();
@@ -51,6 +52,7 @@ void DCL() {
   //DCL14();
   DCL15();
   DCL16();
+  DCL17();
 }
 
 /* DCL_00_CPP */
@@ -417,4 +419,40 @@ void DCL17_1() {
 void DCL17() {
   DCL17_0();
   DCL17_1();
+}
+
+
+/* DCL_30_CPP */
+
+void DCL30_0_this_is_OK() {
+    const char str[] = "Everything OK";
+    const char *p = str;
+    /* ... */
+} /* p is inaccessible outside the scope of string str */
+
+
+const char *DCL30_1_p;
+void DCL30_1_this_is_OK() {
+    const char str[] = "Everything OK?";
+    DCL30_1_p = str;
+    /* ... */
+    DCL30_1_p = NULL;
+}
+
+/* Begin {code} */
+
+void init_array(char array[]) {
+   return;
+}
+
+void DCL30_2() {
+   char array[10];
+   init_array(array);
+   /* ... */
+}
+
+void DCL30() {
+  DCL30_0_this_is_OK();
+  DCL30_1_this_is_OK();
+  DCL30_2();
 }

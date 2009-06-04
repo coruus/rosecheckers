@@ -378,3 +378,38 @@ void DCL17() {
   DCL17_2();
   //DCL17_3();
 }
+
+
+/* DCL_30_CPP */
+
+/* Begin {code} */
+
+const char *DCL30_0_p;
+void DCL30_0_dont_do_this(void) {
+  const char str[] = "This will change";
+  DCL30_0_p = str; /* dangerous */
+  /* ... */
+}
+
+void DCL30_0_innocuous(void) {
+  const char str[] = "Surprise, surprise";
+}
+/* ... */
+void DCL30_0() {
+  DCL30_0_dont_do_this();
+  DCL30_0_innocuous();
+} /* p might be pointing to "Surprise, surprise" */
+
+
+char *DCL30_1_init_array(void) {
+   char array[10];
+   /* Initialize array */
+   //XXX EXPECT WARNING XXX
+   return array;
+}
+
+void DCL30() {
+  DCL30_0();
+  //just leave DCL30_1 in the code
+  //DCL30_1();
+}  
