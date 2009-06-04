@@ -41,6 +41,7 @@ using namespace std;
 
 
 #include <errno.h>
+#include <cstdarg>
 
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
