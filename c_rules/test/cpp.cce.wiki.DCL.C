@@ -34,6 +34,14 @@ void DCL13();
 void DCL15();
 void DCL16();
 void DCL17();
+void DCL30();
+void DCL31();
+void DCL32();
+//void DCL33();
+void DCL34();
+//void DCL35();
+void DCL36();
+//void DCL37();
 
 void DCL() {
   DCL00();
@@ -53,6 +61,14 @@ void DCL() {
   DCL15();
   DCL16();
   DCL17();
+  DCL30();
+  DCL31();
+  DCL32();
+  //DCL33();
+  DCL34();
+  //DCL35();
+  DCL36();
+  //DCL37();
 }
 
 /* DCL_00_CPP */
@@ -423,32 +439,31 @@ void DCL17() {
 
 
 /* DCL_30_CPP */
-
 void DCL30_0_this_is_OK() {
-    const char str[] = "Everything OK";
-    const char *p = str;
-    /* ... */
+  const char str[] = "Everything OK";
+  const char *p = str;
+  /* ... */
 } /* p is inaccessible outside the scope of string str */
 
 
 const char *DCL30_1_p;
 void DCL30_1_this_is_OK() {
-    const char str[] = "Everything OK?";
-    DCL30_1_p = str;
-    /* ... */
-    DCL30_1_p = NULL;
+  const char str[] = "Everything OK?";
+  DCL30_1_p = str;
+  /* ... */
+  DCL30_1_p = NULL;
 }
 
 /* Begin {code} */
 
 void init_array(char array[]) {
-   return;
+  return;
 }
 
 void DCL30_2() {
-   char array[10];
-   init_array(array);
-   /* ... */
+  char array[10];
+  init_array(array);
+  /* ... */
 }
 
 void DCL30() {
@@ -456,3 +471,54 @@ void DCL30() {
   DCL30_1_this_is_OK();
   DCL30_2();
 }
+
+/* DCL_31_CPP */
+
+void DCL31() {
+  string separator = " ";
+  string s = "hello" + separator + "world";
+}
+
+
+/* DCL_32_CPP */
+
+void DCL32() {
+  int PageCount;
+}
+
+
+/* DCL_33_CPP */
+//the problem is corrected with a compiler error-nothing to do
+
+
+/* DCL_34_CPP */
+
+volatile sig_atomic_t DCL34_i;
+
+void DCL34_handler(int signum) {
+  DCL34_i = 0;
+}
+
+void DCL34() {
+  DCL34_i = 1;
+  signal(SIGINT, DCL34_handler);
+  while (DCL34_i) {
+    /* do something */
+  }
+}
+
+
+/* DCL_35_CPP */
+// no code
+
+
+/* DCL_36_CPP */
+
+int DCL36_i1() {return 10;}  /* definition, external linkage */
+static int DCL36_i2() {return 20;}  /* definition, internal linkage */
+extern int DCL36_i3() {return 30;}  /* definition, external linkage */
+
+void DCL36() { }
+
+/* DCL_37_CPP */
+//no code

@@ -34,6 +34,14 @@ void DCL13();
 void DCL15();
 void DCL16();
 void DCL17();
+void DCL30();
+void DCL31();
+void DCL32();
+//void DCL33();
+void DCL34();
+//void DCL35();
+void DCL36();
+//void DCL37();
 
 void DCL() {
   DCL00();
@@ -53,6 +61,14 @@ void DCL() {
   DCL15();
   DCL16();
   DCL17();
+  DCL30();
+  DCL31();
+  DCL32();
+  //DCL33();
+  DCL34();
+  //DCL35();
+  DCL36();
+  //DCL37();
 }
 
 /* DCL_00_CPP */
@@ -402,14 +418,105 @@ void DCL30_0() {
 
 
 char *DCL30_1_init_array(void) {
-   char array[10];
-   /* Initialize array */
-   //XXX EXPECT WARNING XXX
-   return array;
+  char array[10];
+  /* Initialize array */
+  //XXX EXPECT WARNING XXX
+  return array;
 }
 
 void DCL30() {
   DCL30_0();
   //just leave DCL30_1 in the code
   //DCL30_1();
-}  
+}
+
+
+/* DCL_31_CPP */
+
+char *DCL31_concatenate(const char *s, ...) {
+  // code to actually concatenate the strings
+  char *a;
+  return a;
+}
+
+void DCL31() {
+  char *separator = " ";
+  char *t = DCL31_concatenate("hello", separator, "world", NULL);
+  char *u = DCL31_concatenate("hello", separator, "world"); // undefined behavior
+  char *v = DCL31_concatenate("hello", ' ', "world", NULL); // undefined behavior
+}
+
+
+/* DCL_32_CPP */
+
+void DCL32() {
+  int _Page_Count;
+}
+
+
+/* DCL_33_CPP */
+
+/*XXX gcc catches the error with this...*/
+//void DCL33() {
+//  char c = 'c';
+//  char &const p = c;
+//  p = 'p';
+//  cout << c << endl;
+//}
+
+
+/* DCL_34_CPP */
+
+sig_atomic_t DCL34_0_i;
+
+void DCL34_0_handler(int signum) {
+  DCL34_0_i = 0;
+}
+
+void DCL34_0() {
+  DCL34_0_i = 1;
+  signal(SIGINT, DCL34_0_handler);
+  while (DCL34_0_i) {
+    /* do something */
+  }
+}
+
+sig_atomic_t DCL34_1_i;
+
+void DCL34_1_handler(int signum) {
+  DCL34_1_i = 0;
+}
+
+void DCL34_1() {
+  DCL34_1_i = 1;
+  signal(SIGINT, DCL34_1_handler);
+  while (*(volatile sig_atomic_t *)&DCL34_1_i) {
+    /* do something */
+  }
+}
+
+void DCL34() {
+  DCL34_0();
+  DCL34_1();
+}
+
+
+/* DCL_35_CPP */
+// no code
+
+
+/* DCL_36_CPP */
+
+int DCL36_i1() {return 10;}  /* definition, external linkage */
+static int DCL36_i2() {return 20;}  /* definition, internal linkage */
+extern int DCL36_i3() {return 30;}  /* definition, external linkage */
+
+int DCL36_i1();  /* valid declaration */
+int DCL36_i2();  /* not valid, linkage disagreement with previous */
+int DCL36_i3();  /* valid declaration */
+
+void DCL36() { }
+
+
+/* DCL_37_CPP */
+// no code
