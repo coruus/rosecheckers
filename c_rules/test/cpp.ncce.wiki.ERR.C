@@ -17,12 +17,17 @@
 
 #include "cpp.util.h"
 
+//void ERR00();
 void ERR08();
 
 
 void ERR() {
+  //ERR00();
   ERR08();
 }
+
+/* ERR00_CPP */
+//no code
 
 
 /* ERR08_CPP */
