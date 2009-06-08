@@ -174,7 +174,7 @@ void ERR06_cleanup() {
 
 void ERR06() {
   int a = 1;
-  if (atexit(cleanup) != 0) {
+  if (atexit(ERR06_cleanup) != 0) {
     /* Handle error */
   }
 
@@ -190,6 +190,7 @@ void ERR06() {
 /* Begin {code} */
 
 void ERR07() {
+  int result = 0;
   if (result == -1) {
     /* deal with error */
   }
@@ -201,197 +202,159 @@ void ERR07() {
 
 void ERR08() {
   try {
-    doSomething();
+    printf("Hello, World!\n");
   }
   catch( const char *msg ) {
     std::string m( msg );
-    if ( m == "stack underflow" ) { ... }
-    else if ( m == "connection timeout" ) { ... }
-    else if ( m == "security violation" ) { ... }
+    if ( m == "stack underflow" ) { }
     else throw;
   }
 }
 
 
-///* ERR09_cpp */
-//
-///* Begin {code} */
-//
-//throw new StackUnderflow;
-//// /* ... */
-//StackUnderflow su1;
-//throw &su1;
-//// /* ... */
-//static StackUnderflow su2;
-//throw &su2;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//StackUnderflow su;
-//throw su;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//static StackUnderflow su;
-//extern std::runtime_error *lastRuntimeError;
-//lastRuntimeError = &su;
-//throw su;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//catch( StackUnderflow su ) {
-//  su.modify(); // modify argument
-//  throw; // modifications lost
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//catch( std::runtime_error re ) {
-//  // /* ... */
-//  throw re; // original type of exception lost
-//}
-//
-///* End {code} */
-//void ERR09() { }
-//
-//
-///* ERR10_cpp */
-//
-///* Begin {code} */
-//
-//char *str = (char *)malloc(strlen(input_string)+1);
-//strcpy(str, input_string); /* What if malloc() fails? */
-//
-///* End {code} */
-//void ERR10() { }
-//
-//
-///* ERR30_cpp */
-//
-///* Begin {code} */
-//
-//int main(int argc, char** argv) {
-//  Object object; // might not get destroyed if exception thrown
-//  // do useful work
-//  return 0;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//using namespace std;
-//class exception1 : public exception {};
-//class exception2 : public exception {};
-//
-//void f(void) throw( exception1) {
-//  // /* ... */
-//  throw (exception2());
-//}
-//
-//int main(void) {
-//  try {
-//    f();
-//    return 0;
-//  } catch (...) {
-//    cerr << "F called" << endl;
-//  }
-//  return -1;
-//}
-//
-///* End {code} */
-//void ERR30() { }
-//
-//
-///* ERR31_cpp */
-//
-///* Begin {code} */
-//
-//extern int errno;
-//
-///* End {code} */
-//void ERR31() { }
-//
-//
-///* ERR32_cpp */
-//
-///* Begin {code} */
-//
-//#include <signal.h>
-//#include <stdlib.h>
-//#include <string.h>
-//
-//typedef void (*pfv)(int);
-//
-//void handler(int signum) {
-//  pfv old_handler = signal(signum, SIG_DFL);
-//  if (old_handler == SIG_ERR) {
-//    perror("SIGINT handler"); /* undefined behavior */
-//    /* handle error condition */
-//  }
-//}
-//
-//int main(void) {
-//  pfv old_handler = signal(SIGINT, handler);
-//  if (old_handler == SIG_ERR) {
-//    perror("SIGINT handler");
-//    /* handle error condition */
-//  }
-//
-//  /* main code loop */
-//
-//  return 0;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//#include <stddef.h>
-//#include <signal.h>
-//#include <errno.h>
-//#include <sys/wait.h>
-//
-//void reaper(int signum) {
-//  errno = 0;
-//  for (;;) {
-//    int rc = waitpid(-1, NULL, WNOHANG);
-//    if ( (0 == rc) || (-1 == rc && EINTR != errno) )
-//      break;
-//  }
-//  if (ECHILD != errno) {
-//    /* handle error */
-//  }
-//}
-//
-//int main(void) {
-//  struct sigaction act;
-//  act.sa_handler = reaper;
-//  act.sa_flags = 0;
-//  if (sigemptyset(&act.sa_mask) != 0) {
-//    /* handle error */
-//  }
-//  if (sigaction(SIGCHLD, &act, NULL) != 0) {
-//    /* handle error */
-//  }
-//
-//  /* ... */
-//
-//  return 0;
-//}
-//
-///* End {code} */
-//void ERR32() { }
-//
-//
+/* ERR09_cpp */
+
+/* Begin {code} */
+
+//XXX dont run!!
+void ERR09_0() {
+
+  runtime_error r1("runtime");
+  throw &r1;
+
+  static runtime_error r2("runtime");
+  extern std::runtime_error *lastRuntimeError;
+  lastRuntimeError = &r2;
+  throw r2;
+
+  try {
+    printf("hello world\n");
+  }
+  catch( StackUnderflow su ) {
+    su.modify(); // modify argument
+    throw; // modifications lost
+  }
+  catch( std::runtime_error re ) {
+    // /* ... */
+    throw re; // original type of exception lost
+  }
+}
+
+void ERR09() { }
+
+
+/* ERR10_cpp */
+
+void ERR10() { 
+  char input_string[] = "input";
+  char *str = (char *)malloc(strlen(input_string)+1);
+  strcpy(str, input_string); /* What if malloc() fails? */
+}
+
+
+/* ERR30_cpp */
+
+void ERR30_0() {
+  string object; // might not get destroyed if exception thrown
+  /*do useful work*/
+  return;
+}
+
+class exception1 : public exception {};
+class exception2 : public exception {};
+
+void f(void) throw( exception1) {
+  // /* ... */
+  throw (exception2());
+}
+
+void ERR30_1() {
+  try {
+    f();
+  } 
+  catch(exception1 &e) {
+    cerr << "F called" << endl;
+  }
+}
+
+void ERR30() { }
+
+
+/* ERR31_cpp */
+
+extern int errno;
+
+
+
+/* ERR32_cpp */
+
+/* Begin {code} */
+
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef void (*pfv)(int);
+
+void handler(int signum) {
+  pfv old_handler = signal(signum, SIG_DFL);
+  if (old_handler == SIG_ERR) {
+    perror("SIGINT handler"); /* undefined behavior */
+    /* handle error condition */
+  }
+}
+
+void ERR32_0() {
+  pfv old_handler = signal(SIGINT, handler);
+  if (old_handler == SIG_ERR) {
+    perror("SIGINT handler");
+    /* handle error condition */
+  }
+
+  /* main code loop */
+}
+
+/* End {code} */
+
+/* Begin {code} */
+
+#include <stddef.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/wait.h>
+
+void reaper(int signum) {
+  errno = 0;
+  for (;;) {
+    int rc = waitpid(-1, NULL, WNOHANG);
+    if ( (0 == rc) || (-1 == rc && EINTR != errno) )
+      break;
+  }
+  if (ECHILD != errno) {
+    /* handle error */
+  }
+}
+
+void ERR32_1() {
+  struct sigaction act;
+  act.sa_handler = reaper;
+  act.sa_flags = 0;
+  if (sigemptyset(&act.sa_mask) != 0) {
+    /* handle error */
+  }
+  if (sigaction(SIGCHLD, &act, NULL) != 0) {
+    /* handle error */
+  }
+
+  /* ... */
+}
+
+void ERR32() { 
+  ERR32_0();
+  ERR32_1();
+}
+
+
 ///* ERR33_cpp */
 //
 ///* Begin {code} */

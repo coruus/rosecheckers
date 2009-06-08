@@ -29,7 +29,7 @@ void ERR08();
 void ERR09();
 void ERR10();
 void ERR30();
-void ERR31();
+//void ERR31();
 void ERR32();
 void ERR33();
 void ERR34();
@@ -49,7 +49,7 @@ void ERR() {
   ERR09();
   ERR10();
   ERR30();
-  ERR31();
+  //ERR31();
   ERR32();
   ERR33();
   ERR34();
@@ -329,20 +329,16 @@ void ERR06() {
 
 /* Begin {code} */
 
+
 void ERR07(){
   int result = 0;
   if (result == -1) {
-    throw MyException();
+    throw runtime_error("problem");
   }
 }
 
 /* ERR08_cpp */
 
-/* Begin {code} */
-
-class StackUnderflow : public std::runtime_error {
-  // /* ... */
-};
 // /* ... */
 void ERR08() {
   try {
@@ -352,118 +348,100 @@ void ERR08() {
   // /* ... */
 }
 
-///* ERR09_cpp */
-//
-///* Begin {code} */
-//
-//throw StackUnderflow();
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//catch( StackUnderflow &su ) {
-//  su.modify(); // modify exception object
-//  throw; // modifications not lost
-//}
-//catch( std::runtime_error &re ) {
-//  // /* ... */
-//  throw; // original type of exception not lost
-//}
-//
-///* End {code} */
-//void ERR09() { }
-//
-//
-///* ERR10_cpp */
-//
-///* Begin {code} */
-//
-//char *str = (char *)malloc(strlen(input_string)+1);
-//if (str == NULL) {
-//  /* Handle Allocation Error */
-//}
-//strcpy(str, input_string);
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *str = new char [strlen(input_string)+1];
-//strcpy(str, input_string);
-//
-///* End {code} */
-//void ERR10() { }
-//
-//
-///* ERR30_cpp */
-//
-///* Begin {code} */
-//
-//int main(int argc, char** argv) {
-//  Object object;
-//  bool error = false;
-//
-//  try {
-//    // do useful work
-//  } catch (...) {
-//    error = true;
-//  }
-//
-//  return error ? -1 : 0; // object gets destroyed here
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//int main(int argc, char** argv) {
-//  try {
-//    Object object;
-//    // do useful work
-//    return 0; // object gets destroyed here
-//  } catch (...) {
-//    throw;  
-//  }
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//using namespace std;
-//class exception1 : public exception {};
-//class exception2 : public exception {};
-//
-//void f(void) throw( exception1) {
-//  // /* ... */
-//  throw (exception1());
-//}
-//
-//int main(void) {
-//  try {
-//    f();
-//    return 0;
-//  } catch (...) {
-//    cerr << "F called" << endl;
-//  }
-//  return -1;
-//}
-//
-///* End {code} */
-//void ERR30() { }
-//
-//
-///* ERR31_cpp */
-//
-///* Begin {code} */
-//
-//#include <errno.h>
-//
-///* End {code} */
+/* ERR09_cpp */
+//XXX dont run!!
+void ERR09_0() {
+  throw StackUnderflow();
+
+  try { }
+  catch( StackUnderflow &su ) {
+    su.modify(); // modify exception object
+    throw; // modifications not lost
+  }
+  catch( std::runtime_error &re ) {
+    // /* ... */
+    throw; // original type of exception not lost
+  }
+}
+
+void ERR09() { }
+
+
+/* ERR10_cpp */
+void ERR10_0() { 
+  char input_string[] = "input";
+  char *str = (char *)malloc(strlen(input_string)+1);
+  if (str == NULL) {
+    /* Handle Allocation Error */
+  }
+  strcpy(str, input_string);
+}
+
+void ERR10_1() {
+  char input_string[] = "input";
+  char *str = new char [strlen(input_string)+1];
+  strcpy(str, input_string);
+}
+
+void ERR10() { 
+  ERR10_0();
+  ERR10_1();
+}
+
+
+/* ERR30_cpp */
+
+void ERR30_0() {
+  string object;
+  bool error = false;
+
+  try {
+    // do useful work
+  } catch (...) {
+    error = true;
+  }
+
+  return;
+}
+
+/* End {code} */
+
+/* Begin {code} */
+
+int main(int argc, char** argv) {
+  try {
+    string object;
+    // do useful work
+    return 0; // object gets destroyed here
+  } catch (...) {
+    throw;  
+  }
+}
+
+class exception1 : public exception {};
+class exception2 : public exception {};
+
+void ERR30_1_f(void) throw( exception1) {
+  // /* ... */
+  throw (exception1());
+}
+
+void ERR30_1() {
+  try {
+    ERR30_1_f();
+  } catch (exception1 &e) {
+    cerr << "F called" << endl;
+  }
+}
+
+/* End {code} */
+void ERR30() { }
+
+
+//nothing useful to do
 //void ERR31() { }
-//
-//
+
+
 ///* ERR32_cpp */
 //
 ///* Begin {code} */

@@ -56,9 +56,14 @@ typedef void (*abort_handler_s) (
     void * __restrict__ ptr,
     errno_t error);
 
-class MyException: public std::runtime_error {
-  // /* ... */
+class StackUnderflow : public std::exception {
+  /* ... */
+  public:
+    StackUnderflow() {};
+    void modify() {};
 };
+
+
 
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
