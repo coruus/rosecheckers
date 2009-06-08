@@ -100,42 +100,6 @@ bool isTestForNullOp(const SgNode* node);
  */
 bool isAssignToVar( const SgNode *node, const SgInitializedName *var);
 
-/****************************************************************************
- * Next Visitor                                                             *
- ****************************************************************************/
-class NextVisitor : public AstPrePostProcessing {
-public:
-	// Visits nodes that will be executed after this one
-	void traverse_next(const SgNode* node);
-protected:
-	virtual void preOrderVisit(SgNode *node);
-	virtual void postOrderVisit(SgNode *node);
-	virtual void visit_next(SgNode* node);
-
-	// This is the node passed to traverse_next, we only want nodes
-	// that follow it.
-	const SgNode* sentinel_;
-
-	// A stack of nodes before our sentinel that we might visit
-	// because they are in the same for/while loop as our sentinel
-	Rose_STL_Container< Rose_STL_Container< SgNode*> > stack_;
-
-	// true if we've passed our sentinel yet
-	bool after_;
-
-	// If non-NULL, skip nodes until we encounter this one
-	const SgNode* skip_;
-};
-
-class NextValueReferred : public NextVisitor {
-public:
-	// Returns next instance where ref's value is used, or NULL if none
-	const SgVarRefExp* next_value_referred(const SgVarRefExp* ref);
-protected:
-	const SgVarRefExp* next_ref_;
-	const SgInitializedName* var_;
-	virtual void visit_next(SgNode* node);
-};
 
 /**
  * Given a node in a block, returns the node at the top of the block.
@@ -143,6 +107,33 @@ protected:
  * \note This looks for a lot of blocks, but maybe not all of them?
  */
 const SgNode *popBlock(const SgNode *node);
+
+
+/**
+ * Class to visit nodes following node in control flow
+ */
+class CFGVisitor {
+private:
+  /** Nodes that have already been visited */
+  std::set<VirtualCFG::CFGNode> visited;
+public:
+  /** Do something with this node, then visit its successors, in a bfs order */
+  void visit(const VirtualCFG::CFGNode& node);
+  /** Visit node's successors */
+  void visitOthers(const VirtualCFG::CFGNode& node);
+  /**
+   * Do something with this node
+   * /return true if visiting should continue
+   */
+  virtual bool doSomething(const SgNode* node) = 0; // returns true if visit should continue
+};
+
+
+/**
+ * /param ref  Reference to a variable
+ * /return list of succeeding variable references
+ */
+Rose_STL_Container<const SgVarRefExp*> next_var_references(const SgVarRefExp* ref);
 
 
 /// C++ utiltiies
@@ -155,5 +146,6 @@ bool isClassDeclaredInStdNamespace(const SgClassDeclaration *decl);
 
 /* Returns true if class inherits from std::exception */
 bool inheritsFromStdException(const SgClassDeclaration *cdecl);
+
 
 #endif

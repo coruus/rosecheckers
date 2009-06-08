@@ -22,8 +22,6 @@
 #include "rose.h"
 #include "utilities.h"
 #include "utilities_cpp.h"
-#include <algorithm>
-
 
 /**
  * Store a new value in pointers immediately after free()
@@ -224,6 +222,7 @@ bool MEM08_C( const SgNode *node ) {
 	return false;
 }
 
+
 /**
  * Ensure that freed pointers are not reused
  *
@@ -242,37 +241,11 @@ bool MEM30_C( const SgNode *node ) {
   const SgInitializedName* var = getRefDecl( ref);
   assert(var != NULL);
 
-  const SgNode *next_ref = NextValueReferred().next_value_referred( ref);
-
-  if(next_ref) {
-    const SgFunctionDefinition *top = findParentOfType(node, SgFunctionDefinition);
-
-    assert(top);
-
-    Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>(top), V_SgNode );
-    Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
-    while(fnRef != isSgFunctionRefExp(*i)) {
-      assert(i != nodes.end());
-      i++;
-    }
-
-    while(*i != next_ref) {    
-      if(i == nodes.end())
-	break;
-        
-      //If they return immediately after it's ok.
-      if(isSgReturnStmt(*i))
-	return false;
-
-      //If there's an if statement we don't check further.
-      if(isSgIfStmt(*i)) {
-	print_error( node, "MEM30-C", "Do not access freed memory");
-	return true;
-      }
-
-      i++;
-    }
-	    
+  Rose_STL_Container<const SgVarRefExp*> references = next_var_references( ref);
+  Rose_STL_Container<const SgVarRefExp*>::iterator i;
+  for (i = references.begin(); i != references.end(); ++i) {
+    if (isTestForNullOp(*i)) continue;
+    if (isAssignToVar( (*i)->get_parent(), var)) continue;
     print_error( node, "MEM30-C", "Do not access freed memory");
     return true;
   }

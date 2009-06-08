@@ -554,87 +554,6 @@ bool varWrittenTo(const SgNode* var) {
 	}
 }
 
-/// NextVisitor code
-
-void add_dfs_to_stack(Rose_STL_Container< SgNode*>& stack, const SgNode *node) {
-	Rose_STL_Container<SgNode *> list;
-	assert(node);
-	list = NodeQuery::querySubTree(const_cast< SgNode*>( node), V_SgNode);
-	stack.insert( stack.end(), list.begin(), list.end());
-}
-
-
-// Visits nodes that will be executed after this one
-void NextVisitor::traverse_next(const SgNode* node) {
-	stack_.erase( stack_.begin(), stack_.end());
-	sentinel_ = node;
-	after_ = false;
-	skip_ = NULL;
-	traverse(const_cast<SgFunctionDefinition *>( findParentOfType(node, SgFunctionDefinition)));
-}
-
-void NextVisitor::preOrderVisit(SgNode *node) {
-	if (node == skip_) skip_ = NULL;
-	else if (skip_ != NULL) return;
-
-	const SgForStatement *forLoop;
-	if (after_) {
-		/// \todo for loops visited in AST order, not execution order
-		/// \todo handle break, continue, return, goto
-		visit_next( node);
-	} else if (node == sentinel_) {
-		after_ = true;
-	} else if (!after_) {
-		if ((forLoop = isSgForStatement( node)) != NULL) {
-			// for loops must be treated specially, since the statements
-			// are not executed in the AST order. 
-			if (!stack_.empty()) {
-				add_dfs_to_stack( stack_.back(), forLoop->get_for_init_stmt());
-				add_dfs_to_stack( stack_.back(), forLoop->get_test());
-			}
-			stack_.push_back( Rose_STL_Container<SgNode*>()); // part of for loop
-			stack_.back().push_back( node);
-			add_dfs_to_stack( stack_.back(), forLoop->get_increment());
-			add_dfs_to_stack( stack_.back(), forLoop->get_test());
-			skip_ = forLoop->get_loop_body(); // ignore nodes in for line, skip to body
-
-		} else if (isSgWhileStmt( node) || isSgDoWhileStmt( node)) {
-			// add do & while loop nodes to stack
-			stack_.push_back( Rose_STL_Container<SgNode*>());
-			stack_.back().push_back( node);
-		} else { // node is nothing special
-
-			if (!stack_.empty()) { // inside a loop
-				stack_.back().push_back( node);
-			}
-		}
-	}
-}
-
-void NextVisitor::postOrderVisit(SgNode *node) {
-	if (skip_ != NULL) return;
-	if (!stack_.empty() && (stack_.back().front() == node)) {
-		// unwind loop, visit all nodes
-		if (after_) 
-			for (Rose_STL_Container<SgNode *>::const_iterator i = stack_.back().begin();
-					 i != stack_.back().end(); i++)
-				visit_next(*i);
-		stack_.pop_back();
-	}
-}
-
-/**
- * \todo Rewrite this so that it just returns a list (possibly just an
- * extension
- */
-void NextVisitor::visit_next(SgNode* node) {
-#if 0
-	if (isSgExpression( node))
-		std::cerr << "visit-next: " << node->unparseToString() << " in "
-							<< node->get_parent()->unparseToString() << std::endl;
-#endif
-}
-
 
 /**
  * Checks to see if node is an assignment with var as the lhs and not in
@@ -665,27 +584,6 @@ bool isAssignToVar( const SgNode *node, const SgInitializedName *var) {
 	return true;
 }
 
-// Returns next instance where ref's value is used, or NULL if none
-const SgVarRefExp* NextValueReferred::next_value_referred(const SgVarRefExp* ref) {
-	next_ref_ = NULL;
-	var_ = getRefDecl( ref);
-	traverse_next( ref);
-	return next_ref_;
-}
-
-void NextValueReferred::visit_next(SgNode* node) {
-	const SgVarRefExp* ref = isSgVarRefExp( node);
-	if (ref == NULL || getRefDecl(ref) != var_)
-		return;
-
-	skip_ = node; // disables all visits hereafter
-
-	if (isTestForNullOp(ref) ||
-			isAssignToVar(findParentOfType(ref, SgAssignOp), getRefDecl(ref)))
-		return;
-
-	next_ref_ = ref;
-}
 
 /**
  * Takes a statement and sees if a variable is being compared to 0 inside
@@ -825,3 +723,53 @@ const SgNode *popBlock(const SgNode *node) {
   return parent;
 }
 
+
+/** Do something with this node, then visit its successors, in a bfs order */
+void CFGVisitor::visit(const VirtualCFG::CFGNode& node) {
+  if (visited.find(node) != visited.end()) return; // don't revisit the same nodes
+  if (!doSomething( node.getNode())) return;
+  visitOthers( node);
+}
+
+/** Visit node's successors */
+void CFGVisitor::visitOthers(const VirtualCFG::CFGNode& node) {
+  visited.insert( node);
+  Rose_STL_Container<VirtualCFG::CFGEdge> children = node.outEdges();
+  Rose_STL_Container<VirtualCFG::CFGEdge>::iterator i;
+  for (i = children.begin(); i != children.end(); ++i) visit( i->target());
+  visited.erase( node);
+}
+
+/** 
+ * Class that returns list of next references to a variable
+ */
+class CFGNextVarRef : public CFGVisitor {
+private:
+  const SgInitializedName* variable_;
+public:
+  Rose_STL_Container<const SgVarRefExp*> result_;
+
+  CFGNextVarRef(const SgVarRefExp* ref)
+    : variable_( getRefDecl( ref)) {}
+
+  virtual bool doSomething(const SgNode* node);
+};
+
+bool CFGNextVarRef::doSomething(const SgNode* node) {
+  const SgVarRefExp* ref = isSgVarRefExp(node);
+  if (ref == NULL) return true;
+  const SgInitializedName* ref_var = getRefDecl( ref);
+  if (ref_var != variable_) return true;
+  result_.push_back( ref);
+  return false;
+}
+
+/**
+ * /param ref  Reference to a variable
+ * /return list of succeeding variable references
+ */
+Rose_STL_Container<const SgVarRefExp*> next_var_references(const SgVarRefExp* ref) {
+  CFGNextVarRef visitor( ref);
+  visitor.visitOthers( const_cast< SgVarRefExp*>(ref)->cfgForEnd());
+  return visitor.result_;
+}
