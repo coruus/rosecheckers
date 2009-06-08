@@ -33,6 +33,9 @@
 #include <cstdarg>
 #include <errno.h>
 #include <signal.h>
+#include <cassert>
+
+typedef int errno_t;
 
 extern char **environ;
 
