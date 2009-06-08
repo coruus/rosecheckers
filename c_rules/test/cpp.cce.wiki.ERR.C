@@ -442,191 +442,141 @@ void ERR30() { }
 //void ERR31() { }
 
 
-///* ERR32_cpp */
-//
-///* Begin {code} */
-//
-//#include <signal.h>
-//#include <stdlib.h>
-//#include <string.h>
-//
-//typedef void (*pfv)(int);
-//
-//void handler(int signum) {
-//  pfv old_handler = signal(signum, SIG_DFL);
-//  if (old_handler == SIG_ERR) {
-//    abort();
-//  }
-//}
-//
-//int main(void) {
-//  pfv old_handler = signal(SIGINT, handler);
-//  if (old_handler == SIG_ERR) {
-//    perror("SIGINT handler");
-//    /* handle error condition */
-//  }
-//
-//  /* main code loop */
-//
-//  return 0;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//#include <stddef.h>
-//#include <signal.h>
-//#include <errno.h>
-//#include <sys/wait.h>
-//
-//void reaper(int signum) {
-//  int save_errno = errno;
-//  errno = 0;
-//  for (;;) {
-//    int rc = waitpid(-1, NULL, WNOHANG);
-//    if ( (0 == rc) || (-1 == rc && EINTR != errno) )
-//      break;
-//  }
-//  if (ECHILD != errno) {
-//    /* handle error */
-//  }
-//  errno = save_errno;
-//}
-//
-//int main(void) {
-//  struct sigaction act;
-//  act.sa_handler = reaper;
-//  act.sa_flags = 0;
-//  if (sigemptyset(&act.sa_mask) != 0) {
-//    /* handle error */
-//  }
-//  if (sigaction(SIGCHLD, &act, NULL) != 0) {
-//    /* handle error */
-//  }
-//
-//  /* ... */
-//
-//  return 0;
-//}
-//
-///* End {code} */
-//void ERR32() { }
-//
-//
-///* ERR33_cpp */
-//void ERR33() { }
-//
-//
-///* ERR34_cpp */
-//
-///* Begin {code} */
-//
-//#include <csetjmp>
-//#include <iostream>
-//using namespace std;
-//
-//static jmp_buf env;
-//
-//class Counter {
-//  public:
-//    static int Instances;
-//
-//    Counter() {Instances++;}
-//    ~Counter() {Instances--;}
-//  private:
-//    Counter(const Counter& that);
-//    Counter& operator=(const Counter& that);
-//};
-//
-//int Counter::Instances = 0;
-//class Error {};
-//
-//void func() {
-//  Counter c;
-//  cout << "func(): Instances: " << Counter::Instances << endl;
-//  longjmp( env, 1);
-//}
-//
-//int main(void) {
-//
-//  cout << "Before setjmp(): Instances: " << Counter::Instances << endl;
-//  if (setjmp(env) == 0) {
-//    func();
-//  } else {
-//    cout << "From longjmp(): Instances: " << Counter::Instances << endl;
-//  }
-//
-//  cout << "After longjmp(): Instances: " << Counter::Instances << endl;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//#include <iostream>
-//using namespace std;
-//
-//class Counter {
-//  public:
-//    static int Instances;
-//
-//    Counter() {Instances++;}
-//    ~Counter() {Instances--;}
-//  private:
-//    Counter(const Counter& that);
-//    Counter& operator=(const Counter& that);
-//};
-//
-//int Counter::Instances = 0;
-//class Error {};
-//
-//void func() {
-//  Counter c;
-//  cout << "func(): Instances: " << Counter::Instances << endl;
-//  throw Error();
-//}
-//
-//int main(void) {
-//
-//  cout << "Before try: Instances: " << Counter::Instances << endl;
-//  try {
-//    func();
-//  } catch (...) {
-//    cout << "In catch: Instances: " << Counter::Instances << endl;
-//  }
-//
-//  cout << "After catch: Instances: " << Counter::Instances << endl;
-//}
-//
-///* End {code} */
-//void ERR34() { }
-//
-//
-///* ERR35_cpp */
-//
-///* Begin {code} */
-//
-//class C {
-//  private:
-//    int x;
-//  public:
-//    C() : x(0) {
-//      int y = x;
-//      try {
-//        // /* ... */
-//      } catch (...) {
-//        if (0 == y) {
-//          // /* ... */
-//        }
-//      }
-//    }
-//};
-//
-///* End {code} */
-//void ERR35() { }
-//
-//
+/* ERR32_cpp */
+
+/* Begin {code} */
+
+typedef void (*pfv)(int);
+
+void ERR32_handler(int signum) {
+  pfv old_ERR32_handler = signal(signum, SIG_DFL);
+  if (old_ERR32_handler == SIG_ERR) {
+    abort();
+  }
+}
+
+void ERR32_0(void) {
+  pfv old_ERR32_handler = signal(SIGINT, ERR32_handler);
+  if (old_ERR32_handler == SIG_ERR) {
+    perror("SIGINT ERR32_handler");
+    /* handle error condition */
+  }
+
+  /* main code loop */
+}
+
+void ERR32_reaper(int signum) {
+  int save_errno = errno;
+  errno = 0;
+  for (;;) {
+    int rc = waitpid(-1, NULL, WNOHANG);
+    if ( (0 == rc) || (-1 == rc && EINTR != errno) )
+      break;
+  }
+  if (ECHILD != errno) {
+    /* handle error */
+  }
+  errno = save_errno;
+}
+
+void ERR32_1() {
+  struct sigaction act;
+  act.sa_handler = ERR32_reaper;
+  act.sa_flags = 0;
+  if (sigemptyset(&act.sa_mask) != 0) {
+    /* handle error */
+  }
+  if (sigaction(SIGCHLD, &act, NULL) != 0) {
+    /* handle error */
+  }
+
+  /* ... */
+}
+
+void ERR32() { 
+  ERR32_0();
+  ERR32_1();
+}
+
+
+/* ERR33_cpp */
+class ERR33_X {
+  public:
+    ERR33_X() { }
+    ~ERR33_X() {
+      try {
+        printf("bye bye\n");
+      }
+      catch(...) {
+      }
+    }
+};
+
+void ERR33() {
+  ERR33_X();
+}
+
+
+/* ERR34_cpp */
+
+class ERR34_Counter {
+  public:
+    static int Instances;
+
+    ERR34_Counter() {Instances++;}
+    ~ERR34_Counter() {Instances--;}
+  private:
+    ERR34_Counter(const ERR34_Counter& that);
+    ERR34_Counter& operator=(const ERR34_Counter& that);
+};
+
+int ERR34_Counter::Instances = 0;
+class ERR34_Error {};
+
+void ERR34_func() {
+  ERR34_Counter c;
+  cout << "ERR34_func(): Instances: " << ERR34_Counter::Instances << endl;
+  throw ERR34_Error();
+}
+
+void ERR34() {
+
+  cout << "Before try: Instances: " << ERR34_Counter::Instances << endl;
+  try {
+    ERR34_func();
+  } catch (...) {
+    cout << "In catch: Instances: " << ERR34_Counter::Instances << endl;
+  }
+
+  cout << "After catch: Instances: " << ERR34_Counter::Instances << endl;
+}
+
+/* ERR35_cpp */
+
+/* Begin {code} */
+
+class ERR35_C {
+  private:
+    int x;
+  public:
+    ERR35_C() : x(0) {
+      int y = x;
+      try {
+        // /* ... */
+      } catch (...) {
+        if (0 == y) {
+          // /* ... */
+        }
+      }
+    }
+};
+
+/* End {code} */
+void ERR35() { 
+  ERR35_C a = ERR35_C();
+}
+
+
 ///* ERR36_cpp */
 //void ERR36() { }
 //

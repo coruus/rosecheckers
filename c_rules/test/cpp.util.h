@@ -37,6 +37,13 @@
 #include <cassert>
 #include <cstring>
 #include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <errno.h>
+#include <sys/wait.h>
+#include <csetjmp>
+#include <iostream>
+
 
 typedef int errno_t;
 

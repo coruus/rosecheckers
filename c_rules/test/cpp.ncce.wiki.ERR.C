@@ -290,10 +290,6 @@ extern int errno;
 
 /* Begin {code} */
 
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-
 typedef void (*pfv)(int);
 
 void handler(int signum) {
@@ -313,15 +309,6 @@ void ERR32_0() {
 
   /* main code loop */
 }
-
-/* End {code} */
-
-/* Begin {code} */
-
-#include <stddef.h>
-#include <signal.h>
-#include <errno.h>
-#include <sys/wait.h>
 
 void reaper(int signum) {
   errno = 0;
@@ -355,48 +342,82 @@ void ERR32() {
 }
 
 
-///* ERR33_cpp */
-//
-///* Begin {code} */
-//
-//SomeClass::~SomeClass() {
-//  // normal processing
-//  if (someCondition) {
-//    throw someException("something nasty");
-//  }
-//}
-//
-///* End {code} */
-//void ERR33() { }
-//
-//
-///* ERR34_cpp */
-//void ERR34() { }
-//
-//
-///* ERR35_cpp */
-//
-///* Begin {code} */
-//
-//class C {
-//  private:
-//    int x;
-//  public:
-//    C() : x(0) {
-//      try {
-//        // /* ... */
-//      } catch (...) {
-//        if (0 == x) {
-//          // /* ... */
-//        }
-//      }
-//    }
-//};
-//
-///* End {code} */
-//void ERR35() { }
-//
-//
+/* ERR33_cpp */
+
+class ERR33_X {
+  public:
+    ERR33_X() { }
+    ~ERR33_X() {
+      bool someCondition = false;
+      if (someCondition) {
+        throw exception();
+      }
+    }
+};
+
+void ERR33() {
+  ERR33_X a = ERR33_X();
+}
+
+/* ERR34_cpp */
+
+static jmp_buf ERR34_env;
+
+class ERR34_Counter {
+  public:
+    static int Instances;
+
+    ERR34_Counter() {Instances++;}
+    ~ERR34_Counter() {Instances--;}
+  private:
+    ERR34_Counter(const ERR34_Counter& that);
+    ERR34_Counter& operator=(const ERR34_Counter& that);
+};
+
+int ERR34_Counter::Instances = 0;
+class ERR34_Error {};
+
+void ERR34_func() {
+  ERR34_Counter c;
+  cout << "ERR34_func(): Instances: " << ERR34_Counter::Instances << endl;
+  longjmp( ERR34_env, 1);
+}
+
+void ERR34() {
+
+  cout << "Before setjmp(): Instances: " << ERR34_Counter::Instances << endl;
+  if (setjmp(ERR34_env) == 0) {
+    ERR34_func();
+  } else {
+    cout << "From longjmp(): Instances: " << ERR34_Counter::Instances << endl;
+  }
+
+  cout << "After longjmp(): Instances: " << ERR34_Counter::Instances << endl;
+}
+
+
+
+/* ERR35_cpp */
+class ERR35_C {
+  private:
+    int x;
+  public:
+    ERR35_C() : x(0) {
+      try {
+        // /* ... */
+      } catch (...) {
+        if (0 == x) {
+          // /* ... */
+        }
+      }
+    }
+};
+
+void ERR35() { 
+  ERR35_C a = ERR35_C();
+}
+
+
 ///* ERR36_cpp */
 //
 ///* Begin {code} */
