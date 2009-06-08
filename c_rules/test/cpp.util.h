@@ -44,14 +44,12 @@
 #include <csetjmp>
 #include <iostream>
 
-
+typedef unsigned int rsize_t;
 typedef int errno_t;
 
 extern char **environ;
 
 using namespace std;
-
-typedef int errno_t;
 
 typedef void (*constraint_handler_t) (
     const char * __restrict__ msg,
@@ -70,13 +68,10 @@ class StackUnderflow : public std::exception {
     void modify() {};
 };
 
-
-
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
  * specified as a #define to avoid being ignored by the tools.
  */
-
 
 #define RUNTIME_IGNORE 1
 
