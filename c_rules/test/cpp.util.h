@@ -33,7 +33,10 @@
 #include <cstdarg>
 #include <errno.h>
 #include <signal.h>
+#include <stdexcept>
 #include <cassert>
+#include <cstring>
+#include <stdlib.h>
 
 typedef int errno_t;
 
@@ -41,10 +44,28 @@ extern char **environ;
 
 using namespace std;
 
+typedef int errno_t;
+
+typedef void (*constraint_handler_t) (
+    const char * __restrict__ msg,
+    void * __restrict__ ptr,
+    errno_t error);
+
+typedef void (*abort_handler_s) (
+    const char * __restrict__ msg,
+    void * __restrict__ ptr,
+    errno_t error);
+
+class MyException: public std::runtime_error {
+  // /* ... */
+};
+
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
  * specified as a #define to avoid being ignored by the tools.
-*/
+ */
+
+
 #define RUNTIME_IGNORE 1
 
 #endif

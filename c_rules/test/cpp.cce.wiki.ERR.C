@@ -18,28 +18,652 @@
 #include "cpp.util.h"
 
 //void ERR00();
+void ERR01();
+void ERR02();
+//void ERR03();
+void ERR04();
+void ERR05();
+void ERR06();
+void ERR07();
 void ERR08();
-
-
+void ERR09();
+void ERR10();
+void ERR30();
+void ERR31();
+void ERR32();
+void ERR33();
+void ERR34();
+void ERR35();
+void ERR36();
+void ERR37();
 void ERR() {
   //ERR00();
+  ERR01();
+  ERR02();
+  //ERR03();
+  ERR04();
+  ERR05();
+  ERR06();
+  ERR07();
   ERR08();
+  ERR09();
+  ERR10();
+  ERR30();
+  ERR31();
+  ERR32();
+  ERR33();
+  ERR34();
+  ERR35();
+  ERR36();
+  ERR37();
 }
 
-/* ERR00_CPP*/
+
+
+/* ERR00_cpp */
 //no code
 
-/* ERR08_CPP */
+/* ERR01_cpp */
 
-extern void doSomething();
-
-class StackUnderflow : public std::runtime_error {};
-
-void ERR08() {
-  try {
-    doSomething();
+void ERR01() { 
+  printf("This\n");
+  printf("is\n");
+  printf("a\n");
+  printf("test.\n");
+  if (ferror(stdout)) {
+    fprintf(stderr, "printf failed\n");
   }
-  catch (StackUnderflow& xr) // no diagnostic
-    {}
 }
 
+
+/* ERR02_cpp */
+//XXX context specific
+//errno_t sprintf_m(
+//    string_m buf, 
+//    const string_m fmt, 
+//    int *count, 
+//    /* ... */
+//    );
+//
+//
+//int i;
+//rsize_t count = 0;
+//errno_t err;
+//
+//for (i = 0; i < 9; ++i) {
+//  err = sprintf_m(
+//      buf + count, "%02x ", &count, ((u8 *)&slreg_num)[i]
+//      );
+//  if (err != 0) {
+//    /* Handle print error */
+//  }
+//}
+//err = sprintf_m(
+//    buf + count, "%02x ", &count, ((u8 *)&slreg_num)[i]
+//    );
+//if (err != 0) {
+//  /* Handle print error */
+//}
+
+
+/*
+* The abort_handler_s() function writes a message on the
+* standard error stream and then calls the abort() function.
+*/
+
+//XXX abort_handler_s blankly typedef'd in cpp.util.h
+//XXX XXX won't work:
+//set_constraint_handler(abort_handler_s);
+
+//XXX this part won't work on GCC but isn't important
+///*...*/
+//
+///* Returns zero on success */
+//errno_t function(char *dst1){
+//  char src1[100] = "hello";
+//
+//  strcpy_s(dst1, sizeof(dst1), src1);
+//  /* Because abort_handler_s() never returns,
+//     we only get here if strcpy_s() succeeds. */
+//
+//  /* ... */
+//  return 0;
+//}
+//
+///* End {code} */
+
+void ERR02() { }
+
+
+/* ERR03_cpp */
+
+constraint_handler_t handle_errors(void) {
+  /* Handle runtime constraint error */
+}
+
+//XXX XXX won't work:
+//set_constraint_handler_s(handle_errors);
+
+
+//we don't have strcpy_s
+/* Returns zero on success */
+//errno_t function(char *dst1, size_t size){
+//  char src1[100] = "hello";
+//
+//  if (strcpy_s(dst1, size, src1) != 0) {
+//    return -1;
+//  }
+//  /* ... */
+//  return 0;
+//}
+//
+//void ERR03() { }
+
+
+/* ERR04_cpp */
+void ERR04_0() {
+  int a = 0;
+  int b = 1;
+  if (a == b)
+    exit(EXIT_FAILURE);
+}
+
+void ERR04_1() {
+  int a = 0;
+  int b = 1;
+  if (a == b) {
+    _Exit(EXIT_FAILURE);
+  }
+}
+
+void ERR04_2() {
+  printf("Hello, World");
+  /* ... */
+  exit(EXIT_FAILURE); /* writes data & closes f. */
+  /* ... */
+}
+
+void ERR04() {
+  ERR04_0();
+  ERR04_1();
+  ERR04_2();
+}
+
+
+/* ERR05_cpp */
+
+const errno_t ERR05_ESOMETHINGREALLYBAD = 1;
+
+errno_t ERR05_0_g(){
+  int a = 0;
+  int b = 1;
+  if (a == b) {
+    return ERR05_ESOMETHINGREALLYBAD;
+  }
+  /* ... */
+  return 0;
+}
+
+errno_t ERR05_0() {
+  errno_t status = ERR05_0_g();
+  if (status != 0) return status;
+
+  /* ... do the rest of f ... */
+
+  return 0;
+}
+
+void ERR05_1_g(errno_t* err) {
+  int a = 0;
+  int b = 1;
+  if (err == NULL) {
+    /* Handle null pointer */
+  }
+  /* ... */
+  if (/*something_really_bad_happens*/ a == b) {
+    *err = ERR05_ESOMETHINGREALLYBAD;
+  } else {
+    /* ... */
+    *err = 0;
+  }
+}
+
+//we can't call this... so ERR05_1 is just skipped
+void ERR05_1_f(errno_t* err) {
+  if (err == NULL) {
+    /* Handle null pointer */
+  }
+  ERR05_1_g(err);
+  if (*err == 0) {
+    /* ... do the rest of f ... */
+  }
+}
+
+errno_t ERR05_2_my_errno; /* also declared in a .h file */
+
+void ERR05_2_g() {
+  int a = 0;
+  int b = 1;
+  /* ... */
+  if (a == b) {
+    ERR05_2_my_errno = ERR05_ESOMETHINGREALLYBAD;
+    return;
+  }
+  /* ... */
+}
+
+void ERR05_2() {
+  int a = 0;
+  int b = 1;
+  ERR05_2_my_errno = 0;
+  ERR05_2_g();
+  if (ERR05_2_my_errno != 0) {
+    return;
+  }
+  /* ... do the rest of f ... */
+}
+
+#include <setjmp.h>
+
+jmp_buf ERR05_3_exception_env;
+
+void ERR05_3_g(void) {
+  int a = 0;
+  int b = 1;
+  if (a == b) {
+    longjmp(ERR05_3_exception_env, ERR05_ESOMETHINGREALLYBAD);
+  }
+  /* ... */
+}
+
+void ERR05_3_f() {
+  ERR05_3_g();
+  /* ... do the rest of f ... */
+}
+
+
+void ERR05_3() {
+  errno_t ERR05_3_err = setjmp(ERR05_3_exception_env);
+  ERR05_3_f();
+
+  /* ... */
+  if (ERR05_3_err != 0) {
+    /* if we get here, an error occurred
+       and err indicates what went wrong */
+  }
+  /* ... */
+  /* ... */
+}
+
+void ERR05() { 
+  ERR05_0();
+  ERR05_2();
+  ERR05_3();
+}
+
+/* ERR06_cpp */
+
+/* Begin {code} */
+
+void ERR06_cleanup() {
+  /* delete temporary files, restore consistent state, etc */
+}
+
+void ERR06() {
+  int a = 0;
+  if (atexit(ERR06_cleanup) != 0) {
+    /* Handle error */
+  }
+
+  /* ... */
+
+  if (a == a) {
+    exit(EXIT_FAILURE);
+  }
+
+  /* ... */
+}
+
+
+/* ERR07_cpp */
+
+/* Begin {code} */
+
+void ERR07(){
+  int result = 0;
+  if (result == -1) {
+    throw MyException();
+  }
+}
+
+/* ERR08_cpp */
+
+/* Begin {code} */
+
+class StackUnderflow : public std::runtime_error {
+  // /* ... */
+};
+// /* ... */
+void ERR08() {
+  try {
+    printf("Hello, World\n");
+  }
+  catch( StackUnderflow &su ) { throw; }
+  // /* ... */
+}
+
+///* ERR09_cpp */
+//
+///* Begin {code} */
+//
+//throw StackUnderflow();
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//catch( StackUnderflow &su ) {
+//  su.modify(); // modify exception object
+//  throw; // modifications not lost
+//}
+//catch( std::runtime_error &re ) {
+//  // /* ... */
+//  throw; // original type of exception not lost
+//}
+//
+///* End {code} */
+//void ERR09() { }
+//
+//
+///* ERR10_cpp */
+//
+///* Begin {code} */
+//
+//char *str = (char *)malloc(strlen(input_string)+1);
+//if (str == NULL) {
+//  /* Handle Allocation Error */
+//}
+//strcpy(str, input_string);
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//char *str = new char [strlen(input_string)+1];
+//strcpy(str, input_string);
+//
+///* End {code} */
+//void ERR10() { }
+//
+//
+///* ERR30_cpp */
+//
+///* Begin {code} */
+//
+//int main(int argc, char** argv) {
+//  Object object;
+//  bool error = false;
+//
+//  try {
+//    // do useful work
+//  } catch (...) {
+//    error = true;
+//  }
+//
+//  return error ? -1 : 0; // object gets destroyed here
+//}
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//int main(int argc, char** argv) {
+//  try {
+//    Object object;
+//    // do useful work
+//    return 0; // object gets destroyed here
+//  } catch (...) {
+//    throw;  
+//  }
+//}
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//using namespace std;
+//class exception1 : public exception {};
+//class exception2 : public exception {};
+//
+//void f(void) throw( exception1) {
+//  // /* ... */
+//  throw (exception1());
+//}
+//
+//int main(void) {
+//  try {
+//    f();
+//    return 0;
+//  } catch (...) {
+//    cerr << "F called" << endl;
+//  }
+//  return -1;
+//}
+//
+///* End {code} */
+//void ERR30() { }
+//
+//
+///* ERR31_cpp */
+//
+///* Begin {code} */
+//
+//#include <errno.h>
+//
+///* End {code} */
+//void ERR31() { }
+//
+//
+///* ERR32_cpp */
+//
+///* Begin {code} */
+//
+//#include <signal.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef void (*pfv)(int);
+//
+//void handler(int signum) {
+//  pfv old_handler = signal(signum, SIG_DFL);
+//  if (old_handler == SIG_ERR) {
+//    abort();
+//  }
+//}
+//
+//int main(void) {
+//  pfv old_handler = signal(SIGINT, handler);
+//  if (old_handler == SIG_ERR) {
+//    perror("SIGINT handler");
+//    /* handle error condition */
+//  }
+//
+//  /* main code loop */
+//
+//  return 0;
+//}
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//#include <stddef.h>
+//#include <signal.h>
+//#include <errno.h>
+//#include <sys/wait.h>
+//
+//void reaper(int signum) {
+//  int save_errno = errno;
+//  errno = 0;
+//  for (;;) {
+//    int rc = waitpid(-1, NULL, WNOHANG);
+//    if ( (0 == rc) || (-1 == rc && EINTR != errno) )
+//      break;
+//  }
+//  if (ECHILD != errno) {
+//    /* handle error */
+//  }
+//  errno = save_errno;
+//}
+//
+//int main(void) {
+//  struct sigaction act;
+//  act.sa_handler = reaper;
+//  act.sa_flags = 0;
+//  if (sigemptyset(&act.sa_mask) != 0) {
+//    /* handle error */
+//  }
+//  if (sigaction(SIGCHLD, &act, NULL) != 0) {
+//    /* handle error */
+//  }
+//
+//  /* ... */
+//
+//  return 0;
+//}
+//
+///* End {code} */
+//void ERR32() { }
+//
+//
+///* ERR33_cpp */
+//void ERR33() { }
+//
+//
+///* ERR34_cpp */
+//
+///* Begin {code} */
+//
+//#include <csetjmp>
+//#include <iostream>
+//using namespace std;
+//
+//static jmp_buf env;
+//
+//class Counter {
+//  public:
+//    static int Instances;
+//
+//    Counter() {Instances++;}
+//    ~Counter() {Instances--;}
+//  private:
+//    Counter(const Counter& that);
+//    Counter& operator=(const Counter& that);
+//};
+//
+//int Counter::Instances = 0;
+//class Error {};
+//
+//void func() {
+//  Counter c;
+//  cout << "func(): Instances: " << Counter::Instances << endl;
+//  longjmp( env, 1);
+//}
+//
+//int main(void) {
+//
+//  cout << "Before setjmp(): Instances: " << Counter::Instances << endl;
+//  if (setjmp(env) == 0) {
+//    func();
+//  } else {
+//    cout << "From longjmp(): Instances: " << Counter::Instances << endl;
+//  }
+//
+//  cout << "After longjmp(): Instances: " << Counter::Instances << endl;
+//}
+//
+///* End {code} */
+//
+///* Begin {code} */
+//
+//#include <iostream>
+//using namespace std;
+//
+//class Counter {
+//  public:
+//    static int Instances;
+//
+//    Counter() {Instances++;}
+//    ~Counter() {Instances--;}
+//  private:
+//    Counter(const Counter& that);
+//    Counter& operator=(const Counter& that);
+//};
+//
+//int Counter::Instances = 0;
+//class Error {};
+//
+//void func() {
+//  Counter c;
+//  cout << "func(): Instances: " << Counter::Instances << endl;
+//  throw Error();
+//}
+//
+//int main(void) {
+//
+//  cout << "Before try: Instances: " << Counter::Instances << endl;
+//  try {
+//    func();
+//  } catch (...) {
+//    cout << "In catch: Instances: " << Counter::Instances << endl;
+//  }
+//
+//  cout << "After catch: Instances: " << Counter::Instances << endl;
+//}
+//
+///* End {code} */
+//void ERR34() { }
+//
+//
+///* ERR35_cpp */
+//
+///* Begin {code} */
+//
+//class C {
+//  private:
+//    int x;
+//  public:
+//    C() : x(0) {
+//      int y = x;
+//      try {
+//        // /* ... */
+//      } catch (...) {
+//        if (0 == y) {
+//          // /* ... */
+//        }
+//      }
+//    }
+//};
+//
+///* End {code} */
+//void ERR35() { }
+//
+//
+///* ERR36_cpp */
+//void ERR36() { }
+//
+//
+///* ERR37_cpp */
+//
+///* Begin {code} */
+//
+//void bar() throw (exception1) {
+//  try {
+//    foo();
+//  } catch (...) {
+//    // handle error, without re-throwing it
+//  }
+//}
+//
+///* End {code} */
+//void ERR37() { }
