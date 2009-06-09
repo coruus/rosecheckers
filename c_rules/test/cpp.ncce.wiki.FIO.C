@@ -30,10 +30,10 @@ void FIO07();
 void FIO08();
 void FIO09();
 void FIO10();
-void FIO11();
+//void FIO11();
 void FIO12();
 void FIO13();
-void FIO14();
+//void FIO14();
 void FIO15();
 void FIO16();
 void FIO17();
@@ -67,10 +67,10 @@ void FIO() {
   FIO08();
   FIO09();
   FIO10();
-  FIO11();
+  //FIO11();
   FIO12();
   FIO13();
-  FIO14();
+  //FIO14();
   FIO15();
   FIO16();
   FIO17();
@@ -247,41 +247,41 @@ void FIO02_2() {
     /* Handle error */
   }
 
-    //XXX a windows thing
-//  ret = GetFullPathName(
-//      file_name,
-//      INITBUFSIZE,
-//      canonical_filename,
-//      NULL
-//      );
-//
-//  if (ret == 0) {
-//    /* Handle error */
-//  } 
-//  else if (ret > INITBUFSIZE) {
-//    new_file = (char *)realloc(canonical_filename, ret);
-//    if (new_file == NULL) {
-//      /* Handle error */
-//    }
-//
-//    canonical_filename = new_file;
-//
-//    new_ret = GetFullPathName(
-//        file_name,
-//        ret,
-//        canonical_filename,
-//        NULL
-//        );
-//    if (new_ret > ret) {
-//      /* 
-//       * The length of the path changed between calls
-//       * to GetFullPathName(), handle error 
-//       */
-//    } 
-//    else if (new_ret == 0) {
-//      /* Handle error */
-//    }
-//  }
+  //XXX a windows thing
+  //  ret = GetFullPathName(
+  //      file_name,
+  //      INITBUFSIZE,
+  //      canonical_filename,
+  //      NULL
+  //      );
+  //
+  //  if (ret == 0) {
+  //    /* Handle error */
+  //  } 
+  //  else if (ret > INITBUFSIZE) {
+  //    new_file = (char *)realloc(canonical_filename, ret);
+  //    if (new_file == NULL) {
+  //      /* Handle error */
+  //    }
+  //
+  //    canonical_filename = new_file;
+  //
+  //    new_ret = GetFullPathName(
+  //        file_name,
+  //        ret,
+  //        canonical_filename,
+  //        NULL
+  //        );
+  //    if (new_ret > ret) {
+  //      /* 
+  //       * The length of the path changed between calls
+  //       * to GetFullPathName(), handle error 
+  //       */
+  //    } 
+  //    else if (new_ret == 0) {
+  //      /* Handle error */
+  //    }
+  //  }
 
   if (!verify_file(canonical_filename)) {
     /* Handle error */
@@ -295,636 +295,555 @@ void FIO02() {
 }
 
 
-//    /* FIO03_cpp */
-//
-//    /* Begin {code} */
-//
-//    char *file_name;
-//    FILE *fp;
-//
-//    /* initialize file_name */
-//
-//    fp = fopen(file_name, "w");
-//    if (!fp) {
-//      /* Handle error */
-//    }
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//errno_t res = fopen_s(&fp, file_name, "w");
-//if (res != 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//#include <iostream>
-//#include <fstream>
-//
-//using namespace std;
-//
-//int main(void) {
-//
-//  ifstream fi("foo.txt");// attempt to open as input file
-//  if (!fi) {
-//    // file doesn't exist; so it's safe to create it and write to it
-//    ofstream fo("foo.txt");
-//    // can now write to fo, e.g., fo << "Some output" << endl;
-//    // /* ... */
-//  }
-//  else {  // file exists; close and handle error
-//    fi.close();
-//    // handle error
-//  }
-//
-//}
-//
-///* End {code} */
-//void FIO03() {
-//}
-//
-//
-///* FIO04_cpp */
-//
-///* Begin {code} */
-//
-//FILE *file;
-//long offset;
-//
-///* initialize file and offset */
-//
-//fseek(file, offset, SEEK_SET);
-///* process file */
-//
-///* End {code} */
-//void FIO04() {
-//}
-//
-//
-///* FIO05_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//
-///* initialize file_name */
-//
-//FILE *fd = fopen(file_name, "w");
-//if (fd == NULL) {
-//  /* Handle error */
-//}
-//
-///*... write to file ...*/
-//
-//fclose(fd);
-//fd = NULL;
-//
-///*
-// * A race condition here allows for an attacker to switch 
-// * out the file for another 
-// */
-//
-///* ... */
-//
-//fd = fopen(file_name, "r");
-//if (fd == NULL) {
-//  /* Handle error */
-//}
-//
-///*... read from file ...*/
-//
-//fclose(fd);
-//fd = NULL;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fd;
-//
-///* initialize file_name */
-//
-//fd = fopen(file_name, "w+");
-//if (fd == NULL) {
-//  /* Handle error */
-//}
-//
-///* read user's file */
-//
-//fclose(fd);
-//fd = NULL; 
-//
-///* End {code} */
-//void FIO05() {
-//}
-//
-//
-///* FIO06_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "w");
-//if (!fp){
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//int fd;
-//
-///* initialize file_name */
-//
-//fd = open(file_name, O_CREAT | O_WRONLY);
-///* access permissions were missing */
-//
-//if (fd == -1){
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO06() {
-//}
-//
-//
-///* FIO07_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "r");
-//if (fp == NULL) {
-//  /* Handle open error */
-//}
-//
-///* read data */
-//
-//rewind(fp);
-//
-///* continue */
-//
-///* End {code} */
-//void FIO07() {
-//}
-//
-//
-///* FIO08_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *file;
-//
-///* initialize file_name */
-//
-//file = fopen(file_name, "w+");
-//if (file == NULL) {
-//  /* Handle error condition */
-//}
-//
-///* ... */
-//
-//if (remove(file_name) != 0) {
-//  /* Handle error condition */
-//}
-//
-///* continue performing I/O operations on file */
-//
-//fclose(file);
-//
-///* End {code} */
-//void FIO08() {
-//}
-//
-//
-///* FIO09_cpp */
-//
-///* Begin {code} */
-//
-//struct myData {
-//  char c;
-//  long l;
-//};
-//
-///* ... */
-//
-//FILE *file;
-//struct myData data;
-//
-///* initialize file */
-//
-//if (fread(&data, sizeof(struct myData), 1, file) < sizeof(struct myData)) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO09() {
-//}
-//
-//
-///* FIO10_cpp */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle Error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO10() {
-//}
-//
-//
-///* FIO11_cpp */
-//void FIO11() {
-//}
-//
-//
-///* FIO12_cpp */
-//
-///* Begin {code} */
-//
-//FILE *file;
-///* Setup file */
-//setbuf(file, NULL);
-///* ... */
-//
-///* End {code} */
-//void FIO12() {
-//}
-//
-//
-///* FIO13_cpp */
-//
-///* Begin {code} */
-//
-//FILE *fp;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "rb");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* read data */
-//
-//if (ungetc('\n', fp) == EOF) {
-//  /* Handle error */
-//}
-//if (ungetc('\r', fp) == EOF) {
-//  /* Handle error */
-//}
-//
-///* continue on */
-//
-///* End {code} */
-//void FIO13() {
-//}
-//
-//
-///* FIO14_cpp */
-//void FIO14() {
-//}
-//
-//
-///* FIO15_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "w");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///*... Process file ...*/
-//
-//if (fclose(fp) != 0) {
-//  /* Handle error */
-//}
-//
-//if (remove(file_name) != 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO15() {
-//}
-//
-//
-///* FIO16_cpp */
-//
-///* Begin {code} */
-//
-//enum { array_max = 100 };
-//
-///*
-// * Program running with elevated privileges where argv[1] 
-// * and argv[2] are supplied by the user 
-// */
-//
-//char x[array_max];
-//FILE *fp = fopen(argv[1], "w");
-//
-//strncpy(x, argv[2], array_max);
-//x[array_max - 1] = '\0';
-//
-///* 
-// * Write operation to an unintended file like /etc/passwd 
-// * gets executed  
-// */
-//if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) <
-//    sizeof(x)/sizeof(x[0])) {
-//  /* Handle Error */
-//}
-//
-///* End {code} */
-//void FIO16() {
-//}
-//
-//
-///* FIO17_cpp */
-//
-///* Begin {code} */
-//
-//#include <cstdio>
-//
-//int main(int argc, char *argv[]) {
-//  char filename[256];
-//  FILE *f;
-//  char format[256];
-//
-//  fscanf(stdin, "%s", filename);
-//  f = fopen(filename, "r");  // read only
-//
-//  if (f == 0) {
-//    sprintf(format, "Error opening file %s\n", filename);
-//    fprintf(stderr, format);
-//    exit(-1);
-//  }
-//  fclose(f);
-//}
-//
-///* End {code} */
-//void FIO17() {
-//}
-//
-//
-///* FIO18_cpp */
-//
-///* Begin {code} */
-//#include <fstream>
-//using namespace std;&#xA0;
-//int main () {&#xA0;&#xA0;
-//  char * buffer;
-//  long size1, size2;&#xA0;
-//  ofstream outfile ("new.txt", ofstream::binary);
-//  buffer = new char [size1];&#xA0;
-//
-//  // write to outfile
-//  outfile.write (buffer, size2);&#xA0;
-//
-//  delete[] buffer;
-//  outfile.close();
-//  return 0;}
-//
-//  /* End {code} */
-//  void FIO18() {
-//  }
-//
-//
-///* FIO30_cpp */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  /* user names are restricted to 256 characters or less */
-//  static const char *msg_format
-//    = "%s cannot be authenticated.\n";
-//  size_t len = strlen(user) + strlen(msg_format) + 1;
-//  char *msg = new char[len];
-//  int ret = sprintf(msg, msg_format, user);
-//  if (ret < 0 || ((size_t) ret) >= len) {
+/* FIO03_cpp */
+
+void FIO03_0() {
+  char *file_name;
+  FILE *fp;
+
+  /* initialize file_name */
+
+  fp = fopen(file_name, "w");
+  if (!fp) {
+    /* Handle error */
+  }
+}
+
+//XXX can't use this since gcc doesn't support
+//XXX fopen_s yet.
+//void FIO03_1() {
+//  char *file_name;
+//  FILE *fp;
+//
+//  /* initialize file_name */
+//  errno_t res = fopen_s(&fp, file_name, "w");
+//  if (res != 0) {
 //    /* Handle error */
 //  }
-//  fprintf(stderr, msg);
-//  delete[] msg;
-//  msg = NULL;
 //}
 //
-///* End {code} */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  /* user names are restricted to 256 characters or less */
-//  static const char *msg_format
-//    = "%s cannot be authenticated.\n";
-//  size_t len = strlen(user) + strlen(msg_format) + 1;
-//  char *msg = new char[len];
-//  int ret = sprintf(msg, msg_format, user);
-//  if (ret < 0 || ((size_t) ret) >= len) {
-//    /* Handle error */
-//  }
-//  syslog(LOG_INFO, msg);
-//  delete[] msg;
-//  msg = NULL;
-//}
-//
-///* End {code} */
-//void FIO30() {
-//}
-//
-//
-///* FIO31_cpp */
-//
-///* Begin {code} */
-//
-//void do_stuff(void) {
-//  ofstream logfile("log", ios::app);
-//
-//  /* Write logs pertaining to do_stuff() */
-//  logfile << "do_stuff" << endl;
-//
-//  /* ... */
-//}
-//
-//int main(void) {
-//  ofstream logfile("log", ios::app);
-//
-//  /* Write logs pertaining to main() */
-//  logfile << "main" << endl;
-//
-//  do_stuff();
-//
-//  /* ... */
-//}
-//
-///* End {code} */
-//void FIO31() {
-//}
-//
-//
-///* FIO32_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *file;
-//
-///* initialize file_name */
-//
-//if (!fgets(file_name, sizeof(file_name), stdin)) {
-//  /* Handle error */
-//}
-//
-//if ((file = fopen(file_name, "wb")) == NULL) {
-//  /* Handle error */
-//}
-//
-///* operate on file */
-//
-//fclose(file);
-//
-///* End {code} */
-//void FIO32() {
-//}
-//
-//
-///* FIO33_cpp */
-//
-///* Begin {code} */
-//
-//char buf[BUFSIZ];
-//
-//fgets(buf, sizeof(buf), stdin);
-//buf[strlen(buf) - 1] = '\0'; /* Overwrite newline */
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//FILE * fptr = fopen(file_name, "w");
-///* process file */
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//enum { BUFFERSIZE = 200 };
-//char buffer[BUFFERSIZE];
-//char s[] = "computer";
-//char c = 'l';
-//int i = 35;
-//int j = 0;
-//float fp = 1.7320534f;
-//
-///* Format and print various data: */
-//j = snprintf(
-//    buffer,
-//    sizeof(buffer),
-//    " String:    %s\n",
-//    s
-//    );
-//j += snprintf(
-//    buffer + j,
-//    sizeof(buffer) - j,
-//    " Character: %c\n",
-//    c
-//    );
-//j += snprintf(
-//    buffer + j,
-//    sizeof(buffer) - j,
-//    " Integer:   %d\n",
-//    i
-//    );
-//j += snprintf(
-//    buffer + j,
-//    sizeof(buffer) - j,
-//    " Real:      %f\n",
-//    fp
-//    );
-//
-///* End {code} */
-//void FIO33() {
-//}
-//
-//
-///* FIO34_cpp */
-//
-///* Begin {code} */
-//
-//char buf[BUFSIZ];
-//char c;
-//int i = 0;
-//
-//while ( (c = cin.get()) != '\n' && c != EOF ) {
-//  if (i < BUFSIZ-1) {
-//    buf[i++] = c;
-//  }
-//}
-//buf[i] = '\0'; /* terminate NTBS */
-//
-///* End {code} */
-//void FIO34() {
-//}
-//
-//
-///* FIO35_cpp */
-//
-///* Begin {code} */
-//
-//int c;
-//
-//do {
-//  /* ... */
-//  c = getchar();
-//  /* ... */
-//} while (c != EOF);
-//
-///* End {code} */
-//void FIO35() {
-//}
-//
-//
+void FIO03_2() {
+  ifstream fi("foo.txt");// attempt to open as input file
+  if (!fi) {
+    // file doesn't exist; so it's safe to create it and write to it
+    ofstream fo("foo.txt");
+    // can now write to fo, e.g., fo << "Some output" << endl;
+    // /* ... */
+  }
+  else {  // file exists; close and handle error
+    fi.close();
+    // handle error
+  }
+
+}
+
+void FIO03() {
+  FIO03_0();
+  //FIO03_1();
+  FIO03_2();
+}
+
+
+/* FIO04_cpp */
+
+void FIO04() {
+  FILE *file;
+  long offset;
+
+  /* initialize file and offset */
+
+  fseek(file, offset, SEEK_SET);
+  /* process file */
+}
+
+
+/* FIO05_cpp */
+
+void FIO05_0() {
+  char *file_name;
+
+  /* initialize file_name */
+
+  FILE *fd = fopen(file_name, "w");
+  if (fd == NULL) {
+    /* Handle error */
+  }
+
+  /*... write to file ...*/
+
+  fclose(fd);
+  fd = NULL;
+
+  /*
+   * A race condition here allows for an attacker to switch 
+   * out the file for another 
+   */
+
+  /* ... */
+
+  fd = fopen(file_name, "r");
+  if (fd == NULL) {
+    /* Handle error */
+  }
+
+  /*... read from file ...*/
+
+  fclose(fd);
+  fd = NULL;
+}
+
+void FIO05_1() {
+
+  char *file_name;
+  FILE *fd;
+
+  /* initialize file_name */
+
+  fd = fopen(file_name, "w+");
+  if (fd == NULL) {
+    /* Handle error */
+  }
+
+  /* read user's file */
+
+  fclose(fd);
+  fd = NULL; 
+}
+
+void FIO05() {
+  FIO05_0();
+  FIO05_1();
+}
+
+
+/* FIO06_cpp */
+
+void FIO06_0() {
+  char *file_name;
+  FILE *fp;
+
+  /* initialize file_name */
+
+  fp = fopen(file_name, "w");
+  if (!fp){
+    /* Handle error */
+  }
+}
+
+void FIO06_1() {
+  char *file_name;
+  int fd;
+
+  /* initialize file_name */
+
+  fd = open(file_name, O_CREAT | O_WRONLY);
+  /* access permissions were missing */
+
+  if (fd == -1){
+    /* Handle error */
+  }
+}
+
+void FIO06() {
+  FIO06_0();
+  FIO06_1();
+}
+
+
+/* FIO07_cpp */
+
+void FIO07() {
+
+  char *file_name;
+  FILE *fp;
+
+  /* initialize file_name */
+
+  fp = fopen(file_name, "r");
+  if (fp == NULL) {
+    /* Handle open error */
+  }
+
+  /* read data */
+
+  rewind(fp);
+
+  /* continue */
+}
+
+
+/* FIO08_cpp */
+
+void FIO08() {
+char *file_name = "foo";
+FILE *file;
+
+file = fopen(file_name, "w+");
+if (file == NULL) {
+  /* Handle error condition */
+}
+
+/* ... */
+
+if (remove(file_name) != 0) {
+  /* Handle error condition */
+}
+
+/* continue performing I/O operations on file */
+
+fclose(file);
+}
+
+/* FIO09_cpp */
+
+struct FIO09_myData {
+  char c;
+  long l;
+};
+
+/* ... */
+
+void FIO09() {
+  FILE *file;
+  struct FIO09_myData data;
+
+  /* initialize file */
+
+  if (fread(&data, sizeof(struct FIO09_myData), 1, file) < sizeof(struct FIO09_myData)) {
+    /* Handle error */
+  }
+}
+
+
+/* FIO10_cpp */
+
+void FIO10_0() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle Error */
+  }
+}
+
+void FIO10_1() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle error */
+  }
+}
+
+void FIO10() {
+  FIO10_0();
+  FIO10_1();
+}
+
+
+/* FIO11_cpp */
+//XXX no tester code
+
+
+/* FIO12_cpp */
+void FIO12() {
+
+  FILE *file;
+  /* Setup file */
+  setbuf(file, NULL);
+  /* ... */
+
+}
+
+
+/* FIO13_cpp */
+
+void FIO13() {
+  FILE *fp;
+  char *file_name = "foo";
+
+  fp = fopen(file_name, "rb");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+
+  /* read data */
+
+  if (ungetc('\n', fp) == EOF) {
+    /* Handle error */
+  }
+  if (ungetc('\r', fp) == EOF) {
+    /* Handle error */
+  }
+  /* continue on */
+}
+
+
+/* FIO14_cpp */
+//XXX no tester code
+
+
+/* FIO15_cpp */
+
+void FIO15() {
+  char *file_name;
+  FILE *fp;
+
+  /* initialize file_name */
+
+  fp = fopen(file_name, "w");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+
+  /*... Process file ...*/
+
+  if (fclose(fp) != 0) {
+    /* Handle error */
+  }
+
+  if (remove(file_name) != 0) {
+    /* Handle error */
+  }
+
+}
+
+
+/* FIO16_cpp */
+
+void FIO16() {
+  enum { array_max = 100 };
+
+  char str1[] = "foo";
+  char str2[] = "bar";
+
+  /*
+   * Program running with elevated privileges where argv[1] 
+   * and argv[2] are supplied by the user 
+   */
+
+  char x[array_max];
+  FILE *fp = fopen(str1, "w");
+
+  strncpy(x, str2, array_max);
+  x[array_max - 1] = '\0';
+
+  /* 
+   * Write operation to an unintended file like /etc/passwd 
+   * gets executed  
+   */
+  if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) <
+      sizeof(x)/sizeof(x[0])) {
+    /* Handle Error */
+  }
+
+}
+
+
+/* FIO17_cpp */
+
+void FIO17() {
+  char filename[256];
+  FILE *f;
+  char format[256];
+
+  fscanf(stdin, "%s", filename);
+  f = fopen(filename, "r");  // read only
+
+  if (f == 0) {
+    sprintf(format, "Error opening file %s\n", filename);
+    fprintf(stderr, format);
+    return;
+  }
+  fclose(f);
+}
+
+/* FIO18_cpp */
+void FIO18() {
+  char * buffer;
+  long size1, size2;
+  ofstream outfile ("new.txt", ofstream::binary);
+  buffer = new char [size1];
+
+  // write to outfile
+  outfile.write (buffer, size2);
+
+  delete[] buffer;
+  outfile.close();
+}
+
+
+/* FIO30_cpp */
+
+/* Begin {code} */
+
+void FIO30_0_incorrect_password(const char *user) {
+  /* user names are restricted to 256 characters or less */
+  static const char *msg_format
+    = "%s cannot be authenticated.\n";
+  size_t len = strlen(user) + strlen(msg_format) + 1;
+  char *msg = new char[len];
+  int ret = sprintf(msg, msg_format, user);
+  if (ret < 0 || ((size_t) ret) >= len) {
+    /* Handle error */
+  }
+  fprintf(stderr, msg);
+  delete[] msg;
+  msg = NULL;
+}
+
+/* End {code} */
+
+/* Begin {code} */
+
+void FIO30_1_incorrect_password(const char *user) {
+  /* user names are restricted to 256 characters or less */
+  static const char *msg_format
+    = "%s cannot be authenticated.\n";
+  size_t len = strlen(user) + strlen(msg_format) + 1;
+  char *msg = new char[len];
+  int ret = sprintf(msg, msg_format, user);
+  if (ret < 0 || ((size_t) ret) >= len) {
+    /* Handle error */
+  }
+  syslog(LOG_INFO, msg);
+  delete[] msg;
+  msg = NULL;
+}
+
+/* End {code} */
+void FIO30() {
+  //nothing to run
+}
+
+
+/* FIO31_cpp */
+
+void FIO31_do_stuff(void) {
+  ofstream logfile("log", ios::app);
+
+  /* Write logs pertaining to do_stuff() */
+  logfile << "do_stuff" << endl;
+
+  /* ... */
+}
+
+void FIO31() {
+  ofstream logfile("log", ios::app);
+
+  /* Write logs pertaining to main() */
+  logfile << "main" << endl;
+
+  FIO31_do_stuff();
+
+  /* ... */
+}
+
+/* FIO32_cpp */
+
+void FIO32() {
+  char *file_name;
+  FILE *file;
+
+  /* initialize file_name */
+
+  if (!fgets(file_name, sizeof(file_name), stdin)) {
+    /* Handle error */
+  }
+
+  if ((file = fopen(file_name, "wb")) == NULL) {
+    /* Handle error */
+  }
+
+  /* operate on file */
+
+  fclose(file);
+}
+
+
+/* FIO33_cpp */
+
+void FIO33_0() {
+  char buf[BUFSIZ];
+
+  fgets(buf, sizeof(buf), stdin);
+  buf[strlen(buf) - 1] = '\0'; /* Overwrite newline */
+}
+
+void FIO33_1() {
+  char file_name[] = "str";
+  FILE * fptr = fopen(file_name, "w");
+  /* process file */
+}
+
+void FIO33_2() {
+  enum { BUFFERSIZE = 200 };
+  char buffer[BUFFERSIZE];
+  char s[] = "computer";
+  char c = 'l';
+  int i = 35;
+  int j = 0;
+  float fp = 1.7320534f;
+
+  /* Format and print various data: */
+  j = snprintf(
+      buffer,
+      sizeof(buffer),
+      " String:    %s\n",
+      s
+      );
+  j += snprintf(
+      buffer + j,
+      sizeof(buffer) - j,
+      " Character: %c\n",
+      c
+      );
+  j += snprintf(
+      buffer + j,
+      sizeof(buffer) - j,
+      " Integer:   %d\n",
+      i
+      );
+  j += snprintf(
+      buffer + j,
+      sizeof(buffer) - j,
+      " Real:      %f\n",
+      fp
+      );
+}
+
+void FIO33() {
+  FIO33_0();
+  FIO33_1();
+  FIO33_2();
+}
+
+
+/* FIO34_cpp */
+void FIO34() {
+  char buf[BUFSIZ];
+  char c;
+  int i = 0;
+
+  while ( (c = cin.get()) != '\n' && c != EOF ) {
+    if (i < BUFSIZ-1) {
+      buf[i++] = c;
+    }
+  }
+  buf[i] = '\0'; /* terminate NTBS */
+}
+
+
+/* FIO35_cpp */
+void FIO35() {
+  int c;
+
+  do {
+    /* ... */
+    c = getchar();
+    /* ... */
+  } while (c != EOF);
+}
+
+
 ///* FIO36_cpp */
 //
 ///* Begin {code} */

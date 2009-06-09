@@ -30,10 +30,10 @@ void FIO07();
 void FIO08();
 void FIO09();
 void FIO10();
-void FIO11();
+//void FIO11();
 void FIO12();
 void FIO13();
-void FIO14();
+//void FIO14();
 void FIO15();
 void FIO16();
 void FIO17();
@@ -67,10 +67,10 @@ void FIO() {
   FIO08();
   FIO09();
   FIO10();
-  FIO11();
+  //FIO11();
   FIO12();
   FIO13();
-  FIO14();
+  //FIO14();
   FIO15();
   FIO16();
   FIO17();
@@ -130,7 +130,7 @@ void FIO01() {
       O_WRONLY | O_CREAT | O_EXCL,
       S_IRWXU
       );
-    
+
   if (fd == -1) {
     /* Handle error */
   }
@@ -236,967 +236,892 @@ void FIO02() {
 }
 
 
-///* FIO03_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//int new_file_mode;
-//
-///* initialize file_name and new_file_mode */
-//
-//int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//
-///* initialize file_name */
-//
-//FILE *fp = fopen(file_name, "wx");
-//if (!fp) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//int new_file_mode;
-//FILE *fp;
-//int fd;
-//
-///* initialize file_name and new_file_mode */
-//
-//fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-//fp = fdopen(fd, "w");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO03() {
-//}
-//
-//
-///* FIO04_cpp */
-//void FIO04() {
-//}
-//
-//
-///* FIO05_cpp */
-//
-///* Begin {code} */
-//
-//struct stat orig_st;
-//struct stat new_st;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//int fd = open(file_name, O_WRONLY);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-///*... write to file ...*/
-//
-//if (fstat(fd, &orig_st) == -1) {
-//  /* Handle error */
-//}
-//close(fd);
-//fd = -1;
-//
-///* ... */
-//
-//fd = open(file_name, O_RDONLY);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-//if (fstat(fd, &new_st) == -1) {
-//  /* Handle error */
-//}
-//
-//if ((orig_st.st_dev != new_st.st_dev) ||
-//    (orig_st.st_ino != new_st.st_ino)) {
-//  /* file was tampered with! */
-//}
-//
-///*... read from file ...*/
-//
-//close(fd);
-//fd = -1;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fd;
-//
-///* initialize file_name */
-//
-//fd = fopen(file_name, "w+");
-//if (fd == NULL) {
-//  /* Handle error */
-//}
-//
-///*... write to file ...*/
-//
-///* go to beginning of file */
-//fseek(fd, 0, SEEK_SET);
-//
-///*... read from file ...*/
-//
-//fclose(fd);
-//fd = NULL;
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//struct stat st;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//int fd = open(file_name, O_RDONLY);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-//if ((fstat(fd, &st) == -1) ||
-//    (st.st_uid != getuid()) ||
-//    (st.st_gid != getgid())) {
-//  /* file does not belong to user */
-//}
-//
-///*... read from file ...*/
-//
-//close(fd);
-//fd = -1;
-//
-///* End {code} */
-//void FIO05() {
-//}
-//
-//
-///* FIO06_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//
-//errno_t res = fopen_s(&fp, file_name, "w");
-//if (res != 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//int file_access_permissions;
-//
-///* initialize file_name and file_access_permissions */
-//
-//int fd = open(
-//    file_name,
-//    O_CREAT | O_WRONLY,
-//    file_access_permissions
-//    );
-//if (fd == -1){
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO06() {
-//}
-//
-//
-///* FIO07_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fp;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "r");
-//if (fp == NULL) {
-//  /* Handle open error */
-//}
-//
-///* read data */
-//
-//if (fseek(fp, 0L, SEEK_SET) != 0) {
-//  /* Handle repositioning error */
-//}
-//
-///* continue */
-//
-///* End {code} */
-//void FIO07() {
-//}
-//
-//
-///* FIO08_cpp */
-//
-///* Begin {code} */
-//
-//FILE *file;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//file = fopen(file_name, "w+");
-//if (file == NULL) {
-//  /* Handle error condition */
-//}
-//
-//if (unlink(file_name) != 0) {
-//  /* Handle error condition */
-//}
-//
-///*... continue performing I/O operations on file ...*/
-//
-//fclose(file);
-//
-///* End {code} */
-//void FIO08() {
-//}
-//
-//
-///* FIO09_cpp */
-//
-///* Begin {code} */
-//
-//struct myData {
-//  char c;
-//  long l;
-//};
-//
-///* ... */
-//
-//FILE *file;
-//struct myData data;
-//char buf[25];
-//char *end_ptr;
-//
-///* initialize file */
-//
-//if (fgets(buf, 1, file) == NULL) {
-//  /* Handle error */
-//}
-//
-//data.c = buf[0];
-//
-//if (fgets(buf, sizeof(buf), file) == NULL) {
-//  /* Handle Error */
-//}
-//
-//data.l = strtol(buf, &end_ptr, 10);
-//
-//  if ((ERANGE == errno)
-//      || (end_ptr == buf)
-//      || ('\n' != *end_ptr && '\0' != *end_ptr)) {
-//    /* Handle Error */
-//  }
-//
-///* End {code} */
-//void FIO09() {
-//}
-//
-//
-///* FIO10_cpp */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//
-//if (access(dest_file, F_OK) != 0) {
-//  if (rename(src_file, dest_file) != 0) {
-//    /* Handle error condition */
-//  }
-//} 
-//else {
-//  /* Handle file-exists condition */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle Error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//
-//if (_access_s(dest_file, 0) == 0) {
-//  if (remove(dest_file) != 0) {
-//    /* Handle error condition */
-//  }
-//}
-//
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle error condition */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle error condition */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//
-//(void)remove(dest_file);
-//
-//if (rename(src_file, dest_file) != 0) {
-//  /* Handle error condition */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//const char *src_file = /* ... */;
-//const char *dest_file = /* ... */;
-//
-//if (!file_exists(dest_file)) {
-//  if (rename(src_file, dest_file) != 0) {
-//    /* Handle error condition */
-//  }
-//} 
-//else {
-//  /* Handle file-exists condition */
-//}
-//
-///* End {code} */
-//void FIO10() {
-//}
-//
-//
-///* FIO11_cpp */
-//void FIO11() {
-//}
-//
-//
-///* FIO12_cpp */
-//
-///* Begin {code} */
-//
-//FILE *file;
-//char *buf = NULL;
-///* Setup file */
-//if (setvbuf(file, buf, buf ? _IOFBF : _IONBF, BUFSIZ) != 0) {
-//  /* Handle error */
-//}
-///* ... */
-//
-///* End {code} */
-//void FIO12() {
-//}
-//
-//
-///* FIO13_cpp */
-//
-///* Begin {code} */
-//
-//FILE *fp;
-//fpos_t pos;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//fp = fopen(file_name, "rb");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* read data */
-//
-//if (fgetpos(fp, &pos)) {
-//  /* Handle error */
-//}
-//
-///* read the data that will be "pushed back" */
-//
-//if (fsetpos(fp, &pos)) {
-//  /* Handle error */
-//}
-//
-///* Continue on */
-//
-///* End {code} */
-//void FIO13() {
-//}
-//
-//
-///* FIO14_cpp */
-//void FIO14() {
-//}
-//
-//
-///* FIO15_cpp */
-//
-///* Begin {code} */
-//
-//#include <stdlib.h>
-//#include <unistd.h>
-//#include <limits.h>
-//#include <libgen.h>
-//#include <sys/stat.h>
-//#include <string.h>
-//
-///* Returns nonzero if directory is secure, zero otherwise */
-//int secure_dir(const char *fullpath) {
-//  char *path_copy = NULL;
-//  char *dirname_res = NULL;
-//  char ** dirs = NULL;
-//  int num_of_dirs = 0;
-//  int secure = 1;
-//  int i;
-//  struct stat buf;
-//  uid_t my_uid = geteuid();
-//
-//  if (!(path_copy = strdup(fullpath))) {
+/* FIO03_cpp */
+
+void FIO03_0() {
+  char *file_name;
+  int new_file_mode;
+
+  /* initialize file_name and new_file_mode */
+
+  int fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
+  if (fd == -1) {
+    /* Handle error */
+  }
+}
+
+void FIO03_1() {
+  char *file_name;
+
+  /* initialize file_name */
+
+  FILE *fp = fopen(file_name, "wx");
+  if (!fp) {
+    /* Handle error */
+  }
+}
+
+void FIO03_2() {
+  char *file_name;
+  int new_file_mode;
+  FILE *fp;
+  int fd;
+
+  /* initialize file_name and new_file_mode */
+
+  fd = open(file_name, O_CREAT | O_EXCL | O_WRONLY, new_file_mode);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  fp = fdopen(fd, "w");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+}
+
+/* End {code} */
+void FIO03() {
+  FIO03_0();
+  FIO03_1();
+  FIO03_2();
+}
+
+
+/* FIO04_cpp */
+void FIO04() {
+  FILE *file;
+  long offset;
+
+  /* initialize file and offset */
+
+  if (fseek(file, offset, SEEK_SET) != 0) {
+    /* Handle error */
+  }
+  /* process file */
+}
+
+
+/* FIO05_cpp */
+
+void FIO05_0() {
+  struct stat orig_st;
+  struct stat new_st;
+  char *file_name;
+
+  /* initialize file_name */
+
+  int fd = open(file_name, O_WRONLY);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  /*... write to file ...*/
+
+  if (fstat(fd, &orig_st) == -1) {
+    /* Handle error */
+  }
+  close(fd);
+  fd = -1;
+
+  /* ... */
+
+  fd = open(file_name, O_RDONLY);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  if (fstat(fd, &new_st) == -1) {
+    /* Handle error */
+  }
+
+  if ((orig_st.st_dev != new_st.st_dev) ||
+      (orig_st.st_ino != new_st.st_ino)) {
+    /* file was tampered with! */
+  }
+
+  /*... read from file ...*/
+
+  close(fd);
+  fd = -1;
+}
+
+void FIO05_1() {
+  char *file_name;
+  FILE *fd;
+
+  /* initialize file_name */
+
+  fd = fopen(file_name, "w+");
+  if (fd == NULL) {
+    /* Handle error */
+  }
+
+  /*... write to file ...*/
+
+  /* go to beginning of file */
+  fseek(fd, 0, SEEK_SET);
+
+  /*... read from file ...*/
+
+  fclose(fd);
+  fd = NULL;
+}
+
+void FIO05_2() {
+  struct stat st;
+  char *file_name;
+
+  /* initialize file_name */
+
+  int fd = open(file_name, O_RDONLY);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  if ((fstat(fd, &st) == -1) ||
+      (st.st_uid != getuid()) ||
+      (st.st_gid != getgid())) {
+    /* file does not belong to user */
+  }
+
+  /*... read from file ...*/
+
+  close(fd);
+  fd = -1;
+}
+
+void FIO05() {
+  FIO05_0();
+  FIO05_1();
+  FIO05_2();
+}
+
+
+/* FIO06_cpp */
+
+/* Begin {code} */
+void FIO06_0() {
+
+  char *file_name;
+  FILE *fp;
+
+  /* initialize file_name */
+
+  //XXX we don't have fopen_s
+  //errno_t res = fopen_s(&fp, file_name, "w");
+  //if (res != 0) {
+  //  /* Handle error */
+  //}
+}
+
+void FIO06_1() {
+  char *file_name;
+  int file_access_permissions;
+
+  /* initialize file_name and file_access_permissions */
+
+  int fd = open(
+      file_name,
+      O_CREAT | O_WRONLY,
+      file_access_permissions
+      );
+  if (fd == -1){
+    /* Handle error */
+  }
+}
+
+/* End {code} */
+void FIO06() {
+  FIO06_0();
+  FIO06_1();
+}
+
+
+/* FIO07_cpp */
+
+/* Begin {code} */
+void FIO07() {
+  char *file_name = "foo";
+  FILE *fp;
+
+  fp = fopen(file_name, "r");
+  if (fp == NULL) {
+    /* Handle open error */
+  }
+
+  /* read data */
+
+  if (fseek(fp, 0L, SEEK_SET) != 0) {
+    /* Handle repositioning error */
+  }
+
+  /* continue */
+}
+
+
+/* FIO08_cpp */
+void FIO08() {
+  FILE *file;
+  char *file_name = "foo";
+
+  file = fopen(file_name, "w+");
+  if (file == NULL) {
+    /* Handle error condition */
+  }
+
+  if (unlink(file_name) != 0) {
+    /* Handle error condition */
+  }
+
+  /*... continue performing I/O operations on file ...*/
+
+  fclose(file);
+}
+
+
+/* FIO09_cpp */
+
+struct FIO09_myData {
+  char c;
+  long l;
+};
+
+void FIO09() {
+  /* ... */
+
+  FILE *file;
+  struct FIO09_myData data;
+  char buf[25];
+  char *end_ptr;
+
+  /* initialize file */
+
+  if (fgets(buf, 1, file) == NULL) {
+    /* Handle error */
+  }
+
+  data.c = buf[0];
+
+  if (fgets(buf, sizeof(buf), file) == NULL) {
+    /* Handle Error */
+  }
+
+  data.l = strtol(buf, &end_ptr, 10);
+
+  if ((ERANGE == errno)
+      || (end_ptr == buf)
+      || ('\n' != *end_ptr && '\0' != *end_ptr)) {
+    /* Handle Error */
+  }
+}
+
+
+/* FIO10_cpp */
+void FIO10_0() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+
+  if (access(dest_file, F_OK) != 0) {
+    if (rename(src_file, dest_file) != 0) {
+      /* Handle error condition */
+    }
+  } 
+  else {
+    /* Handle file-exists condition */
+  }
+}
+
+void FIO10_1() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle Error */
+  }
+}
+
+void FIO10_2() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+
+  //XXX microsoft stuff
+  //  if (_access_s(dest_file, 0) == 0) {
+  //    if (remove(dest_file) != 0) {
+  //      /* Handle error condition */
+  //    }
+  //  }
+
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle error condition */
+  }
+}
+
+void FIO10_3() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle error condition */
+  }
+}
+
+void FIO10_4() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+
+  (void)remove(dest_file);
+
+  if (rename(src_file, dest_file) != 0) {
+    /* Handle error condition */
+  }
+}
+
+void FIO10_5() {
+  const char *src_file = "foo";
+  const char *dest_file = "bar";
+
+  //XXX there is no file exists function
+  if (!access(dest_file, F_OK)) {
+    if (rename(src_file, dest_file) != 0) {
+      /* Handle error condition */
+    }
+  } 
+  else {
+    /* Handle file-exists condition */
+  }
+}
+
+/* End {code} */
+void FIO10() {
+  FIO10_0();
+  FIO10_1();
+  FIO10_2();
+  FIO10_3();
+  FIO10_4();
+  FIO10_5();
+}
+
+
+/* FIO11_cpp */
+//XXX no tester code
+
+
+/* FIO12_cpp */
+
+void FIO12() {
+  FILE *file;
+  char *buf = NULL;
+  /* Setup file */
+  if (setvbuf(file, buf, buf ? _IOFBF : _IONBF, BUFSIZ) != 0) {
+    /* Handle error */
+  }
+  /* ... */
+}
+
+
+/* FIO13_cpp */
+
+void FIO13() {
+  FILE *fp;
+  fpos_t pos;
+  char *file_name;
+
+  /* initialize file_name */
+
+  fp = fopen(file_name, "rb");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+
+  /* read data */
+
+  if (fgetpos(fp, &pos)) {
+    /* Handle error */
+  }
+
+  /* read the data that will be "pushed back" */
+
+  if (fsetpos(fp, &pos)) {
+    /* Handle error */
+  }
+
+  /* Continue on */
+}
+
+
+/* FIO14_cpp */
+//XXX no tester code
+
+/* FIO15_cpp */
+
+/* Returns nonzero if directory is secure, zero otherwise */
+int secure_dir(const char *fullpath) {
+  char *path_copy = NULL;
+  char *dirname_res = NULL;
+  char ** dirs = NULL;
+  int num_of_dirs = 0;
+  int secure = 1;
+  int i;
+  struct stat buf;
+  uid_t my_uid = geteuid();
+
+  if (!(path_copy = strdup(fullpath))) {
+    /* Handle error */
+  }
+
+  dirname_res = path_copy;
+  /* Figure out how far it is to the root */
+  while (1) {
+    dirname_res = dirname(dirname_res);
+
+    num_of_dirs++;
+
+    if ((strcmp(dirname_res, "/") == 0) ||
+        (strcmp(dirname_res, "//") == 0)) {
+      break;
+    }
+  }
+  free(path_copy);
+  path_copy = NULL;
+
+  /* Now allocate and fill the dirs array */
+  if (!(dirs = (char **)malloc(num_of_dirs*sizeof(*dirs)))) {
+    /* Handle error */
+  }
+  if (!(dirs[num_of_dirs - 1] = strdup(fullpath))) {
+    /* Handle error */
+  }
+
+  if (!(path_copy = strdup(fullpath))) {
+    /* Handle error */
+  }
+
+  dirname_res = path_copy;
+  for (i = 1; i < num_of_dirs; i++) {
+    dirname_res = dirname(dirname_res);
+
+    dirs[num_of_dirs - i - 1] = strdup(dirname_res);
+
+  }
+  free(path_copy);
+  path_copy = NULL;
+
+  /* Traverse from the root to the leaf, checking
+   * permissions along the way */
+  for (i = 0; i < num_of_dirs; i++) {
+    if (stat(dirs[i], &buf) != 0) {
+      /* Handle error */
+    }
+    if ((buf.st_uid != my_uid) && (buf.st_uid != 0)) {
+      /* Directory is owned by someone besides user or root */
+      secure = 0;
+    } else if ((buf.st_mode & (S_IWGRP | S_IWOTH))
+        && ((i == num_of_dirs - 1) || !(buf.st_mode & S_ISVTX))) {
+      /* Others have permissions to the leaf directory
+       * or are able to delete or rename files along the way */
+      secure = 0;
+    }
+
+    free(dirs[i]);
+    dirs[i] = NULL;
+  }
+
+  free(dirs);
+  dirs = NULL;
+
+  return secure;
+}
+
+void FIO15() {
+  char *dir_name;
+  char *canonical_dir_name;
+  const char *file_name = "passwd"; /* file name within the secure directory */
+  FILE *fp;
+
+  /* initialize dir_name */
+
+  canonical_dir_name = realpath(dir_name, NULL);
+  if (canonical_dir_name == NULL) {
+    /* Handle error */
+  }
+
+  if (!secure_dir(canonical_dir_name)) {
+    /* Handle error */
+  }
+
+  if (chdir(canonical_dir_name) == -1) {
+    /* Handle error */
+  }
+
+  fp = fopen(file_name, "w");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+
+  /*... Process file ...*/
+
+  if (fclose(fp) != 0) {
+    /* Handle error */
+  }
+
+  if (remove(file_name) != 0) {
+    /* Handle error */
+  }
+
+  /* End {code} */
+}
+
+
+/* FIO16_cpp */
+
+void FIO16() {
+  /*
+   * Make sure that the chroot/jail directory exists within 
+   * the current working directory. Also assign appropriate 
+   * permissions to the directory to restrict access. Close 
+   * all file system descriptors to outside resources lest 
+   * they escape the jail.
+   */
+  char str1[] = "foo";
+  char str2[] = "bar";
+  const size_t array_max = 10;
+
+  if (setuid(0) == -1) {
+    /* Handle error */
+  }
+
+  if (chroot("chroot/jail") == -1) {
+    /* Handle error */
+  }
+
+  if (chdir("/") == -1) {
+    /* Handle error */
+  }
+
+  /* Drop privileges permanently */
+  if (setgid(getgid()) == -1) {
+    /* Handle error */
+  }
+
+  if (setuid(getuid()) == -1) {
+    /* Handle error */
+  }
+
+  /* Perform unprivileged operations */
+  enum {array_mex = 100};
+
+  FILE *fp = fopen(str1, "w");
+  char x[array_max];
+  strncpy(x, str2, array_max);
+  x[array_max - 1] = '\0';
+
+  /* Write operation safe is safe within jail */
+  if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) <
+      sizeof(x)/sizeof(x[0])) {
+    /* Handle error */
+  }
+
+  /* End {code} */
+}
+
+
+/* FIO17_cpp */
+
+void FIO17() {
+  string filename;
+  ifstream ifs;
+
+  cin >> filename;
+  ifs.open(filename.c_str());
+
+  if (ifs.fail()) {
+    cerr << "Error opening file" << filename << endl;
+    return;
+  }
+  ifs.close();
+}
+
+
+/* FIO18_cpp */
+
+void FIO18() {
+  char * buffer;
+  size_t size, length;
+
+  ofstream outfile ("new.txt", ofstream::binary);
+  // suppose buffer is populated with a c-string
+  size = sizeof(buffer);
+  outfile.write (buffer, length); // suppose length is already initialized.&#xA0;
+  if (size != length) {// File is not properly null-terminated. Handle this
+    delete[] buffer;
+    outfile.close();
+  }
+}
+
+/* FIO30_cpp */
+
+void FIO30_0_incorrect_password(const char *user) {
+  /* user names are restricted to 256 characters or less */
+  static const char *msg_format
+    = "%s cannot be authenticated.\n";
+  size_t len = strlen(user) + strlen(msg_format) + 1;
+  char *msg = new char[len];
+  int ret = sprintf(msg, msg_format, user);
+  if (ret < 0 || ((size_t) ret) >= len) {
+    /* Handle error */
+  }
+  if (fputs(msg, stderr) == EOF) {
+    /* Handle error */
+  }
+  delete[] msg;
+  msg = NULL;
+}
+
+void FIO30_1_incorrect_password(const char *user) {
+  fprintf(stderr, "%s cannot be authenticated.\n", user);
+}
+
+void FIO30_2_incorrect_password(const char *user) {
+  cerr << user << " cannot be authenticated." << endl;
+}
+
+void FIO30_3_incorrect_password(const char *user) {
+  syslog(LOG_INFO, "%s cannot be authenticated.", user);
+}
+
+void FIO30() {
+  //nothing to run
+}
+
+
+/* FIO31_cpp */
+
+/* Begin {code} */
+
+void FIO31_do_stuff(ostream& logfile) {
+  /* Write logs pertaining to do_stuff() */
+  logfile << "do_stuff" << endl;
+
+  /* ... */
+}
+
+void FIO31() {
+  ofstream logfile("log", ios::app);
+
+  /* Write logs pertaining to main() */
+  logfile << "main" << endl;
+
+  FIO31_do_stuff(logfile);
+
+  /* ... */
+}
+
+/* FIO32_cpp */
+
+#ifdef O_NOFOLLOW
+#define OPEN_FLAGS O_NOFOLLOW | O_NONBLOCK
+#else
+#define OPEN_FLAGS O_NONBLOCK
+#endif
+
+/* ... */
+
+void FIO32_0() {
+  struct stat orig_st;
+  struct stat open_st;
+  int fd;
+  int flags;
+  char *file_name;
+
+  /* initialize file_name */
+
+  if (!fgets(file_name, sizeof(file_name), stdin)) {
+    /* Handle error */
+  }
+
+  if ((lstat(file_name, &orig_st) != 0)
+      || (!S_ISREG(orig_st.st_mode)))
+  {
+    /* Handle error */
+  }
+
+  /* A TOCTOU race condition exists here, see below */
+
+  fd = open(file_name, OPEN_FLAGS | O_WRONLY);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  if (fstat(fd, &open_st) != 0) {
+    /* Handle error */
+  }
+
+  if ((orig_st.st_mode != open_st.st_mode) ||
+      (orig_st.st_ino  != open_st.st_ino) ||
+      (orig_st.st_dev  != open_st.st_dev)) {
+    /* file was tampered with */
+  }
+
+  /* Optional: drop the O_NONBLOCK now that we are sure
+   * this is a good file */
+  if ((flags = fcntl(fd, F_GETFL)) == -1) {
+    /* Handle error */
+  }
+
+  if (fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) != 0) {
+    /* Handle error */
+  }
+
+  /* Operate on file */
+
+  close(fd);
+}
+
+//XXX this is for windows
+//void FIO32_1() {
+//  HANDLE hFile = CreateFile(
+//      pFullPathName, 0, 0, NULL, OPEN_EXISTING, 0, NULL
+//      );
+//  if (hFile == INVALID_HANDLE_VALUE) {
 //    /* Handle error */
-//  }
-//
-//  dirname_res = path_copy;
-//  /* Figure out how far it is to the root */
-//  while (1) {
-//    dirname_res = dirname(dirname_res);
-//
-//    num_of_dirs++;
-//
-//    if ((strcmp(dirname_res, "/") == 0) ||
-//        (strcmp(dirname_res, "//") == 0)) {
-//      break;
-//    }
-//  }
-//  free(path_copy);
-//  path_copy = NULL;
-//
-//  /* Now allocate and fill the dirs array */
-//  if (!(dirs = (char **)malloc(num_of_dirs*sizeof(*dirs)))) {
-//    /* Handle error */
-//  }
-//  if (!(dirs[num_of_dirs - 1] = strdup(fullpath))) {
-//    /* Handle error */
-//  }
-//
-//  if (!(path_copy = strdup(fullpath))) {
-//    /* Handle error */
-//  }
-//
-//  dirname_res = path_copy;
-//  for (i = 1; i < num_of_dirs; i++) {
-//    dirname_res = dirname(dirname_res);
-//
-//    dirs[num_of_dirs - i - 1] = strdup(dirname_res);
-//
-//  }
-//  free(path_copy);
-//  path_copy = NULL;
-//
-//  /* Traverse from the root to the leaf, checking
-//   * permissions along the way */
-//  for (i = 0; i < num_of_dirs; i++) {
-//    if (stat(dirs[i], &buf) != 0) {
-//      /* Handle error */
-//    }
-//    if ((buf.st_uid != my_uid) && (buf.st_uid != 0)) {
-//      /* Directory is owned by someone besides user or root */
-//      secure = 0;
-//    } else if ((buf.st_mode & (S_IWGRP | S_IWOTH))
-//        && ((i == num_of_dirs - 1) || !(buf.st_mode & S_ISVTX))) {
-//      /* Others have permissions to the leaf directory
-//       * or are able to delete or rename files along the way */
-//      secure = 0;
-//    }
-//
-//    free(dirs[i]);
-//    dirs[i] = NULL;
-//  }
-//
-//  free(dirs);
-//  dirs = NULL;
-//
-//  return secure;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *dir_name;
-//char *canonical_dir_name;
-//const char *file_name = "passwd"; /* file name within the secure directory */
-//FILE *fp;
-//
-///* initialize dir_name */
-//
-//canonical_dir_name = realpath(dir_name, NULL);
-//if (canonical_dir_name == NULL) {
-//  /* Handle error */
-//}
-//
-//if (!secure_dir(canonical_dir_name)) {
-//  /* Handle error */
-//}
-//
-//if (chdir(canonical_dir_name) == -1) {
-//  /* Handle error */
-//}
-//
-//fp = fopen(file_name, "w");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///*... Process file ...*/
-//
-//if (fclose(fp) != 0) {
-//  /* Handle error */
-//}
-//
-//if (remove(file_name) != 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO15() {
-//}
-//
-//
-///* FIO16_cpp */
-//
-///* Begin {code} */
-//
-///*
-// * Make sure that the chroot/jail directory exists within 
-// * the current working directory. Also assign appropriate 
-// * permissions to the directory to restrict access. Close 
-// * all file system descriptors to outside resources lest 
-// * they escape the jail.
-// */
-//
-//if (setuid(0) == -1) {
-//  /* Handle error */
-//}
-//
-//if (chroot("chroot/jail") == -1) {
-//  /* Handle error */
-//}
-//
-//if (chdir("/") == -1) {
-//  /* Handle error */
-//}
-//
-///* Drop privileges permanently */
-//if (setgid(getgid()) == -1) {
-//  /* Handle error */
-//}
-//
-//if (setuid(getuid()) == -1) {
-//  /* Handle error */
-//}
-//
-///* Perform unprivileged operations */
-//enum {array_mex = 100};
-//
-//FILE *fp = fopen(argv[1], "w");
-//char x[array_max];
-//strncpy(x, argv[2], array_max);
-//x[array_max - 1] = '\0';
-//
-///* Write operation safe is safe within jail */
-//if (fwrite(x, sizeof(x[0]), sizeof(x)/sizeof(x[0]), fp) <
-//    sizeof(x)/sizeof(x[0])) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO16() {
-//}
-//
-//
-///* FIO17_cpp */
-//
-///* Begin {code} */
-//
-//#include <iostream>
-//#include <fstream>
-//#include <string>
-//using namespace std;
-//
-//int main(int argc, char *argv[]) {
-//  string filename;
-//  ifstream ifs;
-//
-//  cin >> filename;
-//  ifs.open(filename.c_str());
-//
-//  if (ifs.fail()) {
-//    cerr << "Error opening file << filename << endl;
-//    exit(-1);
-//  }
-//  ifs.close();
-//}
-//
-///* End {code} */
-//void FIO17() {
-//}
-//
-//
-///* FIO18_cpp */
-//
-///* Begin {code} */
-//int main () {
-//  char * buffer;
-//  size_t size, length;&#xA0;
-//
-//  ofstream outfile ("new.txt", ofstream::binary);
-//  // suppose buffer is populated with a c-string
-//  size = sizeof(buffer);
-//  outfile.write (buffer, length); // suppose length is already initialized.&#xA0;
-//  if (size != length) {// File is not properly null-terminated. Handle this }
-//
-//  delete[] buffer;
-//  outfile.close();
-//  return 0;
-//}
-//
-///* End {code} */
-//void FIO18() {
-//}
-//
-//
-///* FIO30_cpp */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  /* user names are restricted to 256 characters or less */
-//  static const char *msg_format
-//    = "%s cannot be authenticated.\n";
-//  size_t len = strlen(user) + strlen(msg_format) + 1;
-//  char *msg = new char[len];
-//  int ret = sprintf(msg, msg_format, user);
-//  if (ret < 0 || ((size_t) ret) >= len) {
-//    /* Handle error */
-//  }
-//  if (fputs(msg, stderr) == EOF) {
-//    /* Handle error */
-//  }
-//  delete[] msg;
-//  msg = NULL;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  fprintf(stderr, "%s cannot be authenticated.\n", user);
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  cerr << user << " cannot be authenticated." << endl;
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//void incorrect_password(const char *user) {
-//  syslog(LOG_INFO, "%s cannot be authenticated.", user);
-//}
-//
-///* End {code} */
-//void FIO30() {
-//}
-//
-//
-///* FIO31_cpp */
-//
-///* Begin {code} */
-//
-//void do_stuff(ostream& logfile) {
-//  /* Write logs pertaining to do_stuff() */
-//  logfile << "do_stuff" << endl;
-//
-//  /* ... */
-//}
-//
-//int main(void) {
-//  ofstream logfile("log", ios::app);
-//
-//  /* Write logs pertaining to main() */
-//  logfile << "main" << endl;
-//
-//  do_stuff(logfile);
-//
-//  /* ... */
-//}
-//
-///* End {code} */
-//void FIO31() {
-//}
-//
-//
-///* FIO32_cpp */
-//
-///* Begin {code} */
-//
-//#ifdef O_NOFOLLOW
-//#define OPEN_FLAGS O_NOFOLLOW | O_NONBLOCK
-//#else
-//#define OPEN_FLAGS O_NONBLOCK
-//#endif
-//
-///* ... */
-//
-//struct stat orig_st;
-//struct stat open_st;
-//int fd;
-//int flags;
-//char *file_name;
-//
-///* initialize file_name */
-//
-//if (!fgets(file_name, sizeof(file_name), stdin)) {
-//  /* Handle error */
-//}
-//
-//  if ((lstat(file_name, &orig_st) != 0)
-//      || (!S_ISREG(orig_st.st_mode)))
-//{
-//  /* Handle error */
-//}
-//
-///* A TOCTOU race condition exists here, see below */
-//
-//fd = open(file_name, OPEN_FLAGS | O_WRONLY);
-//if (fd == -1) {
-//  /* Handle error */
-//}
-//
-//if (fstat(fd, &open_st) != 0) {
-//  /* Handle error */
-//}
-//
-//if ((orig_st.st_mode != open_st.st_mode) ||
-//    (orig_st.st_ino  != open_st.st_ino) ||
-//    (orig_st.st_dev  != open_st.st_dev)) {
-//  /* file was tampered with */
-//}
-//
-///* Optional: drop the O_NONBLOCK now that we are sure
-// * this is a good file */
-//if ((flags = fcntl(fd, F_GETFL)) == -1) {
-//  /* Handle error */
-//}
-//
-//if (fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) != 0) {
-//  /* Handle error */
-//}
-//
-///* Operate on file */
-//
-//close(fd);
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//HANDLE hFile = CreateFile(
-//    pFullPathName, 0, 0, NULL, OPEN_EXISTING, 0, NULL
-//    );
-//if (hFile == INVALID_HANDLE_VALUE) {
-//  /* Handle error */
-//}
-//else {
-//  if (GetFileType(hFile) != FILE_TYPE_DISK) {
-//    /* Handle error */
-//  }
-//  /* operate on file */
-//}
-//
-///* End {code} */
-//void FIO32() {
-//}
-//
-//
-///* FIO33_cpp */
-//
-///* Begin {code} */
-//
-//char buf[BUFSIZ];
-//char *p;
-//
-//if (fgets(buf, sizeof(buf), stdin)) {
-//  /* fgets succeeds, scan for newline character */
-//  p = strchr(buf, '\n');
-//  if (p) {
-//    *p = '\0';
 //  }
 //  else {
-//    /* newline not found, flush stdin to end of line */
-//    while ((getchar() != '\n')
-//        && !feof(stdin)
-//        && !ferror(stdin)
-//        );
-//  }
-//}
-//else {
-//  /* fgets failed, handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//FILE * fptr = fopen(file_name, "w");
-//if (fptr == NULL) {
-//  /* Handle error */
-//}
-//else {
-//  /* process file */
-//
-//  /* End {code} */
-//
-//  /* Begin {code} */
-//
-//  enum { BUFFERSIZE = 200 };
-//  char buffer[BUFFERSIZE];
-//  char s[] = "computer";
-//  char c = 'l';
-//  int i = 35;
-//  int j = 0;
-//  int rc = 0;
-//  float fp = 1.7320534f;
-//
-//  /* Format and print various data: */
-//  rc = snprintf(
-//      buffer,
-//      sizeof(buffer),
-//      " String: %s\n",
-//      s
-//      );
-//  if (rc == -1 || rc >= sizeof(buffer)) /* Handle error */ ;
-//  else j += rc;
-//
-//  rc = snprintf(
-//      buffer + j,
-//      sizeof(buffer) - j,
-//      " Character: %c\n",
-//      c
-//      );
-//  if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
-//  else j += rc;
-//
-//  rc = snprintf(
-//      buffer + j,
-//      sizeof(buffer) - j,
-//      " Integer: %d\n",
-//      i
-//      );
-//  if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
-//  else j += rc;
-//
-//  rc = snprintf(
-//      buffer + j,
-//      sizeof(buffer) - j,
-//      " Real: %f\n",
-//      fp
-//      );
-//  if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
-//
-//  /* End {code} */
-//  void FIO33() {
-//  }
-//
-//
-//  /* FIO34_cpp */
-//
-//  /* Begin {code} */
-//
-//  char buf[BUFSIZ];
-//  int c;
-//  int i = 0;
-//
-//  while (((c = cin.get()) != '\n')
-//      && !cin.eof()
-//      && !cin)
-//  {
-//    if (i < BUFSIZ-1) {
-//      buf[i++] = c;
+//    if (GetFileType(hFile) != FILE_TYPE_DISK) {
+//      /* Handle error */
 //    }
+//    /* operate on file */
 //  }
-//  buf[i] = '\0'; /* terminate NTBS */
+//}
 //
-//  /* End {code} */
-//  void FIO34() {
-//  }
-//
-//
-//  /* FIO35_cpp */
-//
-//  /* Begin {code} */
-//
-//  int c;
-//
-//  do {
-//    /* ... */
-//    c = getchar();
-//    /* ... */
-//  } while (!feof(stdin) && !ferror(stdin));
-//
-//  /* End {code} */
-//
-//  /* Begin {code} */
-//
+void FIO32() {
+  FIO32_0();
+  //FIO32_1();
+}
+
+
+/* FIO33_cpp */
+
+void FIO33_0() {
+  char buf[BUFSIZ];
+  char *p;
+
+  if (fgets(buf, sizeof(buf), stdin)) {
+    /* fgets succeeds, scan for newline character */
+    p = strchr(buf, '\n');
+    if (p) {
+      *p = '\0';
+    }
+    else {
+      /* newline not found, flush stdin to end of line */
+      while ((getchar() != '\n')
+          && !feof(stdin)
+          && !ferror(stdin)
+          );
+    }
+  }
+  else {
+    /* fgets failed, handle error */
+  }
+}
+
+void FIO33_1() {
+  char file_name[] = "foo";
+  FILE * fptr = fopen(file_name, "w");
+  if (fptr == NULL) {
+    /* Handle error */
+  }
+  else {
+    /* process file */
+
+    /* End {code} */
+
+    /* Begin {code} */
+
+    enum { BUFFERSIZE = 200 };
+    char buffer[BUFFERSIZE];
+    char s[] = "computer";
+    char c = 'l';
+    int i = 35;
+    int j = 0;
+    int rc = 0;
+    float fp = 1.7320534f;
+
+    /* Format and print various data: */
+    rc = snprintf(
+        buffer,
+        sizeof(buffer),
+        " String: %s\n",
+        s
+        );
+    if (rc == -1 || rc >= sizeof(buffer)) /* Handle error */ ;
+    else j += rc;
+
+    rc = snprintf(
+        buffer + j,
+        sizeof(buffer) - j,
+        " Character: %c\n",
+        c
+        );
+    if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
+    else j += rc;
+
+    rc = snprintf(
+        buffer + j,
+        sizeof(buffer) - j,
+        " Integer: %d\n",
+        i
+        );
+    if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
+    else j += rc;
+
+    rc = snprintf(
+        buffer + j,
+        sizeof(buffer) - j,
+        " Real: %f\n",
+        fp
+        );
+    if (rc == -1 || rc >= sizeof(buffer) - j) /* Handle error */ ;
+  }
+}
+
+void FIO33() {
+  FIO33_0();
+  FIO33_1();
+}
+
+
+/* FIO34_cpp */
+void FIO34() {
+  char buf[BUFSIZ];
+  int c;
+  int i = 0;
+
+  while (((c = cin.get()) != '\n')
+      && !cin.eof()
+      && !cin)
+  {
+    if (i < BUFSIZ-1) {
+      buf[i++] = c;
+    }
+  }
+  buf[i] = '\0'; /* terminate NTBS */
+}
+
+
+/* FIO35_cpp */
+void FIO35_0() {
+  int c;
+
+  do {
+    /* ... */
+    c = getchar();
+    /* ... */
+  } while (!feof(stdin) && !ferror(stdin));
+
+}
+
+
+//XXX static assert??
+//void FIO35_1() {
 //  int c;
 //
 //  static_assert(sizeof(char) < sizeof(int));
@@ -1205,12 +1130,13 @@ void FIO02() {
 //    c = getchar();
 //    /* ... */
 //  } while (c != EOF);
-//
-//  /* End {code} */
-//  void FIO35() {
-//  }
-//
-//
+//}
+
+void FIO35() {
+  FIO35_0();
+  //FIO35_1();
+}
+
 //  /* FIO36_cpp */
 //
 //  /* Begin {code} */

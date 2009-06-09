@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#include <fstream>
+#include <syslog.h>
 
 
 int verify_file(char *const filename) {

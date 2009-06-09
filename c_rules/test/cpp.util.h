@@ -45,6 +45,9 @@
 #include <sys/stat.h>
 #include <csetjmp>
 #include <iostream>
+#include <unistd.h>
+#include <limits.h>
+#include <libgen.h>
 
 typedef unsigned int rsize_t;
 typedef int errno_t;
