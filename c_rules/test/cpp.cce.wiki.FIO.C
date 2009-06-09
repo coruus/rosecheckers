@@ -228,7 +228,6 @@ void FIO02_2() {
   canonical_filename = NULL;
 }
 
-/* End {code} */
 void FIO02() {
   FIO02_0();
   FIO02_1();
@@ -280,7 +279,6 @@ void FIO03_2() {
   }
 }
 
-/* End {code} */
 void FIO03() {
   FIO03_0();
   FIO03_1();
@@ -400,7 +398,6 @@ void FIO05() {
 
 /* FIO06_cpp */
 
-/* Begin {code} */
 void FIO06_0() {
 
   char *file_name;
@@ -431,7 +428,6 @@ void FIO06_1() {
   }
 }
 
-/* End {code} */
 void FIO06() {
   FIO06_0();
   FIO06_1();
@@ -440,7 +436,6 @@ void FIO06() {
 
 /* FIO07_cpp */
 
-/* Begin {code} */
 void FIO07() {
   char *file_name = "foo";
   FILE *fp;
@@ -590,7 +585,6 @@ void FIO10_5() {
   }
 }
 
-/* End {code} */
 void FIO10() {
   FIO10_0();
   FIO10_1();
@@ -767,7 +761,6 @@ void FIO15() {
     /* Handle error */
   }
 
-  /* End {code} */
 }
 
 
@@ -820,7 +813,6 @@ void FIO16() {
     /* Handle error */
   }
 
-  /* End {code} */
 }
 
 
@@ -895,7 +887,6 @@ void FIO30() {
 
 /* FIO31_cpp */
 
-/* Begin {code} */
 
 void FIO31_do_stuff(ostream& logfile) {
   /* Write logs pertaining to do_stuff() */
@@ -1032,11 +1023,8 @@ void FIO33_1() {
   else {
     /* process file */
 
-    /* End {code} */
 
-    /* Begin {code} */
 
-    enum { BUFFERSIZE = 200 };
     char buffer[BUFFERSIZE];
     char s[] = "computer";
     char c = 'l';
@@ -1137,231 +1125,203 @@ void FIO35() {
   //FIO35_1();
 }
 
-//  /* FIO36_cpp */
-//
-//  /* Begin {code} */
-//
-//  char buf[BUFSIZ + 1];
-//  char *p;
-//
-//  if (fgets(buf, sizeof(buf), stdin)) {
-//    p = strchr(buf, '\n');
-//    if (p) {
-//      *p = '\0';
-//    }
-//  }
-//  else {
-//    /* Handle error condition */
-//  }
-//
-//  /* End {code} */
-//  void FIO36() {
-//  }
-//
-//
-//  /* FIO37_cpp */
-//
-//  /* Begin {code} */
-//
-//  char buf[BUFSIZ + 1];
-//  char *p;
-//
-//  if (fgets(buf, sizeof(buf), stdin)) {
-//    p = strchr(buf, '\n');
-//    if (p) {
-//      *p = '\0';
-//    }
-//  }
-//  else {
-//    /* Handle error condition */
-//  }
-//
-//  /* End {code} */
-//  void FIO37() {
-//  }
-//
-//
-//  /* FIO38_cpp */
-//
-//  /* Begin {code} */
-//
-//  int main(void) {
-//    FILE *my_stdout = stdout;
-//    if (fputs("Hello, World!\n", my_stdout) == EOF) {
-//      /* Handle error */
-//    }
-//    return 0;
-//  }
-//
-//  /* End {code} */
-//  void FIO38() {
-//  }
-//
-//
-//  /* FIO39_cpp */
-//
-//  /* Begin {code} */
-//  char data[BUFFERSIZE];
-//  char append_data[BUFFERSIZE];
-//  char *file_name;
-//  FILE *file;
-//
-//  /* initialize file_name */
-//
-//  file = fopen(file_name, "a+");
-//  if (file == NULL) {
-//    /* Handle error */
-//  }
-//
-//  /* Initialize append_data */
-//
-//  if (fwrite(append_data, BUFFERSIZE, 1, file) != BUFFERSIZE) {
-//    /* Handle error */
-//  }
-//
-//  if (fseek(file, 0L, SEEK_SET) != 0) {
-//    /* Handle error */
-//  }
-//
-//  if (fread(data, BUFFERSIZE, 1, file) != 0) {
-//    /* Handle there not being data */
-//  }
-//
-//  fclose(file);
-//
-//  /* End {code} */
-//  void FIO39() {
-//  }
-//
-//
-//  /* FIO40_cpp */
-//
-//  /* Begin {code} */
-//
-//  char buf[BUFSIZ];
-//  FILE *file;
-//  /* Initialize file */
-//
-//  if (fgets(buf, sizeof(buf), file) == NULL) {
-//    /* set error flag and continue */
-//    *buf = '\0';
-//  }
-//
-//  /* End {code} */
-//  void FIO40() {
-//  }
-//
-//
-//  /* FIO41_cpp */
-//
-//  /* Begin {code} */
-//
-//  int c;
-//  char *file_name;
-//  FILE *fptr;
-//
-//  /* Initialize file_name */
-//
-//  fptr = fopen(file_name, "r");
-//  if (fptr == NULL) {
-//    /* Handle error */
-//  }
-//
-//  c = getc(fptr);
-//  if (c == EOF) {
-//    /* Handle error */
-//  }
-//
-//  /* End {code} */
-//
-//  /* Begin {code} */
-//
-//  char *file_name;
-//
-//  /* Initialize file_name */
-//
-//  FILE *fptr = fopen(file_name, "w");
-//  if (fptr == NULL) {
-//    /* Handle error */
-//  }
-//
-//  int c = 'a';
-//
-//  while (c <= 'z') {
-//    if (putc(c++, fptr) == EOF) {
-//      /* Handle error */
-//    }
-//  }
-//
-//  /* End {code} */
-//  void FIO41() {
-//  }
-//
-//
-//  /* FIO42_cpp */
-//
-//  /* Begin {code} */
-//
-//  FILE* f;
-//  const char *editor;
-//  char *file_name;
-//
-//  /* Initialize file_name */
-//
-//  f = fopen(file_name, "r");
-//  if (f == NULL) {
-//    /* Handle fopen() error */
-//  }
-//  /* ... */
-//  fclose(f);
-//  f = NULL;
-//  editor = getenv("EDITOR");
-//  if (editor == NULL) {
-//    /* Handle getenv() error */
-//  }
-//  /* Sanitize environment before calling system()! */
-//  if (system(editor) == -1) {
-//    /* Handle Error */
-//  }
-//
-//  /* End {code} */
-//
-//  /* Begin {code} */
-//
-//  int flags;
-//  char *editor;
-//  char *file_name;
-//
-//  /* Initialize file_name */
-//
-//  int fd = open(file_name, O_RDONLY);
-//  if (fd == -1) {
-//    /* Handle error */
-//  }
-//
-//  flags = fcntl(fd, F_GETFD);
-//  if (flags == -1) {
-//    /* Handle error */
-//  }
-//
-//  if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
-//    /* Handle error */
-//  }
-//
-//  /* ... */
-//
-//  editor = getenv("EDITOR");
-//  if (editor == NULL) {
-//    /* Handle getenv() error */
-//  }
-//  if (system(editor) == -1) {
-//    /* Handle error */
-//  }
-//
-//  /* End {code} */
-//
-//  /* Begin {code} */
-//
+/* FIO36_cpp */
+
+void FIO36() {
+  char buf[BUFSIZ + 1];
+  char *p;
+
+  if (fgets(buf, sizeof(buf), stdin)) {
+    p = strchr(buf, '\n');
+    if (p) {
+      *p = '\0';
+    }
+  }
+  else {
+    /* Handle error condition */
+  }
+}
+
+/* FIO37_cpp */
+
+void FIO37() {
+  char buf[BUFSIZ + 1];
+  char *p;
+
+  if (fgets(buf, sizeof(buf), stdin)) {
+    p = strchr(buf, '\n');
+    if (p) {
+      *p = '\0';
+    }
+  }
+  else {
+    /* Handle error condition */
+  }
+}
+
+
+/* FIO38_cpp */
+
+void FIO38() {
+  FILE *my_stdout = stdout;
+  if (fputs("Hello, World!\n", my_stdout) == EOF) {
+    /* Handle error */
+  }
+}
+
+
+/* FIO39_cpp */
+void FIO39() {
+  char data[BUFFERSIZE];
+  char append_data[BUFFERSIZE];
+  char *file_name;
+  FILE *file;
+
+  /* initialize file_name */
+
+  file = fopen(file_name, "a+");
+  if (file == NULL) {
+    /* Handle error */
+  }
+
+  /* Initialize append_data */
+
+  if (fwrite(append_data, BUFFERSIZE, 1, file) != BUFFERSIZE) {
+    /* Handle error */
+  }
+
+  if (fseek(file, 0L, SEEK_SET) != 0) {
+    /* Handle error */
+  }
+
+  if (fread(data, BUFFERSIZE, 1, file) != 0) {
+    /* Handle there not being data */
+  }
+
+  fclose(file);
+}
+
+
+/* FIO40_cpp */
+
+void FIO40() {
+  char buf[BUFSIZ];
+  FILE *file;
+  /* Initialize file */
+
+  if (fgets(buf, sizeof(buf), file) == NULL) {
+    /* set error flag and continue */
+    *buf = '\0';
+  }
+}
+
+
+/* FIO41_cpp */
+
+void FIO41_0() {
+  int c;
+  char *file_name;
+  FILE *fptr;
+
+  /* Initialize file_name */
+
+  fptr = fopen(file_name, "r");
+  if (fptr == NULL) {
+    /* Handle error */
+  }
+
+  c = getc(fptr);
+  if (c == EOF) {
+    /* Handle error */
+  }
+}
+
+void FIO41_1() {
+  char *file_name;
+
+  /* Initialize file_name */
+
+  FILE *fptr = fopen(file_name, "w");
+  if (fptr == NULL) {
+    /* Handle error */
+  }
+
+  int c = 'a';
+
+  while (c <= 'z') {
+    if (putc(c++, fptr) == EOF) {
+      /* Handle error */
+    }
+  }
+}
+
+void FIO41() {
+  FIO41_0();
+  FIO41_1();
+}
+
+
+/* FIO42_cpp */
+
+void FIO42_0() {
+  FILE* f;
+  const char *editor;
+  char *file_name;
+
+  /* Initialize file_name */
+
+  f = fopen(file_name, "r");
+  if (f == NULL) {
+    /* Handle fopen() error */
+  }
+  /* ... */
+  fclose(f);
+  f = NULL;
+  editor = getenv("EDITOR");
+  if (editor == NULL) {
+    /* Handle getenv() error */
+  }
+  /* Sanitize environment before calling system()! */
+  if (system(editor) == -1) {
+    /* Handle Error */
+  }
+}
+
+void FIO42_1() {
+  int flags;
+  char *editor;
+  char *file_name;
+
+  /* Initialize file_name */
+
+  int fd = open(file_name, O_RDONLY);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  flags = fcntl(fd, F_GETFD);
+  if (flags == -1) {
+    /* Handle error */
+  }
+
+  if (fcntl(fd, F_SETFD, flags | FD_CLOEXEC) == -1) {
+    /* Handle error */
+  }
+
+  /* ... */
+
+  editor = getenv("EDITOR");
+  if (editor == NULL) {
+    /* Handle getenv() error */
+  }
+  if (system(editor) == -1) {
+    /* Handle error */
+  }
+}
+
+//XXX Andrew computers have linux kernel version
+//XXX 2.6.16, but 2.6.23 is required for this
+//void FIO41_2() {
 //  char *editor;
 //  char *file_name;
 //
@@ -1381,109 +1341,103 @@ void FIO35() {
 //  if (system(editor) == -1) {
 //    /* Handle error */
 //  }
-//
-//  /* End {code} */
-//  void FIO42() {
-//  }
-//
-//
-//  /* FIO43_cpp */
-//
-//  /* Begin {code} */
-//
-//  const char *sdn = "/home/usr1/";
-//  char sfn[] = "/home/usr1/temp-XXXXXX";
-//  FILE *sfp;
-//
-//  if (!secure_dir(sdn)) {
-//    /* Handle error */
-//  }
-//
-//  int fd = mkstemp(sfn);
-//  if (fd == -1) {
-//    /* Handle error */
-//  }
-//
-//  /*
-//   * Unlink immediately to hide the file name.
-//   * The race condition here is inconsequential if the file
-//   * is created with exclusive permissions (glibc >= 2.0.7)
-//   */
-//
-//  if (unlink(sfn) == -1) {
-//    /* Handle error */
-//  }
-//
-//  sfp = fdopen(fd, "w+");
-//  if (sfp == NULL) {
-//    close(fd);
-//    /* Handle error */
-//  }
-//
-//  /* use temporary file */
-//
-//  fclose(sfp); /* also closes fd */
-//
-//  /* End {code} */
-//  void FIO43() {
-//  }
-//
-//
-//  /* FIO44_cpp */
-//
-//  /* Begin {code} */
-//
-//  enum { NO_FILE_POS_VALUES = 3 };
-//
-//  int opener(FILE* file, /* ... */) {
-//    int rc;
-//    fpos_t offset;
-//
-//    /* ... */
-//
-//    if (file == NULL) { return EINVAL; }
-//
-//    rc = fgetpos(file, &offset);
-//    if (rc != 0 ) { return rc; }
-//
-//    /* Read in data from file */
-//
-//    rc = fsetpos(file, &offset);
-//    if (rc != 0 ) { return rc; }
-//
-//    /* ... */
-//
-//    return 0;
-//  }
-//
-//  /* End {code} */
-//  void FIO44() {
-//  }
-//
-//
-//  /* FIO45_cpp */
-//
-//  /* Begin {code} */
-//
-//  char * buffer;
-//  size_t size;
-//
-//  ifstream infile ("test.txt", ifstream::binary);
-//
-//  // get length of the file
-//  infile.seekg(0, ifstream::end);
-//  length = infile.tellg();
-//  infile.seekg(0);
-//
-//  // allocate memory for the content of the file
-//  buffer = new char [size];
-//  infile.read (buffer, size);&#xA0;
-//  if (size != length) {
-//    // buffer is not properly null-terminated. Handle this case
-//  }
-//
-//  infile.close();
-//
-//  /* End {code} */
-//  void FIO45() {
-//  }
+//}
+
+void FIO42() {
+  FIO42_0();
+  FIO42_1();
+  //FIO42_2();
+}
+
+
+/* FIO43_cpp */
+
+void FIO43() {
+  const char *sdn = "/home/usr1/";
+  char sfn[] = "/home/usr1/temp-XXXXXX";
+  FILE *sfp;
+
+  if (!secure_dir(sdn)) {
+    /* Handle error */
+  }
+
+  int fd = mkstemp(sfn);
+  if (fd == -1) {
+    /* Handle error */
+  }
+
+  /*
+   * Unlink immediately to hide the file name.
+   * The race condition here is inconsequential if the file
+   * is created with exclusive permissions (glibc >= 2.0.7)
+   */
+
+  if (unlink(sfn) == -1) {
+    /* Handle error */
+  }
+
+  sfp = fdopen(fd, "w+");
+  if (sfp == NULL) {
+    close(fd);
+    /* Handle error */
+  }
+
+  /* use temporary file */
+
+  fclose(sfp); /* also closes fd */
+}
+
+
+/* FIO44_cpp */
+
+
+enum { NO_FILE_POS_VALUES = 3 };
+
+int opener(FILE* file /*, ... */) {
+  int rc;
+  fpos_t offset;
+
+  /* ... */
+
+  if (file == NULL) { return EINVAL; }
+
+  rc = fgetpos(file, &offset);
+  if (rc != 0 ) { return rc; }
+
+  /* Read in data from file */
+
+  rc = fsetpos(file, &offset);
+  if (rc != 0 ) { return rc; }
+
+  /* ... */
+
+  return 0;
+}
+
+void FIO44() {
+  //nothing to run
+}
+
+
+/* FIO45_cpp */
+
+void FIO45() {
+  char * buffer;
+  size_t size;
+  streampos length;
+
+  ifstream infile ("test.txt", ifstream::binary);
+
+  // get length of the file
+  infile.seekg(0, ifstream::end);
+  length = infile.tellg();
+  infile.seekg(0);
+
+  // allocate memory for the content of the file
+  buffer = new char [size];
+  infile.read (buffer, size);
+  if (size != length) {
+    // buffer is not properly null-terminated. Handle this case
+  }
+  infile.close();
+}

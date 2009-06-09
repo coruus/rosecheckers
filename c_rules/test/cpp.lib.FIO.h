@@ -5,6 +5,7 @@
 #include <fstream>
 #include <syslog.h>
 
+#define BUFFERSIZE 10
 
 int verify_file(char *const filename) {
   /* Get /etc/passwd entry for current user */

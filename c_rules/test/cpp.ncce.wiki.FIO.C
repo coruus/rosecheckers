@@ -145,7 +145,6 @@ void FIO01_1() {
   }
 }
 
-/* End {code} */
 void FIO01() {
   FIO01_0();
   FIO01_1();
@@ -154,7 +153,6 @@ void FIO01() {
 
 /* FIO02_cpp */
 
-/* Begin {code} */
 
 /* Verify argv[1] is supplied */
 
@@ -475,23 +473,23 @@ void FIO07() {
 /* FIO08_cpp */
 
 void FIO08() {
-char *file_name = "foo";
-FILE *file;
+  char *file_name = "foo";
+  FILE *file;
 
-file = fopen(file_name, "w+");
-if (file == NULL) {
-  /* Handle error condition */
-}
+  file = fopen(file_name, "w+");
+  if (file == NULL) {
+    /* Handle error condition */
+  }
 
-/* ... */
+  /* ... */
 
-if (remove(file_name) != 0) {
-  /* Handle error condition */
-}
+  if (remove(file_name) != 0) {
+    /* Handle error condition */
+  }
 
-/* continue performing I/O operations on file */
+  /* continue performing I/O operations on file */
 
-fclose(file);
+  fclose(file);
 }
 
 /* FIO09_cpp */
@@ -673,7 +671,6 @@ void FIO18() {
 
 /* FIO30_cpp */
 
-/* Begin {code} */
 
 void FIO30_0_incorrect_password(const char *user) {
   /* user names are restricted to 256 characters or less */
@@ -690,9 +687,7 @@ void FIO30_0_incorrect_password(const char *user) {
   msg = NULL;
 }
 
-/* End {code} */
 
-/* Begin {code} */
 
 void FIO30_1_incorrect_password(const char *user) {
   /* user names are restricted to 256 characters or less */
@@ -709,7 +704,6 @@ void FIO30_1_incorrect_password(const char *user) {
   msg = NULL;
 }
 
-/* End {code} */
 void FIO30() {
   //nothing to run
 }
@@ -775,7 +769,6 @@ void FIO33_1() {
 }
 
 void FIO33_2() {
-  enum { BUFFERSIZE = 200 };
   char buffer[BUFFERSIZE];
   char s[] = "computer";
   char c = 'l';
@@ -844,323 +837,289 @@ void FIO35() {
 }
 
 
-///* FIO36_cpp */
+/* FIO36_cpp */
+void FIO36() {
+  char buf[BUFSIZ + 1];
+
+  if (fgets(buf, sizeof(buf), stdin)) {
+    if (*buf) { /* see FIO37-CPP */
+      buf[strlen(buf) - 1] = '\0';
+    }
+  }
+  else {
+    /* Handle error condition */
+  }
+}
+
+
+/* FIO37_cpp */
+void FIO37() {
+  char buf[BUFSIZ + 1];
+
+  if (fgets(buf, sizeof(buf), stdin) == NULL) {
+    /* Handle error */
+  }
+  buf[strlen(buf) - 1] = '\0';
+}
+
+
+/* FIO38_cpp */
+
+
+void FIO38() {
+  FILE my_stdout = *(stdout);
+  if (fputs("Hello, World!\n", &my_stdout) == EOF) {
+    /* Handle error */
+  }
+}
+
+
+/* FIO39_cpp */
+void FIO39() {
+  char data[BUFFERSIZE];
+  char append_data[BUFFERSIZE];
+  char *file_name;
+  FILE *file;
+
+  /* Initialize file_name */
+
+  file = fopen(file_name, "a+");
+  if (file == NULL) {
+    /* Handle error */
+  }
+
+  /* initialize append_data */
+
+  if (fwrite(append_data, BUFFERSIZE, 1, file) != BUFFERSIZE) {
+    /* Handle error */
+  }
+  if (fread(data, BUFFERSIZE, 1, file) != 0) {
+    /* Handle there not being data */
+  }
+
+  fclose(file);
+
+}
+
+
+/* FIO40_cpp */
+
+void FIO40() {
+  char buf[BUFSIZ];
+  FILE *file;
+  /* Initialize file */
+
+  if (fgets(buf, sizeof(buf), file) == NULL) {
+    /* set error flag and continue */
+  }
+
+}
+
+
+/* FIO41_cpp */
+
+void FIO41_0() {
+  char *file_name;
+  FILE *fptr;
+
+  /* Initialize file_name */
+
+  int c = getc(fptr = fopen(file_name, "r"));
+  if (c == EOF) {
+    /* Handle error */
+  }
+}
+
+void FIO41_1() {
+  char *file_name;
+  FILE *fptr = NULL;
+
+  /* Initialize file_name */
+
+  int c = 'a';
+  while (c <= 'z') {
+    if (putc(c++, fptr ? fptr :
+          (fptr = fopen(file_name, "w"))) == EOF) {
+      /* Handle error */
+    }
+  }
+}
+void FIO41() {
+  FIO41_0();
+  FIO41_1();
+}
+
+
+/* FIO42_cpp */
+void FIO42() {
+
+  FILE* f;
+  const char *editor;
+  char *file_name;
+
+  /* Initialize file_name */
+
+  f = fopen(file_name, "r");
+  if (f == NULL) {
+    /* Handle fopen() error */
+  }
+  /* ... */
+  editor = getenv("EDITOR");
+  if (editor == NULL) {
+    /* Handle getenv() error */
+  }
+  if (system(editor) == -1) {
+    /* Handle error */
+  }
+}
+
+
+/* FIO43_cpp */
+
+void FIO43_0() {
+  char file_name[] = "str";
+
+  FILE *fp = fopen(file_name, "wb+");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+}
+
+
+//XXX except warnings about use of tmpnam
+void FIO43_1() {
+
+  char file_name[L_tmpnam];
+  FILE* fp;
+
+  if (!tmpnam(file_name)) {
+    /* Handle error */
+  }
+
+  /* A TOCTOU race condition exists here */
+
+  fp = fopen(file_name, "wb+");
+  if (fp == NULL) {
+    /* Handle error */
+  }
+}
+
+
+void FIO43_2() {
+  char file_name[L_tmpnam];
+  int fd;
+
+  if (!(tmpnam(file_name))) {
+    /* Handle error */
+  }
+
+  /* A TOCTOU race condition exists here */
+
+  fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
+  if (fd < 0) {
+    /* Handle error */
+  }
+}
+
+//XXX not yet in GCC
+//void FIO43_3() {
+//  char file_name[L_tmpnam_s];
+//  int fd;
 //
-///* Begin {code} */
-//
-//char buf[BUFSIZ + 1];
-//
-//if (fgets(buf, sizeof(buf), stdin)) {
-//  if (*buf) { /* see FIO37-CPP */
-//    buf[strlen(buf) - 1] = '\0';
-//  }
-//}
-//else {
-//  /* Handle error condition */
-//}
-//
-///* End {code} */
-//void FIO36() {
-//}
-//
-//
-///* FIO37_cpp */
-//
-///* Begin {code} */
-//
-//char buf[BUFSIZ + 1];
-//
-//if (fgets(buf, sizeof(buf), stdin) == NULL) {
-//  /* Handle error */
-//}
-//buf[strlen(buf) - 1] = '\0';
-//
-///* End {code} */
-//void FIO37() {
-//}
-//
-//
-///* FIO38_cpp */
-//
-///* Begin {code} */
-//
-//int main(void) {
-//  FILE my_stdout = *(stdout);
-//  if (fputs("Hello, World!\n", &my_stdout) == EOF) {
+//  if (tmpnam_s(file_name, L_tmpnam_s) != 0) {
 //    /* Handle error */
 //  }
-//  return 0;
-//}
 //
-///* End {code} */
-//void FIO38() {
-//}
-//
-//
-///* FIO39_cpp */
-//
-///* Begin {code} */
-//char data[BUFFERSIZE];
-//char append_data[BUFFERSIZE];
-//char *file_name;
-//FILE *file;
-//
-///* Initialize file_name */
-//
-//file = fopen(file_name, "a+");
-//if (file == NULL) {
-//  /* Handle error */
-//}
-//
-///* initialize append_data */
-//
-//if (fwrite(append_data, BUFFERSIZE, 1, file) != BUFFERSIZE) {
-//  /* Handle error */
-//}
-//if (fread(data, BUFFERSIZE, 1, file) != 0) {
-//  /* Handle there not being data */
-//}
-//
-//fclose(file);
-//
-///* End {code} */
-//void FIO39() {
-//}
-//
-//
-///* FIO40_cpp */
-//
-///* Begin {code} */
-//
-//char buf[BUFSIZ];
-//FILE *file;
-///* Initialize file */
-//
-//if (fgets(buf, sizeof(buf), file) == NULL) {
-//  /* set error flag and continue */
-//}
-//
-///* End {code} */
-//void FIO40() {
-//}
-//
-//
-///* FIO41_cpp */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fptr;
-//
-///* Initialize file_name */
-//
-//int c = getc(fptr = fopen(file_name, "r"));
-//if (c == EOF) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char *file_name;
-//FILE *fptr = NULL;
-//
-///* Initialize file_name */
-//
-//int c = 'a';
-//while (c <= 'z') {
-//  if (putc(c++, fptr ? fptr :
-//        (fptr = fopen(file_name, "w")) == EOF) {
-//      /* Handle error */
-//      }
-//      }
-//
-//      /* End {code} */
-//      void FIO41() {
-//      }
-//
-//
-//      /* FIO42_cpp */
-//
-//      /* Begin {code} */
-//
-//      FILE* f;
-//      const char *editor;
-//      char *file_name;
-//
-//      /* Initialize file_name */
-//
-//  f = fopen(file_name, "r");
-//  if (f == NULL) {
-//    /* Handle fopen() error */
+//  /* A TOCTOU race condition exists here */
+//  fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
+//  if (fd < 0) {
+//    /* Handle error */
 //  }
-///* ... */
-//editor = getenv("EDITOR");
-//if (editor == NULL) {
-//  /* Handle getenv() error */
 //}
-//if (system(editor) == -1) {
-//  /* Handle error */
+
+void FIO43_4() {
+  char file_name[] = "tmp-XXXXXX";
+  int fd;
+
+  if (!mktemp(file_name)) {
+    /* Handle error */
+  }
+
+  /* A TOCTOU race condition exists here */
+
+  fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
+  if (fd < 0) {
+    /* Handle error */
+  }
+}
+
+void FIO43_5() {
+  FILE* fp = tmpfile();
+  if (fp == NULL) {
+    /* Handle error */
+  }
+}
+
+//XXX not yet in GCC
+//void FIO43_6() {
+//  if (tmpfile_s(&fp)) {
+//    /* Handle error */
+//  }
 //}
-//
-///* End {code} */
-//void FIO42() {
-//}
-//
-//
-///* FIO43_cpp */
-//
-///* Begin {code} */
-//
-//char file_name[] = /* hard coded string */;
-//
-//FILE *fp = fopen(file_name, "wb+");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char file_name[L_tmpnam];
-//FILE* fp;
-//
-//if (!tmpnam(file_name)) {
-//  /* Handle error */
-//}
-//
-///* A TOCTOU race condition exists here */
-//
-//fp = fopen(file_name, "wb+");
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char file_name[L_tmpnam];
-//int fd;
-//
-//if (!(tmpnam(file_name))) {
-//  /* Handle error */
-//}
-//
-///* A TOCTOU race condition exists here */
-//
-//fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
-//if (fd < 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char file_name[L_tmpnam_s];
-//int fd;
-//
-//if (tmpnam_s(file_name, L_tmpnam_s) != 0) {
-//  /* Handle error */
-//}
-//
-///* A TOCTOU race condition exists here */
-//fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
-//if (fd < 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//char file_name[] = "tmp-XXXXXX";
-//int fd;
-//
-//if (!mktemp(file_name)) {
-//  /* Handle error */
-//}
-//
-///* A TOCTOU race condition exists here */
-//
-//fd = open(file_name, O_WRONLY | O_CREAT | O_EXCL | O_TRUNC, 0600);
-//if (fd < 0) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//FILE* fp = tmpfile();
-//if (fp == NULL) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//if (tmpfile_s(&fp)) {
-//  /* Handle error */
-//}
-//
-///* End {code} */
-//void FIO43() {
-//}
-//
-//
-///* FIO44_cpp */
-//
-///* Begin {code} */
-//
-//enum { NO_FILE_POS_VALUES = 3 };
-//
-//int opener(FILE* file, /* ... */ ) {
-//  int rc;
-//  fpos_t offset;
-//
-//  /* ... */
-//
-//  memset(&offset, 0, sizeof(offset));
-//
-//  if (file == NULL) { return EINVAL; }
-//
-//  /* Read in data from file */
-//
-//  rc = fsetpos(file, &offset);
-//  if (rc != 0 ) { return rc; }
-//
-//  /* ... */
-//
-//  return 0;
-//}
-//
-///* End {code} */
-//void FIO44() {
-//}
-//
-//
-///* FIO45_cpp */
-//
-///* Begin {code} */
-//
-//char * buffer;
-//size_t size;
-//
-//ifstream infile ("test.txt", ifstream::binary);
-//
-//// allocate memory for file content
-//buffer = new char [size];
-//
-//// read content of infile
-//infile.read (buffer, size);
-//
-//infile.close();
-//
-///* End {code} */
-//void FIO45() {
-//}
+
+void FIO43() {
+  void FIO43_0();
+  void FIO43_1();
+  void FIO43_2();
+  //void FIO43_3();
+  void FIO43_4();
+  void FIO43_5();
+  //void FIO43_6();
+}
+
+
+/* FIO44_cpp */
+
+enum { NO_FILE_POS_VALUES = 3 };
+
+int opener(FILE* file/*,  ... */ ) {
+  int rc;
+  fpos_t offset;
+
+  /* ... */
+
+  memset(&offset, 0, sizeof(offset));
+
+  if (file == NULL) { return EINVAL; }
+
+  /* Read in data from file */
+
+  rc = fsetpos(file, &offset);
+  if (rc != 0 ) { return rc; }
+
+  /* ... */
+
+  return 0;
+}
+
+void FIO44() {
+  //nothing to run
+}
+
+
+/* FIO45_cpp */
+
+void FIO45() {
+  char * buffer;
+  size_t size;
+
+  ifstream infile ("test.txt", ifstream::binary);
+
+  // allocate memory for file content
+  buffer = new char [size];
+
+  // read content of infile
+  infile.read (buffer, size);
+
+  infile.close();
+}
