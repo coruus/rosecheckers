@@ -16,6 +16,7 @@
  */
 
 #include "cpp.util.h"
+#include "cpp.lib.ERR.h"
 
 //void ERR00();
 void ERR01();
@@ -577,8 +578,20 @@ void ERR35() {
 }
 
 
-///* ERR36_cpp */
-//void ERR36() { }
+/* ERR36_cpp */
+
+// classes used for exception handling
+// /* ... */ Using the classes from above
+void ERR36() {
+  try {
+    // /* ... */
+  } catch (ERR36_D &d) {
+    // /* ... */
+  } catch (ERR36_B &b) {
+    // /* ... */
+  }
+}
+
 //
 //
 ///* ERR37_cpp */

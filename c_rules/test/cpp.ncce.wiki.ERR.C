@@ -16,6 +16,7 @@
  */
 
 #include "cpp.util.h"
+#include "cpp.lib.ERR.h"
 
 //void ERR00();
 void ERR01();
@@ -260,19 +261,19 @@ void ERR30_0() {
   return;
 }
 
-class exception1 : public exception {};
-class exception2 : public exception {};
+class ERR30_exception1 : public exception {};
+class ERR30_exception2 : public exception {};
 
-void f(void) throw( exception1) {
+void f(void) throw( ERR30_exception1) {
   // /* ... */
-  throw (exception2());
+  throw (ERR30_exception2());
 }
 
 void ERR30_1() {
   try {
     f();
   } 
-  catch(exception1 &e) {
+  catch(ERR30_exception1 &e) {
     cerr << "F called" << endl;
   }
 }
@@ -418,47 +419,22 @@ void ERR35() {
 }
 
 
-///* ERR36_cpp */
-//
-///* Begin {code} */
-//
-//// classes used for exception handling
-//class B {};
-//class D: public B {};
-//
-//// /* ... */ Using the classes from above
-//try {
-//  // /* ... */
-//} catch (B &b) {
-//  // /* ... */
-//} catch (D &d) {
-//  // /* ... */
-//}
-//
-///* End {code} */
-//
-///* Begin {code} */
-//
-//// classes used for exception handling
-//class B {};
-//class D: public B {};
-//
-//// /* ... */ Using the classes from above
-//try {
-//  // /* ... */
-//} catch (D &d) {
-//  // /* ... */
-//} catch (B &b) {
-//  // /* ... */
-//}
-//
-///* End {code} */
-//void ERR36() { }
-//
-//
+/* ERR36_cpp */
+
+// /* ... */ Using the classes from above
+// compiler successfully warns about this, but it should be kept
+void ERR36() {
+  int a;
+  try {
+    // /* ... */
+  } catch (ERR36_B &b) {
+    // /* ... */
+  } catch (ERR36_D &d) {
+    // /* ... */
+  }
+}
+
 ///* ERR37_cpp */
-//
-///* Begin {code} */
 //
 //class exception1 : public exception {};
 //class exception2 : public exception {};
