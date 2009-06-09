@@ -86,7 +86,7 @@ void EXP01() {
 }
 
 void EXP02() {
-  char *p;
+  char *p = NULL;
 
   const unsigned int BUF_SIZE = 12;
 
@@ -155,9 +155,10 @@ void EXP04() {
 }
 
 void EXP05() {
-  int dividend, divisor;
+  int dividend=1, divisor=2;
   // ...
   double result = ((double)dividend)/divisor;
+  cout << result << endl;
 }
 
 void EXP06() {
@@ -196,6 +197,7 @@ int EXP10_f(int i) {
 
 void EXP10() {
   const int x = EXP10_f(1) + EXP10_f(2); 
+  cout << x << endl;
 }
 
 
@@ -222,6 +224,7 @@ void EXP12() {
 void EXP15() {
   uint8_t port = 0x5aU;
   uint8_t result_8 = ( ~port ) >> 4;
+  cout << result_8 << endl;
 }
 
 void EXP17() {

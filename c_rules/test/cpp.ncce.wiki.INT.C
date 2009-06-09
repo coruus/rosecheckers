@@ -65,11 +65,13 @@ void INT() {
 }
 
 void INT00() {
-  unsigned int a;
-  unsigned int b;
+  unsigned int a=0;
+  unsigned int b=0;
   unsigned long c;
   /* Initialize a and b */
   c = static_cast<unsigned long>(a) * b; /* not guaranteed to fit */
+
+  printf("%d", c);
 }
 
 void *INT01_alloc(unsigned int blocksize) {
@@ -114,13 +116,13 @@ void INT05() {
 }
 
 void INT06() {
-  int si;
+  int si=0;
   si = atoi("4");
 }
 
 
 void INT07() {
-  char c = 200;
+  char c = 4;
   int i = 1000;
   cout << "i/c = " << i/c << endl;
 }
@@ -189,12 +191,16 @@ void INT30() {
   unsigned int sum;
 
   sum = ui1 + ui2;
+
+  printf("%d", sum);
 }
 
 void INT31() {
   unsigned long int ul = ULONG_MAX;
   signed char sc;
   sc = static_cast<signed char>(ul);
+
+  printf("%c", sc);
 }
 
 void INT32() {
@@ -203,7 +209,9 @@ void INT32() {
   
   signed int result;
   
-  result = -si1;
+  result = -sum;
+
+  printf("%d", result);
 }
 
 void INT33() {
@@ -212,12 +220,16 @@ void INT33() {
   sl2 = random();
   
   const signed long result = sl1/sl2;
+
+  printf("%d", result);
 }
 
 void INT34() {
   const int si1 = 0, si2 = 0;
 
   const int sresult = si1 << si2;
+
+  printf("%d", sresult);
 }
 
 

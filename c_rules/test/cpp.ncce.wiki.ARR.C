@@ -272,6 +272,8 @@ void ARR36_0() {
 
   /* increment next_num_ptr as array fills */
   free_bytes = strings - (char **)next_num_ptr;
+
+  printf("%d", free_bytes);
 }
 
 
@@ -335,7 +337,7 @@ void ARR38_1() {
 }
 
 void ARR38_2() {
-  char *buf;
+  char *buf = NULL;
   size_t len = 1 << 30;
 
   /* Check for overflow */

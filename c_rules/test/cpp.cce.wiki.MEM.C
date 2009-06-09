@@ -58,8 +58,8 @@ void MEM00(void) {
 }
 
 void MEM01(void) {
-  char *message;
-  int message_type;
+  char *message=NULL;
+  int message_type=2;
 
   /* initialize message and message_type */
 
@@ -87,11 +87,11 @@ void MEM02(void) {
 }
 
 void MEM03(void) {
-  char *secret;
+  char *secret=NULL;
 
   /* initialize secret */
 
-  char *new_secret;
+  char *new_secret=NULL;
   size_t size = strlen(secret);
   if (size == 32) {
     /* Handle error */
@@ -113,7 +113,7 @@ void MEM03(void) {
 }
 
 void MEM04(void) {
-  size_t size;
+  size_t size=0;
 
   /* initialize size, possibly by user-controlled input */
 
@@ -132,7 +132,7 @@ void MEM04(void) {
 
 void MEM06(void) {
   struct rlimit limit;
-  char *secret;
+  char *secret=NULL;
 
   limit.rlim_cur = 0;
   limit.rlim_max = 0;
@@ -148,7 +148,7 @@ void MEM06(void) {
 
 void MEM07(void) {
   long *buffer;
-  size_t num_elements;
+  size_t num_elements=0;
 
   /* initialize num_elements to the number of elements needed */
 
@@ -179,7 +179,7 @@ void MEM08(void) {
 void MEM09(void) {
   enum { MAX_BUF_SIZE = 256 };
 
-  char *str;
+  char *str=NULL;
 
   /* initialize string to be copied */
 
@@ -211,7 +211,8 @@ void MEM10_incr(int *intptr) {
 }
 
 void MEM10(void) {
-  int *i;
+  int a = 5;
+  int *i = &a;
   MEM10_incr(i);
 }
 
@@ -226,7 +227,7 @@ typedef struct MEM30_node {
 void MEM30(void) {
   MEM30_node *p;
   MEM30_node *q;
-  MEM30_node *head;
+  MEM30_node *head = NULL;
   
   for (p = head; p != NULL; p = q) {
     q = p->next;
@@ -236,7 +237,7 @@ void MEM30(void) {
 
 
   char *buff;
-  char *source;
+  char *source=NULL;
 
   buff = new char[BUFSIZ];
   /* ... */
@@ -264,7 +265,7 @@ void MEM31(void) {
 }
 
 void MEM32(void) {
-  char *input_string;
+  char *input_string=NULL;
 
   /* initialize input_string */
 
@@ -304,8 +305,8 @@ void MEM34(void) {
 }
 
 void MEM35(void) {
-  size_t len;
-  char *str;
+  size_t len=2; 
+  char *str=NULL;
   char buf[32];
 
   /* ... */

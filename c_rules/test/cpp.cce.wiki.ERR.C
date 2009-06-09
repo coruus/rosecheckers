@@ -140,6 +140,7 @@ void ERR02() { }
 
 constraint_handler_t handle_errors(void) {
   /* Handle runtime constraint error */
+  return NULL;
 }
 
 //XXX XXX won't work:
@@ -262,6 +263,9 @@ void ERR05_2() {
     return;
   }
   /* ... do the rest of f ... */
+
+  printf("%d", a);
+  printf("%d", b);
 }
 
 #include <setjmp.h>
@@ -352,9 +356,9 @@ void ERR08() {
 /* ERR09_cpp */
 //XXX dont run!!
 void ERR09_0() {
-  throw StackUnderflow();
-
-  try { }
+  try {
+    throw StackUnderflow();
+  }
   catch( StackUnderflow &su ) {
     su.modify(); // modify exception object
     throw; // modifications not lost
@@ -401,6 +405,8 @@ void ERR30_0() {
   } catch (...) {
     error = true;
   }
+
+  printf("%d", error);
 
   return;
 }

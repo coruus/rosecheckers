@@ -59,7 +59,7 @@ void STR01(void) {
 }
 
 void STR03(void) {
-  char *string_data;
+  char *string_data=NULL;
   char a[16];
 
   if (string_data == NULL) {
@@ -74,14 +74,17 @@ void STR03(void) {
 }
 
 void STR04(void) {
-  size_t len;
+  size_t len=0;
   char cstr[] = "char string";
 
   len = strlen(cstr);
+
+  printf("%d", len);
 }
 
 void STR05(void) {
   const char *c = "Hello";
+  printf("%s", c);
 }
 
 void STR06(void) {
@@ -115,17 +118,21 @@ void STR07(void) {
 void STR30(void) {
   char a[] = "string literal";
   a[0] = 'S';
+  printf("%s", a);
 }
 
 void STR31(void) {
   char dest[32];
   char src[32];
-  size_t i;
+  src[0]='a';
+  size_t i=0;
   /* ... */
   for (i=0; src[i] && (i < sizeof(dest)-1); i++) {
     dest[i] = src[i];
   }
   dest[i] = '\0';
+
+  printf("%s", dest);
 }
 
 void STR32(void) {
@@ -148,7 +155,7 @@ void STR34(void) {
   register char *string;
   register int c;
 
-  char *s;
+  char *s=NULL;
 
   string = s;
   c = EOF;
@@ -160,10 +167,14 @@ void STR34(void) {
 
     s = string;
   }
+
+  printf("%c", c);
+  printf("%s", s);
 }
 
 void STR35(void) {
   unsigned char buf[32];
+  buf[0] = 'a';
   int ch;
   int index = 0;
   int chars_read = 0;
@@ -186,11 +197,15 @@ void STR35(void) {
   if (chars_read > index) {
     /* handle truncation */
   }
+
+  printf("%s", buf);
 }
 
 void STR36(void) {
   const char s[] = "abc";
   char s2[3] = { 'a', 'b', 'c' }; /* NOT null-terminated */
+  printf("%s", s);
+  printf("%s", s2);
 }
 
 size_t STR37_count_preceding_whitespace(const char *s) {

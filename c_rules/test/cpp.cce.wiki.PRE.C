@@ -223,6 +223,8 @@ long MASK = -1L;
 void PRE12() {
   long x = -1L;
   long positive_x = (x ^ MASK) + 1;
+
+  printf("%d", positive_x);
 }
 
 #define PRE31_ABS(x) (((x) < 0) ? -(x) : (x))
@@ -235,8 +237,8 @@ void PRE31() {
 }
 
 void PRE32() {
-  char *dest;
-  char *src;
+  char *dest=NULL;
+  char *src=NULL;
 
 #ifdef PLATFORM1
   memcpy(dest, src, 12);

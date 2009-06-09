@@ -76,7 +76,7 @@ enum { MAX_VALUE = 256 };
 
 void FLP04(void) {
   float val;
-  float currentBalance; /* User's cash balance */
+  float currentBalance=0.0; /* User's cash balance */
   scanf("%f", &val);
   if (isinf(val)) {
     /* handle infinity error */
@@ -151,6 +151,8 @@ void FLP32(void) {
     /* handle domain error */
   }
   result = sqrt(x);
+
+  printf("%f", result);
 }
 
 void FLP33(void) {
@@ -194,6 +196,10 @@ void FLP34(void) {
     /* Handle error condition */
   }
   d2 = (double)ld;
+
+  printf("%f", d2);
+  printf("%f", f2);
+  printf("%f", i1);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))

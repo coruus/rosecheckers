@@ -64,8 +64,8 @@ void MEM00(void) {
 }
 
 void MEM01(void) {
-  char *message;
-  int message_type;
+  char *message = NULL;
+  int message_type=2;
 
   /* initialize message and message_type */
 
@@ -104,7 +104,7 @@ void MEM02(void) {
 */
 
 void MEM03(void) {
-  char *secret;
+  char *secret = NULL;
 
   /* initialize secret */
 
@@ -127,7 +127,7 @@ void MEM03(void) {
 }
 
 void MEM04(void) {
-  size_t size;
+  size_t size = 8;
 
   /* initialize size, possibly by user-controlled input */
 
@@ -159,7 +159,7 @@ void MEM05(void) {
 /* MEM06 deals with data security but is ok code. */
 
 void MEM07(void) {
-  size_t num_elements;
+  size_t num_elements = 8;
 
   long *buffer = (long *)calloc(num_elements, sizeof(long));
   if (buffer == NULL) {
@@ -192,7 +192,7 @@ void MEM08() {
 }
 
 void MEM09() {
-  char *str;
+  char *str = NULL;
   /* User supplied data */
 
   size_t len = strlen(str);
@@ -219,8 +219,7 @@ void MEM10_incr(int *intptr) {
 }
 
 void MEM10() {
-  int *a;
-  *a = 5;
+  int *a = NULL;
   MEM10_incr(a);
 }
 

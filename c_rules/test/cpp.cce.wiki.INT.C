@@ -137,7 +137,7 @@ void INT05() {
   char buff [25];
   char *end_ptr;
   long sl;
-  int si;
+  int si=0;
 
   cin.width(24);
   cin >> buff;
@@ -164,13 +164,15 @@ void INT05() {
   else {
     si = static_cast<int>(sl);
   }
+
+  printf("%d", si);
 }
 
 void INT06() {
   char buff [25];
   char *end_ptr;
   long sl;
-  int si;
+  int si=0;
 
   cin.width(24);
   cin >> buff;
@@ -197,6 +199,8 @@ void INT06() {
   else {
     si = static_cast<int>(sl);
   }
+
+  printf("%d", si);
 }
 
 void INT07() {
@@ -270,7 +274,7 @@ void INT14() {
 }
 
 void INT30() {
-  unsigned int ui1, ui2, sum;
+  unsigned int ui1, ui2, sum=0;
 
  ui1 = 0;
  ui2 = 0;
@@ -278,21 +282,25 @@ void INT30() {
   if(UINT_MAX - ui1 < ui2)
     return;
   sum = ui1 + ui2;
+
+  printf("%d", sum);
 }
 
 void INT31() {
   const unsigned long int ul = ULONG_MAX;
-  signed char sc;
+  signed char sc=0;
   if (ul <= SCHAR_MAX) {
     sc = (signed char)ul;  /* use cast to eliminate warning */
   }
   else {
     /* handle error condition */
   }
+
+  printf("%d", sc);
 }
 
 void INT32() {
-  signed int si1, si2, sum;
+  signed int si1=0, si2=0, sum;
 
   /* Initialize si1 and si2 */
 
@@ -303,6 +311,8 @@ void INT32() {
   else {
     sum = si1 + si2;
   }
+
+  printf("%d", sum);
 }
 
 void INT33() {
@@ -313,15 +323,17 @@ void INT33() {
     /* handle error condition */
   }
   result = sl1 / sl2;
+
+  printf("%d", result);
 }
 
 void INT34() {
-  unsigned int ui1;
-  unsigned int ui2;
+  unsigned int ui1=0;
+  unsigned int ui2=0;
   unsigned int uresult;
 
-  unsigned int mod1; /* modulo behavior is allowed by INT36-EX1 */
-  unsigned int mod2; /* modulo behavior is allowed by INT36-EX1 */
+  unsigned int mod1=0; /* modulo behavior is allowed by INT36-EX1 */
+  unsigned int mod2=0; /* modulo behavior is allowed by INT36-EX1 */
 
   /* Initialize ui1, ui2, mod1, and mod2 */
 
@@ -337,6 +349,8 @@ void INT34() {
     /* modulo behavior is allowed by exception */
     uresult = mod1 << mod2;
   }
+
+  printf("%d", uresult);
 }
 
 enum { INT35_BLOCK_HEADER_SIZE = 16 };

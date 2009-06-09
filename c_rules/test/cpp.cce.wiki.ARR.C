@@ -359,6 +359,9 @@ void ARR36_0() {
   /* increment next_num_ptr as array fills */
 
   free_bytes = (nums + ARR36_ARRAY_SIZE - next_num_ptr) * sizeof(int);
+
+  printf("%p", strings);
+  printf("%d", free_bytes);
 }
 
 void ARR36_1() {
@@ -387,6 +390,8 @@ struct ARR37_numbers {
 void ARR37_0() {
   struct ARR37_numbers numb = { 1, 2, 3, 4, };
   int total = numb.num1 + numb.num2 + numb.num3 + numb.num4;
+
+  printf("%d", total);
 }
 
 int ARR37_sum_numbers(const int *numb, size_t dim) {
@@ -430,7 +435,7 @@ void ARR38_1() {
 }
 
 void ARR38_2() {
-  char *buf;
+  char *buf = NULL;
   size_t len = 1 << 30;
 
   /* Check for overflow */
@@ -495,6 +500,8 @@ int ARR39_1() {
 
   ARR39_1_walk(dis);
   ARR39_1_walk(dat);
+
+  return 1;
 }
 
 void ARR39() {

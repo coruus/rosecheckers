@@ -145,8 +145,9 @@ bool my_buf::buf_compare(const my_buf *that)
 }
 
 void EXP05() {
-  int dividend, divisor;
+  int dividend=1, divisor=2;
   double result = static_cast<double>(dividend)/divisor;
+  cout << result << endl;
 }
 
 
@@ -214,10 +215,11 @@ void EXP12() {
 void EXP15() {
   uint8_t port = 0x5aU;
   uint8_t result_8 = (static_cast<uint8_t> (~port)) >> 4;
+  cout << result_8 << endl;
 }
 
 void EXP17() {
-  int a,b,c;
+  int a=2,b=3,c=4;
 
   if ( a < b && b < c ) {}
 

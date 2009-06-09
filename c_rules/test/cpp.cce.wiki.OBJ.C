@@ -130,10 +130,11 @@ void OBJ05(void) {
 /* OBJ06 */
 class OBJ06_thing {
 private:
-  OBJ06_thing& operator = (const OBJ06_thing& other) {/* do nothing */}
+  OBJ06_thing& operator = (const OBJ06_thing& other) { return *(new OBJ06_thing());}
   OBJ06_thing (const OBJ06_thing & other) {/* do nothing */}
 
 public:
+  OBJ06_thing();
   int *ptr;
   int a;
 };
