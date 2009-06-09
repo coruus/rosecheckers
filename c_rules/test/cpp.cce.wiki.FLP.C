@@ -16,6 +16,7 @@
  */
 
 #include "util.h"
+#include "cpp.util.h"
 
 void FLP02();
 void FLP04();

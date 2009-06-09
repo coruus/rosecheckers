@@ -28,9 +28,11 @@ void PRE07(void);
 void PRE08(void);
 void PRE09(void);
 void PRE10(void);
+void PRE11(void);
+void PRE12(void);
 void PRE31(void);
+void PRE32(void);
 
- 
 void PRE(void) {
   PRE00();
   PRE01();
@@ -43,7 +45,10 @@ void PRE(void) {
   PRE08();
   PRE09();
   PRE10();
+  PRE11();
+  PRE12();
   PRE31();
+  PRE32();
 }
 
 void PRE00_A();
@@ -56,33 +61,25 @@ void PRE00(void) {
   PRE00_C();
 }
 
-/* PRE00_A v.8 */
-
-inline int PRE00_A_A(int i) {
-  return i * i * i;
-}
+#define PRE00_A_CUBE(X) ((X) * (X) * (X))
 
 void PRE00_A() {
   int i = 2;
-  const int a = 81 / PRE00_A_A(++i);
+  const int a = 81 / PRE00_A_CUBE(++i);
 }
 
 size_t PRE00_B_count = 0;
 
-void PRE00_B_B(void) {
-  printf("Called PRE00_B_B, PRE00_B_count = %zu.\n", PRE00_B_count);
-}
+#define PRE00_B_EXEC_BUMP(func) (func(), ++PRE00_B_count)
 
-typedef void (*exec_func)(void);
-inline void PRE00_B_exec_bump(exec_func f) {
-  f();
-  ++PRE00_B_count;
+void PRE00_B_B(void) {
+  printf("Called PRE00_B_A, PRE00_B_count = %zu.\n", PRE00_B_count);
 }
 
 void PRE00_B_A(void) {
   PRE00_B_count = 0;
   while (PRE00_B_count++ < 10) {
-    PRE00_B_exec_bump(PRE00_B_B);
+    PRE00_B_EXEC_BUMP(PRE00_B_B);
   }
 }
 
@@ -90,52 +87,37 @@ void PRE00_B() {
   PRE00_B_A();
 }
 
-unsigned int PRE00_C_operations;
-unsigned int calls_to_PRE00_C_A;
-unsigned int calls_to_PRE00_C_B;
-
-inline int PRE00_C_A(int x) {
-   ++PRE00_C_operations;
-   ++calls_to_PRE00_C_A;
-   return 2*x;
-}
-
-inline int PRE00_C_B(int x) {
-   ++PRE00_C_operations;
-   ++calls_to_PRE00_C_B;
-   return x + 1;
-}
+#define PRE00_C_A(x) (++operations, ++calls_to_PRE00_C_A, 2*x)
+#define PRE00_C_B(x) (++operations, ++calls_to_PRE00_C_B, x + 1)
 
 void PRE00_C() {
+  unsigned int operations = 0;
+  unsigned int calls_to_PRE00_C_A = 0;
+  unsigned int calls_to_PRE00_C_B = 0;
   const unsigned int x = 3;
   const unsigned int y = PRE00_C_A(x) + PRE00_C_B(x);  
 }
 
 
-/* PRE01_A v.66 */
-
-#define PRE01_CUBE(I) ( (I) * (I) * (I) )
+#define PRE01_CUBE(I) (I * I * I)
 
 void PRE01() {
   const int a = 81 / PRE01_CUBE(2 + 1);
-  printf("PRE01 %d\n", a);
 }
 
 
-/* PRE02_A v.59 */
-
-#define PRE02_CUBE(X) ((X) * (X) * (X))
+#define PRE02_CUBE(X) (X) * (X) * (X)
 
 void PRE02_A() {
   const int i = 3;
   const int a = 81 / PRE02_CUBE(i);
-  printf("PRE02 %d\n", a);
+	printf("PRE02 %d\n", a);
 }
 
-#define PRE02_EOF (-1)
+#define PRE02_EOF -1
 
 void PRE02_B() {
-  if (getchar() != PRE02_EOF) {
+  if (getchar() PRE02_EOF) {
    /* ... */
   }
 }
@@ -145,96 +127,86 @@ void PRE02() {
   PRE02_B();
 }
 
-/* PRE03_A v.49 */
-
-typedef char * PRE03_cstring;
+#define PRE03_cstring char *
 
 void PRE03() {
   PRE03_cstring s1, s2;
-  s1 = s2 = NULL;
-  printf("PRE03 %p %p\n", s1, s2);
 }
 
+#include "stdio_cpp.h"
 
-/* PRE04_A v.36 */
+void PRE04() {}
 
-#include "my_stdio.h"
-
-void PRE04() {
- 
-}
-
-
-/* PRE05_A v.31 */
-
-#define JOIN(x, y) JOIN_AGAIN(x, y)
-#define JOIN_AGAIN(x, y) x ## y
+#define JOIN(x, y) x ## y
 
 void PRE05() {}
 
-
-/* PRE06_A v.23 */
-
-#include "PRE06_CS.h"
+#include "06_CPP.h"
 
 void PRE06() {}
 
-
-/* PRE07_A v.33 */
-
 void PRE07() {
-  size_t i;
+  const size_t i = 0;
   /* assignment of i */
-  i = random();
   if (i > 9000) {
-    if (puts("Over 9000!?""?!") == EOF) {
-      /* Handle Error */
-    }
+    if (puts("Over 9000!??!") == EOF) {}
   }
 }
 
-
-/* PRE08_A v.25 */
-
-#include "lib1.h"
-#include "lib2.h"
+#include "PRE08_library1_cpp.h"
+#include "PRE08_library2_cpp.h"
 
 void PRE08() {}
 
-
-/* PRE09_A v.18 */
-
-#ifndef __USE_ISOC99
-#include "PRE09.h"
-#endif
+#define vsnprintf(buf, size, fmt, list) \
+vsprintf(buf, fmt, list)
 
 void PRE09() {}
 
-
-/* PRE10_A v.16 */
-
 #define PRE10_SWAP(x, y) \
-  do { \
-    tmp = x;					\
-    x = y;					\
-    y = tmp; } \
-  while(0)
+  tmp = x; \
+  x = y; \
+  y = tmp
 
 void PRE10() {
-  int x, y, z, tmp;
-  z = random() % 2;
+  const int z = 0;
+  int x = 0, y = 0, tmp;
   if (z == 0)
     PRE10_SWAP(x, y);
 }
 
+#define FOR_LOOP(n)  for(i=0; i<(n); i++);
 
-/* PRE31_C v.27 */
+void PRE11(void) {
+  int i;
+  FOR_LOOP(3)
+    {
+      puts("Inside for loop\n");
+    }
+}
+
+void PRE12(void) {
+#define MASK   0xFFFFFFFFL
+  long x = -1L;
+  long positive_x = (x ^ MASK) + 1;
+}
 
 #define PRE31_ABS(x) (((x) < 0) ? -(x) : (x))
 
 void PRE31() {
   int n=0, m=0;
-  ++n;
   m = PRE31_ABS(++n); 
-  printf("PRE31 %d\n", m);
+}
+
+void PRE32() {
+  char *dest;
+  char *src;
+
+  memcpy(dest, src,
+#ifdef PLATFORM1
+  12
+#else
+  24
+#endif
+	 );
 }

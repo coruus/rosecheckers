@@ -16,6 +16,7 @@
  */
 
 #include "util.h"
+#include "cpp.util.h"
 
 void PRE00(void);
 void PRE01(void);
@@ -28,7 +29,10 @@ void PRE07(void);
 void PRE08(void);
 void PRE09(void);
 void PRE10(void);
+void PRE11(void);
+void PRE12(void);
 void PRE31(void);
+void PRE32(void);
 
  
 void PRE(void) {
@@ -43,7 +47,10 @@ void PRE(void) {
   PRE08();
   PRE09();
   PRE10();
+  PRE11();
+  PRE12();
   PRE31();
+  PRE32();
 }
 
 void PRE00_A();
@@ -55,8 +62,6 @@ void PRE00(void) {
   PRE00_B();
   PRE00_C();
 }
-
-/* PRE00_A v.8 */
 
 inline int PRE00_A_A(int i) {
   return i * i * i;
@@ -121,9 +126,6 @@ void PRE01() {
   printf("PRE01 %d\n", a);
 }
 
-
-/* PRE02_A v.59 */
-
 #define PRE02_CUBE(X) ((X) * (X) * (X))
 
 void PRE02_A() {
@@ -132,7 +134,7 @@ void PRE02_A() {
   printf("PRE02 %d\n", a);
 }
 
-#define PRE02_EOF (-1)
+enum { PRE02_EOF = -1 };
 
 void PRE02_B() {
   if (getchar() != PRE02_EOF) {
@@ -145,8 +147,6 @@ void PRE02() {
   PRE02_B();
 }
 
-/* PRE03_A v.49 */
-
 typedef char * PRE03_cstring;
 
 void PRE03() {
@@ -156,31 +156,20 @@ void PRE03() {
 }
 
 
-/* PRE04_A v.36 */
-
-#include "my_stdio.h"
+#include "my_stdio_cpp.h"
 
 void PRE04() {
  
 }
-
-
-/* PRE05_A v.31 */
 
 #define JOIN(x, y) JOIN_AGAIN(x, y)
 #define JOIN_AGAIN(x, y) x ## y
 
 void PRE05() {}
 
-
-/* PRE06_A v.23 */
-
-#include "PRE06_CS.h"
+#include "PRE06_CS_CPP.h"
 
 void PRE06() {}
-
-
-/* PRE07_A v.33 */
 
 void PRE07() {
   size_t i;
@@ -193,25 +182,17 @@ void PRE07() {
   }
 }
 
-
-/* PRE08_A v.25 */
-
-#include "lib1.h"
-#include "lib2.h"
+#include "lib1_cpp.h"
+#include "lib2_cpp.h"
 
 void PRE08() {}
 
-
-/* PRE09_A v.18 */
-
 #ifndef __USE_ISOC99
-#include "PRE09.h"
+#include "09_cpp.h"
 #endif
 
 void PRE09() {}
 
-
-/* PRE10_A v.16 */
 
 #define PRE10_SWAP(x, y) \
   do { \
@@ -227,8 +208,22 @@ void PRE10() {
     PRE10_SWAP(x, y);
 }
 
+#define FOR_LOOP(n)  for(i=0; i<(n); i++)
 
-/* PRE31_C v.27 */
+void PRE11() {
+  int i;
+  FOR_LOOP(3)
+    {
+      puts("Inside for loop\n");
+    }
+}
+
+long MASK = -1L;
+
+void PRE12() {
+  long x = -1L;
+  long positive_x = (x ^ MASK) + 1;
+}
 
 #define PRE31_ABS(x) (((x) < 0) ? -(x) : (x))
 
@@ -237,4 +232,15 @@ void PRE31() {
   ++n;
   m = PRE31_ABS(++n); 
   printf("PRE31 %d\n", m);
+}
+
+void PRE32() {
+  char *dest;
+  char *src;
+
+#ifdef PLATFORM1
+  memcpy(dest, src, 12);
+#else
+  memcpy(dest, src, 24);
+#endif
 }
