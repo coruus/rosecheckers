@@ -18,3 +18,6 @@ class StackUnderflow : public std::exception {
 // classes used for exception handling
 class ERR36_B {};
 class ERR36_D: public ERR36_B {};
+
+class ERR37_exception1 : public exception {};
+class ERR37_exception2 : public exception {};

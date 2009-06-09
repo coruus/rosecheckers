@@ -283,13 +283,14 @@ void ERR30() { }
 
 /* ERR31_cpp */
 
-extern int errno;
+void ERR31() {
+  extern int errno;
+}
 
 
 
 /* ERR32_cpp */
 
-/* Begin {code} */
 
 typedef void (*pfv)(int);
 
@@ -434,18 +435,14 @@ void ERR36() {
   }
 }
 
-///* ERR37_cpp */
-//
-//class exception1 : public exception {};
-//class exception2 : public exception {};
-//
-//void foo() {
-//  throw exception2; // ok...since foo() promises nothing wrt exceptions
-//}
-//
-//void bar() throw (exception1) {
-//  foo();    // bad, since foo() can throw exception2
-//}
-//
-///* End {code} */
-//void ERR37() { }
+/* ERR37_cpp */
+void ERR37_foo() {
+  throw ERR37_exception2(); // ok...since ERR37_foo() promises nothing wrt exceptions
+}
+
+void ERR37_bar() throw (ERR37_exception1) {
+  ERR37_foo();    // bad, since ERR37_foo() can throw ERR37_exception2
+}
+
+//don't need to run anything, leave blank
+void ERR37() { }

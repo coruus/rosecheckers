@@ -405,15 +405,10 @@ void ERR30_0() {
   return;
 }
 
-/* End {code} */
-
-/* Begin {code} */
-
-int main(int argc, char** argv) {
+void ERR30_1() {
   try {
     string object;
     // do useful work
-    return 0; // object gets destroyed here
   } catch (...) {
     throw;  
   }
@@ -422,14 +417,14 @@ int main(int argc, char** argv) {
 class exception1 : public exception {};
 class exception2 : public exception {};
 
-void ERR30_1_f(void) throw( exception1) {
+void ERR30_2_f(void) throw( exception1) {
   // /* ... */
   throw (exception1());
 }
 
-void ERR30_1() {
+void ERR30_2() {
   try {
-    ERR30_1_f();
+    ERR30_2_f();
   } catch (exception1 &e) {
     cerr << "F called" << endl;
   }
@@ -592,19 +587,22 @@ void ERR36() {
   }
 }
 
-//
-//
-///* ERR37_cpp */
-//
-///* Begin {code} */
-//
-//void bar() throw (exception1) {
-//  try {
-//    foo();
-//  } catch (...) {
-//    // handle error, without re-throwing it
-//  }
-//}
-//
-///* End {code} */
-//void ERR37() { }
+
+
+/* ERR37_cpp */
+
+void ERR37_foo() {
+  throw ERR37_exception2(); // ok...since ERR37_foo() promises nothing wrt exceptions
+}
+
+
+void ERR37_bar() throw (ERR37_exception1) {
+  try {
+    ERR37_foo();
+  } catch (...) {
+    // handle error, without re-throwing it
+  }
+}
+
+//don't need to run anything, leave blank
+void ERR37() { }
