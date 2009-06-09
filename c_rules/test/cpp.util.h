@@ -41,6 +41,8 @@
 #include <stddef.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <csetjmp>
 #include <iostream>
 
