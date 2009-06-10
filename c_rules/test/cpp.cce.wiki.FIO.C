@@ -509,6 +509,7 @@ void FIO09() {
       || ('\n' != *end_ptr && '\0' != *end_ptr)) {
     /* Handle Error */
   }
+  printf("%d", data.c);
 }
 
 
@@ -616,7 +617,8 @@ void FIO12() {
 
 void FIO13() {
   FILE *fp=NULL;
-  fpos_t pos=fgetpos();
+  fpos_t pos;
+  fgetpos(fp, &pos);
   char *file_name=NULL;
 
   /* initialize file_name */

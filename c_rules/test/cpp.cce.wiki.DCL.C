@@ -177,7 +177,7 @@ void DCL04() {
 
 /* DCL_05_CPP */
 typedef void (*DCL05_SighandlerType)(int signum);
-extern DCL05_SighandlerType signal(
+extern DCL05_SighandlerType DCLsignal(
     int signum, 
     DCL05_SighandlerType handler
     );

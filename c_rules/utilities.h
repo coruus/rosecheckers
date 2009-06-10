@@ -117,6 +117,8 @@ private:
   /** Nodes that have already been visited */
   std::set<VirtualCFG::CFGNode> visited;
 public:
+  CFGVisitor() {}
+  virtual ~CFGVisitor() {}
   /** Do something with this node, then visit its successors, in a bfs order */
   void visit(const VirtualCFG::CFGNode& node);
   /** Visit node's successors */
