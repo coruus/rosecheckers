@@ -106,7 +106,7 @@ void FIO00() {
 
 /* FIO01_cpp */
 void FIO01_0() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *f_ptr;
 
   /* initialize file_name */
@@ -128,7 +128,7 @@ void FIO01_0() {
 }
 
 void FIO01_1() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *f_ptr;
 
   /* initialize file_name */
@@ -221,82 +221,82 @@ void FIO02_1() {
   canonical_filename = NULL;
 
 }
-void FIO02_2() {
-  /* ... */
-
-  enum { INITBUFSIZE = 256 };
-  //using unsigned long instead of original DOWRD
-  unsigned long ret = 0;
-  unsigned long new_ret = 0;
-  char *canonical_filename;
-  char *new_file;
-  char *file_name;
-  char string[] = "string";
-
-  /* ... */
-
-  file_name = (char *)malloc(strlen(string)+1);
-  canonical_filename = (char *)malloc(INITBUFSIZE);
-
-  if ( (file_name != NULL) && (canonical_filename != NULL) ) {
-    strcpy(file_name, string);
-    strcpy(canonical_filename, "");
-  } else {
-    /* Handle error */
-  }
-
-  //XXX a windows thing
-  //  ret = GetFullPathName(
-  //      file_name,
-  //      INITBUFSIZE,
-  //      canonical_filename,
-  //      NULL
-  //      );
-  //
-  //  if (ret == 0) {
-  //    /* Handle error */
-  //  } 
-  //  else if (ret > INITBUFSIZE) {
-  //    new_file = (char *)realloc(canonical_filename, ret);
-  //    if (new_file == NULL) {
-  //      /* Handle error */
-  //    }
-  //
-  //    canonical_filename = new_file;
-  //
-  //    new_ret = GetFullPathName(
-  //        file_name,
-  //        ret,
-  //        canonical_filename,
-  //        NULL
-  //        );
-  //    if (new_ret > ret) {
-  //      /* 
-  //       * The length of the path changed between calls
-  //       * to GetFullPathName(), handle error 
-  //       */
-  //    } 
-  //    else if (new_ret == 0) {
-  //      /* Handle error */
-  //    }
-  //  }
-
-  if (!verify_file(canonical_filename)) {
-    /* Handle error */
-  }
-  /* Verify file name before using */
-}
+//XXX a windows thing
+//void FIO02_2() {
+//  /* ... */
+//
+//  enum { INITBUFSIZE = 256 };
+//  //using unsigned long instead of original DOWRD
+//  unsigned long ret = 0;
+//  unsigned long new_ret = 0;
+//  char *canonical_filename;
+//  char *new_file;
+//  char *file_name;
+//  char string[] = "string";
+//
+//  /* ... */
+//
+//  file_name = (char *)malloc(strlen(string)+1);
+//  canonical_filename = (char *)malloc(INITBUFSIZE);
+//
+//  if ( (file_name != NULL) && (canonical_filename != NULL) ) {
+//    strcpy(file_name, string);
+//    strcpy(canonical_filename, "");
+//  } else {
+//    /* Handle error */
+//  }
+//
+//    ret = GetFullPathName(
+//        file_name,
+//        INITBUFSIZE,
+//        canonical_filename,
+//        NULL
+//        );
+//  
+//    if (ret == 0) {
+//      /* Handle error */
+//    } 
+//    else if (ret > INITBUFSIZE) {
+//      new_file = (char *)realloc(canonical_filename, ret);
+//      if (new_file == NULL) {
+//        /* Handle error */
+//      }
+//  
+//      canonical_filename = new_file;
+//  
+//      new_ret = GetFullPathName(
+//          file_name,
+//          ret,
+//          canonical_filename,
+//          NULL
+//          );
+//      if (new_ret > ret) {
+//        /* 
+//         * The length of the path changed between calls
+//         * to GetFullPathName(), handle error 
+//         */
+//      } 
+//      else if (new_ret == 0) {
+//        /* Handle error */
+//      }
+//    }
+//
+//  if (!verify_file(canonical_filename)) {
+//    /* Handle error */
+//  }
+//  /* Verify file name before using */
+//}
 void FIO02() {
   FIO02_0();
   FIO02_1();
-  FIO02_2();
+  //FIO02_2();
 }
 
 
 /* FIO03_cpp */
 
 void FIO03_0() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fp;
 
   /* initialize file_name */
@@ -345,8 +345,8 @@ void FIO03() {
 /* FIO04_cpp */
 
 void FIO04() {
-  FILE *file;
-  long offset;
+  FILE *file = fopen("foo", "w");
+  long offset = 0;
 
   /* initialize file and offset */
 
@@ -358,7 +358,7 @@ void FIO04() {
 /* FIO05_cpp */
 
 void FIO05_0() {
-  char *file_name;
+  char file_name[] = "foo";
 
   /* initialize file_name */
 
@@ -392,7 +392,7 @@ void FIO05_0() {
 
 void FIO05_1() {
 
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fd;
 
   /* initialize file_name */
@@ -417,7 +417,7 @@ void FIO05() {
 /* FIO06_cpp */
 
 void FIO06_0() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fp;
 
   /* initialize file_name */
@@ -429,7 +429,7 @@ void FIO06_0() {
 }
 
 void FIO06_1() {
-  char *file_name;
+  char file_name[] = "foo";
   int fd;
 
   /* initialize file_name */
@@ -452,7 +452,7 @@ void FIO06() {
 
 void FIO07() {
 
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fp;
 
   /* initialize file_name */
@@ -473,7 +473,7 @@ void FIO07() {
 /* FIO08_cpp */
 
 void FIO08() {
-  char *file_name = "foo";
+  char file_name[] = "foo";
   FILE *file;
 
   file = fopen(file_name, "w+");
@@ -502,7 +502,7 @@ struct FIO09_myData {
 /* ... */
 
 void FIO09() {
-  FILE *file;
+  FILE *file = fopen("foo", "rb");
   struct FIO09_myData data;
 
   /* initialize file */
@@ -544,7 +544,7 @@ void FIO10() {
 /* FIO12_cpp */
 void FIO12() {
 
-  FILE *file;
+  FILE *file = fopen("foo", "w");
   /* Setup file */
   setbuf(file, NULL);
   /* ... */
@@ -582,7 +582,7 @@ void FIO13() {
 /* FIO15_cpp */
 
 void FIO15() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fp;
 
   /* initialize file_name */
@@ -657,7 +657,7 @@ void FIO17() {
 /* FIO18_cpp */
 void FIO18() {
   char * buffer;
-  long size1, size2;
+  long size1 = 10, size2 = 10;
   ofstream outfile ("new.txt", ofstream::binary);
   buffer = new char [size1];
 
@@ -734,7 +734,7 @@ void FIO31() {
 /* FIO32_cpp */
 
 void FIO32() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *file;
 
   /* initialize file_name */
@@ -822,6 +822,7 @@ void FIO34() {
     }
   }
   buf[i] = '\0'; /* terminate NTBS */
+  printf("%s\n", buf);
 }
 
 
@@ -878,7 +879,7 @@ void FIO38() {
 void FIO39() {
   char data[BUFFERSIZE];
   char append_data[BUFFERSIZE];
-  char *file_name;
+  char file_name[] = "foo";
   FILE *file;
 
   /* Initialize file_name */
@@ -906,7 +907,7 @@ void FIO39() {
 
 void FIO40() {
   char buf[BUFSIZ];
-  FILE *file;
+  FILE *file = fopen("foo", "r");
   /* Initialize file */
 
   if (fgets(buf, sizeof(buf), file) == NULL) {
@@ -919,7 +920,7 @@ void FIO40() {
 /* FIO41_cpp */
 
 void FIO41_0() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fptr;
 
   /* Initialize file_name */
@@ -928,10 +929,11 @@ void FIO41_0() {
   if (c == EOF) {
     /* Handle error */
   }
+  fclose(fptr);
 }
 
 void FIO41_1() {
-  char *file_name;
+  char file_name[] = "foo";
   FILE *fptr = NULL;
 
   /* Initialize file_name */
@@ -955,7 +957,7 @@ void FIO42() {
 
   FILE* f;
   const char *editor;
-  char *file_name;
+  char file_name[] = "foo";
 
   /* Initialize file_name */
 
@@ -1111,7 +1113,7 @@ void FIO44() {
 
 void FIO45() {
   char * buffer;
-  size_t size;
+  size_t size = BUFFERSIZE;
 
   ifstream infile ("test.txt", ifstream::binary);
 
