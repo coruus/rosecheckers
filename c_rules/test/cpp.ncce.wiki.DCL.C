@@ -76,10 +76,11 @@ void DCL() {
 void DCL00_0() {
 
   float pi = 3.14159f;
-  float degrees;
+  float degrees=0;
   float radians;
   /* ... */
   radians = degrees * pi / 180;
+  printf("%f", radians);
 }
 
 #define DCL00_1_MAX (1<<16)
@@ -135,6 +136,11 @@ void DCL03() {
 void DCL04() {
   char *src = 0, c = 0;
   int i, j = 1;
+  printf("%s", src);
+  printf("%s", c);
+  i=4;
+  printf("%i", i);
+  printf("%d", j);
 }
 
 
@@ -276,12 +282,14 @@ void DCL13_0(int * x) {
   /* ... */
 }
 
-char *DCL13_strcat_nc(char *s1, char *s2) {}
+char *DCL13_strcat_nc(char *s1, char *s2) {return NULL;}
 void DCL13_1() {
   char *str1 = "str1";
   const char *str2 = "str2";
   char str3[9] = "str3";
   const char str4[9] = "str4";
+  printf("%s", str2);
+  printf("%s", str4);
 
   //XXX Compiler gives errors on these two, so we have to comment them out
   //DCL13_strcat_nc(str3, str2);	/* Compiler warns that str2 is const */
@@ -305,6 +313,7 @@ enum { DCL15_MAX = 100 };
 
 int DCL15_helper(int i) {
   /* perform some computation based on i */
+  return 0;
 }
 
 void DCL15() {
@@ -314,7 +323,7 @@ void DCL15() {
   for (i = 0; i < DCL15_MAX; i++) {
     out[i] = DCL15_helper(i);
   }
-  /* ... */
+  printf("%s", out);
 }
 
 
@@ -409,6 +418,7 @@ void DCL30_0_dont_do_this(void) {
 
 void DCL30_0_innocuous(void) {
   const char str[] = "Surprise, surprise";
+  printf("%s", str);
 }
 /* ... */
 void DCL30_0() {
@@ -435,7 +445,7 @@ void DCL30() {
 
 char *DCL31_concatenate(const char *s, ...) {
   // code to actually concatenate the strings
-  char *a;
+  char *a=NULL;
   return a;
 }
 
@@ -450,7 +460,8 @@ void DCL31() {
 /* DCL_32_CPP */
 
 void DCL32() {
-  int _Page_Count;
+  int _Page_Count=0;
+  printf("%d", _Page_Count);
 }
 
 
@@ -515,7 +526,11 @@ int DCL36_i1();  /* valid declaration */
 int DCL36_i2();  /* not valid, linkage disagreement with previous */
 int DCL36_i3();  /* valid declaration */
 
-void DCL36() { }
+void DCL36() {
+  (void)DCL36_i1;
+  (void)DCL36_i2;
+  (void)DCL36_i3;
+}
 
 
 /* DCL_37_CPP */

@@ -80,12 +80,15 @@ void FLP03(void) {
   y = a;
   b = y / x;
   c = sin(30) * a;
+
+  printf("%f", b);
+  printf("%f", c);
 }
 
 enum { MAX_VALUE = 256 };
 
 void FLP04(void) {
-  float currentBalance; /* User's cash balance */
+  float currentBalance=0.0; /* User's cash balance */
 
   float val;
 
@@ -132,16 +135,22 @@ void FLP32(void) {
   }
   result = pow(x, y);
   result = sqrt(x);
+
+  printf("%f", result);
 }
 
 void FLP33(void) {
   const short a = 533;
   const int b = 6789;
-  const long c = 466438237;
+  const long c = 466;
 
-  const float d = a / 7; /* d is 76.0 */
-  const double e = b / 30; /* e is 226.0 */
-  const double f = c * 789; /*  f may be negative due to overflow */
+  const float d = a / 7; 
+  const double e = b / 30;
+  const double f = c * 9;
+
+  printf("%f", d);
+  printf("%f", e);
+  printf("%f", f);
 }
 
 void FLP34(void) {
@@ -152,9 +161,7 @@ void FLP34(void) {
 
   i1 = (int)f1; /* Undefined if the integral part of f1 > INT_MAX */
 
-  /* End {code} */
-
-  /* Begin {code} */
+  printf("%d", i1);
 
   const long double ld = 0.0;
   const double d1 = 0.0;
@@ -167,6 +174,10 @@ void FLP34(void) {
   f1 = (float)d1;
   f2 = (float)ld;
   d2 = (double)ld;
+
+  printf("%f", f1);
+  printf("%f", f2);
+  printf("%f", d2);
 }
 
 void FLP35(void) {

@@ -249,7 +249,7 @@ typedef struct MEM30_node {
 
 void MEM30() {
   MEM30_node *p;
-  MEM30_node *head;
+  MEM30_node *head=NULL;
 
   for (p = head; p != NULL; p = p->next)
     free(p);
@@ -272,7 +272,7 @@ void MEM31() {
 }
 
 void MEM32() {
-  char *input_string;
+  char *input_string=NULL;
   /* initialize from untrusted data */; 
 
   size_t size = strlen(input_string) + 1;
@@ -286,9 +286,9 @@ void MEM32() {
 enum { MEM34_MAX_ALLOCATION = 1000 };
 
 void MEM34() {
-  int argc;
-  const char *argv[argc];
-
+  int argc=2;
+  const char *argv[20];
+  argv[0]=NULL;
   char *str = NULL;
   size_t len;
 
@@ -313,8 +313,8 @@ void MEM34() {
 
 
 void MEM35() {
-  int len;
-  char *str;
+  int len=3;
+  char *str=NULL;
   char buf[256];
 
   /* ... */
@@ -369,7 +369,7 @@ MEM42_Thingy& MEM42_Thingy::operator=(const MEM42_Thingy& rhs) {
 
 /* Caller should free return value */
 MEM08_SomeClass* nextInstance() {
-  MEM08_SomeClass *result;
+  MEM08_SomeClass *result = NULL;
   /* ... */
   return result;
 }

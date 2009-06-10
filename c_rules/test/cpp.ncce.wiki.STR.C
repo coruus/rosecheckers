@@ -65,7 +65,7 @@ void STR02(void) {
 }
 
 void STR03(void) {
-  char *string_data;
+  char *string_data=NULL;
   char a[16];
   strncpy(a, string_data, sizeof(a));
 }
@@ -85,6 +85,7 @@ void STR04(void) {
 
 void STR05(void) {
   char *c = "Hello";
+  printf("%s", c);
 }
 
 void STR06(void) {
@@ -116,6 +117,7 @@ void STR30(void) {
 void STR31(void) {
   char dest[32];
   char src[32];
+  src[0]='a';
   size_t i;
   /* ... */
   for (i=0; src[i] && (i < sizeof(dest)); i++) {
@@ -123,6 +125,8 @@ void STR31(void) {
   }
   dest[i] = '\0';
   /* ... */
+
+  printf("%s", dest);
 }
 
 void STR32(void) {
@@ -149,7 +153,7 @@ void STR34(void) {
   register char *string;
   register int c;
 
-  char *s;
+  char *s=NULL;
 
   string = s;
   c = EOF;
@@ -159,6 +163,9 @@ void STR34(void) {
     c = *string++;
     s = string;
   }
+
+  printf("%s", s);
+  printf("%d", c);
 }
 
 void STR35(void) {

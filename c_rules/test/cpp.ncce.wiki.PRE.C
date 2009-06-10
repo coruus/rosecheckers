@@ -103,6 +103,7 @@ void PRE00_C() {
 
 void PRE01() {
   const int a = 81 / PRE01_CUBE(2 + 1);
+  printf("%d", a);
 }
 
 
@@ -130,7 +131,9 @@ void PRE02() {
 #define PRE03_cstring char *
 
 void PRE03() {
-  PRE03_cstring s1, s2;
+  PRE03_cstring s1=NULL, s2=NULL;
+  printf("%s", s1);
+  printf("%s", s2);
 }
 
 #include "stdio_cpp.h"
@@ -189,6 +192,7 @@ void PRE12(void) {
 #define MASK   0xFFFFFFFFL
   long x = -1L;
   long positive_x = (x ^ MASK) + 1;
+  printf("%d", positive_x);
 }
 
 #define PRE31_ABS(x) (((x) < 0) ? -(x) : (x))
@@ -196,11 +200,12 @@ void PRE12(void) {
 void PRE31() {
   int n=0, m=0;
   m = PRE31_ABS(++n); 
+  printf("%d", m);
 }
 
 void PRE32() {
-  char *dest;
-  char *src;
+  char *dest=NULL;
+  char *src=NULL;
 
   memcpy(dest, src,
 #ifdef PLATFORM1

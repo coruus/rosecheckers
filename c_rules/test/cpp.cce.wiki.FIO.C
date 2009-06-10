@@ -120,7 +120,7 @@ void FIO00() {
 /* FIO01_cpp */
 
 void FIO01() {
-  char *file_name;
+  char *file_name=NULL;
   int fd;
 
   /* initialize file_name */
@@ -238,8 +238,8 @@ void FIO02() {
 /* FIO03_cpp */
 
 void FIO03_0() {
-  char *file_name;
-  int new_file_mode;
+  char *file_name=NULL;
+  int new_file_mode=0;
 
   /* initialize file_name and new_file_mode */
 
@@ -250,7 +250,7 @@ void FIO03_0() {
 }
 
 void FIO03_1() {
-  char *file_name;
+  char *file_name=NULL;
 
   /* initialize file_name */
 
@@ -261,8 +261,8 @@ void FIO03_1() {
 }
 
 void FIO03_2() {
-  char *file_name;
-  int new_file_mode;
+  char *file_name=NULL;
+  int new_file_mode=0;
   FILE *fp;
   int fd;
 
@@ -288,8 +288,8 @@ void FIO03() {
 
 /* FIO04_cpp */
 void FIO04() {
-  FILE *file;
-  long offset;
+  FILE *file=NULL;
+  long offset=0;
 
   /* initialize file and offset */
 
@@ -305,7 +305,7 @@ void FIO04() {
 void FIO05_0() {
   struct stat orig_st;
   struct stat new_st;
-  char *file_name;
+  char *file_name=NULL;
 
   /* initialize file_name */
 
@@ -345,7 +345,7 @@ void FIO05_0() {
 }
 
 void FIO05_1() {
-  char *file_name;
+  char *file_name=NULL;
   FILE *fd;
 
   /* initialize file_name */
@@ -368,7 +368,7 @@ void FIO05_1() {
 
 void FIO05_2() {
   struct stat st;
-  char *file_name;
+  char *file_name=NULL;
 
   /* initialize file_name */
 
@@ -400,8 +400,8 @@ void FIO05() {
 
 void FIO06_0() {
 
-  char *file_name;
-  FILE *fp;
+  //  char *file_name=NULL;
+  //  FILE *fp;
 
   /* initialize file_name */
 
@@ -413,8 +413,8 @@ void FIO06_0() {
 }
 
 void FIO06_1() {
-  char *file_name;
-  int file_access_permissions;
+  char *file_name=NULL;
+  int file_access_permissions=0;
 
   /* initialize file_name and file_access_permissions */
 
@@ -485,7 +485,7 @@ struct FIO09_myData {
 void FIO09() {
   /* ... */
 
-  FILE *file;
+  FILE *file=NULL;
   struct FIO09_myData data;
   char buf[25];
   char *end_ptr;
@@ -602,7 +602,7 @@ void FIO10() {
 /* FIO12_cpp */
 
 void FIO12() {
-  FILE *file;
+  FILE *file=NULL;
   char *buf = NULL;
   /* Setup file */
   if (setvbuf(file, buf, buf ? _IOFBF : _IONBF, BUFSIZ) != 0) {
@@ -615,9 +615,9 @@ void FIO12() {
 /* FIO13_cpp */
 
 void FIO13() {
-  FILE *fp;
-  fpos_t pos;
-  char *file_name;
+  FILE *fp=NULL;
+  fpos_t pos=fgetpos();
+  char *file_name=NULL;
 
   /* initialize file_name */
 
@@ -726,7 +726,7 @@ int secure_dir(const char *fullpath) {
 }
 
 void FIO15() {
-  char *dir_name;
+  char *dir_name=NULL;
   char *canonical_dir_name;
   const char *file_name = "passwd"; /* file name within the secure directory */
   FILE *fp;
@@ -836,8 +836,8 @@ void FIO17() {
 /* FIO18_cpp */
 
 void FIO18() {
-  char * buffer;
-  size_t size, length;
+  char * buffer=NULL;
+  size_t size, length=0;
 
   ofstream outfile ("new.txt", ofstream::binary);
   // suppose buffer is populated with a c-string
@@ -921,7 +921,7 @@ void FIO32_0() {
   struct stat open_st;
   int fd;
   int flags;
-  char *file_name;
+  char *file_name=NULL;
 
   /* initialize file_name */
 
@@ -1080,6 +1080,7 @@ void FIO33() {
 /* FIO34_cpp */
 void FIO34() {
   char buf[BUFSIZ];
+  buf[0]='a';
   int c;
   int i = 0;
 
@@ -1091,7 +1092,9 @@ void FIO34() {
       buf[i++] = c;
     }
   }
+  printf("%d", c);
   buf[i] = '\0'; /* terminate NTBS */
+  printf("%s", buf);
 }
 
 
@@ -1104,7 +1107,7 @@ void FIO35_0() {
     c = getchar();
     /* ... */
   } while (!feof(stdin) && !ferror(stdin));
-
+  printf("%d", c);
 }
 
 
@@ -1174,7 +1177,7 @@ void FIO38() {
 void FIO39() {
   char data[BUFFERSIZE];
   char append_data[BUFFERSIZE];
-  char *file_name;
+  char *file_name=NULL;
   FILE *file;
 
   /* initialize file_name */
@@ -1206,7 +1209,7 @@ void FIO39() {
 
 void FIO40() {
   char buf[BUFSIZ];
-  FILE *file;
+  FILE *file=NULL;
   /* Initialize file */
 
   if (fgets(buf, sizeof(buf), file) == NULL) {
@@ -1220,7 +1223,7 @@ void FIO40() {
 
 void FIO41_0() {
   int c;
-  char *file_name;
+  char *file_name=NULL;
   FILE *fptr;
 
   /* Initialize file_name */
@@ -1234,10 +1237,11 @@ void FIO41_0() {
   if (c == EOF) {
     /* Handle error */
   }
+  printf("%d", c);
 }
 
 void FIO41_1() {
-  char *file_name;
+  char *file_name=NULL;
 
   /* Initialize file_name */
 
@@ -1266,7 +1270,7 @@ void FIO41() {
 void FIO42_0() {
   FILE* f;
   const char *editor;
-  char *file_name;
+  char *file_name=NULL;
 
   /* Initialize file_name */
 
@@ -1290,7 +1294,7 @@ void FIO42_0() {
 void FIO42_1() {
   int flags;
   char *editor;
-  char *file_name;
+  char *file_name=NULL;
 
   /* Initialize file_name */
 
@@ -1423,7 +1427,7 @@ void FIO44() {
 
 void FIO45() {
   char * buffer;
-  size_t size;
+  size_t size=0;
   streampos length;
 
   ifstream infile ("test.txt", ifstream::binary);

@@ -94,7 +94,7 @@ void ERR01() {
 
 
 constraint_handler_t handle_errors() {
-  constraint_handler_t data;
+  constraint_handler_t data = NULL;
   /* define what to do when error occurs */
   return data;
 }
@@ -215,21 +215,16 @@ void ERR08() {
 
 /* ERR09_cpp */
 
-/* Begin {code} */
-
 //XXX dont run!!
 void ERR09_0() {
-
-  runtime_error r1("runtime");
-  throw &r1;
+  try {
+    printf("hello world\n");
 
   static runtime_error r2("runtime");
   extern std::runtime_error *lastRuntimeError;
   lastRuntimeError = &r2;
   throw r2;
 
-  try {
-    printf("hello world\n");
   }
   catch( StackUnderflow su ) {
     su.modify(); // modify argument
@@ -284,7 +279,8 @@ void ERR30() { }
 /* ERR31_cpp */
 
 void ERR31() {
-  extern int errno;
+  //compile time error
+  //  extern int errno;
 }
 
 
@@ -425,7 +421,6 @@ void ERR35() {
 // /* ... */ Using the classes from above
 // compiler successfully warns about this, but it should be kept
 void ERR36() {
-  int a;
   try {
     // /* ... */
   } catch (ERR36_B &b) {

@@ -75,10 +75,11 @@ void DCL() {
 
 void DCL00_0() {
   const float pi = 3.14159f;
-  float degrees;
+  float degrees=0;
   float radians;
   /* ... */
   radians = degrees * pi / 180;
+  printf("%f", radians);
 }
 
 
@@ -164,11 +165,6 @@ void DCL03() {
 /* DCL_04_CPP */
 
 void DCL04() {
-  char *src;    /* source string */
-  char c;       /* character being tested */
-
-  int i = 1;
-  int j = 1;
 
   size_t mx = 20;
   //allowed to declare on the same line
@@ -247,6 +243,7 @@ void DCL06_4() {
   int c = 3;
   int x;
   x = (-b + DCL06_sqrt(b*b - 4*a*c)) / (2*a);
+  printf("%d", x);
 }
 
 void DCL06() {
@@ -343,13 +340,15 @@ void DCL13_0(const int * x) {
   /* ... */
 }
 
-char* DCL13_strcat_c(char *s1, const char *s2)  {};
+char* DCL13_strcat_c(char *s1, const char *s2)  {return NULL;}
+
 void DCL13_1() {
 
   char *str1 = "str1";
   const char *str2 = "str2";
   char str3[9] = "str3";
   const char str4[9] = "str4";
+  printf("%s", str4);
 
   DCL13_strcat_c(str3, str2); 
   DCL13_strcat_c(str3, str1);  /* Args reversed to prevent overwriting string literal */ 
@@ -372,6 +371,7 @@ enum {DCL15_MAX = 100};
 
 static int DCL15_helper(int i) {
   /* perform some computation based on i */
+  return 0;
 }
 
 void DCL15() {
@@ -381,7 +381,7 @@ void DCL15() {
   for (i = 0; i < DCL15_MAX; i++) {
     out[i] = DCL15_helper(i);
   }
-  /* ... */
+  printf("%d", out[0]);
 }
 
 
@@ -443,6 +443,7 @@ void DCL30_0_this_is_OK() {
   const char str[] = "Everything OK";
   const char *p = str;
   /* ... */
+  printf("%s", p);
 } /* p is inaccessible outside the scope of string str */
 
 
@@ -483,7 +484,8 @@ void DCL31() {
 /* DCL_32_CPP */
 
 void DCL32() {
-  int PageCount;
+  int PageCount=0;
+  printf("%d", PageCount);
 }
 
 
@@ -518,7 +520,11 @@ int DCL36_i1() {return 10;}  /* definition, external linkage */
 static int DCL36_i2() {return 20;}  /* definition, internal linkage */
 extern int DCL36_i3() {return 30;}  /* definition, external linkage */
 
-void DCL36() { }
+void DCL36() { 
+  (void)DCL36_i1;
+  (void)DCL36_i2;
+  (void)DCL36_i3;
+}
 
 /* DCL_37_CPP */
 //no code

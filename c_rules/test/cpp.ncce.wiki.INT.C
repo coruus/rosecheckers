@@ -118,6 +118,8 @@ void INT05() {
 void INT06() {
   int si=0;
   si = atoi("4");
+
+  printf("%d", si);
 }
 
 
