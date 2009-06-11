@@ -147,13 +147,16 @@ struct DCL03_timer {
 
 //
 
+
 #define DCL03_1_JOIN(x, y) DCL03_1_JOIN_AGAIN(x, y)
 #define DCL03_1_JOIN_AGAIN(x, y) x ## y
 
 #define static_assert(e) \
-  typedef char DCL03_1_JOIN(assertion_failed_at_line_, __LINE__) [(e) ? 1 : -1]
+  typedef char DCL03_1_JOIN_AGAIN(assertion_failed_at_line_, __LINE__) [(e) ? 1 : -1]
+
 
 void DCL03_1() {
+  int a;
   static_assert(offsetof(struct DCL03_timer, DATA) == 4);
 }
 
