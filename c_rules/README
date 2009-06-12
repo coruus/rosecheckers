@@ -1,6 +1,3 @@
-
-
-
 Prerequesites
 -------------
 
@@ -17,6 +14,10 @@ ROSE 0.9.4a also depends on the BOOST C++ library, version 1.3.7, which is avail
 First make sure that the ROSE environment variable points to the build directory of ROSE:
 
 	export ROSE=/usr/local/rose/compileTree
+
+
+The build process depends on libtool. It works with GNU libtool version 1.5.22.
+The process also works with G++ 3.4.4 or 4.2.4.
 
 
 Building Diagnose
