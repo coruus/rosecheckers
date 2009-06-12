@@ -49,12 +49,13 @@
 #include <limits.h>
 #include <libgen.h>
 
-using namespace std;
 
 typedef unsigned int rsize_t;
 typedef int errno_t;
 
 extern char **environ;
+
+using namespace std;
 
 /* This is for the case where we just want to run it through a static
  * analysis tool and don't care about runtime errors. This is not 
