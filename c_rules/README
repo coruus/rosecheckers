@@ -3,7 +3,7 @@ Prerequesites
 
 This code has been developed and tested on an i386 workstation running Linux (2.6.16.60) and g++ (3.4.4 and 4.2.4)
 
-This code depends on ROSE 0.9.4a, which is available for free download from:
+This code depends on ROSE 0.9.4a, which is available for free download from
 
 	http://rosecompiler.org/
 
@@ -51,7 +51,7 @@ If the C file violates some secure coding rules, the diagnose program will print
 Secure Coding Rules Enforced by Diagnose
 ----------------------------------------
 
-The C Secure Coding Rules are available at:
+The C and C++ Secure Coding Rules are available at:
 
-	https://www.securecoding.cert.org/confluence/display/seccode/CERT+C+Secure+Coding+Standard
+	https://www.securecoding.cert.org
 
