@@ -42,7 +42,7 @@
 # You should have ROSE predefined to point to ROSE
 
 # Change this to your own installation of ROSE
-DIAGNOSE_CMD = ./diagnose
+ROSECHECKERS_CMD = ./rosecheckers
 
 # Location of include directory after "make install"
 ROSE_INCLUDE_DIR = $(ROSE)/include
@@ -61,7 +61,7 @@ ROSE_LIBS = -lrose $(MYSQL_DATABASE_LIBS) $(LIB_QT)
 SRCS = PRE.C DCL.C EXP.C ARR.C FLP.C INT.C STR.C MEM.C FIO.C ENV.C SIG.C ERR.C OBJ.C MSC.C POS.C \
 	categories.C type.C value.C utilities.C utilities_cpp.C
 OBJS = $(SRCS:.C=.o)
-PGMS = diagnose virtualCFG
+PGMS = rosecheckers virtualCFG
 
 ANSWERS = $(wildcard test/*.ans)
 ANSWERS_C = $(wildcard test/c.*.ans)
@@ -85,17 +85,17 @@ $(PGMS): %: %.o $(OBJS)
 tests:	$(TESTS)
 
 %.output:	%.c $(PGMS)
-	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.c > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
 
 %.output:	%.C $(PGMS)
-	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.C > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
@@ -110,17 +110,17 @@ tests:	$(TESTS)
 tests_c:	$(TESTS_C)
 
 %.output:	%.c $(PGMS)
-	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.c > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
 
 %.output:	%.C $(PGMS)
-	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.C > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
@@ -135,17 +135,17 @@ tests_c:	$(TESTS_C)
 tests_cpp:	$(TESTS_CPP)
 
 %.output:	%.c $(PGMS)
-	@${DIAGNOSE_CMD} $*.c > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.c > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
 
 %.output:	%.C $(PGMS)
-	@${DIAGNOSE_CMD} $*.C > $@ 2>&1 || true
+	@${ROSECHECKERS_CMD} $*.C > $@ 2>&1 || true
 	@perl -p -i -e "s|${PWD}|\.|;" $@
-	@perl -p -i -e 's|diagnose: .*/EDG_SAGE_Connection|diagnose: .../EDGE_SAGE_Connection|;' $@
+	@perl -p -i -e 's|rosecheckers: .*/EDG_SAGE_Connection|rosecheckers: .../EDGE_SAGE_Connection|;' $@
 	@perl -n -i -e 'print if (!/Aborted/);' $@
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
@@ -169,4 +169,4 @@ doc:
 check-syntax:
 	gcc -std=c99 -Wall -o nul -S -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) ${CHK_SOURCES}
 #check-syntax:
-#	${DIAGNOSE_CMD} --edg:no_wrap_diagnostics --edg:remarks --edg:display_error_number -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) ${CHK_SOURCES}
+#	${ROSECHECKERS_CMD} --edg:no_wrap_diagnostics --edg:remarks --edg:display_error_number -DHAVE_CONFIG_H -I$(ROSE_INCLUDE_DIR) ${CHK_SOURCES}

@@ -41,7 +41,7 @@
 */
 
 /**
- * \file diagnose.C
+ * \file rosecheckers.C
  */
 
 //#include <iostream>

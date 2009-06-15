@@ -20,14 +20,14 @@ The build process depends on libtool. It works with GNU libtool version 1.5.22.
 The process also works with G++ 3.4.4 or 4.2.4.
 
 
-Building Diagnose
------------------
+Building Rosecheckers
+---------------------
 
-To build the ROSE 'diagnose' program, which runs secure coding rules:
+To build the 'rosecheckers' program, which runs secure coding rules:
 
 	make pgms
 
-To test diagnose on the code samples from the CERT C Secure Coding Rules:
+To test rosecheckers on the code samples from the CERT C Secure Coding Rules:
 
 	make tests
 
@@ -40,20 +40,20 @@ To clean documentation pages and build files:
 	make clean
 
 
-Running Diagnose
+Running Rosecheckers
 ----------------
 
-To run the diagnose program on a C or C++ source file, simply pass the file as an argument:
+To run the rosecheckers program on a C or C++ source file, simply pass the file as an argument:
 
-	diagnose hello.c
+	rosecheckers hello.c
 
-If the file takes special arguments to compile properly, such as an include path, simply pass to diagnose the same arguments you would pass to GCC or G++.
+If the file takes special arguments to compile properly, such as an include path, simply pass to rosecheckers the same arguments you would pass to GCC or G++.
 
-If the C file violates some secure coding rules, the diagnose program will print them out. If the diagnose program can not find any violations, it prints nothing.
+If the C file violates some secure coding rules, the rosecheckers program will print them out. If the rosecheckers program can not find any violations, it prints nothing.
 
 
-Secure Coding Rules Enforced by Diagnose
-----------------------------------------
+Secure Coding Rules Enforced by Rosecheckers
+--------------------------------------------
 
 The C and C++ Secure Coding Rules are available at:
 
