@@ -130,6 +130,7 @@ int main( int argc, char* argv[]) {
   else
     visitorTraversal = new CPPVisitorTraversal();
   visitorTraversal->traverseInputFiles( project, preorder);
+  delete visitorTraversal;
   return 0;
 }
 
