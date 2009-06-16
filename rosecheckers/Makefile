@@ -74,7 +74,7 @@ TESTS_CPP = $(ANSWERS_CPP:.ans=.test)
 .PRECIOUS: $(OUTPUTS)
 
 # Default make rule to use
-all: pgms tests
+all: pgms # tests -- not done for Eclipse
 
 pgms: $(PGMS)
 $(PGMS): %: %.o $(OBJS)
@@ -100,7 +100,7 @@ tests:	$(TESTS)
 	@perl -e 'undef $$/; while (<>) {s/ *\n {10,11}([^ ^])/ \1/g; print;};' $@ > /tmp/testdata
 	@mv /tmp/testdata $@
 
-%.test:	%.output %.ans
+%.test:	pgms %.output %.ans
 	@echo "Checking $*"
 	@-if [ -n "`cmp $*.output $*.ans 2>&1`" ]; then \
 		echo "WARNING: $* failure" ;\
