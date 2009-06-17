@@ -309,9 +309,20 @@ void MEM30_2(char const *arg) {
   strncpy(buff, arg, BUFSIZ-1);
 }
 
+void MEM30_3() {
+  char *a = malloc(10);
+  char *b;
+
+  b = realloc(a, 12);
+  if (b == NULL) exit(EXIT_FAILURE);
+
+  a[10] = 'a'; /*this may be accessing freed memory*/
+}
+
 void MEM30(void) {
   MEM30_1(0);
   MEM30_2("lul");
+  MEM30_3();
 }
 
 /* MEM31 v.61 */

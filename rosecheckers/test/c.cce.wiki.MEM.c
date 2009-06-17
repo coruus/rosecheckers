@@ -343,9 +343,37 @@ void MEM30_2(char const *arg) {
   free(buff);
 }
 
+void MEM30_3_1() {
+  char *a = malloc(10);
+  char *b;
+
+  a = realloc(a,12);
+  if (a == NULL) exit(EXIT_FAILURE);
+
+  a[10] = 'a';
+}
+
+void MEM30_3_2() {
+  char *a = malloc(10);
+  char *b;
+
+  b = realloc(a,12);
+  if (b == NULL) exit(EXIT_FAILURE);
+  /*do any other tests on b*/
+
+  a = b;
+  a[10] = 'a';
+}
+
+void MEM30_3() {
+  MEM30_3_1();
+  MEM30_3_2();
+}
+
 void MEM30(void) {
   MEM30_1(0);
   MEM30_2("lul");
+  MEM30_3();
 }
 
 
