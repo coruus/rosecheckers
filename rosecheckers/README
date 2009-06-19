@@ -45,7 +45,7 @@ Running Rosecheckers
 
 To run the rosecheckers program on a C or C++ source file, simply pass the file as an argument:
 
-	rosecheckers hello.c
+	rosecheckers example.c
 
 If the file takes special arguments to compile properly, such as an include path, simply pass to rosecheckers the same arguments you would pass to GCC or G++.
 
