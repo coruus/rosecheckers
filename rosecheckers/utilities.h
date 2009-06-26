@@ -71,6 +71,11 @@ int getScanfFormatString(const SgFunctionRefExp *node);
 int getPrintfFormatString(const SgFunctionRefExp *node);
 
 /**
+ * Returns node if node is a reference to memcpy(), memmove(), or memset(). NULL otherwise
+ */
+const SgFunctionRefExp* isMemoryBlockFunction(const SgNode* node);
+
+/**
  * Returns the number of bytes that an object of this type should take up
  */
 size_t sizeOfType(const SgType *type);

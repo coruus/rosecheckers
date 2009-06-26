@@ -523,6 +523,19 @@ int getPrintfFormatString(const SgFunctionRefExp *node) {
 }
 
 /**
+ * Returns node if node is a reference to memcpy(), memmove(), or memset(). NULL otherwise
+ */
+const SgFunctionRefExp* isMemoryBlockFunction(const SgNode* node) {
+  const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+  if (fnRef == NULL) return NULL;
+  if (isCallOfFunctionNamed(fnRef, "memcpy") ||
+      isCallOfFunctionNamed(fnRef, "memmove") ||
+      isCallOfFunctionNamed(fnRef, "memset"))
+    return fnRef;
+  return NULL;
+}
+
+/**
  * Checks to see if the variable is being written to by some kind of
  * assignment or ++/-- operator
  *
