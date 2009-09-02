@@ -249,12 +249,12 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 	// first, find the parent block
 	const SgNode *parent = node;
 	const SgNode *block = node->get_parent();
-	assert(block);
+	if (!block) return NULL;
 
 	while(!isSgBasicBlock(block)) {
 		parent = block;
 		block = parent->get_parent();
-		assert(block);
+		if (!block) return NULL;
 	}
 
 	// second, find the expression offset by delta from node
@@ -271,7 +271,7 @@ const SgStatement * findInBlockByOffset(const SgNode *node, int delta) {
 		if ((i--) == nodes.begin()) {
 			if (delta == -1) {
 				parent = block->get_parent();
-				assert(parent);
+				if (!parent) return NULL;
 				if (isSgForStatement(parent)
 				||  isSgIfStmt(parent))
 					return isSgStatement(parent);
