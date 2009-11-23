@@ -367,6 +367,43 @@ bool DCL05_C( const SgNode *node ) {
   return false;
 }
 
+/**
+ * Use the correct syntax for flexible array members
+ */
+bool DCL38_C( const SgNode *node ) {
+	const SgClassDefinition* def = isSgClassDefinition(node);
+	if (!def)
+		return false;
+
+	const SgVariableDeclaration* varDecl = isSgVariableDeclaration(def->get_members().back());
+	/**
+	 * Disabling assertion due to C++ code
+	 */
+	if (!varDecl)
+		return false;
+//	assert(varDecl);
+
+	if (varDecl->get_variables().size() != 1)
+		return false;
+
+	const SgInitializedName *varName = varDecl->get_variables().front();
+	assert(varName);
+
+	const SgArrayType *arrT = isSgArrayType(varName->get_type());
+	if (!arrT)
+		return false;
+
+	const SgValueExp* arrSize = isSgValueExp(arrT->get_index());
+	if (!arrSize)
+		return false;
+
+	if (isVal(arrSize,0) || isVal(arrSize,1)) {
+		print_error(varDecl, "DCL38-C", "Use the correct syntax when declaring flexible array members");
+		return true;
+	}
+	return false;
+}
+
 
 /*************
  * CPP Rules *
@@ -466,8 +503,10 @@ bool DCL_C(const SgNode *node) {
   violation |= DCL02_C(node);
   violation |= DCL04_C(node);
   violation |= DCL05_C(node);
+  violation |= DCL38_C(node);
   return violation;
 }
+
 
 
 /// C++ checkers
