@@ -245,7 +245,7 @@ bool MEM30_C( const SgNode *node ) {
   Rose_STL_Container<const SgVarRefExp*>::iterator i;
   for (i = references.begin(); i != references.end(); ++i) {
     if (isTestForNullOp(*i)) continue;
-    if (isAssignToVar( (*i)->get_parent(), var)) continue;
+    if (isAssignToVar( (*i)->get_parent(), var)) continue; // return false? ~DS 2010-03-15
     print_error( node, "MEM30-C", "Do not access freed memory");
     return true;
   }
