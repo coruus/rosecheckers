@@ -57,7 +57,7 @@ bool FLP02_C( const SgNode *node ) {
 /**
  * Detect and handle floating point errors
  *
- * \bog ROSE can't handle the FENV_ACCESS pragma :( so there's no way to a
+ * \bug ROSE can't handle the FENV_ACCESS pragma :( so there's no way to a
  * have a compliant solution here
  */
 bool FLP03_C( const SgNode *node ) {
