@@ -181,9 +181,7 @@ bool STR30_C(const SgNode *node ) {
  */
 bool STR31_C(const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if ( !(fnRef &&
-		(isCallOfFunctionNamed(fnRef, "strcpy") ||
-		 isCallOfFunctionNamed(fnRef, "strcpy"))) )
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "strcpy")))
 		return false;
 
 	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));

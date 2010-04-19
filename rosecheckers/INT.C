@@ -142,7 +142,7 @@ bool INT06_C( const SgNode *node ) {
 			|| isCallOfFunctionNamed(fnRef,"atol")
 			|| isCallOfFunctionNamed(fnRef,"atoll")
 			|| isCallOfFunctionNamed(fnRef,"atoq")) {
-		print_error(node,"INT06-C", "Use strtol() or a related function to convert a string token to an integer", true);
+		print_error(node,"INT01-C", "Use strtol() or a related function to convert a string token to an integer", true);
 		return true;
 	}
 
@@ -311,8 +311,7 @@ bool INT11_C( const SgNode *node ) {
 	const SgType * innerType = cast->get_operand()->get_type();
 	assert(innerType);
 
-	if ( (INT11_isPointer(outerType) && ! INT11_isPointer(innerType))
-	     || (! INT11_isPointer(outerType) && INT11_isPointer(innerType)) ) {
+	if (INT11_isPointer(outerType) && ! INT11_isPointer(innerType)) {
 		print_error(node, "INT11-C", "Take care when converting from pointer to integer or integer to pointer", true);
 		return true;
 	}

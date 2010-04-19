@@ -172,8 +172,9 @@ bool ARR30_C( const SgNode *node ) {
  * We make sure that the length argument to memcpy is at most the size
  * of memcpy's first argument (destination). This rule fires if:
  * * the destination is a fixed-length array
- * * the last argument N is known at compile time
- * * destination array index < N
+ * * the last argument is N * sizeof( arraytype)
+ * * N is known at compile time
+ * * N > destination array index
  */
 bool ARR33_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isMemoryBlockFunction(node);
@@ -200,7 +201,7 @@ bool ARR33_C( const SgNode *node ) {
 	dst_size *= sizeOfType(arrT->findBaseType());
 	if (dst_size == 0)
 		return false;
-	if (dst_size < len) {
+	if (dst_size > len) {
 		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size");
 		return true;
 	}

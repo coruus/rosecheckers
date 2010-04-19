@@ -41,20 +41,20 @@ class CVisitorTraversal : public AstSimpleProcessing {
 public :
   CVisitorTraversal () {}
   virtual void visit(SgNode* node) {
-    //    PRE_C(node);
-    //    DCL_C(node);
-    //    EXP_C(node);
+    PRE_C(node);
+    DCL_C(node);
+    EXP_C(node);
     ARR_C(node);
-    //    FLP_C(node);
-    //    INT_C(node);
-    //    STR_C(node);
-    //    MEM_C(node);
-    //    FIO_C(node);
-    //    ENV_C(node);
-    //    SIG_C(node);
-    //    ERR_C(node);
-    //    MSC_C(node);
-    //    POS_C(node);
+    FLP_C(node);
+    INT_C(node);
+    STR_C(node);
+    MEM_C(node);
+    FIO_C(node);
+    ENV_C(node);
+    SIG_C(node);
+    ERR_C(node);
+    MSC_C(node);
+    POS_C(node);
   }
 };
 
