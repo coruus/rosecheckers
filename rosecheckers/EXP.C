@@ -94,7 +94,7 @@ bool EXP04_C( const SgNode *node ) {
   assert(dstT);
   const SgType *srcT = getFnArg(fnRef, 1)->get_type();
   assert(srcT);
-  if (isSgNamedType(dstT->findBaseType()) || isSgNamedType(srcT->findBaseType())) {
+  if (isSgClassType(dstT->findBaseType()) || isSgClassType(srcT->findBaseType())) {
     print_error(node, "EXP04-C", "Do not perform byte-by-byte comparisons between structures", true);
     return true;
   }
