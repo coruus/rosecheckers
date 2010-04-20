@@ -217,6 +217,52 @@ bool ARR34_C( const SgNode *node ) {
 	return false;
 }
 
+
+/* ARR36_C
+ * \note 
+ * find the subtraction between pointer variables and
+ * check if both of the variables have the same declaration.
+ *
+ * \bug
+ * false positive when the pointers point to the different location of
+ * the same array.
+ *
+ * TODO:
+ * adapts to the case where pointers are assigned values after declared
+ * adapts to the case where the arguments of the subtraction are any expression
+ * adapts to the comparison, instead of subtraction
+ */
+bool ARR36_C( const SgNode *node ) {
+	const SgSubtractOp* subtractexp = isSgSubtractOp(node);
+	if (! subtractexp){
+	  return false;
+	}
+
+	assert(subtractexp->get_lhs_operand());
+	assert(subtractexp->get_rhs_operand());
+
+	SgVarRefExp* var_lhs
+		    = isSgVarRefExp(subtractexp->get_lhs_operand());
+	SgVarRefExp* var_rhs
+		    = isSgVarRefExp(subtractexp->get_rhs_operand());
+	if (! var_lhs || ! var_rhs)  return false;
+
+	if ( (! isSgPointerType(var_lhs->get_type())) ||
+	     (! isSgPointerType(var_lhs->get_type())) ){
+	  return false;
+	}
+
+	std::string var_lhs_name = (var_lhs->get_symbol()->get_name()).getString();
+	std::string var_rhs_name = (var_rhs->get_symbol()->get_name()).getString();
+
+	if (getRefDecl(var_lhs) != getRefDecl(var_rhs)){
+	  std::string msg = "two arguments points to the different objects; lhs: " + var_lhs_name + "   rhs: " + var_rhs_name;
+	  print_error(node, "ARR36-C", msg.c_str(), true);
+	}
+	return true;
+}
+
+
 /**
  * Do not add or subtract an integer to a pointer to a non-array object
  */
@@ -302,6 +348,7 @@ bool ARR_C(const SgNode *node) {
   violation |= ARR30_C(node);
   violation |= ARR33_C(node);
   violation |= ARR34_C(node);
+  violation |= ARR36_C(node);
   violation |= ARR37_C(node);
   violation |= ARR38_C(node);
   return violation;
