@@ -217,48 +217,119 @@ bool ARR34_C( const SgNode *node ) {
 	return false;
 }
 
+// get_basearraypointer()
+// if an argument is of shape (pointer + integer) or (pointer - integer), then
+// returns pointer (pointer may be an array).
+const SgExpression* get_basearraypointer(const SgExpression *exp){
+    assert(isSgExpression(exp));
+    if(const SgVarRefExp *expvar = isSgVarRefExp(exp)){
+      const SgType *exp_type = expvar->get_type();
+      assert(exp_type);
+      if (isSgArrayType(exp_type) || isSgPointerType(exp_type)){
+	return expvar;
+      }
+      else {
+	return NULL;
+      }
+    }
+
+    if(!isSgAddOp(exp) && !isSgMinusOp(exp)){
+	return NULL;
+    }
+
+    const SgExpression* exp_lhs = isSgBinaryOp(exp)->get_lhs_operand();
+    const SgExpression* exp_rhs = isSgBinaryOp(exp)->get_rhs_operand();
+
+    const SgType* exp_lhs_type = exp_lhs->get_type();
+    const SgType* exp_rhs_type = exp_rhs->get_type();
+
+    if( (isSgPointerType(exp_lhs_type) || isSgArrayType(exp_lhs_type)) &&
+	exp_rhs_type->isIntegerType() ){
+      return (get_basearraypointer(exp_lhs));
+    }
+    else if( (isSgPointerType(exp_rhs_type) || isSgArrayType(exp_rhs_type)) &&
+	     exp_lhs_type->isIntegerType() ){
+      return (get_basearraypointer(exp_rhs));
+    }
+
+    return NULL;
+}
+
+// get_baseobjects(const SgVarRefExp *)
+// returns the name of the object
+// which is assigned (as an initializer) to the argument variable
+std::string get_baseobjects(const SgVarRefExp *var){
+  std::string var_name = (var->get_symbol()->get_name()).getString();
+  const SgInitializedName *varinit = getRefDecl(var);
+  if (!varinit){
+    return (std::string(""));
+  }
+
+  const SgAssignInitializer *varinit_initializer = isSgAssignInitializer(varinit->get_initializer());
+  if (!varinit_initializer){
+    return (std::string(""));
+  }
+
+  const SgExpression* varinit_initializer_operand = varinit_initializer->get_operand();
+  const SgVarRefExp* varinit_base = isSgVarRefExp(get_basearraypointer(varinit_initializer_operand));
+  if (!varinit_base){
+    return (std::string(""));
+  }
+
+  std::string ss0 = get_baseobjects(varinit_base);
+
+  if (ss0.empty()) return ((varinit_base->get_symbol()->get_name()).getString());
+  return ss0;
+}
+
 
 /* ARR36_C
  * \note 
- * find the subtraction between pointer variables and
- * check if both of the variables have the same declaration.
- *
- * \bug
- * false positive when the pointers point to the different location of
- * the same array.
+ * find the BinaryOp between pointer (or array) variables and
+ * check if both of the variables point to the same object.
  *
  * TODO:
  * adapts to the case where pointers are assigned values after declared
- * adapts to the case where the arguments of the subtraction are any expression
- * adapts to the comparison, instead of subtraction
  */
 bool ARR36_C( const SgNode *node ) {
-	const SgSubtractOp* subtractexp = isSgSubtractOp(node);
-	if (! subtractexp){
+	const SgBinaryOp* BinOp = isSgBinaryOp(node);
+	if (!BinOp || isSgAssignOp(BinOp)){
+	  return false;
+	}
+	assert(BinOp);
+
+	const SgType *BinOp_lhs_Type = (BinOp->get_lhs_operand()->get_type());
+	const SgType *BinOp_rhs_Type = (BinOp->get_rhs_operand()->get_type());
+
+	if ( ! isSgPointerType(BinOp_lhs_Type) && ! isSgArrayType(BinOp_lhs_Type) ){
+	  return false;
+	}
+	if ( ! isSgPointerType(BinOp_rhs_Type) && ! isSgArrayType(BinOp_rhs_Type) ){
+	  return false;
+	}
+	assert(BinOp_lhs_Type);
+	assert(BinOp_rhs_Type);
+
+	const SgExpression* lhs = BinOp->get_lhs_operand();
+	const SgExpression* rhs = BinOp->get_rhs_operand();
+
+	const SgVarRefExp* lhs_var = isSgVarRefExp(get_basearraypointer(lhs));
+	if (!lhs_var){
+	  return false;
+	}
+	const SgVarRefExp* rhs_var = isSgVarRefExp(get_basearraypointer(rhs));
+	if (!rhs_var){
 	  return false;
 	}
 
-	assert(subtractexp->get_lhs_operand());
-	assert(subtractexp->get_rhs_operand());
+	const std::string lhs_string = (lhs_var->get_symbol()->get_name()).getString();
+	const std::string rhs_string = (rhs_var->get_symbol()->get_name()).getString();
 
-	SgVarRefExp* var_lhs
-		    = isSgVarRefExp(subtractexp->get_lhs_operand());
-	SgVarRefExp* var_rhs
-		    = isSgVarRefExp(subtractexp->get_rhs_operand());
-	if (! var_lhs || ! var_rhs)  return false;
+	std::string lhs_base = get_baseobjects(lhs_var);
+	std::string rhs_base = get_baseobjects(rhs_var);
+	if(0 == lhs_base.compare(rhs_base)) return false;
 
-	if ( (! isSgPointerType(var_lhs->get_type())) ||
-	     (! isSgPointerType(var_lhs->get_type())) ){
-	  return false;
-	}
-
-	std::string var_lhs_name = (var_lhs->get_symbol()->get_name()).getString();
-	std::string var_rhs_name = (var_rhs->get_symbol()->get_name()).getString();
-
-	if (getRefDecl(var_lhs) != getRefDecl(var_rhs)){
-	  std::string msg = "two arguments points to the different objects; lhs: " + var_lhs_name + "   rhs: " + var_rhs_name;
-	  print_error(node, "ARR36-C", msg.c_str(), true);
-	}
+	print_error(node, "ARR36-C", "possible non-compliant operation between pointers!");
 	return true;
 }
 
