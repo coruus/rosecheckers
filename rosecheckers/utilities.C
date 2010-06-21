@@ -739,6 +739,7 @@ const SgNode *popBlock(const SgNode *node) {
 /** Do something with this node, then visit its successors, in a bfs order */
 void CFGVisitor::visit(const VirtualCFG::CFGNode& node) {
   if (visited.find(node) != visited.end()) return; // don't revisit the same nodes
+  if (node.getNode() == NULL) return;
   if (!doSomething( node.getNode())) return;
   visitOthers( node);
 }
@@ -749,7 +750,8 @@ void CFGVisitor::visitOthers(const VirtualCFG::CFGNode& node) {
   Rose_STL_Container<VirtualCFG::CFGEdge> children = node.outEdges();
   Rose_STL_Container<VirtualCFG::CFGEdge>::iterator i;
   for (i = children.begin(); i != children.end(); ++i) visit( i->target());
-  visited.erase( node);
+  // TODO: currently visited nodes are not erased...have a 'reset' method
+  // to let a visitor do multiple visits
 }
 
 /** 
