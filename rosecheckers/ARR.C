@@ -21,6 +21,84 @@
 
 #include "rose.h"
 #include "utilities.h"
+#include "type.h"
+
+/**
+ *  Do not apply the sizeof operator to an object of pointer type
+ */
+bool ARR001_C( const SgNode* node )
+{
+	const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( node);
+	if(!sizeOfOp)
+		return false;
+
+	const SgExpression *expr = removeImplicitPromotions(sizeOfOp->get_operand_expr());
+	if(!expr)
+		return false;
+
+	/*while (isSgUnaryOp(expr)){
+		 expr = removeImplicitPromotions(isSgUnaryOp(expr)->get_operand());
+	}
+	expr = removeImplicitPromotions(expr);*/
+
+  /* We have to pay some attention to array typed objects.  When an array is
+     passed as a function parameter, it is passed by reference and is
+     treated as a pointer.  Thus calling sizeof(var) where var is an array
+     and also parameter to the function effectively violates ARR001_C.
+     Here we check this using the same methodology as in ARR01_C below.  If
+     this overlap is not intended (through NCCEs for ARR001_C suggest it
+     is), simply remove the code block below dealing with arrT.
+  */
+
+  const SgArrayType *arrT = isSgArrayType(expr->get_type());
+  if (arrT)
+    {
+      const SgVarRefExp* var = isSgVarRefExp(expr);
+      if(!var) { return false; }
+
+      const SgFunctionDeclaration *fnRef = findParentOfType( node,SgFunctionDeclaration);
+     	if (!fnRef) { return false; }
+
+      const SgName &varName = var->get_symbol()->get_name();
+     	FOREACH_INITNAME(fnRef->get_args(), i) {
+        if((*i)->get_name() == varName) {
+          print_error( node, "ARR001_C", "Do not apply the sizeof operator to an object of pointer", true);
+          return true;
+        }
+      }
+    }
+
+  /* If expr has pointer type, then it is a violation of this rule, unless
+     this node is the second operand of a binary / or * operator.  Those
+     cases are exempt to allow the "sizeof(arr)/sizeof(arr[0])" and
+     "num*sizeof(arr[0])" practices to be used even when arr is an array
+     of pointer type.
+  */
+  const SgPointerType *ptrT = isSgPointerType(expr->get_type());
+  if (ptrT) // if true is either violation or exception
+    {
+	  const SgPntrArrRefExp *ptArrE = isSgPntrArrRefExp( expr);
+      if (ptArrE) // possible exception; investigate further
+        {
+          // try to access grandparent node of node
+          // where we will find * or / in exception cases
+          const SgNode* parent = node->get_parent();
+          const SgNode* gParent = parent ? parent->get_parent() : NULL;
+          if (gParent) {
+            if (isSgMultiplyOp(gParent)) { return false; }
+            const SgDivideOp* divop = isSgDivideOp(gParent);
+            if (divop && (divop->get_rhs_operand() == parent)) { return false; }
+          }
+        }
+      // no exception found => violation
+      print_error(node, "ARR001_C", "Do not apply the sizeof operator to an object of pointer", true);
+      return true;
+    }
+
+
+
+  return false;
+}
 
 /**
  * Do not apply the sizeof operator to a pointer when taking the size of an
@@ -95,7 +173,7 @@ bool ARR02_C( const SgNode *node ) {
 }
 
 /**
- * Guarantee that array indices are within the valid range 
+ * Guarantee that array indices are within the valid range
  *
  * \note Without tainting, the only thing we can really do is ensure that if a
  * value is already getting checked and is signed, that it's also being
@@ -172,8 +250,9 @@ bool ARR30_C( const SgNode *node ) {
  * We make sure that the length argument to memcpy is at most the size
  * of memcpy's first argument (destination). This rule fires if:
  * * the destination is a fixed-length array
- * * the last argument N is known at compile time
- * * destination array index < N
+ * * the last argument is N * sizeof( arraytype)
+ * * N is known at compile time
+ * * N > destination array index
  */
 bool ARR33_C( const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isMemoryBlockFunction(node);
@@ -200,7 +279,7 @@ bool ARR33_C( const SgNode *node ) {
 	dst_size *= sizeOfType(arrT->findBaseType());
 	if (dst_size == 0)
 		return false;
-	if (dst_size < len) {
+	if (dst_size > len) {
 		print_error(node, "ARR33-C", "Guarantee that copies are made into storage of sufficient size");
 		return true;
 	}
@@ -216,123 +295,6 @@ bool ARR33_C( const SgNode *node ) {
 bool ARR34_C( const SgNode *node ) {
 	return false;
 }
-
-// get_basearraypointer()
-// if an argument is of shape (pointer + integer) or (pointer - integer), then
-// returns pointer (pointer may be an array).
-const SgExpression* get_basearraypointer(const SgExpression *exp){
-    assert(isSgExpression(exp));
-    if(const SgVarRefExp *expvar = isSgVarRefExp(exp)){
-      const SgType *exp_type = expvar->get_type();
-      assert(exp_type);
-      if (isSgArrayType(exp_type) || isSgPointerType(exp_type)){
-	return expvar;
-      }
-      else {
-	return NULL;
-      }
-    }
-
-    if(!isSgAddOp(exp) && !isSgMinusOp(exp)){
-	return NULL;
-    }
-
-    const SgExpression* exp_lhs = isSgBinaryOp(exp)->get_lhs_operand();
-    const SgExpression* exp_rhs = isSgBinaryOp(exp)->get_rhs_operand();
-
-    const SgType* exp_lhs_type = exp_lhs->get_type();
-    const SgType* exp_rhs_type = exp_rhs->get_type();
-
-    if( (isSgPointerType(exp_lhs_type) || isSgArrayType(exp_lhs_type)) &&
-	exp_rhs_type->isIntegerType() ){
-      return (get_basearraypointer(exp_lhs));
-    }
-    else if( (isSgPointerType(exp_rhs_type) || isSgArrayType(exp_rhs_type)) &&
-	     exp_lhs_type->isIntegerType() ){
-      return (get_basearraypointer(exp_rhs));
-    }
-
-    return NULL;
-}
-
-// get_baseobjects(const SgVarRefExp *)
-// returns the name of the object
-// which is assigned (as an initializer) to the argument variable
-std::string get_baseobjects(const SgVarRefExp *var){
-  std::string var_name = (var->get_symbol()->get_name()).getString();
-  const SgInitializedName *varinit = getRefDecl(var);
-  if (!varinit){
-    return (std::string(""));
-  }
-
-  const SgAssignInitializer *varinit_initializer = isSgAssignInitializer(varinit->get_initializer());
-  if (!varinit_initializer){
-    return (std::string(""));
-  }
-
-  const SgExpression* varinit_initializer_operand = varinit_initializer->get_operand();
-  const SgVarRefExp* varinit_base = isSgVarRefExp(get_basearraypointer(varinit_initializer_operand));
-  if (!varinit_base){
-    return (std::string(""));
-  }
-
-  std::string ss0 = get_baseobjects(varinit_base);
-
-  if (ss0.empty()) return ((varinit_base->get_symbol()->get_name()).getString());
-  return ss0;
-}
-
-
-/* ARR36_C
- * \note 
- * find the BinaryOp between pointer (or array) variables and
- * check if both of the variables point to the same object.
- *
- * TODO:
- * adapts to the case where pointers are assigned values after declared
- */
-bool ARR36_C( const SgNode *node ) {
-	const SgBinaryOp* BinOp = isSgBinaryOp(node);
-	if (!BinOp || isSgAssignOp(BinOp)){
-	  return false;
-	}
-	assert(BinOp);
-
-	const SgType *BinOp_lhs_Type = (BinOp->get_lhs_operand()->get_type());
-	const SgType *BinOp_rhs_Type = (BinOp->get_rhs_operand()->get_type());
-
-	if ( ! isSgPointerType(BinOp_lhs_Type) && ! isSgArrayType(BinOp_lhs_Type) ){
-	  return false;
-	}
-	if ( ! isSgPointerType(BinOp_rhs_Type) && ! isSgArrayType(BinOp_rhs_Type) ){
-	  return false;
-	}
-	assert(BinOp_lhs_Type);
-	assert(BinOp_rhs_Type);
-
-	const SgExpression* lhs = BinOp->get_lhs_operand();
-	const SgExpression* rhs = BinOp->get_rhs_operand();
-
-	const SgVarRefExp* lhs_var = isSgVarRefExp(get_basearraypointer(lhs));
-	if (!lhs_var){
-	  return false;
-	}
-	const SgVarRefExp* rhs_var = isSgVarRefExp(get_basearraypointer(rhs));
-	if (!rhs_var){
-	  return false;
-	}
-
-	const std::string lhs_string = (lhs_var->get_symbol()->get_name()).getString();
-	const std::string rhs_string = (rhs_var->get_symbol()->get_name()).getString();
-
-	std::string lhs_base = get_baseobjects(lhs_var);
-	std::string rhs_base = get_baseobjects(rhs_var);
-	if(0 == lhs_base.compare(rhs_base)) return false;
-
-	print_error(node, "ARR36-C", "possible non-compliant operation between pointers!");
-	return true;
-}
-
 
 /**
  * Do not add or subtract an integer to a pointer to a non-array object
@@ -414,14 +376,14 @@ bool ARR38_C( const SgNode *node ) {
 
 bool ARR_C(const SgNode *node) {
   bool violation = false;
-  violation |= ARR01_C(node);
-  violation |= ARR02_C(node);
-  violation |= ARR30_C(node);
-  violation |= ARR33_C(node);
-  violation |= ARR34_C(node);
-  violation |= ARR36_C(node);
-  violation |= ARR37_C(node);
-  violation |= ARR38_C(node);
+  //violation |= ARR01_C(node);
+  //violation |= ARR02_C(node);
+  //violation |= ARR30_C(node);
+  //violation |= ARR33_C(node);
+  //violation |= ARR34_C(node);
+  //violation |= ARR37_C(node);
+  //violation |= ARR38_C(node);
+  violation |= ARR001_C(node);
   return violation;
 }
 
@@ -432,5 +394,3 @@ bool ARR_CPP(const SgNode *node) {
   bool violation = false;
   return violation;
 }
-
- 
