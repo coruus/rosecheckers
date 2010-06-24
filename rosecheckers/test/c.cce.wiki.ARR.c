@@ -33,11 +33,11 @@ void ARR() {
 	ARR01();
 	ARR02();
 	ARR30();
-//	ARR31();
-//	ARR32();
+	//	ARR31();
+	//	ARR32();
 	ARR33();
 	ARR34();
-//	ARR35();
+	//	ARR35();
 	ARR36();
 	ARR37();
 	ARR38();
@@ -46,40 +46,103 @@ void ARR() {
 /*ARR01_A v.46 */
 
 void clear(int array[], size_t size) {
-  size_t i;
-  for (i = 0; i < size; i++) {
-     array[i] = 0;
-  }
+	size_t i;
+	for (i = 0; i < size; i++) {
+		array[i] = 0;
+	}
+}
+
+void foo1() {
+	size_t *arr[12];
+	size_t num_elems = sizeof(arr) / sizeof(arr[0]);
+}
+
+void foo2() {
+	size_t **arr;
+	size_t raw_size;
+	size_t num_elems = raw_size / sizeof(arr[0]);
+}
+
+void foo3() {
+	size_t *arr[12];
+	size_t realloc_size = 24 * sizeof(arr[0]);
+}
+
+size_t array_exceptions() {
+	int *array[5];
+	const int x = 5;
+	const size_t realloc_size3 = x / sizeof(array[0]);
+	const size_t realloc_size1 = x * sizeof(array[0]);
+	const size_t realloc_size2 = sizeof(array[0]) * x;
+	return x;
+}
+
+size_t cce1() {
+	char * arr[12];
+	size_t num_elems;
+	num_elems = sizeof(arr);//This might be supposed to fail..?
+
+	return num_elems;
+}
+
+size_t cce4() {
+	const int *arr[12];
+	const int arr2[12];
+	const int x = 5;
+	const size_t realloc_size1 = 24 * sizeof(arr[0]);
+	const size_t realloc_size2 = sizeof(arr[0]) * 24;
+	const size_t realloc_size3 = sizeof(x) + x;
+	const size_t realloc_size4 = sizeof(arr2[0]);
+
+	return realloc_size1 + realloc_size2 + realloc_size3 + realloc_size4;
+}
+
+void cce5(){
+	struct tab{
+		int number;
+		char character;
+	};
+	struct tab *table;
+	table = realloc(table, sizeof(*table) * 100);
 }
 
 void ARR01(void) {
-  int dis[12];
+	int dis[12];
 
-  clear(dis, sizeof(dis) / sizeof(dis[0]));
+	clear(dis, sizeof(dis) / sizeof(dis[0]));
+
+	array_exceptions();
+	cce1();
+	cce4();
+	cce5();
+	foo1();
+	foo2();
+	foo3();
 }
 
 /*ARR02_A v.08 */
 
 void ARR02(void) {
-  const int ARR02_a[4] = {1, 2, 3, 4};
-  printf("ARR02: %d\n", ARR02_a);
+	const int ARR02_a[4] = { 1, 2, 3, 4 };
+	printf("ARR02: %d\n", ARR02_a);
 }
 
 /*ARR30_C v.47 */
 
-
 int *table = NULL;
 
-int ARR30_CS_insert_in_table(size_t pos, int value){
-enum { TABLESIZE = 100 };
-  if (!table) {
-    table = (int *)malloc(sizeof(int) * TABLESIZE);
-  }
-  if (pos >= TABLESIZE) {
-    return -1;
-  }
-  table[pos] = value;
-  return 0;
+int ARR30_CS_insert_in_table(size_t pos, int value) {
+	enum {
+		TABLESIZE = 100
+	};
+	if (!table) {
+		table = (int *) malloc(sizeof(int) * TABLESIZE);
+	}
+	if (pos >= TABLESIZE) {
+		return -1;
+	}
+	table[pos] = value;
+	return 0;
 }
 
 void ARR30(void) {
@@ -115,27 +178,29 @@ void ARR30(void) {
 /*ARR33_C v.50 */
 
 void ARR33_A(int const src[], size_t len) {
-enum { WORKSPACE_SIZE = 256 };
-  int dest[WORKSPACE_SIZE];
-  if (len > WORKSPACE_SIZE) {
-      /* Handle Error */
-  }
-  memcpy(dest, src, sizeof(int)*len);
-  /* ... */
+	enum {
+		WORKSPACE_SIZE = 256
+	};
+	int dest[WORKSPACE_SIZE];
+	if (len > WORKSPACE_SIZE) {
+		/* Handle Error */
+	}
+	memcpy(dest, src, sizeof(int) * len);
+	/* ... */
 }
 
 void ARR33_B(int const src[], size_t len) {
-  int *dest;
-  if (len > SIZE_MAX/sizeof(int)) {
-   /* handle overflow */
-  }
-  dest = (int *)malloc(sizeof(int) * len);
-  if (dest == NULL) {
-     /* Couldn't get the memory - recover */
-  }
-  memcpy(dest, src, sizeof(int) * len);
-  /* ... */
-  free(dest);
+	int *dest;
+	if (len > SIZE_MAX / sizeof(int)) {
+		/* handle overflow */
+	}
+	dest = (int *) malloc(sizeof(int) * len);
+	if (dest == NULL) {
+		/* Couldn't get the memory - recover */
+	}
+	memcpy(dest, src, sizeof(int) * len);
+	/* ... */
+	free(dest);
 }
 
 void ARR33(void) {
@@ -147,7 +212,9 @@ void ARR33(void) {
 /*ARR34_C v.30 */
 
 void ARR34(void) {
-	enum { ARR34_a = 10, ARR34_b = 10, ARR34_c = 20 };
+	enum {
+		ARR34_a = 10, ARR34_b = 10, ARR34_c = 20
+	};
 	int arr1[ARR34_c][ARR34_b];
 	int (*arr2)[ARR34_a];
 	arr2 = arr1; /* OK, because a == b */
@@ -173,19 +240,20 @@ void ARR36(void) {
 /*ARR37_C v.22 */
 
 int sum_numbers(int const *numb, size_t dim) {
-  int total = 0;
-  int const *numb_ptr;
+	int total = 0;
+	int const *numb_ptr;
 
-  for (numb_ptr = numb; numb_ptr < numb + dim; numb_ptr++) {
-    total += *(numb_ptr);
-  }
+	for (numb_ptr = numb; numb_ptr < numb + dim; numb_ptr++) {
+		total += *(numb_ptr);
+	}
 
-  return total;
+	return total;
 }
 
 void ARR37(void) {
-  int my_numbers[3] = { 1, 2, 3 };
-	const int sum = sum_numbers(my_numbers, sizeof(my_numbers)/sizeof(my_numbers[0]));
+	int my_numbers[3] = { 1, 2, 3 };
+	const int sum = sum_numbers(my_numbers, sizeof(my_numbers)
+			/ sizeof(my_numbers[0]));
 	printf("%d\n", sum);
 }
 
@@ -195,20 +263,20 @@ void ARR38(void) {
 	int ar[20];
 	int *ip;
 
-	for (ip = &ar[0]; ip < &ar[sizeof(ar)/sizeof(ar[0])]; ip++) {
-	  *ip = 0;
+	for (ip = &ar[0]; ip < &ar[sizeof(ar) / sizeof(ar[0])]; ip++) {
+		*ip = 0;
 	}
 
 	char buf[] = "foo";
 	size_t len = 1u << 30u;
 
 	/* Check for overflow */
-	if ((uintptr_t) buf+len < (uintptr_t) buf) {
-	  len = -(uintptr_t)buf - 1;
+	if ((uintptr_t) buf + len < (uintptr_t) buf) {
+		len = -(uintptr_t) buf - 1;
 	}
 
 	/* Check for overflow */
-	if (UINTPTR_MAX - len < (uintptr_t)buf) {
-	  len = -(uintptr_t)buf-1;
+	if (UINTPTR_MAX - len < (uintptr_t) buf) {
+		len = -(uintptr_t) buf - 1;
 	}
 }
