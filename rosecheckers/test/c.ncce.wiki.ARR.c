@@ -52,11 +52,68 @@ void clear2(int array[]) {
    }
 }
 
+void ncce6() {
+	char *arr2[12];
+	size_t x = sizeof(arr2[0]); /* error */
+}
+
+void foo8() {
+  int *ptr; int x;
+  const size_t realloc_size1 = sizeof(ptr);
+  const size_t realloc_size2 = sizeof(ptr) / x;
+  const size_t realloc_size3 = sizeof(ptr - 1);
+  const size_t realloc_size4 = x * sizeof(ptr);
+  const size_t realloc_size5 = sizeof(ptr) * x;
+}
+
+void foo9() {
+  int *array[5];
+  int x;
+  const size_t realloc_size1 = sizeof(array[0]) / x;
+  const size_t realloc_size2 = sizeof(array[0] - 1);
+}
+
+/* ARR001 */
+
+void foo1() {
+  char *s = "Hello, World!"; /* pointer to char */
+  char *t = (char *)malloc(sizeof(s)); /* error */
+  strcpy(t, s); /* buffer overflow */
+}
+
+void foo2() {
+  extern int *c;
+  int k;
+  k = sizeof(c);   /* pointer to int */ /* error */
+}
+
+void foo3() {
+  size_t nelems;
+  char **ptr_array = calloc(nelems, sizeof(ptr_array)); /* pointer to pointer to char */ /* not an error */
+}
+
+void f(char array[]) {
+  char *p;
+  memcpy(&p, &array, sizeof(array)); /* error ARR01-C */
+}
+
+void clear(int a[12]) {
+  memset(a, 0, sizeof(a)); /* error ARR01-C */
+}
+
 void ARR01(void) {
   int dis[12];
+  char arr[10];
 
   clear2(dis);
-  /* ... */
+  clear(dis);
+  f(arr);
+  foo1();
+  foo2();
+  foo3();
+  foo9();
+  foo8();
+  ncce6();
 }
 
 /*ARR02_A v.08 */
@@ -159,9 +216,9 @@ int sum_numbers2(const struct numbers *numb){
   int total = 0;
   int const *numb_ptr;
 
-  for (numb_ptr = &numb->num1; 
-       numb_ptr <= &numb->num64; 
-       numb_ptr++) 
+  for (numb_ptr = &numb->num1;
+       numb_ptr <= &numb->num64;
+       numb_ptr++)
   {
     total += *(numb_ptr);
   }
@@ -192,3 +249,5 @@ void ARR38(void) {
 	  len = -(uintptr_t)buf-1;
 	}
 }
+
+
