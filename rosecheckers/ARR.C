@@ -38,8 +38,8 @@ bool ARR001_C(const SgNode * node)
 	return false;
 
 /*
- * if the expression is of a typedefined type, then get_type() returns 
- * an SgTypedefType and not the real type of the object so we need to 
+ * if the expression is of a typedefined type, then get_type() returns
+ * an SgTypedefType and not the real type of the object so we need to
  * call the get_base_type() function
  */
     const SgType *type = expr->get_type();
@@ -64,7 +64,7 @@ bool ARR001_C(const SgNode * node)
     const SgArrayType *arrT = isSgArrayType(type);
     if (arrT) {
 	/*
-	 * On binary operations, get_type() returns type of lhs argument, 
+	 * On binary operations, get_type() returns type of lhs argument,
 	 * so if this is an array, then it will decay into a pointer
 	 */
 	if (isSgBinaryOp(expr)) {
@@ -431,6 +431,6 @@ bool ARR_C(const SgNode * node)
 /// C++ checkers
 bool ARR_CPP(const SgNode * node)
 {
-    bool violation = false;
+    bool violation = ARR_C(node);
     return violation;
 }
