@@ -1,1 +1,1 @@
-c.ncce.xtra.ARR.c:23: warning: ARR01-C: Do not apply the sizeof operator to a pointer when taking the size of an array
+

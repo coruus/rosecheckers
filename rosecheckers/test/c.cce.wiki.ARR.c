@@ -52,20 +52,23 @@ void clear(int array[], size_t size) {
 	}
 }
 
-void foo1() {
+size_t foo1() {
 	size_t *arr[12];
-	size_t num_elems = sizeof(arr) / sizeof(arr[0]);
+	const size_t num_elems = sizeof(arr) / sizeof(arr[0]);
+	return num_elems;
 }
 
-void foo2() {
+size_t foo2() {
 	size_t **arr;
-	size_t raw_size;
-	size_t num_elems = raw_size / sizeof(arr[0]);
+	const size_t raw_size = 10;
+	const size_t num_elems = raw_size / sizeof(arr[0]);
+	return num_elems;
 }
 
-void foo3() {
+size_t foo3() {
 	size_t *arr[12];
-	size_t realloc_size = 24 * sizeof(arr[0]);
+	const size_t realloc_size = 24 * sizeof(arr[0]);
+	return realloc_size;
 }
 
 size_t array_exceptions() {
@@ -74,11 +77,11 @@ size_t array_exceptions() {
 	const size_t realloc_size3 = x / sizeof(array[0]);
 	const size_t realloc_size1 = x * sizeof(array[0]);
 	const size_t realloc_size2 = sizeof(array[0]) * x;
-	return x;
+	return (realloc_size3 + realloc_size1 + realloc_size2);
 }
 
 size_t cce1() {
-	char * arr[12];
+	const char * arr[12];
 	size_t num_elems;
 	num_elems = sizeof(arr);//This might be supposed to fail..?
 
@@ -91,33 +94,29 @@ size_t cce4() {
 	const int x = 5;
 	const size_t realloc_size1 = 24 * sizeof(arr[0]);
 	const size_t realloc_size2 = sizeof(arr[0]) * 24;
-	const size_t realloc_size3 = sizeof(x) + x;
+	const size_t realloc_size3 = sizeof x + x;
 	const size_t realloc_size4 = sizeof(arr2[0]);
 
 	return realloc_size1 + realloc_size2 + realloc_size3 + realloc_size4;
 }
 
 void cce5(){
-	struct tab{
-		int number;
-		char character;
-	};
-	struct tab *table;
-	table = realloc(table, sizeof(*table) * 100);
+	int *ptr = (int *)malloc(10 * sizeof(*ptr));
 }
 
 void ARR01(void) {
 	int dis[12];
+	size_t return_value = 0;
 
 	clear(dis, sizeof(dis) / sizeof(dis[0]));
 
-	array_exceptions();
-	cce1();
-	cce4();
+	return_value = return_value + array_exceptions();
+	return_value = return_value + cce1();
+	return_value = return_value + cce4();
 	cce5();
-	foo1();
-	foo2();
-	foo3();
+	return_value = return_value + foo1();
+	return_value = return_value + foo2();
+	return_value = return_value + foo3();
 }
 
 /*ARR02_A v.08 */

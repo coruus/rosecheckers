@@ -75,10 +75,10 @@ void EXP00() {
 double *EXP01_allocate_array(size_t num_elems) {
   double *d_array;
 
-  if (num_elems > SIZE_MAX/sizeof(d_array)) {
+  if (num_elems > SIZE_MAX/sizeof(*d_array)) {
     /* handle error condition */
   }
-  d_array = (double *)malloc(sizeof(d_array) * num_elems);
+  d_array = (double *)malloc(sizeof(*d_array) * num_elems);
   if (d_array == NULL) {
     /* handle error condition */
   }

@@ -15,6 +15,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <limits.h>
 #include "util.h"
 
 void ARR01();
@@ -52,44 +53,47 @@ void clear2(int array[]) {
    }
 }
 
-void ncce6() {
+size_t ncce6() {
 	char *arr2[12];
-	size_t x = sizeof(arr2[0]); /* error */
+	const size_t x = sizeof(arr2[0]); /* error */
+	return x;
 }
 
-void foo8() {
-  int *ptr; int x;
-  const size_t realloc_size1 = sizeof(ptr);
-  const size_t realloc_size2 = sizeof(ptr) / x;
-  const size_t realloc_size3 = sizeof(ptr - 1);
-  const size_t realloc_size4 = x * sizeof(ptr);
-  const size_t realloc_size5 = sizeof(ptr) * x;
+size_t foo8() {
+	int *ptr;
+	const size_t realloc_size1 = sizeof ptr;
+	const size_t realloc_size2 = sizeof(ptr) / 10;
+	const size_t realloc_size3 = sizeof(ptr - 1);
+	const size_t realloc_size4 = 10 * sizeof(ptr);
+	const size_t realloc_size5 = sizeof(ptr) * 10;
+	return (realloc_size1 + realloc_size2 + realloc_size3 + realloc_size4 + realloc_size5);
 }
 
-void foo9() {
-  int *array[5];
-  int x;
-  const size_t realloc_size1 = sizeof(array[0]) / x;
-  const size_t realloc_size2 = sizeof(array[0] - 1);
+size_t foo9() {
+	int *array[5];
+	const size_t realloc_size1 = sizeof(array[0]) / 10;
+	const size_t realloc_size2 = sizeof(array[0] - 1);
+	return (realloc_size1 + realloc_size2);
 }
 
 /* ARR001 */
 
 void foo1() {
-  char *s = "Hello, World!"; /* pointer to char */
+  const char *s = "Hello, World!"; /* pointer to char */
   char *t = (char *)malloc(sizeof(s)); /* error */
   strcpy(t, s); /* buffer overflow */
 }
 
-void foo2() {
-  extern int *c;
-  int k;
-  k = sizeof(c);   /* pointer to int */ /* error */
+int foo2() {
+	extern int *c;
+	int k;
+	k = sizeof(c);   /* pointer to int */ /* error */
+	return k;
 }
 
 void foo3() {
-  size_t nelems;
-  char **ptr_array = calloc(nelems, sizeof(ptr_array)); /* pointer to pointer to char */ /* not an error */
+	const size_t nelems = 1;
+	char **ptr_array = calloc(nelems, sizeof(ptr_array)); /* pointer to pointer to char */
 }
 
 void f(char array[]) {
@@ -102,18 +106,19 @@ void clear(int a[12]) {
 }
 
 void ARR01(void) {
-  int dis[12];
-  char arr[10];
+	int dis[12];
+	size_t return_value = 0;
+	char arr[10];
 
-  clear2(dis);
-  clear(dis);
-  f(arr);
-  foo1();
-  foo2();
-  foo3();
-  foo9();
-  foo8();
-  ncce6();
+	clear2(dis);
+	clear(dis);
+	f(arr);
+	foo1();
+	return_value = return_value + foo2();
+	foo3();
+	return_value = return_value + foo9();
+	return_value = return_value + foo8();
+	return_value = return_value + ncce6();
 }
 
 /*ARR02_A v.08 */
@@ -140,7 +145,7 @@ enum { TABLESIZE = 100 };
   return 0;
 }
 
-void ARR30(void) {
+void ARR30() {
 	if (ARR30_NCCE_insert_in_table(0, 1) == -1) {}
 }
 
@@ -198,7 +203,7 @@ void ARR36(void) {
 	const int nums[32];
 	char *strings[32];
 	const int *next_num_ptr = nums;
-	int free_bytes;
+	int free_bytes = 0;
 
 	free_bytes = strings - (char **)next_num_ptr;
 	printf("ARR36 %d\n", free_bytes);
