@@ -38,8 +38,8 @@ bool ARR001_C(const SgNode * node)
 	return false;
 
 /*
- * if the expression is of a typedefined type, then get_type() returns
- * an SgTypedefType and not the real type of the object so we need to
+ * if the expression is of a typedefined type, then get_type() returns 
+ * an SgTypedefType and not the real type of the object so we need to 
  * call the get_base_type() function
  */
     const SgType *type = expr->get_type();
@@ -64,10 +64,12 @@ bool ARR001_C(const SgNode * node)
     const SgArrayType *arrT = isSgArrayType(type);
     if (arrT) {
 	/*
-	 * On binary operations, get_type() returns type of lhs argument,
+	 * On binary operations, get_type() returns type of lhs argument, 
 	 * so if this is an array, then it will decay into a pointer
 	 */
-	if (isSgBinaryOp(expr)) {
+	if (isSgBinaryOp(expr)
+	    && !(isSgDotExp(expr) || isSgArrowExp(expr)
+		 || isSgDotStarOp(expr) || isSgArrowStarOp(expr))) {
 	    print_error(node, "ARR001_C",
 			"Do not apply the sizeof operator to an object of pointer",
 			true);
@@ -102,6 +104,46 @@ bool ARR001_C(const SgNode * node)
     const SgPointerType *ptrT = isSgPointerType(type);
     if (ptrT)			// if true is either violation or exception
     {
+/*
+ * Weed out false positives: check if pointer of type T * is argument to 
+ * function call whose result is being assigned to a variable of type T **.
+ * For example:
+ * char *ptr;
+ * char **array_of_ptrs = malloc(100 * sizeof(ptr));
+ */
+	const SgFunctionCallExp *fn =
+	    findParentOfType(expr, SgFunctionCallExp);
+	if (fn) {
+	    const SgPointerType *lhsType = NULL;
+	    const SgAssignOp *assignOp = findParentOfType(fn, SgAssignOp);
+	    if (assignOp) {
+		lhsType = isSgPointerType(assignOp->get_type());
+	    } else {
+		const SgInitializedName *init =
+		    findParentOfType(fn, SgInitializedName);
+		if (init) {
+		    lhsType = isSgPointerType(init->get_type());
+		}
+	    }
+	    if (lhsType) {
+		const SgType *lhsBase = lhsType->get_base_type();
+		if (isSgTypedefType(lhsBase))
+		    lhsBase =
+			((const SgTypedefType *) lhsBase)->get_base_type();
+		const SgType *exprBase = type;
+		while (isSgPointerType(lhsBase)
+		       && isSgPointerType(exprBase)) {
+		    lhsBase =
+			((const SgPointerType *) lhsBase)->get_base_type();
+		    exprBase =
+			((const SgPointerType *) exprBase)->
+			get_base_type();
+		}
+		if (lhsBase->class_name().
+		    compare(exprBase->class_name()) == 0)
+		    return false;
+	    }
+	}
 	const SgPntrArrRefExp *ptArrE = isSgPntrArrRefExp(expr);
 	if (ptArrE)		// possible exception; investigate further
 	{
@@ -431,6 +473,6 @@ bool ARR_C(const SgNode * node)
 /// C++ checkers
 bool ARR_CPP(const SgNode * node)
 {
-    bool violation = ARR_C(node);
+    bool violation = false;
     return violation;
 }
