@@ -625,6 +625,7 @@ bool FIO_C(const SgNode *node) {
 
 bool FIO_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= FIO_C(node);
   return violation;
 }
 

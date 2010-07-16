@@ -458,13 +458,13 @@ bool ARR_C(const SgNode * node)
 {
     bool violation = false;
 
-    //violation |= ARR01_C(node);
-    //violation |= ARR02_C(node);
-    //violation |= ARR30_C(node);
-    //violation |= ARR33_C(node);
-    //violation |= ARR34_C(node);
-    //violation |= ARR37_C(node);
-    //violation |= ARR38_C(node);
+    violation |= ARR01_C(node);
+    violation |= ARR02_C(node);
+    violation |= ARR30_C(node);
+    violation |= ARR33_C(node);
+    violation |= ARR34_C(node);
+    violation |= ARR37_C(node);
+    violation |= ARR38_C(node);
     violation |= ARR001_C(node);
     return violation;
 }
@@ -474,5 +474,6 @@ bool ARR_C(const SgNode * node)
 bool ARR_CPP(const SgNode * node)
 {
     bool violation = false;
+    violation |= ARR_C( node);
     return violation;
 }

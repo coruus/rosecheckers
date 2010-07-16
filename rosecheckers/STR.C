@@ -409,6 +409,7 @@ bool STR_C(const SgNode *node) {
 
 bool STR_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= STR_C(node);
   return violation;
 }
 

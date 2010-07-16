@@ -722,6 +722,7 @@ bool EXP_CPP(const SgNode *node) {
   violation |= EXP05_CPP(node);
   violation |= EXP17_CPP(node);
   violation |= EXP39_CPP(node);
+  violation |= EXP_C(node);
   return violation;
 }
 

@@ -226,6 +226,7 @@ bool ERR_CPP(const SgNode *node) {
   bool violation = false;
   violation |= ERR08_CPP(node);
   violation |= ERR09_CPP(node);
+  violation |= ERR_C(node);
   return violation;
 }
 

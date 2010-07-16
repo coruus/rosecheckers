@@ -45,6 +45,7 @@ bool PRE_C(const SgNode *node) {
 
 bool PRE_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= PRE_C(node);
   return violation;
 }
 

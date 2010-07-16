@@ -375,6 +375,8 @@ bool DCL38_C( const SgNode *node ) {
 	if (!def)
 		return false;
 
+  if (def->get_members().size() == 0)
+    return false;
 	const SgVariableDeclaration* varDecl = isSgVariableDeclaration(def->get_members().back());
 	/**
 	 * Disabling assertion due to C++ code
@@ -515,5 +517,6 @@ bool DCL_CPP(const SgNode *node) {
   bool violation = false;  
   violation |= DCL10_CPP(node);
   violation |= DCL36_CPP(node);
+  violation |= DCL_C(node);
   return violation;
 }

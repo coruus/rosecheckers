@@ -583,6 +583,7 @@ bool INT_C(const SgNode *node) {
 
 bool INT_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= INT_C(node);
   return violation;
 }
 

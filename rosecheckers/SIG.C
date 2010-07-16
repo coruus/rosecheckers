@@ -406,6 +406,7 @@ bool SIG_C(const SgNode *node) {
 
 bool SIG_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= SIG_C(node);
   return violation;
 }
 

@@ -247,6 +247,7 @@ bool MSC_C(const SgNode *node) {
 
 bool MSC_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= MSC_C(node);
   return violation;
 }
 

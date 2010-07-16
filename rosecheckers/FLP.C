@@ -341,6 +341,7 @@ bool FLP_C(const SgNode *node) {
 
 bool FLP_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= FLP_C(node);
   return violation;
 }
 

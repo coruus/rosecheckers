@@ -258,6 +258,7 @@ bool ENV_C(const SgNode *node) {
 
 bool ENV_CPP(const SgNode *node) {
   bool violation = false;
+  violation |= ENV_C(node);
   return violation;
 }
 
