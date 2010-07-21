@@ -23,6 +23,8 @@
 #include "utilities.h"
 #include "type.h"
 
+using namespace std;
+
 static bool arr37check(const SgNode *node, const SgExpression *rhs);
 
 /**
@@ -89,7 +91,7 @@ bool ARR001_C(const SgNode * node) {
 			if ((*i)->get_name() == varName) {
 				print_error(
 						node,
-						"ARR001_C",
+						"ARR001-C",
 						"Do not apply the sizeof operator to an object of pointer",
 						true);
 				return true;
@@ -138,8 +140,47 @@ bool ARR001_C(const SgNode * node) {
 					exprBase
 							= ((const SgPointerType *) exprBase)-> get_base_type();
 				}
-				if (lhsBase->class_name(). compare(exprBase->class_name()) == 0)
+				if (lhsBase->class_name().compare(exprBase->class_name()) == 0)
 					return false;
+			}
+			/*
+			 * also ignore cases when the function being called is of the form:
+			 * memcpy(T **, T **, n*sizeof(T *));
+			 * memmove(T **, T **, n*sizeof(T *));
+			 * memset(T **, val, n*sizeof(T *));
+			 * memchr(T **, val, n*sizeof(T *));
+			 * We will check that the function name is one of these four functions.
+			 *
+			 * We will be lazy and just check that the first argument is a T **.
+			 */
+			FOREACH_SUBNODE(fn, nodes, i, V_SgFunctionRefExp) {
+				const SgFunctionRefExp *ref = isSgFunctionRefExp(*i);
+				const string name = ref->get_symbol()->get_name().getString();
+				if (!((name.compare("memcpy") == 0)
+						|| (name.compare("memmove") == 0)
+						|| (name.compare("memset") == 0)
+						|| (name.compare("memchr") == 0)
+						|| (name.compare("memset_s") == 0)))
+				{
+					break;
+				}
+				const SgExpressionPtrList &args = fn->get_args()->get_expressions();
+				const SgPointerType *arg0type = isSgPointerType(removeCasts(args[0])->get_type());
+				if (arg0type) {
+					const SgType *arg0base = arg0type->get_base_type();
+					if (isSgTypedefType(arg0base))
+						arg0base = ((const SgTypedefType *)arg0base)->get_base_type();
+					const SgType *exprBase = type;
+					while (isSgPointerType(arg0base) && isSgPointerType(exprBase)) {
+					arg0base
+							= ((const SgPointerType *) arg0base)->get_base_type();
+					exprBase
+							= ((const SgPointerType *) exprBase)-> get_base_type();
+					}
+					if (arg0base->class_name().compare(exprBase->class_name()) == 0)
+						return false;
+				}
+				break;
 			}
 		}
 		const SgPntrArrRefExp *ptArrE = isSgPntrArrRefExp(expr);
