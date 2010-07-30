@@ -149,7 +149,8 @@ bool ARR001_C(const SgNode * node) {
 			 * memmove(T **, T **, n*sizeof(T *));
 			 * memset(T **, val, n*sizeof(T *));
 			 * memchr(T **, val, n*sizeof(T *));
-			 * We will check that the function name is one of these four functions.
+			 * memset_s(T **, T **, n*sizeof(T *));
+			 * We will check that the function name is one of these five functions.
 			 *
 			 * We will be lazy and just check that the first argument is a T **.
 			 */
@@ -442,7 +443,8 @@ bool ARR37_C(const SgNode * node) {
 			if (getRefDecl(iVar) != getRefDecl(varRef))
 				continue;
 			parent = removeCasts(isSgExpression(iVar->get_parent()));
-			assert(parent);
+			if (!parent)
+				continue;
 			const SgExpression *rhs = NULL;
 			if (isSgAssignInitializer(parent)) {
 				rhs = isSgAssignInitializer(parent)->get_operand();
