@@ -149,6 +149,7 @@ bool ARR001_C(const SgNode * node) {
 			 * memmove(T **, T **, n*sizeof(T *));
 			 * memset(T **, val, n*sizeof(T *));
 			 * memchr(T **, val, n*sizeof(T *));
+			 * memcmp(T **, T **, n*sizeof(T *));
 			 * memset_s(T **, T **, n*sizeof(T *));
 			 * We will check that the function name is one of these five functions.
 			 *
@@ -161,6 +162,7 @@ bool ARR001_C(const SgNode * node) {
 						|| (name.compare("memmove") == 0)
 						|| (name.compare("memset") == 0)
 						|| (name.compare("memchr") == 0)
+						|| (name.compare("memcmp") == 0)
 						|| (name.compare("memset_s") == 0)))
 				{
 					break;
