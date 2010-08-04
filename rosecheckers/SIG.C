@@ -273,13 +273,14 @@ bool SIG33_C( const SgNode *node ) {
 	const int signum = sigInt->get_value();
 
 	const SgFunctionRefExp* ref = isSgFunctionRefExp(getFnArg(sigRef, 1));
-	assert(ref);
+	if (!ref)
+		return false; //had to be SIG_DFL or SIG_IGN
 
 	const SgFunctionDeclaration *fnDecl = ref->get_symbol()->get_declaration();
 	assert(fnDecl);
 
 	/**
-	 * See if there's a call too raise in this handler
+	 * See if there's a call to raise() in this handler
 	 */
 	bool raise = false;
 	FOREACH_SUBNODE(fnDecl, nodes1, i, V_SgFunctionRefExp) {
