@@ -153,9 +153,9 @@ bool INT06_C( const SgNode *node ) {
  * Use only explicitly signed or unsigned char type for numeric values
  *
  * \bug (char c = 'a') will trigger a false positive, work around by
- * using (char c; c = 'a') 
+ * using (char c; c = 'a')
  *
- * The AST trees for char c = 'a' and char c = '3' are the same... 
+ * The AST trees for char c = 'a' and char c = '3' are the same...
  * Don't know how to solve this issue currently.
  */
 bool INT07_C( const SgNode *node ) {
@@ -223,19 +223,37 @@ bool INT09_C( const SgNode *node ) {
 
 	bool violation = false;
 	bool implicit = false;
-	int base = 1;
-	std::map<int, const SgInitializedName*> m;
-
+	unsigned long long base = 0;
+	std::map<unsigned long long, const SgInitializedName*> m;
 	FOREACH_INITNAME(enumDec->get_enumerators(), i) {
 		const SgInitializedName *var = isSgInitializedName(*i);
 		assert(var);
-
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
 		if (init) {
 			/** Explicit numbering */
-			const SgIntVal *val = isSgIntVal(init->get_operand());
+			const SgExpression *val = init->get_operand();
 			assert(val);
-			base = val->get_value();
+			if (isSgIntVal(val)) {
+				base = ((const SgIntVal *)val)->get_value();
+			}
+			else if (isSgLongIntVal(val)) {
+				base = ((const SgLongIntVal *)val)->get_value();
+			}
+			else if (isSgLongLongIntVal(val)) {
+				base = ((const SgLongLongIntVal *)val)->get_value();
+			}
+			else if (isSgUnsignedIntVal(val)) {
+				base = ((const SgUnsignedIntVal *)val)->get_value();
+			}
+			else if (isSgUnsignedLongLongIntVal(val)) {
+				base = ((const SgUnsignedLongLongIntVal *)val)->get_value();
+			}
+			else if (isSgUnsignedLongVal(val)) {
+				base = ((const SgUnsignedLongVal *)val)->get_value();
+			}
+			else {
+				assert(false); //should have been one of the above types. it's possible i didn't cover all cases.
+			}
 		}
 		else {
 		  implicit = true;
