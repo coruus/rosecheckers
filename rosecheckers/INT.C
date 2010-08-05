@@ -215,6 +215,7 @@ bool INT07_C( const SgNode *node ) {
 
 /**
  * Ensure enumeration constants map to unique values
+ * \todo implement INT09-EX1 when ROSE supports it
  */
 bool INT09_C( const SgNode *node ) {
 	const SgEnumDeclaration* enumDec = isSgEnumDeclaration(node);
@@ -477,6 +478,7 @@ bool INT14_C( const SgNode *node ) {
  * Ensure that operations on signed integers do not result in overflow
  *
  * \note We only check the Unary negation case here
+ * \todo this rule needs to be completely rewritten
  *
  * \see INT33_C
  */
@@ -490,8 +492,12 @@ bool INT32_C( const SgNode *node ) {
 		return false;
 	const SgInitializedName *varName = getRefDecl(var);
 	assert(varName);
-
-	FOREACH_SUBNODE(findInBlockByOffset(node, -1), nodes, i, V_SgBinaryOp) {
+	const SgStatement *statement = findInBlockByOffset(node, -1);
+	if (!statement) {
+		print_error(node,"INT32-C", "Ensure that operations on signed integers do not result in overflow");
+		return true;
+	}
+	FOREACH_SUBNODE(statement, nodes, i, V_SgBinaryOp) {
 		const SgBinaryOp *binOp = isSgBinaryOp(*i);
 		assert(binOp);
 
