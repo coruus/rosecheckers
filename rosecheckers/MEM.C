@@ -226,15 +226,15 @@ bool MEM08_C( const SgNode *node ) {
 /**
  * Ensure that freed pointers are not reused
  *
- * \bug Need to check for conditional return statements 
- * 
+ * \bug Need to check for conditional return statements
+ *
  * \bug Throws errors in loops as well.
  */
 bool MEM30_C( const SgNode *node ) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
     return false;
-  
+
   // Get variable as first arg
   const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
   if (ref == NULL) return false;
@@ -249,7 +249,7 @@ bool MEM30_C( const SgNode *node ) {
     print_error( node, "MEM30-C", "Do not access freed memory");
     return true;
   }
-	
+
   return false;
 }
 
@@ -259,55 +259,63 @@ bool MEM30_C( const SgNode *node ) {
  * If the variable is passed by reference to a function which allocates memory this could throw a false positive.
  * If the variable is freed multiple times by a single loop this could throw a false negative.
  */
-bool MEM31_C( const SgNode *node ) {
-  const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-  if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
-    return false;
+bool MEM31_C(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
+		return false;
 
-  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
+	const SgVarRefExp* ref = isSgVarRefExp(
+			getFnArg(isSgFunctionRefExp(node), 0));
 
-  if (ref == NULL) return false;
-  const SgInitializedName* ref_var = getRefDecl( ref);
+	if (ref == NULL)
+		return false;
+	const SgInitializedName* ref_var = getRefDecl(ref);
 
-  bool before = true;
+	bool before = true;
 
-  const SgNode *parent = findParentOfType(node, SgFunctionDefinition);
-  if(parent == NULL)
-    return false;
+	const SgNode *parent = findParentOfType(node, SgFunctionDefinition);
+	if (parent == NULL)
+		return false;
 
-  FOREACH_SUBNODE(parent, nodes, i, V_SgNode) {
-    if (before) {
-      if (*i == node)
-	before = false;
-      continue;
-    }
+	FOREACH_SUBNODE(parent, nodes, i, V_SgNode) {
+		if (before) {
+			if (*i == node)
+				before = false;
+			continue;
+		}
 
-    /**
-     * Checking for return statements lowers the false positive rate by
-     * allowing conditional frees followed by returns
-     */
-    if(isSgReturnStmt(*i))
-      return false;
+		/**
+		 * Checking for return statements lowers the false positive rate by
+		 * allowing conditional frees followed by returns
+		 */
+		if (isSgReturnStmt(*i))
+			return false;
 
-    const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
-    if(iFn && isCallOfFunctionNamed(iFn, "free")) {
-      const SgVarRefExp* ref2 = isSgVarRefExp(getFnArg(iFn, 0));
-      const SgInitializedName* ref2_var = getRefDecl(ref2);
+		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
+		if (iFn && isCallOfFunctionNamed(iFn, "free")) {
+			const SgVarRefExp* ref2 = isSgVarRefExp(removeCasts(
+					getFnArg(iFn, 0)));
+			if (!ref2)
+				continue;
+			const SgInitializedName* ref2_var = getRefDecl(ref2);
 
-      if (ref_var == ref2_var) {
-	print_error(node, "MEM31-C", "Free dynamically allocated memory exactly once.");
-	return true;
-      }
-    } else if(isSgAssignOp(*i)) {
-      const SgVarRefExp *ref2 = isSgVarRefExp(isSgAssignOp(*i)->get_lhs_operand());
-      if (ref2 != NULL) {
-	const SgInitializedName* ref2_var = ref2 ? getRefDecl( ref2) : NULL;
+			if (ref_var == ref2_var) {
+				print_error(node, "MEM31-C",
+						"Free dynamically allocated memory exactly once.");
+				return true;
+			}
+		} else if (isSgAssignOp(*i)) {
+			const SgVarRefExp *ref2 = isSgVarRefExp(
+					isSgAssignOp(*i)->get_lhs_operand());
+			if (ref2 != NULL) {
+				const SgInitializedName* ref2_var = ref2 ? getRefDecl(ref2)
+						: NULL;
 
-	if (ref_var == ref2_var)
-	  return false;
-      }
-    }
-  }
+				if (ref_var == ref2_var)
+					return false;
+			}
+		}
+	}
 
   return false;
 }
@@ -352,7 +360,7 @@ bool MEM34_C( const SgNode *node ) {
     assert(i != nodes.end());
     i++;
   }
-	
+
   const SgNode *block = NULL;
   do {
     if (block) {
@@ -360,14 +368,14 @@ bool MEM34_C( const SgNode *node ) {
 	block = NULL;
       }
       continue;
-    } 
+    }
     else if (isSgReturnStmt(*i)) {
       block = popBlock(*i);
     }
 
     const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
     const SgVarRefExp *iVar = isSgVarRefExp(*i);
-		
+
     if (iFn) {
       if (!(isCallOfFunctionNamed(iFn, "malloc")
 	    ||isCallOfFunctionNamed(iFn, "calloc")
@@ -387,10 +395,10 @@ bool MEM34_C( const SgNode *node ) {
 	  return false;
       }
 
-      if (var == getVarAssignedTo(iFn, NULL)) 
+      if (var == getVarAssignedTo(iFn, NULL))
 	return false;
     } else if (iVar && (getRefDecl(iVar) == var)) {
-      if (varWrittenTo(iVar)) { 
+      if (varWrittenTo(iVar)) {
 	break;
       }
     }
@@ -402,7 +410,7 @@ bool MEM34_C( const SgNode *node ) {
 
 
 /* MEM41-CPP. Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources */
-bool MEM41_CPP( const SgNode *node ) { 
+bool MEM41_CPP( const SgNode *node ) {
   bool ret = false;
   if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
     // Skip the check if this is a POD (like a C struct).
