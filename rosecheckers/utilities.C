@@ -31,7 +31,7 @@
  * Spin up the AST until we find a parent of the given type, if not, return
  * NULL
  *
- * 
+ *
  */
 const SgNode *findParentNodeOfType(const SgNode *node, VariantT t) {
 	const SgNode *parent = (node)->get_parent();
@@ -90,7 +90,7 @@ bool getCaseValues( const SgBasicBlock *body, std::vector<int> &values ) {
 	return sawDefault;
 }
 
-bool isCallOfFunctionNamed( const SgFunctionRefExp *f, const std::string &name ) { 
+bool isCallOfFunctionNamed( const SgFunctionRefExp *f, const std::string &name ) {
 	assert(f);
 	return isSgFunctionCallExp(f->get_parent())
 		&& (f->get_symbol()->get_name().getString() == name);
@@ -121,7 +121,7 @@ void print_error(const SgNode* node, const char* rule, const char* desc, bool wa
   size_t found = filename.rfind("/");
   if( found != std::string::npos)
     filename.erase( 0, found+1);
-  /// don't use << ':' << fi->get_col(), not flymake-compliant 
+  /// don't use << ':' << fi->get_col(), not flymake-compliant
   std::cerr << filename << ':' << fi->get_line()
 	    << ": " << (warning ? "warning" : "error")
 	    << ": " << rule << ": " << desc << std::endl;
@@ -240,7 +240,7 @@ bool isVarUsedByFunction(const char* function, const SgVarRefExp* ref) {
  * statement)
  *
  * \todo Use next visitor to make this better
- * 
+ *
  * \param[in] node Find the BasicBlock above this node
  * \param[in] delta Number of lines to search before or after node
  * \return NULL on failure
@@ -321,7 +321,7 @@ const SgInitializedName *getVarAssignedTo(const SgFunctionRefExp *fnRef, const S
 	if (assignment != NULL) {
 		ref = isSgVarRefExp( assignment->get_lhs_operand());
 		if (ref == NULL)
-			return NULL; 
+			return NULL;
 		/**
 		 * \todo LHS is more complex than variable, it might be array ref or
 		 * struct member or pointer; we're only handling variables (for
@@ -550,7 +550,8 @@ bool varWrittenTo(const SgNode* var) {
 		assert(parent);
 		child = parent;
 		parent = child->get_parent();
-		assert(parent);
+		if (!parent)
+			return false;
 
 		if (isSgCastExp(parent)
 		|| isSgAddressOfOp(parent)) {
@@ -668,7 +669,7 @@ size_t sizeOfType(const SgType *type) {
  */
 bool valueVerified(const SgExpression *expr) {
 	/**
-	 * Allow compile time known values 
+	 * Allow compile time known values
 	 */
 	if (isSgValueExp(expr))
 		return true;
@@ -713,7 +714,7 @@ const SgNode *popBlock(const SgNode *node) {
   for (; parent; parent = parent->get_parent() ) {
     VariantT variant = parent->variantT();
 
-    //Fall through if we catch something    
+    //Fall through if we catch something
     switch(variant) {
     case V_SgIfStmt:
     case V_SgBasicBlock:
@@ -728,7 +729,7 @@ const SgNode *popBlock(const SgNode *node) {
       return parent;
 
     default:
-      break;      
+      break;
     }
   }
 
@@ -754,7 +755,7 @@ void CFGVisitor::visitOthers(const VirtualCFG::CFGNode& node) {
   // to let a visitor do multiple visits
 }
 
-/** 
+/**
  * Class that returns list of next references to a variable
  */
 class CFGNextVarRef : public CFGVisitor {

@@ -129,17 +129,16 @@ bool FIO08_C( const SgNode *node ) {
 		if(iFn == fnRef)
 			break;
 
-		iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
-		if (!iVar)
-			continue;
-
 		if(isCallOfFunctionNamed(iFn, "open")
 		|| isCallOfFunctionNamed(iFn, "fopen")
 		|| isCallOfFunctionNamed(iFn, "freopen")) {
-			fd = getVarAssignedTo(iFn, NULL);
-			assert(fd);
+			iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
+			if (!iVar)
+				continue;
 
 			if (getRefDecl(iVar) == var) {
+				fd = getVarAssignedTo(iFn, NULL);
+				assert(fd);
 				closed = false;
 				opened = true;
 			}
@@ -463,8 +462,8 @@ bool FIO42_C( const SgNode *node ) {
 
 	bool before = true;
 
-	const SgNode *parent = findParentOfType(node, SgFunctionDefinition); 
-	if(parent == NULL) 
+	const SgNode *parent = findParentOfType(node, SgFunctionDefinition);
+	if(parent == NULL)
 	  return false;
 
 	FOREACH_SUBNODE(parent, nodes, i, V_SgFunctionRefExp) {

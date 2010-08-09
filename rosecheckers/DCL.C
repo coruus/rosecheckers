@@ -210,7 +210,7 @@ void DCL02_report_error(const SgInitializedName *var) {
 }
 
 /**
- * Use visually distinct identifiers 
+ * Use visually distinct identifiers
  *
  * \note also checks DCL31-C
  */
@@ -282,7 +282,7 @@ bool DCL02_C( const SgNode *node ) {
 }
 
 /**
- * Do not declare more than one variable per declaration 
+ * Do not declare more than one variable per declaration
  */
 bool DCL04_C( const SgNode *node ) {
   const SgVariableDeclaration *varDec = isSgVariableDeclaration(node);
@@ -437,7 +437,7 @@ bool DCL10_CPP( const SgNode *node ) {
 }
 
 /* DCL36-CPP. Do not declare an identifier with conflicting linkage classifications */
-bool DCL36_CPP( const SgNode *node ) { 
+bool DCL36_CPP( const SgNode *node ) {
   if( const SgVariableDefinition *vdef = isSgVariableDefinition( node ) ) {
     //XXX get defining declaration?
     const SgDeclarationModifier &dm = vdef->get_declarationModifier();
@@ -485,7 +485,7 @@ bool DCL36_CPP( const SgNode *node ) {
 		}
 	      }
 	    }
-	  }	
+	  }
 	}
       }
     }
@@ -514,7 +514,7 @@ bool DCL_C(const SgNode *node) {
 /// C++ checkers
 
 bool DCL_CPP(const SgNode *node) {
-  bool violation = false;  
+  bool violation = false;
   violation |= DCL10_CPP(node);
   violation |= DCL36_CPP(node);
   violation |= DCL_C(node);
