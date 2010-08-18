@@ -482,7 +482,11 @@ bool INT14_C( const SgNode *node ) {
  *
  * \see INT33_C
  */
-bool INT32_C( const SgNode *node ) {
+/* note: compiler gets mad if we name this function
+ * INT32_C because of this line in stdint.h:
+ * # define INT32_C(c)	c
+ */
+bool INT32C( const SgNode *node ) {
 	const SgMinusOp *negOp = isSgMinusOp(node);
 	if(!negOp)
 		return false;
@@ -596,7 +600,7 @@ bool INT_C(const SgNode *node) {
   violation |= INT12_C(node);
   violation |= INT13_C(node);
   violation |= INT14_C(node);
-  violation |= INT32_C(node);
+  violation |= INT32C(node);
   violation |= INT33_C(node);
   violation |= INT34_C(node);
   return violation;
