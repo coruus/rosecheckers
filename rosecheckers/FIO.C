@@ -145,8 +145,8 @@ bool FIO08_C( const SgNode *node ) {
 		}
 
 		if (opened
-		&& (isCallOfFunctionNamed(iFn, "close"))
-		|| isCallOfFunctionNamed(iFn, "fclose")) {
+		&& ((isCallOfFunctionNamed(iFn, "close"))
+		|| isCallOfFunctionNamed(iFn, "fclose"))) {
 			if (getRefDecl(iVar) == fd) {
 				closed = true;
 				opened = false;
