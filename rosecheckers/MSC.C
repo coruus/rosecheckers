@@ -44,7 +44,7 @@ bool MSC01_C( const SgNode *node ) {
 }
 
 /**
- * Avoid errors of addition
+ * Avoid errors of addition. This rule is now deprecated.
  *
  * \note Because of a problem with the expansion of isnan/isless/etc, this
  * rule is disabled, ROSE catches most of this on it's own, so this should not
