@@ -197,7 +197,7 @@ void DCL02_report_error(const SgInitializedName *var) {
   std::string errStr;
   bool warning;
   if (varStr.size() > len) {
-    ruleStr = "DCL31-C";
+    ruleStr = "DCL32-C";
     errStr = "Guarantee that mutually visible identifiers are unique";
     warning = false;
   } else {
