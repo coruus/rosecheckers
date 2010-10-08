@@ -24,6 +24,61 @@
 #include <boost/regex.hpp>
 
 /**
+ *
+  Returns true if the char * represented by var is modified by a function.
+ *
+ */
+bool isStringModifiedInSubnodes(const SgInitializedName *var, const SgNode *node) {
+
+    // Loop through function searching if string is modified.
+    FOREACH_SUBNODE(node, nodes, i, V_SgFunctionCallExp) {
+
+        // Get function call.
+        const SgFunctionCallExp *fnCall = (const SgFunctionCallExp *)(*i);
+        unsigned int numArgs = fnCall->get_args()->get_expressions().size();
+
+        // Check to see if string is modified by function call.
+        for (unsigned int itr = 0; itr < numArgs; itr++) {
+
+            // Skip c string functions.
+            std::string fnName = fnCall->getAssociatedFunctionSymbol()->get_name().getString();
+            if (fnName == "strchr" ||
+                fnName == "strrchr" ||
+                fnName == "strcmp" ||
+                fnName == "strncmp" ||
+                fnName == "strspn" ||
+                fnName == "strcspn" ||
+                fnName == "strlen" ||
+                fnName == "strpbrk" ||
+                fnName == "strstr" ||
+                fnName == "strdup") {
+                continue;
+            }
+
+            // Skip strcpy, strcat if string is src.
+            if (itr == 1 &&
+                (fnName == "strcpy" ||
+                fnName == "strncpy" ||
+                fnName == "strcat" ||
+                fnName == "strncat")) {
+                continue;
+            }
+
+            // Return true if char * is passed to function.
+            const SgVarRefExp *arg = isSgVarRefExp(getFnArg(fnCall, itr));
+            if (arg == NULL) {
+                continue;
+            }
+            SgName argName = arg->get_symbol()->get_name();
+            if (argName == var->get_name()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Do not store the pointer to the string returned by getenv()
  *
  * \todo Do we also need to check for putenv/setenv in the loop?
@@ -174,8 +229,15 @@ bool ENV30_C( const SgNode *node ) {
 		return false;
 	if (isConstType(var->get_type()->dereference()))
 		return false;
-	print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
-	return true;
+
+    const SgFunctionDeclaration *fnDecl = findParentOfType(node, SgFunctionDeclaration);
+
+    if (isStringModifiedInSubnodes(var, fnDecl)) {
+	    print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
+        return true;
+    }
+
+	return false;
 }
 
 /**

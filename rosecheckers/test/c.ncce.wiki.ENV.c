@@ -124,11 +124,28 @@ void ENV04() {
 
 /* ENV30_C v.41 */
 
-void ENV30() {
-  char *env = getenv("TEST_ENV");
-  env[0] = 'a';
+void ENV30_trstr(char *str, char orig, char rep) {
+  while (*str != '\0') {
+    if (*str == orig) {
+      *str = rep;
+    }
+    str++;
+  }
 }
 
+void ENV30() {
+	/* ... */
+
+	char *env = getenv("TEST_ENV");
+	if (env == NULL) {
+	  /* Handle error */
+	}
+
+	ENV30_trstr(env,'"', '_');
+
+
+	/* ... */
+}
 
 /* ENV31_C v.43 */
 
