@@ -44,66 +44,20 @@ bool MSC01_C( const SgNode *node ) {
 }
 
 /**
- * Avoid errors of addition. This rule is now deprecated.
+ * Avoid errors of addition
  *
  * \note Because of a problem with the expansion of isnan/isless/etc, this
  * rule is disabled, ROSE catches most of this on it's own, so this should not
  * be a problem
  */
 bool MSC03_C( const SgNode *node ) {
-	const SgExprStatement *exprStmt = isSgExprStatement(node);
-	if (!exprStmt) {
-		/**
-		 * Check for empty bodies
-		 */
-		const SgBasicBlock *block = NULL;
-		if (isSgIfStmt(node))
-			block = isSgBasicBlock(isSgIfStmt(node)->get_true_body());
-		else if (isSgForStatement(node))
-			block = isSgBasicBlock(isSgForStatement(node)->get_loop_body());
-		else if (isSgWhileStmt(node))
-			block = isSgBasicBlock(isSgWhileStmt(node)->get_body());
-		else
-			return false;
-
-		if (!block
-		|| !isCompilerGeneratedNode(block))
-			return false;
-	} else {
-		/**
-		 * Check for statements with no effect
-		 */
-		const SgBasicBlock *parent = isSgBasicBlock(exprStmt->get_parent());
-		if (!parent)
-			return false;
-
-		/**
-		 * Ignore the last statement in a block because it could be an implicit
-		 * return value, this is GNU extension
-		 */
-		if ((exprStmt == isSgExprStatement(parent->get_statements().back()))
-		&&  (!isSgFunctionDefinition(parent->get_parent())))
-			return false;
-
-		const SgExpression *expr = exprStmt->get_expression();
-		assert(expr);
-
-		if (isCompilerGeneratedNode(expr))
-			return false;
-
-		if(isSgFunctionCallExp(expr)
-		|| isSgAssignOp(expr)
-		|| isSgConditionalExp(expr)
-		|| isAnyAssignOp(expr)
-		|| isSgPointerDerefExp(expr)
-		|| isSgPlusPlusOp(expr)
-		|| isSgMinusMinusOp(expr)
-		|| isSgDeleteExp(expr))
-			return false;
-	}
-
-	print_error(node, "MSC03-C", "Avoid errors of addition", true);
-	return true;
+	/* This rule has been deprecated in favor of the following rules
+	 * EXP15-C. Do not place a semicolon on the same line as an if, for, or while statement
+     	 * MSC12-C. Detect and remove code that has no effect
+	 * 
+	 * Currently, only MSC12-C is actually enabled by rosecheckers.
+	 */
+	return false;
 }
 
 /**
@@ -137,6 +91,50 @@ bool MSC05_C( const SgNode *node ) {
 	}
 
 	print_error(node, "MSC05-C", "Do not manipulate time_t typed values directly", true);
+	return true;
+}
+
+/**
+ * Detect and remove code that has no effect
+ */
+bool MSC12_C( const SgNode *node ) {
+	const SgExprStatement *exprStmt = isSgExprStatement(node);
+	if (exprStmt) {
+		/**
+		 * Check for statements with no effect
+		 */
+		const SgBasicBlock *parent = isSgBasicBlock(exprStmt->get_parent());
+		if (!parent)
+			return false;
+
+		/**
+		 * Ignore the last statement in a block because it could be an implicit
+		 * return value, this is GNU extension
+		 */
+		if ((exprStmt == isSgExprStatement(parent->get_statements().back()))
+		&&  (!isSgFunctionDefinition(parent->get_parent())))
+			return false;
+
+		const SgExpression *expr = exprStmt->get_expression();
+		assert(expr);
+
+		if (isCompilerGeneratedNode(expr))
+			return false;
+
+		if(isSgFunctionCallExp(expr)
+		|| isSgAssignOp(expr)
+		|| isSgConditionalExp(expr)
+		|| isAnyAssignOp(expr)
+		|| isSgPointerDerefExp(expr)
+		|| isSgPlusPlusOp(expr)
+		|| isSgMinusMinusOp(expr)
+		|| isSgDeleteExp(expr))
+			return false;
+	} else {
+		return false;
+	}
+
+	print_error(node, "MSC12-C", "Detect and remove code that has no effect", true);
 	return true;
 }
 
@@ -234,8 +232,8 @@ bool MSC31_C( const SgNode *node ) {
 bool MSC_C(const SgNode *node) {
   bool violation = false;
   violation |= MSC01_C(node);
-  violation |= MSC03_C(node);
   violation |= MSC05_C(node);
+  violation |= MSC12_C(node);
 //  violation |= MSC13_C(node);
   violation |= MSC30_C(node);
   violation |= MSC31_C(node);

@@ -651,6 +651,43 @@ bool EXP05_CPP( const SgNode *node ) {
   return result;
 }
 
+/**
+ * EXP15-C. Do not place a semicolon on the same line as an if, for, or while statement
+ * 
+ * Currently disabled as there is no good way to diagnose the presence of a semicolon
+ * on the given line.
+ *
+ */
+bool EXP15_C( const SgNode *node ) {
+	const SgExprStatement *exprStmt = isSgExprStatement(node);
+	char str[50];
+	if (exprStmt) {
+		/**
+		 * Check for empty bodies
+		 */
+		const SgBasicBlock *block = NULL;
+		if (isSgIfStmt(node)) {
+			block = isSgBasicBlock(isSgIfStmt(node)->get_true_body());
+		}
+		else if (isSgForStatement(node)) {
+			block = isSgBasicBlock(isSgForStatement(node)->get_loop_body());
+		}
+		else if (isSgWhileStmt(node)) {
+			block = isSgBasicBlock(isSgWhileStmt(node)->get_body());
+		}
+		else
+			return false;
+
+		if (!block || !isCompilerGeneratedNode(block))
+			return false;
+	} else {
+		return false;
+	}
+
+	print_error(node, "EXP15-C", "Do not place a semicolon on the same line as an if, for, or while statement", true);
+	return true;
+}
+
 /* EXP17-CPP. Treat relational and equality operators as if they were nonassociative */
 bool EXP17_CPP( const SgNode *node ) {
   // Here, we examine only predefined relational and equality operators, because who knows what an
@@ -707,6 +744,7 @@ bool EXP_C(const SgNode *node) {
   violation |= EXP09_C(node);
   violation |= EXP11_C(node);
   violation |= EXP12_C(node);
+  //violation |= EXP15_C(node);
   violation |= EXP30_C(node);
   violation |= EXP32_C(node);
   violation |= EXP34_C(node);

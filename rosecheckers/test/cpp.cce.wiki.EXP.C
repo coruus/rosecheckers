@@ -213,9 +213,15 @@ void EXP12() {
 }
 
 void EXP15() {
-  uint8_t port = 0x5aU;
-  uint8_t result_8 = (static_cast<uint8_t> (~port)) >> 4;
-  cout << result_8 << endl;
+  int a = 2;
+  int b = 3;
+  cout <<"Originally, a = "<<a <<" and b = "<< b<< endl;
+  if (a==b) {
+         a = a + 1;
+         b = b + 1;
+         cout<<"Incrementing a and b since they're equal"<<endl;
+  }
+  cout<< "Now, a = "<< a <<" b = "<< b << endl;
 }
 
 void EXP17() {
