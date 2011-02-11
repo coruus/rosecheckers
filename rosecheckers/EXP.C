@@ -298,6 +298,7 @@ bool EXP12_C( const SgNode *node ) {
   const SgFunctionRefExp *ref = isSgFunctionRefExp(node);
   /** WHITE LIST */
   if ((ref == NULL)
+      || isCallOfFunctionNamed(ref, "free")
       || isCallOfFunctionNamed(ref, "close")
       || isCallOfFunctionNamed(ref, "fclose")
       || isCallOfFunctionNamed(ref, "fflush")
