@@ -176,7 +176,7 @@ bool INT06_C( const SgNode *node ) {
 			|| isCallOfFunctionNamed(fnRef,"atol")
 			|| isCallOfFunctionNamed(fnRef,"atoll")
 			|| isCallOfFunctionNamed(fnRef,"atoq")) {
-		print_error(node,"INT01-C", "Use strtol() or a related function to convert a string token to an integer", true);
+		print_error(node,"INT05-C", "Use strtol() or a related function to convert a string token to an integer", true);
 		return true;
 	}
 
