@@ -1,52 +1,18 @@
 /*
- * Copyright (c) 2007-2012 Carnegie Mellon University.
- * 
- * All Rights Reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- * 
- * 1. Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following acknowledgments
- * and disclaimers.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the
- * distribution.
- * 
- * 3. The names “Carnegie Mellon University,” "CERT” and/or “Software
- * Engineering Institute" shall not be used to endorse or promote
- * products derived from this software without prior written
- * permission. For written permission, please contact
- * permission@sei.cmu.edu.
- * 
- * 4. Products derived from this software may not be called "CERT" nor
- * may "CERT" appear in their names without prior written permission
- * of permission@sei.cmu.edu.
- * 
- * 5. Redistributions of any form whatsoever must retain the following
- * acknowledgment:
- * 
- * "This product includes software developed by CERT with funding and
- * support from the Department of Defense under Contract No. FA
- * 8721-05-C-0003.  The U.S. Government's rights to use, modify,
- * reproduce, release, perform, display, or disclose this material are
- * restricted by the Rights in Technical Data-Noncommercial Items
- * clauses (DFAR 252-227.7013 and DFAR 252-227.7013 Alternate I
- * contained in the foregoing identified contract.
- * 
- * THIS SOFTWARE IS PROVIDED BY CARNEGIE MELLON UNIVERSITY “AS IS” AND
- * CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER
- * EXPRESS OR IMPLIED, AS TO ANY MATTER, AND ALL SUCH WARRANTIES,
- * INCLUDING WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE, ARE EXPRESSLY DISCLAIMED.  WITHOUT LIMITING THE
- * GENERALITY OF THE FOREGOING, CARNEGIE MELLON UNIVERSITY DOES NOT
- * MAKE ANY WARRANTY OF ANY KIND RELATING TO EXCLUSIVITY,
- * INFORMATIONAL CONTENT, ERROR-FREE OPERATION, RESULTS TO BE OBTAINED
- * FROM USE, FREEDOM FROM PATENT, TRADEMARK AND COPYRIGHT INFRINGEMENT
- *  AND/OR FREEDOM FROM THEFT OF TRADE SECRETS.”
+ * Copyright (C) 2007-2009 by Carnegie Mellon University.
+ * All rights reserved.
+ *
+ * Permission to use this software and its documentation for any purpose is hereby granted,
+ * provided that the above copyright notice appear and that both that copyright notice and
+ * this permission notice appear in supporting documentation, and that the name of CMU not
+ * be used in advertising or publicity pertaining to distribution of the software without
+ * specific, written prior permission.
+ *
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /**
@@ -71,11 +37,11 @@ public:
   bool operator ()( const SgDeclarationStatement *ds ) {
     if( const SgVariableDeclaration *vardecl = isSgVariableDeclaration( ds ) ) {
       const SgAccessModifier &mod
-	= const_cast<SgVariableDeclaration *>(vardecl)->get_declarationModifier().get_accessModifier();
+        = const_cast<SgVariableDeclaration *>(vardecl)->get_declarationModifier().get_accessModifier();
       if( mod.isPublic() ) {
-	lastPublicVarDecl_ = vardecl;
-	foundPublic_ = true;
-	return true;
+        lastPublicVarDecl_ = vardecl;
+        foundPublic_ = true;
+        return true;
       }
     }
     return false;
@@ -93,8 +59,8 @@ bool OBJ00_CPP( const SgNode *node ) {
       IsPublicData op;
       forEachClassMemberShortCircuit( classdef, op );
       if( op.foundPublic() ) {
-	print_error(op.publicDeclaration(), "OBJ00-CPP", "Public data member", true);
-	return true;
+        print_error(op.publicDeclaration(), "OBJ00-CPP", "Public data member", true);
+        return true;
       }
     }
   }
@@ -110,8 +76,8 @@ public:
   bool operator ()( const SgNode *node ) {
     if( const SgFunctionDeclaration *fdecl = isSgFunctionDeclaration( node ) ) {
       if( fdecl->get_specialFunctionModifier().isConversion() ) {
-	++count_;
-	return true;
+        ++count_;
+        return true;
       }
     }
     return false;
@@ -127,7 +93,7 @@ bool OBJ01_CPP( const SgNode *node ) {
     ConvOpCount op;
     forEachClassMember( classdef, op );
     if( op.count() > 1 ) {
-      print_error( classdef,  "OBJ01_CPP", ("Class has " + utostring(op.count()) + " conversion functions.").c_str() , true);
+      print_error( classdef,  "OBJ01-CPP", ("Class has " + utostring(op.count()) + " conversion functions.").c_str() , true);
       return true;
     }
   }
@@ -144,10 +110,10 @@ bool OBJ02_CPP( const SgNode *node ) {
     getMemberInfo( members, names );
     for( MemberNameInfoListIterator i = names.begin(); i != names.end(); ++i ) { // for each name
       if( isCopyAssignmentDeclaration( i->node_ ) ) // Note copy assign is not inherited!
-	continue;
+        continue;
       if( searchInheritedMembers( cdef, dlist, IsNonVirtualFunctionDeclarationNamed(i->id_) ) ) {
-	print_error( i->node_,  "OBJ02_CPP",  (std::string( i->id_ ) + " hides inherited nonvirtual function.").c_str() , true);
-	result = true;
+        print_error( i->node_,  "OBJ02-CPP",  (std::string( i->id_ ) + " hides inherited nonvirtual function.").c_str() , true);
+        result = true;
       }
     }
   }
@@ -157,25 +123,26 @@ bool OBJ02_CPP( const SgNode *node ) {
 /* OBJ03-CPP. Prefer not to overload virtual functions */
 bool OBJ03_CPP( const SgNode *node ) { 
   bool result = false;
+
   if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
     SgDeclarationStatementPtrList dlist;
     const SgDeclarationStatementPtrList &members = cdef->get_members();
     for( SgDeclarationStatementPtrList::const_iterator i = members.begin(); i != members.end(); ++i ) { // n**2 in members
       if( const SgFunctionDeclaration *fdec1 = isSgFunctionDeclaration( *i ) ) {
-	if( fdec1->get_functionModifier().isVirtual() ) {
-	  const std::string name1 = fdec1->get_name().getString();
-	  for( SgDeclarationStatementPtrList::const_iterator j = members.begin(); j != members.end(); ++j ) {
-	    if( *j == *i ) // don't compare with self
-	      continue;
-	    if( const SgFunctionDeclaration *fdec2 = isSgFunctionDeclaration( *j ) ) {
-	      const std::string name2 = fdec2->get_name().getString();
-	      if( name1 == name2 ) {
-		result = true;
-		print_error( fdec1,  "OBJ03_CPP",  ("Overloaded virtual function on line " + utostring( fdec2->get_file_info()->get_line() )).c_str() , true);
-	      }
-	    }
-	  }
-	}
+        if( fdec1->get_functionModifier().isVirtual() ) {
+          const std::string name1 = fdec1->get_name().getString();
+          for( SgDeclarationStatementPtrList::const_iterator j = members.begin(); j != members.end(); ++j ) {
+            if( *j == *i ) // don't compare with self
+              continue;
+            if( const SgFunctionDeclaration *fdec2 = isSgFunctionDeclaration( *j ) ) {
+              const std::string name2 = fdec2->get_name().getString();
+              if( name1 == name2 ) {
+                result = true;
+                print_error( fdec1,  "OBJ03-CPP",  ("Overloaded virtual function " + name1 + " on line " + utostring( fdec2->get_file_info()->get_line() )).c_str() , true);
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -191,16 +158,16 @@ bool OBJ04_CPP( const SgNode *node ) {
     const SgDeclarationStatementPtrList &members = cdef->get_members();
     for( SgDeclarationStatementPtrList::const_iterator i = members.begin(); i != members.end(); ++i ) { // n**2 in members
       if( SgFunctionDeclaration *fdec = isSgFunctionDeclaration( *i ) ) {
-	if( fdec->get_functionModifier().isVirtual() ) {
-	  const SgInitializedNamePtrList &args = fdec->get_args();
-	  for( SgInitializedNamePtrList::const_iterator i = args.begin(); i != args.end(); ++i ) {
-	    if( (*i)->get_initializer() ) {
-	      result = true;
-	      print_error( fdec,  "OBJ04-CPP",  (fdec->get_name().getString() + " is a virtual function with default initializer.").c_str() , true);
-	      break; // avoid multiple reports for multiple initializers
-	    }
-	  }
-	}
+        if( fdec->get_functionModifier().isVirtual() ) {
+          const SgInitializedNamePtrList &args = fdec->get_args();
+          for( SgInitializedNamePtrList::const_iterator i = args.begin(); i != args.end(); ++i ) {
+            if( (*i)->get_initializer() ) {
+              result = true;
+              print_error( fdec,  "OBJ04-CPP",  (fdec->get_name().getString() + " is a virtual function with default initializer.").c_str() , true);
+              break; // avoid multiple reports for multiple initializers
+            }
+          }
+        }
       }
     }
   }
@@ -234,10 +201,10 @@ void handleCallToVirtualMemberOfThisClass( const SgFunctionCallExp *fcall, const
       //int nq = mfre->get_need_qualifier();
       // XXXcan't seem to find a use of SgQualifiedName anywhere either...
       if( functionCallClassDef == cdtorClassDef ) {
-	print_error(fcall, "OBJ30-CPP", "Calling base class virtual in constructor or destructor", false);
+        print_error(fcall, "OBJ30-CPP", "Calling base class virtual in constructor or destructor", false);
       }
       else if( isBaseOf( cdtorClassDef, functionCallClassDef ) ) {
-	print_error(fcall, "OBJ30-CPP", "Calling base class virtual in constructor or destructor", false);
+        print_error(fcall, "OBJ30-CPP", "Calling base class virtual in constructor or destructor", false);
       }
     }
   }
@@ -262,14 +229,14 @@ bool OBJ30_CPP( const SgNode *node ) { // Avoid calling your own virtual functio
     const SgFunctionDeclaration *fdec = fdef->get_declaration();
     if( fdec->get_specialFunctionModifier().isConstructor() || fdec->get_specialFunctionModifier().isDestructor() ) {
       if( const SgMemberFunctionDeclaration *mfdec = isSgMemberFunctionDeclaration( fdec ) ) {
-	// get the type of the class to which ctor or dtor belongs
-	const SgClassDefinition *cdef = mfdec->get_class_scope();
-	//const SgClassDeclaration *cdecl = cdef->get_declaration();
-	//SgClassType *ctype = cdecl->get_type();
-	const SgBasicBlock *body = fdef->get_body();
-	//SgStatementPtrList &stats = body->get_statements();
-	FunctionBodyTraversal bt( cdef );
-	bt.traverse( const_cast<SgBasicBlock *>(body), postorder );
+        // get the type of the class to which ctor or dtor belongs
+        const SgClassDefinition *cdef = mfdec->get_class_scope();
+        //const SgClassDeclaration *cdecl = cdef->get_declaration();
+        //SgClassType *ctype = cdecl->get_type();
+        const SgBasicBlock *body = fdef->get_body();
+        //SgStatementPtrList &stats = body->get_statements();
+        FunctionBodyTraversal bt( cdef );
+        bt.traverse( const_cast<SgBasicBlock *>(body), postorder );
       }
     }
   }
@@ -285,7 +252,7 @@ bool OBJ32_CPP( const SgNode *node ) {
     const SgFunctionModifier &mod = fdecl->get_functionModifier();
     if( !mod.isExplicit() ) {
       //XXX returns 0 for instantiated template
-      print_error( fdecl,  "OBJ32_CPP",  (fdecl->get_name().getString() + " is a non-explicit single-argument constructor.").c_str() , false);
+      print_error( fdecl,  "OBJ32-CPP",  (fdecl->get_name().getString() + " is a non-explicit single-argument constructor.").c_str() , false);
       return true;
     }
   }

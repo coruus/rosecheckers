@@ -1,52 +1,18 @@
 /*
- * Copyright (c) 2007-2012 Carnegie Mellon University.
- * 
- * All Rights Reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- * 
- * 1. Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following acknowledgments
- * and disclaimers.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the
- * distribution.
- * 
- * 3. The names “Carnegie Mellon University,” "CERT” and/or “Software
- * Engineering Institute" shall not be used to endorse or promote
- * products derived from this software without prior written
- * permission. For written permission, please contact
- * permission@sei.cmu.edu.
- * 
- * 4. Products derived from this software may not be called "CERT" nor
- * may "CERT" appear in their names without prior written permission
- * of permission@sei.cmu.edu.
- * 
- * 5. Redistributions of any form whatsoever must retain the following
- * acknowledgment:
- * 
- * "This product includes software developed by CERT with funding and
- * support from the Department of Defense under Contract No. FA
- * 8721-05-C-0003.  The U.S. Government's rights to use, modify,
- * reproduce, release, perform, display, or disclose this material are
- * restricted by the Rights in Technical Data-Noncommercial Items
- * clauses (DFAR 252-227.7013 and DFAR 252-227.7013 Alternate I
- * contained in the foregoing identified contract.
- * 
- * THIS SOFTWARE IS PROVIDED BY CARNEGIE MELLON UNIVERSITY “AS IS” AND
- * CARNEGIE MELLON UNIVERSITY MAKES NO WARRANTIES OF ANY KIND, EITHER
- * EXPRESS OR IMPLIED, AS TO ANY MATTER, AND ALL SUCH WARRANTIES,
- * INCLUDING WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE, ARE EXPRESSLY DISCLAIMED.  WITHOUT LIMITING THE
- * GENERALITY OF THE FOREGOING, CARNEGIE MELLON UNIVERSITY DOES NOT
- * MAKE ANY WARRANTY OF ANY KIND RELATING TO EXCLUSIVITY,
- * INFORMATIONAL CONTENT, ERROR-FREE OPERATION, RESULTS TO BE OBTAINED
- * FROM USE, FREEDOM FROM PATENT, TRADEMARK AND COPYRIGHT INFRINGEMENT
- *  AND/OR FREEDOM FROM THEFT OF TRADE SECRETS.”
+ * Copyright (C) 2007-2009 by Carnegie Mellon University.
+ * All rights reserved.
+ *
+ * Permission to use this software and its documentation for any purpose is hereby granted,
+ * provided that the above copyright notice appear and that both that copyright notice and
+ * this permission notice appear in supporting documentation, and that the name of CMU not
+ * be used in advertising or publicity pertaining to distribution of the software without
+ * specific, written prior permission.
+ *
+ * CMU DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL CMU BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, RISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /**
@@ -147,7 +113,7 @@ bool MEM04_C( const SgNode *node ) {
       ref = isSgVarRefExp(*i);
       assert(ref);
       if ((var == getRefDecl(ref)) && isTestForNullOp(ref)) {
-	return false;
+        return false;
       }
     }
     /**
@@ -159,9 +125,9 @@ bool MEM04_C( const SgNode *node ) {
       assert(op);
       ref = isSgVarRefExp(op->get_lhs_operand());
       if (!ref || (getRefDecl(ref) != var))
-	continue;
+        continue;
       if (!isZeroVal(removeCasts(op->get_rhs_operand())))
-	return false;
+        return false;
     }
     const SgAssignInitializer *init = isSgAssignInitializer(var->get_initptr());
     if(init && !isZeroVal(removeCasts(init->get_operand()))) {
@@ -211,17 +177,17 @@ bool MEM07_C( const SgNode *node ) {
     const SgStatement *prevStat = findInBlockByOffset(node, -1);
     if (prevStat) {
       FOREACH_SUBNODE(prevStat, nodes, i, V_SgBinaryOp) {
-	const SgBinaryOp *binOp = isSgBinaryOp(*i);
-	assert(binOp);
-	if (!isAnyComparisonOp(binOp))
-	  continue;
-	const SgVarRefExp *lhs = isSgVarRefExp(binOp->get_lhs_operand());
-	const SgVarRefExp *rhs = isSgVarRefExp(binOp->get_rhs_operand());
-	if((lhs && nmembRef && (getRefDecl(lhs)==getRefDecl(nmembRef)))
-	   || (lhs && sizeRef  && (getRefDecl(lhs)==getRefDecl(sizeRef)))
-	   || (rhs && nmembRef && (getRefDecl(rhs)==getRefDecl(nmembRef)))
-	   || (rhs && sizeRef  && (getRefDecl(rhs)==getRefDecl(sizeRef))))
-	  return false;
+        const SgBinaryOp *binOp = isSgBinaryOp(*i);
+        assert(binOp);
+        if (!isAnyComparisonOp(binOp))
+          continue;
+        const SgVarRefExp *lhs = isSgVarRefExp(binOp->get_lhs_operand());
+        const SgVarRefExp *rhs = isSgVarRefExp(binOp->get_rhs_operand());
+        if((lhs && nmembRef && (getRefDecl(lhs)==getRefDecl(nmembRef)))
+           || (lhs && sizeRef  && (getRefDecl(lhs)==getRefDecl(sizeRef)))
+           || (rhs && nmembRef && (getRefDecl(rhs)==getRefDecl(nmembRef)))
+           || (rhs && sizeRef  && (getRefDecl(rhs)==getRefDecl(sizeRef))))
+          return false;
       }
     }
   } else {
@@ -299,7 +265,7 @@ bool MEM31_C(const SgNode *node) {
 		return false;
 
 	const SgVarRefExp* ref = isSgVarRefExp(
-			getFnArg(isSgFunctionRefExp(node), 0));
+                                         getFnArg(isSgFunctionRefExp(node), 0));
 
 	if (ref == NULL)
 		return false;
@@ -328,22 +294,22 @@ bool MEM31_C(const SgNode *node) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		if (iFn && isCallOfFunctionNamed(iFn, "free")) {
 			const SgVarRefExp* ref2 = isSgVarRefExp(removeCasts(
-					getFnArg(iFn, 0)));
+                                                          getFnArg(iFn, 0)));
 			if (!ref2)
 				continue;
 			const SgInitializedName* ref2_var = getRefDecl(ref2);
 
 			if (ref_var == ref2_var) {
 				print_error(node, "MEM31-C",
-						"Free dynamically allocated memory exactly once.");
+                    "Free dynamically allocated memory exactly once.");
 				return true;
 			}
 		} else if (isSgAssignOp(*i)) {
 			const SgVarRefExp *ref2 = isSgVarRefExp(
-					isSgAssignOp(*i)->get_lhs_operand());
+                                              isSgAssignOp(*i)->get_lhs_operand());
 			if (ref2 != NULL) {
 				const SgInitializedName* ref2_var = ref2 ? getRefDecl(ref2)
-						: NULL;
+          : NULL;
 
 				if (ref_var == ref2_var)
 					return false;
@@ -364,7 +330,7 @@ bool MEM34_C( const SgNode *node ) {
   if (!fnRef)
     return false;
   if (!(isCallOfFunctionNamed(fnRef, "free")
-	||isCallOfFunctionNamed(fnRef, "realloc")))
+        ||isCallOfFunctionNamed(fnRef, "realloc")))
     return false;
 
   const SgVarRefExp *varRef = isSgVarRefExp(removeImplicitPromotions(getFnArg(fnRef,0)));
@@ -399,7 +365,7 @@ bool MEM34_C( const SgNode *node ) {
   do {
     if (block) {
       if (block == *i) {
-	block = NULL;
+        block = NULL;
       }
       continue;
     }
@@ -412,28 +378,28 @@ bool MEM34_C( const SgNode *node ) {
 
     if (iFn) {
       if (!(isCallOfFunctionNamed(iFn, "malloc")
-	    ||isCallOfFunctionNamed(iFn, "calloc")
-	    ||isCallOfFunctionNamed(iFn, "realpath")
-	    ||isCallOfFunctionNamed(iFn, "strdup")
-	    ||isCallOfFunctionNamed(iFn, "realloc")
-	    ||isCallOfFunctionNamed(iFn, "getline")))
-	continue;
+            ||isCallOfFunctionNamed(iFn, "calloc")
+            ||isCallOfFunctionNamed(iFn, "realpath")
+            ||isCallOfFunctionNamed(iFn, "strdup")
+            ||isCallOfFunctionNamed(iFn, "realloc")
+            ||isCallOfFunctionNamed(iFn, "getline")))
+        continue;
 
       if(isCallOfFunctionNamed(iFn, "getline")) {
-	const SgExpression *argExp = getFnArg(fnRef, 0);
-	const SgVarRefExp *varRefExp = isSgVarRefExp(argExp);
-	if(!varRefExp)
-	  continue;
+        const SgExpression *argExp = getFnArg(fnRef, 0);
+        const SgVarRefExp *varRefExp = isSgVarRefExp(argExp);
+        if(!varRefExp)
+          continue;
 
-	if(var == getRefDecl(varRefExp))
-	  return false;
+        if(var == getRefDecl(varRefExp))
+          return false;
       }
 
       if (var == getVarAssignedTo(iFn, NULL))
-	return false;
+        return false;
     } else if (iVar && (getRefDecl(iVar) == var)) {
       if (varWrittenTo(iVar)) {
-	break;
+        break;
       }
     }
   } while ((i--) != nodes.begin());
@@ -446,19 +412,20 @@ bool MEM34_C( const SgNode *node ) {
 /* MEM41-CPP. Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources */
 bool MEM41_CPP( const SgNode *node ) {
   bool ret = false;
-  if( const SgClassDefinition *cdef = isSgClassDefinition( node ) ) {
+  const SgClassDefinition *cdef;
+  if ((cdef = isSgClassDefinition( node)) != NULL) {
     // Skip the check if this is a POD (like a C struct).
     if( !isPODClass( cdef ) ) {
       // First, see which of these three functions the class has.
       size_t count = hasExplicitCopyCtor( cdef ) + hasExplicitCopyAssignment( cdef ) + hasExplicitDtor( cdef );
       if( count > 0 && count < 3 ) {
-	print_error(node, "MEM41-CPP", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", true);
-	ret = true;
+        print_error(node, "MEM41-CPP", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", true);
+        ret = true;
       }
       //XXX more...how do we know if a class manages resources?  Punt and just check for a pointer member?
       if( hasPointerMember( cdef ) && count < 3 ) { //XXX should omit this check for unions
-	print_error(node, "MEM41-CPP", "A class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", true);
-	ret = true;
+        print_error(node, "MEM41-CPP", "A class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", true);
+        ret = true;
       }
     }
   }
