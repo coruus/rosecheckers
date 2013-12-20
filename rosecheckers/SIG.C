@@ -70,31 +70,31 @@ using namespace std;
  *
  * \note obsolete
  */
-bool SIG00_C( const SgNode *node ) {
+bool SIG00_C(const SgNode *node) {
   static set<const SgFunctionSymbol*> All_Handlers;
 
-  if (!isCallOfFunctionNamed( node, "signal")) return false;
-  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+  if (!isCallOfFunctionNamed(node, "signal")) return false;
+  const SgFunctionRefExp* sig_fn = isSgFunctionRefExp(node);
   assert(sig_fn != NULL);
-  const SgExpression* ref = getFnArg( sig_fn, 1);
-  const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+  const SgExpression* ref = getFnArg(sig_fn, 1);
+  const SgFunctionRefExp* handler = isSgFunctionRefExp(ref);
   if (handler == NULL) return false; // no signal handler
   const SgFunctionSymbol* symbol = handler->get_symbol();
 
   // We can excuse any 1-arg function assigning itself as a handler
   const SgNode* encloser = findParentOfType(node, SgFunctionDefinition);
   if (encloser == handler->get_symbol()->get_declaration()->get_definition()) {
-    const SgVarRefExp* signal_var = isSgVarRefExp( getFnArg( sig_fn, 0));
+    const SgVarRefExp* signal_var = isSgVarRefExp(getFnArg(sig_fn, 0));
     const SgFunctionParameterList *plist = handler->get_symbol()->get_declaration()->get_parameterList();
     if (plist->get_args().size() >= 1) {
       const SgInitializedName* arg0 = *(plist->get_args().begin());
       if (signal_var->get_symbol()->get_declaration() == arg0)
-	return false;
+        return false;
     }
   }
 
-  if (All_Handlers.insert( symbol).second) return false;
-  print_error( node, "SIG00-C", "Avoid using the same handler for multiple signals", true);
+  if (All_Handlers.insert(symbol).second) return false;
+  print_error(node, "SIG00-C", "Avoid using the same handler for multiple signals", true);
   return true;
 }
 #endif
@@ -121,7 +121,7 @@ set<SgName> load_async_fns() {
     "uname unlink utime wait waitpid write";
 
   set<SgName> functions;
-  istringstream i( posix_async_safe_fns);
+  istringstream i(posix_async_safe_fns);
   string name;
   while (!i.eof()) {
     i >> name;
@@ -143,11 +143,11 @@ vector<SgName> Async_Stack;
 const SgFunctionRefExp* non_async_fn(const SgFunctionRefExp* handler) {
 	const SgName name = handler->get_symbol()->get_name();
 
-	if (Async_Fns.find( name) != Async_Fns.end())
+	if (Async_Fns.find(name) != Async_Fns.end())
 		return NULL; // this fn is async-save
 
 	/// Recursive functions are assumed async-safe
-	if (find( Async_Stack.begin(), Async_Stack.end(), name) != Async_Stack.end())
+	if (find(Async_Stack.begin(), Async_Stack.end(), name) != Async_Stack.end())
 		return NULL;
 
 	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
@@ -155,12 +155,12 @@ const SgFunctionRefExp* non_async_fn(const SgFunctionRefExp* handler) {
 	if (def == NULL) return handler;
 
 	/// Walk through definition ensuring that all function calls are async-safe
-	Async_Stack.push_back( name);
+	Async_Stack.push_back(name);
 	const SgFunctionRefExp* result = NULL;
-	FOREACH_SUBNODE( def, nodes, i, V_SgFunctionRefExp) {
+	FOREACH_SUBNODE(def, nodes, i, V_SgFunctionRefExp) {
 		const SgFunctionRefExp* fn_ref = isSgFunctionRefExp(*i);
-		assert( fn_ref != NULL);
-		if (non_async_fn( fn_ref)) {
+		assert(fn_ref != NULL);
+		if (non_async_fn(fn_ref)) {
 			result = fn_ref;
 			break;
 		}
@@ -169,7 +169,7 @@ const SgFunctionRefExp* non_async_fn(const SgFunctionRefExp* handler) {
 
 	/// If no unsafe functions called, add to async-safe set
 	if (result == NULL)
-		Async_Fns.insert( name);
+		Async_Fns.insert(name);
 	return result;
 }
 
@@ -177,100 +177,32 @@ const SgFunctionRefExp* non_async_fn(const SgFunctionRefExp* handler) {
 /**
  * Call only async-safe functions in a signal handler
  */
-bool SIG30_C( const SgNode *node ) {
-	const SgFunctionRefExp* fnRef = isSgFunctionRefExp( node);
+bool SIG30_C(const SgNode *node) {
+	const SgFunctionRefExp* fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "signal")))
 		return false;
 	const SgExpression* ref = getFnArg(fnRef, 1);
 	if (!ref)
 		return false;
-	const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+	const SgFunctionRefExp* handler = isSgFunctionRefExp(ref);
 	if (handler == NULL)
 		return false; // no signal handler
-	const SgFunctionRefExp* bad_node = non_async_fn( handler);
+	const SgFunctionRefExp* bad_node = non_async_fn(handler);
 	if (bad_node == NULL)
 		return false;
-	print_error( bad_node, "SIG30-C", ("Call only asynchronous-safe functions within signal handlers: " + bad_node->get_symbol()->get_name().getString()).c_str());
+	print_error(bad_node, "SIG30-C", ("Call only asynchronous-safe functions within signal handlers: " + bad_node->get_symbol()->get_name().getString()).c_str());
 	return true;
-}
-
-/**
- * Do not access or modify shared objects in a signal handler
- *
- * Specifically, this rule only ensures that any variable referenced is either
- * local or is static volatile sig_atomic_t
- */
-bool SIG31_C( const SgNode *node ) {
-	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
-	if (!(sig_fn && isCallOfFunctionNamed(sig_fn, "signal")))
-		return false;
-
-	const SgFunctionRefExp* handler = isSgFunctionRefExp(getFnArg(sig_fn,1));
-	if (handler == NULL)
-		return false; // no signal handler
-	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
-
-	/**
-	 * Added because of C++ code
-	 */
-	if (!def)
-		return false;
-	FOREACH_SUBNODE(def, nodes, i, V_SgVarRefExp) {
-		const SgVarRefExp* var_ref = isSgVarRefExp(*i);
-		assert( var_ref != NULL);
-
-		SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
-		assert( var_decl != NULL);
-
-		const SgNode* encloser = findParentOfType(var_decl, SgFunctionParameterList);
-		if (encloser != NULL)
-			continue; // variable is function arg
-
-		// We only care about global variables really
-		const SgInitializedName* decl = getRefDecl(var_ref);
-		assert(decl);
-		if (!isGlobalVar(decl))
-			continue;
-
-		const SgType* var_type = var_ref->get_type();
-
-		// We assume that sig_atomic_t is a typedef (not a macro)
-		static const string sig_atomic_typename = "sig_atomic_t";
-		const SgNamedType* named_type = isSgNamedType(stripModifiers(var_type));
-
-		bool compliant = true;
-		if (!isVolatileType(var_type))
-			compliant = false;
-		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
-			compliant = false;
-
-		if (!isGlobalVar(decl) && !isStaticVar(decl))
-			compliant = false;
-#if 0
-		const SgAssignOp* assignment = isSgAssignOp( var_ref->get_parent());
-		if (assignment == NULL)
-			compliant = false;
-		else if (assignment->get_lhs_operand() != var_ref)
-			compliant = false;
-#endif
-		if (compliant)
-			continue;
-
-		print_error( *i, "SIG31-C", "Do not access or modify shared objects in a signal handler");
-		return true;
-	}
-	return false;
 }
 
 /**
  * Do not call longjmp() from within a signal handler
  */
-bool SIG32_C( const SgNode *node ) {
-	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp( node);
+bool SIG32_SIG30_C(const SgNode *node) {
+	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp(node);
 	if (!(sig_fn && isCallOfFunctionNamed(sig_fn, "signal")))
 		return false;
-	const SgExpression* ref = getFnArg( sig_fn, 1);
-	const SgFunctionRefExp* handler = isSgFunctionRefExp( ref);
+	const SgExpression* ref = getFnArg(sig_fn, 1);
+	const SgFunctionRefExp* handler = isSgFunctionRefExp(ref);
 	if (handler == NULL)
 		return false; // no signal handler
 	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
@@ -280,19 +212,20 @@ bool SIG32_C( const SgNode *node ) {
 	 */
 	if (!def)
 		return false;
-	FOREACH_SUBNODE(def,nodes, i, V_SgFunctionRefExp ) {
+	FOREACH_SUBNODE(def,nodes, i, V_SgFunctionRefExp) {
 		if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "longjmp")) {
-			print_error( *i, "SIG32-C", "Do not call longjmp() from within a signal handler");
+			print_error(*i, "SIG30-C", "Do not call longjmp() from within a signal handler");
 			return true;
 		}
 	}
 	return false;
 }
 
+
 /**
  * Do not recursively invoke the raise() function
  */
-bool SIG33_C( const SgNode *node ) {
+bool SIG33_SIG30_C(const SgNode *node) {
 	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
 	if (!(sigRef && isCallOfFunctionNamed(sigRef, "signal")))
 		return false;
@@ -334,9 +267,9 @@ bool SIG33_C( const SgNode *node ) {
 		if (isCallOfFunctionNamed(fnCall, "raise")) {
 			const SgIntVal *raiseInt = isSgIntVal(getFnArg(fnCall, 0));
 			if (!raiseInt
-			|| (raiseInt->get_value() != signum))
+          || (raiseInt->get_value() != signum))
 				continue;
-			print_error(fnCall, "SIG33-C", "Do not recursively invoke the raise() function");
+			print_error(fnCall, "SIG30-C", "Do not recursively invoke the raise() function");
 			violation = true;
 		}
 	}
@@ -345,9 +278,79 @@ bool SIG33_C( const SgNode *node ) {
 }
 
 /**
+ * Do not access or modify shared objects in a signal handler
+ *
+ * Specifically, this rule only ensures that any variable referenced is either
+ * local or is static volatile sig_atomic_t
+ */
+bool SIG31_C(const SgNode *node) {
+	const SgFunctionRefExp* sig_fn = isSgFunctionRefExp(node);
+	if (!(sig_fn && isCallOfFunctionNamed(sig_fn, "signal")))
+		return false;
+
+	const SgFunctionRefExp* handler = isSgFunctionRefExp(getFnArg(sig_fn,1));
+	if (handler == NULL)
+		return false; // no signal handler
+	const SgFunctionDefinition* def = handler->get_symbol()->get_declaration()->get_definition();
+
+	/**
+	 * Added because of C++ code
+	 */
+	if (!def)
+		return false;
+	FOREACH_SUBNODE(def, nodes, i, V_SgVarRefExp) {
+		const SgVarRefExp* var_ref = isSgVarRefExp(*i);
+		assert(var_ref != NULL);
+
+		SgInitializedName* var_decl = var_ref->get_symbol()->get_declaration();
+		assert(var_decl != NULL);
+
+		const SgNode* encloser = findParentOfType(var_decl, SgFunctionParameterList);
+		if (encloser != NULL)
+			continue; // variable is function arg
+
+		// We only care about global variables really
+		const SgInitializedName* decl = getRefDecl(var_ref);
+		assert(decl);
+		if (!isGlobalVar(decl))
+			continue;
+
+		const SgType* var_type = var_ref->get_type();
+
+		// We assume that sig_atomic_t is a typedef (not a macro)
+		static const string sig_atomic_typename = "sig_atomic_t";
+		const SgNamedType* named_type = isSgNamedType(stripModifiers(var_type));
+
+		bool compliant = true;
+		if (!isVolatileType(var_type))
+			compliant = false;
+		if (named_type == NULL || named_type->get_name() != sig_atomic_typename)
+			compliant = false;
+
+		if (!isGlobalVar(decl) && !isStaticVar(decl))
+			compliant = false;
+#if 0
+		const SgAssignOp* assignment = isSgAssignOp(var_ref->get_parent());
+		if (assignment == NULL)
+			compliant = false;
+		else if (assignment->get_lhs_operand() != var_ref)
+			compliant = false;
+#endif
+		if (compliant)
+			continue;
+
+		print_error(*i, "SIG31-C", "Do not access shared objects in signal handlers");
+		return true;
+	}
+	return false;
+}
+
+
+
+/**
  * Do not call signal() from within interruptible signal handlers
  */
-bool SIG34_C( const SgNode *node ) {
+bool SIG34_C(const SgNode *node) {
 	const SgFunctionRefExp *sigRef = isSgFunctionRefExp(node);
 	if (!(sigRef && isCallOfFunctionNamed(sigRef, "signal")))
 		return false;
@@ -374,7 +377,7 @@ bool SIG34_C( const SgNode *node ) {
 	/**
 	 * Assertion removed b/c of C++ code
 	 */
-	if(! handlerDef)
+	if (! handlerDef)
 		return false;
 
 	/**
@@ -414,7 +417,7 @@ bool SIG34_C( const SgNode *node ) {
 		if (isSgVarRefExp(sigExp)) {
 			if (getRefDecl(isSgVarRefExp(sigExp)) != signum)
 				continue;
-		} else if(sigExp->unparseToString() != sigStr) {
+		} else if (sigExp->unparseToString() != sigStr) {
 			continue;
 		}
 
@@ -429,9 +432,9 @@ bool SIG_C(const SgNode *node) {
   bool violation = false;
   //  violation |= SIG00_C(node);
   violation |= SIG30_C(node);
+  violation |= SIG32_SIG30_C(node);
   violation |= SIG31_C(node);
-  violation |= SIG32_C(node);
-  violation |= SIG33_C(node);
+  violation |= SIG33_SIG30_C(node);
   violation |= SIG34_C(node);
   return violation;
 }

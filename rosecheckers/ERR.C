@@ -121,10 +121,58 @@ bool ERR31_C(const SgNode *node) {
   return violation;
 }
 
+/**
+ * Ensure that return values are compared against the proper type
+ */
+bool MSC31_C_ERR33_C(const SgNode *node) {
+	const SgBinaryOp *op = isSgBinaryOp(node);
+	if (!op || isCompilerGeneratedNode(node))
+		return false;
+	if (!(isSgEqualityOp(op) || isSgNotEqualOp(op)))
+		return false;
+	const SgExpression *lhs = op->get_lhs_operand();
+	const SgValueExp *val = NULL;
+	intmax_t n;
+	while ((val = isSgValueExp(lhs)) != NULL) {
+		if (!getIntegerVal(val, &n) || (n >= 0))
+			return false;
+		if (val->get_originalExpressionTree())
+			lhs = removeImplicitPromotions(val->get_originalExpressionTree());
+		else
+			break;
+	}
+	const SgExpression *rhs = op->get_rhs_operand();
+	while ((val = isSgValueExp(rhs)) != NULL) {
+		if (!getIntegerVal(val, &n) || (n >= 0))
+			return false;
+		if (val->get_originalExpressionTree())
+			rhs = removeImplicitPromotions(val->get_originalExpressionTree());
+		else
+			break;
+	}
+	assert(lhs && rhs);
+	const SgType *lhsType = stripModifiers(lhs->get_type());
+	const SgType *rhsType = stripModifiers(rhs->get_type());
+	assert(lhsType && rhsType);
+	/**
+	 * \todo We should not be using unparseToString, there should be a better
+	 * way to get the name of a typedef type
+	 */
+	std::string lhsName = lhsType->unparseToString();
+	std::string rhsName = rhsType->unparseToString();
+	if ((lhsName == "time_t" || lhsName == "size_t")
+      && (lhsName != rhsName)) {
+		print_error(node, "ERR33-C", "Ensure that return values are compared against the proper type");
+		return true;
+	}
+	return false;
+}
+
 bool ERR_C(const SgNode *node) {
   bool violation = false;
   violation |= ERR06_C(node);
   violation |= ERR31_C(node);
+  violation |= MSC31_C_ERR33_C(node);
   return violation;
 }
 
@@ -133,15 +181,15 @@ bool ERR_C(const SgNode *node) {
 
 enum Exp { ExpAppropriate = 0, ExpPointer, ExpStd, ExpOtherBad };
 
-Exp isNotAppropriateExceptionType( Type t ) {
-  if( const SgClassDeclaration *classdecl = t.getClassDeclaration() ) {
+Exp isNotAppropriateExceptionType(Type t) {
+  if (const SgClassDeclaration *classdecl = t.getClassDeclaration()) {
     // only type thrown from std namespace should be derived from std::exception
-    if( isClassDeclaredInStdNamespace( classdecl ) ) {
-      if( !isStdExceptionOrTypeDerivedFromStdException( classdecl ) )
+    if (isClassDeclaredInStdNamespace(classdecl)) {
+      if (!isStdExceptionOrTypeDerivedFromStdException(classdecl))
         return ExpStd;
     }
   }
-  else if( t.isPointer() ) { // it's a pointer to something: bad
+  else if (t.isPointer()) { // it's a pointer to something: bad
     return ExpPointer;
   }
   else { // it's not a class or a pointer, violation of rule
@@ -151,13 +199,13 @@ Exp isNotAppropriateExceptionType( Type t ) {
 }
 
 /* ERR08-CPP. Prefer special-purpose types for exceptions */
-bool ERR08_CPP( const SgNode *node ) {
+bool ERR08_CPP(const SgNode *node) {
   bool result = false;
-  if( const SgThrowOp *throwop = isSgThrowOp( node ) ) {
-    if( throwop->get_throwKind() == SgThrowOp::throw_expression ) { // not a rethrow or exception-specification
+  if (const SgThrowOp *throwop = isSgThrowOp(node)) {
+    if (throwop->get_throwKind() == SgThrowOp::throw_expression) { // not a rethrow or exception-specification
       const SgExpression *expr = throwop->get_operand();
-      Type t( expr->get_type() );
-      switch( isNotAppropriateExceptionType( t ) ) {
+      Type t(expr->get_type());
+      switch(isNotAppropriateExceptionType(t)) {
       case ExpAppropriate:
         break;
       case ExpPointer:
@@ -178,7 +226,7 @@ bool ERR08_CPP( const SgNode *node ) {
   return result;
 }
 
-bool doTryCatch( const SgTryStmt *trystmt ) {
+bool doTryCatch(const SgTryStmt *trystmt) {
   bool result = false;
   //    const SgStatement *trybody = trystmt->get_body();
   //    const SgStatementPtrList &stats = trybody->get_statements();
@@ -186,17 +234,17 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
   const SgStatementPtrList &clauses = catchseq->get_catch_statement_seq();
   size_t clauseNumber = 0;
   size_t ellipsisClause = 0;
-  for( SgStatementPtrList::const_iterator i = clauses.begin(); i != clauses.end(); ++i ) {
-    if( const SgCatchOptionStmt *clause = isSgCatchOptionStmt( *i ) ) {
+  for (SgStatementPtrList::const_iterator i = clauses.begin(); i != clauses.end(); ++i) {
+    if (const SgCatchOptionStmt *clause = isSgCatchOptionStmt(*i)) {
       ++clauseNumber;
       const SgVariableDeclaration *decl = clause->get_condition();
       const SgInitializedNamePtrList &vars = decl->get_variables();
       const SgInitializedName *arg = vars.front();
-      Type argType( arg->get_type() );
+      Type argType(arg->get_type());
       const std::string argName = arg->get_name().getString();
       // const SgBasicBlock *body = clause->get_body();
-      if( argType.isEllipsis() ) {
-        if( ellipsisClause ) {
+      if (argType.isEllipsis()) {
+        if (ellipsisClause) {
           // Note:  The compiler seems to catch this one, typically.
           result = true;
           print_error(clause, "ERR09-CPP", "Repeated ellipsis catch-clause.", true);
@@ -204,13 +252,13 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
         ellipsisClause = clauseNumber;
       }
       else {
-        if( !argType.isReference() ) {
+        if (!argType.isReference()) {
           result = true;
           print_error(clause, "ERR09-CPP", "Should catch by reference.", true);
         }
         else {
           // even if it is a reference, it may be a ref to an inappropriate type
-          switch( isNotAppropriateExceptionType( argType.dereference() ) ) {
+          switch(isNotAppropriateExceptionType(argType.dereference())) {
           case ExpAppropriate:
             break;
           case ExpPointer:
@@ -230,7 +278,7 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
       }
     }
   }
-  if( ellipsisClause && (ellipsisClause != clauseNumber) ) {
+  if (ellipsisClause && (ellipsisClause != clauseNumber)) {
     // Note:  The compiler seems to catch this one, typically.
     result = true;
     print_error(catchseq, "ERR09-CPP", "Ellipsis should be last catch-clause.", true);
@@ -239,17 +287,17 @@ bool doTryCatch( const SgTryStmt *trystmt ) {
 }
 
 /* ERR09-CPP. Throw anonymous temporaries and catch by reference */
-bool ERR09_CPP(const SgNode *node ) {
-  if( const SgThrowOp *throwop = isSgThrowOp( node ) ) {
-    if( throwop->get_throwKind() == SgThrowOp::throw_expression ) { // not a rethrow or exception-specification
+bool ERR09_CPP(const SgNode *node) {
+  if (const SgThrowOp *throwop = isSgThrowOp(node)) {
+    if (throwop->get_throwKind() == SgThrowOp::throw_expression) { // not a rethrow or exception-specification
       const SgExpression *expr = throwop->get_operand();
-      ROSE_ASSERT( expr );
+      ROSE_ASSERT(expr);
 
       //??? Don't know how torecognize anonymous temporaries!
     }
   }
-  else if( const SgTryStmt *trystmt = isSgTryStmt( node ) )
-    return doTryCatch( trystmt );
+  else if (const SgTryStmt *trystmt = isSgTryStmt(node))
+    return doTryCatch(trystmt);
   else
     return false;
 

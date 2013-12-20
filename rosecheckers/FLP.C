@@ -61,9 +61,9 @@
 #include "utilities.h"
 
 /**
- * Consider avoiding floating point numbers when precise computation is needed
+ * Consider avoiding floating-point numbers when precise computation is needed
  */
-bool FLP02_C( const SgNode *node ) {
+bool FLP02_C(const SgNode *node ) {
 	const SgBinaryOp *op = isSgBinaryOp(node);
 	if (!op)
 		return false;
@@ -82,25 +82,25 @@ bool FLP02_C( const SgNode *node ) {
 		||  isZeroVal(removeCasts(rhs)))
 			return false;
 		
-		print_error(node, "FLP02-C", "Consider avoiding floating point numbers when precise computation is needed", true);
+		print_error(node, "FLP02-C", "Consider avoiding floating-point numbers when precise computation is needed", true);
 		return true;
 	}
 	return false;
 }
 
 /**
- * Detect and handle floating point errors
+ * Detect and handle floating-point errors
  *
- * \bug ROSE can't handle the FENV_ACCESS pragma :( so there's no way to a
+ * \bug ROSE can't handle the FENV_ACCESS pragma :(so there's no way to a
  * have a compliant solution here
  */
-bool FLP03_C( const SgNode *node ) {
+bool FLP03_C(const SgNode *node ) {
 	if (isCompilerGeneratedNode(node))
 		return false;
 
 	/**
-	 * We are looking for floating point mult, divide (with non const/value on
-	 * rhs), and floating point casts from double->float
+	 * We are looking for floating-point mult, divide (with non const/value on
+	 * rhs), and floating-point casts from double->float
 	 */
 	if (isSgBinaryOp(node)) {
 		const SgBinaryOp *op = isSgBinaryOp(node);
@@ -136,7 +136,7 @@ bool FLP03_C( const SgNode *node ) {
 		const SgType *lhsT = cast->get_type();
 		const SgType *rhsT = cast->get_operand()->get_type();
 		/**
-		 * Bail if we're not dealing with floating point, or if the types are
+		 * Bail if we're not dealing with floating-point, or if the types are
 		 * compatible
 		 */
 		if (!lhsT->isFloatType() || !rhsT->isFloatType())
@@ -167,7 +167,7 @@ bool FLP03_C( const SgNode *node ) {
 	}
 
 	if (no_feclearexcept || no_fetestexcept) {
-		print_error(node, "FLP03-C", "Detect and handle floating point errors", true);
+		print_error(node, "FLP03-C", "Detect and handle floating-point errors", true);
 		return true;
 	}
 
@@ -175,107 +175,17 @@ bool FLP03_C( const SgNode *node ) {
 }
 
 /**
- * Do not use floating point variables as loop counters
- */
-bool FLP30_C( const SgNode *node ) {
-	const SgForStatement *forSt = isSgForStatement(node);
-	if (!forSt)
-		return false;
-
-	/* Check test */
-	FOREACH_SUBNODE(forSt->get_test(), nodes, i, V_SgVarRefExp) {
-		if (isSgVarRefExp(*i)->get_type()->isFloatType()) {
-			print_error(*i, "FLP30-C", "Do not use floating point variables as loop counters");
-			return true;
-		}
-	}
-
-	/* Check increment */
-	FOREACH_SUBNODE(forSt->get_increment(), nodes2, i2, V_SgVarRefExp) {
-		if (isSgVarRefExp(*i2)->get_type()->isFloatType()) {
-			print_error(*i2, "FLP30-C", "Do not use floating point variables as loop counters");
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Do not call functions expecting real values with complex values
- */
-bool FLP31_C( const SgNode *node ) {
-	bool violation = false;;
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!fnRef)
-		return false;
-	if (!isSgFunctionCallExp(fnRef->get_parent()))
-		return false;
-	std::string str = fnRef->get_symbol()->get_name().getString();
-	/* one arg */
-	if ((str == "cbrt")
-	||  (str == "ceil")
-	||  (str == "erf")
-	||  (str == "erfc")
-	||  (str == "exp2")
-	||  (str == "expm1")
-	||  (str == "floor")
-	||  (str == "frexp")
-	||  (str == "ilogb")
-	||  (str == "ldexp")
-	||  (str == "lgamma")
-	||  (str == "llrint")
-	||  (str == "llround")
-	||  (str == "log10")
-	||  (str == "log1p")
-	||  (str == "log2")
-	||  (str == "logb")
-	||  (str == "lrint")
-	||  (str == "lround")
-	||  (str == "nearbyint")
-	||  (str == "rint")
-	||  (str == "round")
-	||  (str == "tgamma")
-	||  (str == "trunc")) {
-		violation = isSgTypeComplex(getFnArg(isSgFunctionRefExp(node), 0)->get_type());
-	} else
-	/* two args */
-	if ((str == "atan2")
-	||  (str == "copysign")
-	||  (str == "fdim")
-	||  (str == "fmax")
-	||  (str == "fmin")
-	||  (str == "fmod")
-	||  (str == "hypot")
-	||  (str == "nextafter")
-	||  (str == "nexttoward")
-	||  (str == "remainder")
-	||  (str == "remquo")
-	||  (str == "scalbn")
-	||  (str == "scalbln")) {
-	} else
-	/* three args */
-	if ((str == "fma")) {
-	}
-	if (violation) {
-		print_error(node, "FLP31-C", "Do not call functions expecting real values with complex values");
-		return true;
-	}
-	return false;
-}
-
-/**
- * Convert integers to floating point for floating point operations
+ * Convert integers to floating-point for floating-point operations
  *
  * \see INT07_C
  */
-bool FLP33_C( const SgNode *node ) {
+bool FLP06_C(const SgNode *node ) {
 	const SgBinaryOp *binOp = isSgBinaryOp(node);
 	const SgInitializedName *var = isSgInitializedName(node);
 	const SgType *lhsT;
 	const SgType *rhsT;
 
-	if(binOp) {
+	if (binOp) {
 		/**
 		 * \todo Does this rule even make sense for binary ops?
 		 */
@@ -298,32 +208,60 @@ bool FLP33_C( const SgNode *node ) {
 //		rhsT = removeImplicitPromotions(binOp->get_rhs_operand())->get_type();
 		assert(lhsT);
 		assert(rhsT);
-		if(lhsT->isFloatType() || rhsT->isFloatType()) {
+		if (lhsT->isFloatType() || rhsT->isFloatType()) {
 			return false;
 		}
-	} else if(var) {
+	} else if (var) {
 		lhsT = var->get_type()->stripTypedefsAndModifiers();
 		const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
-		if(!init)
+		if (!init)
 			return false;
 		rhsT = removeImplicitPromotions(init->get_operand())->get_type()->stripTypedefsAndModifiers();
 
 		assert(lhsT);
 		assert(rhsT);
-		if(!(lhsT->isFloatType() && rhsT->isIntegerType()))
+		if (!(lhsT->isFloatType() && rhsT->isIntegerType()))
 			return false;
 	} else
 		return false;
 
 
-	print_error(node, "FLP33-C", "Convert integers to floating point for floating point operations");
+	print_error(node, "FLP06-C", "Convert integers to floating-point for floating-point operations");
 	return true;
 }
 
 /**
- * Ensure that floating point conversions are within range of the new type
+ * Do not use floating-point variables as loop counters
  */
-bool FLP34_C( const SgNode *node ) {
+bool FLP30_C(const SgNode *node ) {
+	const SgForStatement *forSt = isSgForStatement(node);
+	if (!forSt)
+		return false;
+
+	/* Check test */
+	FOREACH_SUBNODE(forSt->get_test(), nodes, i, V_SgVarRefExp) {
+		if (isSgVarRefExp(*i)->get_type()->isFloatType()) {
+			print_error(*i, "FLP30-C", "Do not use floating-point variables as loop counters");
+			return true;
+		}
+	}
+
+	/* Check increment */
+	FOREACH_SUBNODE(forSt->get_increment(), nodes2, i2, V_SgVarRefExp) {
+		if (isSgVarRefExp(*i2)->get_type()->isFloatType()) {
+			print_error(*i2, "FLP30-C", "Do not use floating-point variables as loop counters");
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+/**
+ * Ensure that floating-point conversions are within range of the new type
+ */
+bool FLP34_C(const SgNode *node ) {
 	/**
 	 * \bug We really shouldn't have this cop-out here, but a lot of macros
 	 * (ie. isnan) will trigger this rule otherwise
@@ -355,7 +293,7 @@ bool FLP34_C( const SgNode *node ) {
 	if (valueVerified(removeCasts(rhs)))
 		return false;
 
-	print_error(node, "FLP34-C", "Ensure that floating point conversions are within range of the new type");
+	print_error(node, "FLP34-C", "Ensure that floating-point conversions are within range of the new type");
 	return true;
 }
 
@@ -363,9 +301,8 @@ bool FLP_C(const SgNode *node) {
   bool violation = false;
   violation |= FLP02_C(node);
   violation |= FLP03_C(node);
+  violation |= FLP06_C(node);
   violation |= FLP30_C(node);
-  violation |= FLP31_C(node);
-  violation |= FLP33_C(node);
   violation |= FLP34_C(node);
   return violation;
 }

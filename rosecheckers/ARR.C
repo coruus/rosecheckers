@@ -70,7 +70,7 @@ bool ARR001_C(const SgNode * node) {
 		return false;
 
 	const SgExpression *expr = removeImplicitPromotions(
-			sizeOfOp->get_operand_expr());
+                                                      sizeOfOp->get_operand_expr());
 	if (!expr)
 		return false;
 
@@ -85,18 +85,18 @@ bool ARR001_C(const SgNode * node) {
 		type = typedeffed->get_base_type();
 
 	/*while (isSgUnaryOp(expr)){
-	 expr = removeImplicitPromotions(isSgUnaryOp(expr)->get_operand());
-	 }
-	 expr = removeImplicitPromotions(expr); */
+    expr = removeImplicitPromotions(isSgUnaryOp(expr)->get_operand());
+    }
+    expr = removeImplicitPromotions(expr); */
 
 	/* We have to pay some attention to array typed objects.  When an array is
-	 passed as a function parameter, it is passed by reference and is
-	 treated as a pointer.  Thus calling sizeof(var) where var is an array
-	 and also parameter to the function effectively violates ARR001_C.
-	 Here we check this using the same methodology as in ARR01_C below.  If
-	 this overlap is not intended (through NCCEs for ARR001_C suggest it
-	 is), simply remove the code block below dealing with arrT.
-	 */
+     passed as a function parameter, it is passed by reference and is
+     treated as a pointer.  Thus calling sizeof(var) where var is an array
+     and also parameter to the function effectively violates ARR001_C.
+     Here we check this using the same methodology as in ARR01_C below.  If
+     this overlap is not intended (through NCCEs for ARR001_C suggest it
+     is), simply remove the code block below dealing with arrT.
+  */
 
 	const SgArrayType *arrT = isSgArrayType(type);
 	if (arrT) {
@@ -105,10 +105,10 @@ bool ARR001_C(const SgNode * node) {
 		 * so if this is an array, then it will decay into a pointer
 		 */
 		if (isSgBinaryOp(expr) && !(isSgDotExp(expr) || isSgArrowExp(expr)
-				|| isSgDotStarOp(expr) || isSgArrowStarOp(expr))) {
+                                || isSgDotStarOp(expr) || isSgArrowStarOp(expr))) {
 			print_error(node, "ARR001_C",
-					"Do not apply the sizeof operator to an object of pointer",
-					true);
+                  "Do not apply the sizeof operator to an object of pointer",
+                  true);
 		}
 
 		const SgVarRefExp *var = isSgVarRefExp(expr);
@@ -116,7 +116,7 @@ bool ARR001_C(const SgNode * node) {
 			return false;
 		}
 		const SgFunctionDeclaration *fnRef =
-				findParentOfType(node, SgFunctionDeclaration);
+      findParentOfType(node, SgFunctionDeclaration);
 		if (!fnRef) {
 			return false;
 		}
@@ -124,126 +124,126 @@ bool ARR001_C(const SgNode * node) {
 		FOREACH_INITNAME(fnRef->get_args(), i) {
 			if ((*i)->get_name() == varName) {
 				print_error(
-						node,
-						"ARR001-C",
-						"Do not apply the sizeof operator to an object of pointer",
-						true);
+                    node,
+                    "ARR001-C",
+                    "Do not apply the sizeof operator to an object of pointer",
+                    true);
 				return true;
 			}
 		}
 	}
 
 	/* If expr has pointer type, then it is a violation of this rule, unless
-	 this node is the second operand of a binary / or * operator.  Those
-	 cases are exempt to allow the "sizeof(arr)/sizeof(arr[0])" and
-	 "num*sizeof(arr[0])" practices to be used even when arr is an array
-	 of pointer type.
-	 */
+     this node is the second operand of a binary / or * operator.  Those
+     cases are exempt to allow the "sizeof(arr)/sizeof(arr[0])" and
+     "num*sizeof(arr[0])" practices to be used even when arr is an array
+     of pointer type.
+  */
 	const SgPointerType *ptrT = isSgPointerType(type);
 	if (ptrT) // if true is either violation or exception
-	{
-		/*
-		 * Weed out false positives: check if pointer of type T * is argument to
-		 * function call whose result is being assigned to a variable of type T **.
-		 * For example:
-		 * char *ptr;
-		 * char **array_of_ptrs = malloc(100 * sizeof(ptr));
-		 */
-		const SgFunctionCallExp *fn = findParentOfType(expr, SgFunctionCallExp);
-		if (fn) {
-			const SgPointerType *lhsType = NULL;
-			const SgAssignOp *assignOp = findParentOfType(fn, SgAssignOp);
-			if (assignOp) {
-				lhsType = isSgPointerType(assignOp->get_type());
-			} else {
-				const SgInitializedName *init =
+    {
+      /*
+       * Weed out false positives: check if pointer of type T * is argument to
+       * function call whose result is being assigned to a variable of type T **.
+       * For example:
+       * char *ptr;
+       * char **array_of_ptrs = malloc(100 * sizeof(ptr));
+       */
+      const SgFunctionCallExp *fn = findParentOfType(expr, SgFunctionCallExp);
+      if (fn) {
+        const SgPointerType *lhsType = NULL;
+        const SgAssignOp *assignOp = findParentOfType(fn, SgAssignOp);
+        if (assignOp) {
+          lhsType = isSgPointerType(assignOp->get_type());
+        } else {
+          const SgInitializedName *init =
 						findParentOfType(fn, SgInitializedName);
-				if (init) {
-					lhsType = isSgPointerType(init->get_type());
-				}
-			}
-			if (lhsType) {
-				const SgType *lhsBase = lhsType->get_base_type();
-				if (isSgTypedefType(lhsBase))
-					lhsBase
+          if (init) {
+            lhsType = isSgPointerType(init->get_type());
+          }
+        }
+        if (lhsType) {
+          const SgType *lhsBase = lhsType->get_base_type();
+          if (isSgTypedefType(lhsBase))
+            lhsBase
 							= ((const SgTypedefType *) lhsBase)->get_base_type();
-				const SgType *exprBase = type;
-				while (isSgPointerType(lhsBase) && isSgPointerType(exprBase)) {
-					lhsBase
+          const SgType *exprBase = type;
+          while (isSgPointerType(lhsBase) && isSgPointerType(exprBase)) {
+            lhsBase
 							= ((const SgPointerType *) lhsBase)->get_base_type();
-					exprBase
+            exprBase
 							= ((const SgPointerType *) exprBase)-> get_base_type();
-				}
-				if (lhsBase->class_name().compare(exprBase->class_name()) == 0)
-					return false;
-			}
-			/*
-			 * also ignore cases when the function being called is of the form:
-			 * memcpy(T **, T **, n*sizeof(T *));
-			 * memmove(T **, T **, n*sizeof(T *));
-			 * memset(T **, val, n*sizeof(T *));
-			 * memchr(T **, val, n*sizeof(T *));
-			 * memcmp(T **, T **, n*sizeof(T *));
-			 * memset_s(T **, T **, n*sizeof(T *));
-			 * We will check that the function name is one of these five functions.
-			 *
-			 * We will be lazy and just check that the first argument is a T **.
-			 */
-			FOREACH_SUBNODE(fn, nodes, i, V_SgFunctionRefExp) {
-				const SgFunctionRefExp *ref = isSgFunctionRefExp(*i);
-				const string name = ref->get_symbol()->get_name().getString();
-				if (!((name.compare("memcpy") == 0)
-						|| (name.compare("memmove") == 0)
-						|| (name.compare("memset") == 0)
-						|| (name.compare("memchr") == 0)
-						|| (name.compare("memcmp") == 0)
-						|| (name.compare("memset_s") == 0)))
-				{
-					break;
-				}
-				const SgExpressionPtrList &args = fn->get_args()->get_expressions();
-				const SgPointerType *arg0type = isSgPointerType(removeCasts(args[0])->get_type());
-				if (arg0type) {
-					const SgType *arg0base = arg0type->get_base_type();
-					if (isSgTypedefType(arg0base))
-						arg0base = ((const SgTypedefType *)arg0base)->get_base_type();
-					const SgType *exprBase = type;
-					while (isSgPointerType(arg0base) && isSgPointerType(exprBase)) {
-					arg0base
-							= ((const SgPointerType *) arg0base)->get_base_type();
-					exprBase
-							= ((const SgPointerType *) exprBase)-> get_base_type();
-					}
-					if (arg0base->class_name().compare(exprBase->class_name()) == 0)
-						return false;
-				}
-				break;
-			}
-		}
-		const SgPntrArrRefExp *ptArrE = isSgPntrArrRefExp(expr);
-		if (ptArrE) // possible exception; investigate further
-		{
+          }
+          if (lhsBase->class_name().compare(exprBase->class_name()) == 0)
+            return false;
+        }
+        /*
+         * also ignore cases when the function being called is of the form:
+         * memcpy(T **, T **, n*sizeof(T *));
+         * memmove(T **, T **, n*sizeof(T *));
+         * memset(T **, val, n*sizeof(T *));
+         * memchr(T **, val, n*sizeof(T *));
+         * memcmp(T **, T **, n*sizeof(T *));
+         * memset_s(T **, T **, n*sizeof(T *));
+         * We will check that the function name is one of these five functions.
+         *
+         * We will be lazy and just check that the first argument is a T **.
+         */
+        FOREACH_SUBNODE(fn, nodes, i, V_SgFunctionRefExp) {
+          const SgFunctionRefExp *ref = isSgFunctionRefExp(*i);
+          const string name = ref->get_symbol()->get_name().getString();
+          if (!((name.compare("memcpy") == 0)
+                || (name.compare("memmove") == 0)
+                || (name.compare("memset") == 0)
+                || (name.compare("memchr") == 0)
+                || (name.compare("memcmp") == 0)
+                || (name.compare("memset_s") == 0)))
+            {
+              break;
+            }
+          const SgExpressionPtrList &args = fn->get_args()->get_expressions();
+          const SgPointerType *arg0type = isSgPointerType(removeCasts(args[0])->get_type());
+          if (arg0type) {
+            const SgType *arg0base = arg0type->get_base_type();
+            if (isSgTypedefType(arg0base))
+              arg0base = ((const SgTypedefType *)arg0base)->get_base_type();
+            const SgType *exprBase = type;
+            while (isSgPointerType(arg0base) && isSgPointerType(exprBase)) {
+              arg0base
+                = ((const SgPointerType *) arg0base)->get_base_type();
+              exprBase
+                = ((const SgPointerType *) exprBase)-> get_base_type();
+            }
+            if (arg0base->class_name().compare(exprBase->class_name()) == 0)
+              return false;
+          }
+          break;
+        }
+      }
+      const SgPntrArrRefExp *ptArrE = isSgPntrArrRefExp(expr);
+      if (ptArrE) // possible exception; investigate further
+        {
 
-			// try to access grandparent node of node
-			// where we will find * or / in exception cases
-			const SgNode *parent = node->get_parent();
-			const SgNode *gParent = parent ? parent->get_parent() : NULL;
-			if (gParent) {
-				if (isSgMultiplyOp(gParent)) {
-					return false;
-				}
-				const SgDivideOp *divop = isSgDivideOp(gParent);
-				if (divop && (divop->get_rhs_operand() == parent)) {
-					return false;
-				}
-			}
-		}
-		// no exception found => violation
-		print_error(node, "ARR001_C",
-				"Do not apply the sizeof operator to an object of pointer",
-				true);
-		return true;
-	}
+          // try to access grandparent node of node
+          // where we will find * or / in exception cases
+          const SgNode *parent = node->get_parent();
+          const SgNode *gParent = parent ? parent->get_parent() : NULL;
+          if (gParent) {
+            if (isSgMultiplyOp(gParent)) {
+              return false;
+            }
+            const SgDivideOp *divop = isSgDivideOp(gParent);
+            if (divop && (divop->get_rhs_operand() == parent)) {
+              return false;
+            }
+          }
+        }
+      // no exception found => violation
+      print_error(node, "ARR001_C",
+                  "Do not apply the sizeof operator to an object of pointer",
+                  true);
+      return true;
+    }
 	return false;
 }
 
@@ -259,7 +259,7 @@ bool ARR01_C(const SgNode * node) {
 	if (!sizeOfOp)
 		return false;
 	const SgExpression *expr = removeImplicitPromotions(
-			sizeOfOp->get_operand_expr());
+                                                      sizeOfOp->get_operand_expr());
 	if (!expr)
 		return false;
 	if (isSgUnaryOp(expr))
@@ -271,17 +271,17 @@ bool ARR01_C(const SgNode * node) {
 	if (!arrT)
 		return false;
 	const SgFunctionDeclaration *fnRef =
-			findParentOfType(node, SgFunctionDeclaration);
+    findParentOfType(node, SgFunctionDeclaration);
 	if (!fnRef)
 		return false;
 	const SgName & varName = var->get_symbol()->get_name();
 	FOREACH_INITNAME(fnRef->get_args(), i) {
 		if ((*i)->get_name() == varName) {
 			print_error(
-					node,
-					"ARR01-C",
-					"Do not apply the sizeof operator to a pointer when taking the size of an array",
-					true);
+                  node,
+                  "ARR01-C",
+                  "Do not apply the sizeof operator to a pointer when taking the size of an array",
+                  true);
 			return true;
 		}
 	}
@@ -311,10 +311,10 @@ bool ARR02_C(const SgNode * node) {
 			continue;
 		if (!varType->get_index()) {
 			print_error(
-					*i,
-					"ARR02-C",
-					"Explicitly specify array dimensions, even if implicitly defined by an initializer",
-					true);
+                  *i,
+                  "ARR02-C",
+                  "Explicitly specify array dimensions, even if implicitly defined by an initializer",
+                  true);
 			return true;
 		}
 	}
@@ -338,7 +338,7 @@ bool ARR30_C(const SgNode * node) {
 	if (!deref)
 		return false;
 	const SgVarRefExp *varRef = isSgVarRefExp(removeCasts(
-			deref->get_rhs_operand()));
+                                                        deref->get_rhs_operand()));
 	if (!varRef)
 		return false;
 	if (varRef->get_type()->stripTypedefsAndModifiers()->isUnsignedType())
@@ -381,63 +381,12 @@ bool ARR30_C(const SgNode * node) {
 	}
 	if (check) {
 		print_error(node, "ARR30-C",
-				"Guarantee that array indices are within the valid range");
+                "Do not form or use out-of-bounds pointers or array subscripts");
 		return true;
 	}
 	return false;
 }
 
-/**
- * Guarantee that copies are made into storage of sufficient size
- *
- * We make sure that the length argument to memcpy is at most the size
- * of memcpy's first argument (destination). This rule fires if:
- * * the destination is a fixed-length array
- * * the last argument is N * sizeof( arraytype)
- * * N is known at compile time
- * * N > destination array index
- */
-bool ARR33_C(const SgNode * node) {
-	const SgFunctionRefExp *fnRef = isMemoryBlockFunction(node);
-	if (!fnRef)
-		return false;
-	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef, 0));
-	const SgExpression *lenExp = getFnArg(fnRef, 2);
-	assert(dstExp && lenExp);
-	if (isSgAddressOfOp(dstExp))
-		dstExp = isSgAddressOfOp(dstExp)->get_operand();
-	const SgArrayType *arrT = isSgArrayType(dstExp->get_type());
-	if (!arrT)
-		return false;
-	size_t len;
-	if (!getSizetVal(lenExp, &len))
-		return false;
-	const SgValueExp *dstVal = isSgValueExp(arrT->get_index());
-	if (!dstVal) // VLA or some such...
-		return false;
-	size_t dst_size;
-	if (!getSizetVal(dstVal, &dst_size))
-		return false;
-	dst_size *= sizeOfType(arrT->findBaseType());
-	if (dst_size == 0)
-		return false;
-	if (dst_size > len) {
-		print_error(node, "ARR33-C",
-				"Guarantee that copies are made into storage of sufficient size");
-		return true;
-	}
-	return false;
-}
-
-/**
- * Ensure that array types in expressions are compatible
- *
- * \note Since GCC produces a warning during compilation for this, Rose
- * already catches violations of this rule and we can leave this rule blank
- */
-bool ARR34_C(const SgNode * node) {
-	return false;
-}
 
 /**
  * Do not add or subtract an integer to a pointer to a non-array object
@@ -454,13 +403,13 @@ bool ARR37_C(const SgNode * node) {
 	 *  See if we have a case of pointer arithmetic
 	 */
 	if (!(isSgPlusPlusOp(parent) || isSgMinusMinusOp(parent) || isSgAddOp(
-			parent) || isSgSubtractOp(parent) || isSgPlusAssignOp(parent)
-			|| isSgMinusAssignOp(parent)))
+                                                                        parent) || isSgSubtractOp(parent) || isSgPlusAssignOp(parent)
+        || isSgMinusAssignOp(parent)))
 		return false;
 
 	/* Search forward to find the varRef */
 	FOREACH_SUBNODE(varRef->get_symbol()->get_scope(), nodes, i,
-			V_SgVarRefExp) {
+                  V_SgVarRefExp) {
 		const SgVarRefExp *iVar = isSgVarRefExp(*i);
 		assert(iVar);
 		if (iVar == varRef)
@@ -513,24 +462,13 @@ static bool arr37check(const SgNode *node, const SgExpression *rhs) {
 	if (isSgAddressOfOp(rhs)) {
 		FOREACH_SUBNODE(rhs, rhs_nodes, j, V_SgExpression) {
 			if (isSgPntrArrRefExp(*j) || isSgArrayType(
-					isSgExpression((*j))->get_type()))
+                                                 isSgExpression((*j))->get_type()))
 				return false;
 		}
 		print_error(node, "ARR37-C",
-				"Do not add or subtract an integer to a pointer to a non-array object");
+                "Do not add or subtract an integer to a pointer to a non-array object");
 		return true;
 	}
-	return false;
-}
-
-/**
- * Do not add or subtract an integer to a pointer if the resulting value does
- * not refer to a valid array element
- *
- * \note GCC catches violations of this rule where subscripts to static arrays
- * are out of range.
- */
-bool ARR38_C(const SgNode * node) {
 	return false;
 }
 
@@ -540,10 +478,7 @@ bool ARR_C(const SgNode * node) {
 	violation |= ARR01_C(node);
 	violation |= ARR02_C(node);
 	violation |= ARR30_C(node);
-	violation |= ARR33_C(node);
-	violation |= ARR34_C(node);
 	violation |= ARR37_C(node);
-	violation |= ARR38_C(node);
 	violation |= ARR001_C(node);
 	return violation;
 }

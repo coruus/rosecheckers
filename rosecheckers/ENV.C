@@ -59,57 +59,57 @@
 
 /**
  *
-  Returns true if the char * represented by var is modified by a function.
+ Returns true if the char * represented by var is modified by a function.
  *
  */
 bool isStringModifiedInSubnodes(const SgInitializedName *var, const SgNode *node) {
 
-    // Loop through function searching if string is modified.
-    FOREACH_SUBNODE(node, nodes, i, V_SgFunctionCallExp) {
+  // Loop through function searching if string is modified.
+  FOREACH_SUBNODE(node, nodes, i, V_SgFunctionCallExp) {
 
-        // Get function call.
-        const SgFunctionCallExp *fnCall = (const SgFunctionCallExp *)(*i);
-        unsigned int numArgs = fnCall->get_args()->get_expressions().size();
+    // Get function call.
+    const SgFunctionCallExp *fnCall = (const SgFunctionCallExp *)(*i);
+    unsigned int numArgs = fnCall->get_args()->get_expressions().size();
 
-        // Check to see if string is modified by function call.
-        for (unsigned int itr = 0; itr < numArgs; itr++) {
+    // Check to see if string is modified by function call.
+    for (unsigned int itr = 0; itr < numArgs; itr++) {
 
-            // Skip c string functions.
-            std::string fnName = fnCall->getAssociatedFunctionSymbol()->get_name().getString();
-            if (fnName == "strchr" ||
-                fnName == "strrchr" ||
-                fnName == "strcmp" ||
-                fnName == "strncmp" ||
-                fnName == "strspn" ||
-                fnName == "strcspn" ||
-                fnName == "strlen" ||
-                fnName == "strpbrk" ||
-                fnName == "strstr" ||
-                fnName == "strdup") {
-                continue;
-            }
+      // Skip c string functions.
+      std::string fnName = fnCall->getAssociatedFunctionSymbol()->get_name().getString();
+      if (fnName == "strchr" ||
+          fnName == "strrchr" ||
+          fnName == "strcmp" ||
+          fnName == "strncmp" ||
+          fnName == "strspn" ||
+          fnName == "strcspn" ||
+          fnName == "strlen" ||
+          fnName == "strpbrk" ||
+          fnName == "strstr" ||
+          fnName == "strdup") {
+        continue;
+      }
 
-            // Skip strcpy, strcat if string is src.
-            if (itr == 1 &&
-                (fnName == "strcpy" ||
-                fnName == "strncpy" ||
-                fnName == "strcat" ||
-                fnName == "strncat")) {
-                continue;
-            }
+      // Skip strcpy, strcat if string is src.
+      if (itr == 1 &&
+          (fnName == "strcpy" ||
+           fnName == "strncpy" ||
+           fnName == "strcat" ||
+           fnName == "strncat")) {
+        continue;
+      }
 
-            // Return true if char * is passed to function.
-            const SgVarRefExp *arg = isSgVarRefExp(getFnArg(fnCall, itr));
-            if (arg == NULL) {
-                continue;
-            }
-            SgName argName = arg->get_symbol()->get_name();
-            if (argName == var->get_name()) {
-                return true;
-            }
-        }
+      // Return true if char * is passed to function.
+      const SgVarRefExp *arg = isSgVarRefExp(getFnArg(fnCall, itr));
+      if (arg == NULL) {
+        continue;
+      }
+      SgName argName = arg->get_symbol()->get_name();
+      if (argName == var->get_name()) {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 /**
@@ -117,7 +117,7 @@ bool isStringModifiedInSubnodes(const SgInitializedName *var, const SgNode *node
  *
  * \todo Do we also need to check for putenv/setenv in the loop?
  */
-bool ENV00_C( const SgNode *node ) {
+bool ENV00_C(const SgNode *node) {
 	// find call of getenv
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
@@ -167,8 +167,8 @@ bool ENV00_C( const SgNode *node ) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(iFnCall->get_function());
 		assert(iFn);
 		if (isCallOfFunctionNamed(iFn, "strcpy")
-		  ||isCallOfFunctionNamed(iFn, "memset")
-		  ||isCallOfFunctionNamed(iFn, "strdup"))
+        ||isCallOfFunctionNamed(iFn, "memset")
+        ||isCallOfFunctionNamed(iFn, "strdup"))
 			return false;
 		write = true;
 		break;
@@ -185,7 +185,7 @@ bool ENV00_C( const SgNode *node ) {
 /**
  * Beware of multiple environment variables with the same effective name
  */
-bool ENV02_C( const SgNode *node ) {
+bool ENV02_C(const SgNode *node) {
 	static std::set<std::string> origStrs;
 	static std::set<std::string> normStrs;
 	static std::map<std::string, const SgFunctionRefExp *> strToNode;
@@ -195,8 +195,8 @@ bool ENV02_C( const SgNode *node ) {
 		return false;
 
 	if (!(isCallOfFunctionNamed(fnRef, "getenv")
-		||isCallOfFunctionNamed(fnRef, "setenv")
-		||isCallOfFunctionNamed(fnRef, "putenv"))) {
+        ||isCallOfFunctionNamed(fnRef, "setenv")
+        ||isCallOfFunctionNamed(fnRef, "putenv"))) {
 		return false;
 	}
 	const SgStringVal *strVal = isSgStringVal(removeImplicitPromotions(getFnArg(fnRef,0)));
@@ -223,36 +223,11 @@ bool ENV02_C( const SgNode *node ) {
 	return false;
 }
 
-/**
- * Do not use system()
- *
- * \note As written, these tests catch template declarations only if instantiated.
- */
-bool ENV04_C( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!fnRef)
-		return false;
-	if (!(isCallOfFunctionNamed(fnRef, "system")
-		||isCallOfFunctionNamed(fnRef, "popen")))
-		return false;
-
-	const SgStringVal *command = isSgStringVal(removeCasts(getFnArg(fnRef,0)));
-	if (command) {
-	  const std::string commandStr = command->get_value();
-	  boost::regex r("`.*`");
-	  if (regex_search(commandStr,r)) {
-	    return false;
-	  }
-	}
-
-	print_error( node, "ENV04-C", "Do not use system() or popen() unless you need a command interpreter", true);
-	return true;
-}
 
 /**
  * Do not modify the string returned by getenv()
  */
-bool ENV30_C( const SgNode *node ) {
+bool ENV30_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
@@ -264,12 +239,12 @@ bool ENV30_C( const SgNode *node ) {
 	if (isConstType(var->get_type()->dereference()))
 		return false;
 
-    const SgFunctionDeclaration *fnDecl = findParentOfType(node, SgFunctionDeclaration);
+  const SgFunctionDeclaration *fnDecl = findParentOfType(node, SgFunctionDeclaration);
 
-    if (isStringModifiedInSubnodes(var, fnDecl)) {
-	    print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
-        return true;
-    }
+  if (isStringModifiedInSubnodes(var, fnDecl)) {
+    print_error(node, "ENV30-C", "Do not modify the string returned by getenv()");
+    return true;
+  }
 
 	return false;
 }
@@ -278,7 +253,7 @@ bool ENV30_C( const SgNode *node ) {
  * Do not rely on an environment pointer following an operation that may
  * invalidate it 
  */
-bool ENV31_C( const SgNode *node ) {
+bool ENV31_C(const SgNode *node) {
 	const SgVarRefExp *varRef = isSgVarRefExp(node);
 	if (!varRef)
 		return false;
@@ -292,7 +267,7 @@ bool ENV31_C( const SgNode *node ) {
 		if (!iFn)
 			continue;
 		if (isCallOfFunctionNamed(iFn, "putenv")
-		  ||isCallOfFunctionNamed(iFn, "setenv")) {
+        ||isCallOfFunctionNamed(iFn, "setenv")) {
 			violation = true;
 			break;
 		}
@@ -308,7 +283,7 @@ bool ENV31_C( const SgNode *node ) {
  * \note This catches calls to exit, _exit, _abort, _Exit, longjmp and
  * siglongjmp
  */
-bool ENV32_C( const SgNode *node ) {
+bool ENV32_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "atexit")))
 		return false;
@@ -324,13 +299,13 @@ bool ENV32_C( const SgNode *node ) {
 	FOREACH_SUBNODE(fnDecl,nodes,i,V_SgFunctionRefExp) {
 		const SgFunctionRefExp *iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
-		if(isCallOfFunctionNamed( iFn, "exit")
-		|| isCallOfFunctionNamed( iFn, "_exit")
-		|| isCallOfFunctionNamed( iFn, "abort")
-		|| isCallOfFunctionNamed( iFn, "_Exit")
-		|| isCallOfFunctionNamed( iFn, "longjmp")
-		|| isCallOfFunctionNamed( iFn, "siglongjmp")) {
-			print_error( fnDecl, "ENV32-C", "No atexit handler should terminate in any way other than by returning");
+		if (isCallOfFunctionNamed(iFn, "exit")
+        || isCallOfFunctionNamed(iFn, "_exit")
+        || isCallOfFunctionNamed(iFn, "abort")
+        || isCallOfFunctionNamed(iFn, "_Exit")
+        || isCallOfFunctionNamed(iFn, "longjmp")
+        || isCallOfFunctionNamed(iFn, "siglongjmp")) {
+			print_error(fnDecl, "ENV32-C", "All exit handlers must return normally");
 			violation = true;
 		}
 	}
@@ -338,14 +313,40 @@ bool ENV32_C( const SgNode *node ) {
 	return violation;
 }
 
+/**
+ * Do not use system()
+ *
+ * \note As written, these tests catch template declarations only if instantiated.
+ */
+bool ENV33_C(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!(isCallOfFunctionNamed(fnRef, "system")
+        ||isCallOfFunctionNamed(fnRef, "popen")))
+		return false;
+
+	const SgStringVal *command = isSgStringVal(removeCasts(getFnArg(fnRef,0)));
+	if (command) {
+	  const std::string commandStr = command->get_value();
+	  boost::regex r("`.*`");
+	  if (regex_search(commandStr,r)) {
+	    return false;
+	  }
+	}
+
+	print_error(node, "ENV33-C", "Do not call system()", true);
+	return true;
+}
+
 bool ENV_C(const SgNode *node) {
 	bool violation = false;
 	violation |= ENV00_C(node);
 	violation |= ENV02_C(node);
-	violation |= ENV04_C(node);
 	violation |= ENV30_C(node);
 	violation |= ENV31_C(node);
 	violation |= ENV32_C(node);
+	violation |= ENV33_C(node);
 	return violation;
 }
 

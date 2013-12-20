@@ -63,14 +63,14 @@
 /**
  * Strive for logical completeness
  */
-bool MSC01_C( const SgNode *node ) {
+bool MSC01_C(const SgNode *node) {
 	const SgSwitchStatement *swch = isSgSwitchStatement(node);
 	if (!swch)
 		return false;
 
 	const SgStatementPtrList &stats = swch->getStatementList();
 	if ((stats.size() > 0)
-	&& isSgDefaultOptionStmt(stats.back()))
+      && isSgDefaultOptionStmt(stats.back()))
 		return false;
 
 	print_error(node, "MSC01-C", "Strive for logical completeness", true);
@@ -84,10 +84,10 @@ bool MSC01_C( const SgNode *node ) {
  * rule is disabled, ROSE catches most of this on it's own, so this should not
  * be a problem
  */
-bool MSC03_C( const SgNode *node ) {
+bool MSC03_C(const SgNode *node) {
 	/* This rule has been deprecated in favor of the following rules
 	 * EXP15-C. Do not place a semicolon on the same line as an if, for, or while statement
-     	 * MSC12-C. Detect and remove code that has no effect
+   * MSC12-C. Detect and remove code that has no effect
 	 * 
 	 * Currently, only MSC12-C is actually enabled by rosecheckers.
 	 */
@@ -97,24 +97,24 @@ bool MSC03_C( const SgNode *node ) {
 /**
  * Do not manipulate time_t typed values directly
  */
-bool MSC05_C( const SgNode *node ) {
+bool MSC05_C(const SgNode *node) {
 	if (isAnyBinArithOp(node)
-	  ||isAnyBinArithAssignOp(node)
-	  ||isAnyBinBitOp(node)
-	  ||isAnyBinBitAssignOp(node)
-	  ||isAnyRelationalOp(node)) {
+      ||isAnyBinArithAssignOp(node)
+      ||isAnyBinBitOp(node)
+      ||isAnyBinBitAssignOp(node)
+      ||isAnyRelationalOp(node)) {
 		const SgBinaryOp *binOp = isSgBinaryOp(node);
 		assert(binOp);
 		const SgType *lhsT = binOp->get_lhs_operand()->get_type();
 		const SgType *rhsT = binOp->get_rhs_operand()->get_type();
 		if (!(isTypeTimeT(lhsT) || isTypeTimeT(rhsT)))
 			return false;
-	} else if(isSgBitComplementOp(node)
-	  ||isSgMinusMinusOp(node)
-	  ||isSgNotOp(node)
-	  ||isSgPlusPlusOp(node)
-	  ||isSgUnaryAddOp(node)
-	  ||isSgMinusOp(node)) {
+	} else if (isSgBitComplementOp(node)
+             ||isSgMinusMinusOp(node)
+             ||isSgNotOp(node)
+             ||isSgPlusPlusOp(node)
+             ||isSgUnaryAddOp(node)
+             ||isSgMinusOp(node)) {
 		const SgUnaryOp *op = isSgUnaryOp(node);
 		assert(op);
 		const SgType *opT = op->get_operand()->get_type();
@@ -131,7 +131,7 @@ bool MSC05_C( const SgNode *node ) {
 /**
  * Detect and remove code that has no effect
  */
-bool MSC12_C( const SgNode *node ) {
+bool MSC12_C(const SgNode *node) {
 	const SgExprStatement *exprStmt = isSgExprStatement(node);
 	if (exprStmt) {
 		/**
@@ -146,7 +146,7 @@ bool MSC12_C( const SgNode *node ) {
 		 * return value, this is GNU extension
 		 */
 		if ((exprStmt == isSgExprStatement(parent->get_statements().back()))
-		&&  (!isSgFunctionDefinition(parent->get_parent())))
+        &&  (!isSgFunctionDefinition(parent->get_parent())))
 			return false;
 
 		const SgExpression *expr = exprStmt->get_expression();
@@ -155,14 +155,14 @@ bool MSC12_C( const SgNode *node ) {
 		if (isCompilerGeneratedNode(expr))
 			return false;
 
-		if(isSgFunctionCallExp(expr)
-		|| isSgAssignOp(expr)
-		|| isSgConditionalExp(expr)
-		|| isAnyAssignOp(expr)
-		|| isSgPointerDerefExp(expr)
-		|| isSgPlusPlusOp(expr)
-		|| isSgMinusMinusOp(expr)
-		|| isSgDeleteExp(expr))
+		if (isSgFunctionCallExp(expr)
+        || isSgAssignOp(expr)
+        || isSgConditionalExp(expr)
+        || isAnyAssignOp(expr)
+        || isSgPointerDerefExp(expr)
+        || isSgPlusPlusOp(expr)
+        || isSgMinusMinusOp(expr)
+        || isSgDeleteExp(expr))
 			return false;
 	} else {
 		return false;
@@ -177,7 +177,7 @@ bool MSC12_C( const SgNode *node ) {
  *
  * \bug Disabled until a better algorithm can be found
  */
-bool MSC13_C( const SgNode *node ) {
+bool MSC13_C(const SgNode *node) {
 	const SgInitializedName *var = isSgInitializedName(node);
 	if (!var)
 		return false;
@@ -208,59 +208,12 @@ bool MSC13_C( const SgNode *node ) {
 /**
  * Do not use rand()
  */
-bool MSC30_C( const SgNode *node ) {
+bool MSC30_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "rand")))
 		return false;
-	print_error( node, "MSC30-C", "Do not use rand()");
+	print_error(node, "MSC30-C", "Do not use the rand() function for generating pseudorandom numbers");
 	return true;
-}
-
-/**
- * Ensure that return values are compared against the proper type
- */
-bool MSC31_C( const SgNode *node ) {
-	const SgBinaryOp *op = isSgBinaryOp(node);
-	if (!op || isCompilerGeneratedNode(node))
-		return false;
-	if (!(isSgEqualityOp(op) || isSgNotEqualOp(op)))
-		return false;
-	const SgExpression *lhs = op->get_lhs_operand();
-	const SgValueExp *val = NULL;
-	intmax_t n;
-	while((val = isSgValueExp(lhs)) != NULL) {
-		if (!getIntegerVal(val, &n) || (n >= 0))
-			return false;
-		if (val->get_originalExpressionTree())
-			lhs = removeImplicitPromotions(val->get_originalExpressionTree());
-		else
-			break;
-	}
-	const SgExpression *rhs = op->get_rhs_operand();
-	while((val = isSgValueExp(rhs)) != NULL) {
-		if (!getIntegerVal(val, &n) || (n >= 0))
-			return false;
-		if (val->get_originalExpressionTree())
-			rhs = removeImplicitPromotions(val->get_originalExpressionTree());
-		else
-			break;
-	}
-	assert(lhs && rhs);
-	const SgType *lhsType = stripModifiers(lhs->get_type());
-	const SgType *rhsType = stripModifiers(rhs->get_type());
-	assert(lhsType && rhsType);
-	/**
-	 * \todo We should not be using unparseToString, there should be a better
-	 * way to get the name of a typedef type
-	 */
-	std::string lhsName = lhsType->unparseToString();
-	std::string rhsName = rhsType->unparseToString();
-	if ((lhsName == "time_t" || lhsName == "size_t")
-	 && (lhsName != rhsName)) {
-		print_error(node, "MSC31-C", "Ensure that return values are compared against the proper type");
-		return true;
-	}
-	return false;
 }
 
 bool MSC_C(const SgNode *node) {
@@ -268,9 +221,8 @@ bool MSC_C(const SgNode *node) {
   violation |= MSC01_C(node);
   violation |= MSC05_C(node);
   violation |= MSC12_C(node);
-//  violation |= MSC13_C(node);
+  //  violation |= MSC13_C(node);
   violation |= MSC30_C(node);
-  violation |= MSC31_C(node);
   return violation;
 }
 

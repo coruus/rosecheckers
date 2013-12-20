@@ -63,21 +63,21 @@
 #include <algorithm>
 
 /**
- * Do not mistake sizeof( type*) for sizeof( type)
+ * Do not mistake sizeof(type*) for sizeof(type)
  *
  * We compare two types, one is inside the malloc, which prob looks like
- * X * sizeof( T1)
+ * X * sizeof(T1)
  * The other type is explicitly typecast:  (T2*) malloc(...)
  * Rule fails if T1 != T2 (usually because T1 == *T2)
  */
-bool EXP01_C( const SgNode *node ) {
+bool EXP01_C(const SgNode *node ) {
   const SgExpression* arg0 = getAllocFunctionExpr(isSgFunctionRefExp(node));
   if (arg0 == NULL)
     return false;
 
   const SgType* t1 = NULL;
   FOREACH_SUBNODE(arg0, nodes, i, V_SgSizeOfOp) {
-    const SgSizeOfOp* sizeOfOp = isSgSizeOfOp( *i);
+    const SgSizeOfOp* sizeOfOp = isSgSizeOfOp(*i);
     assert(sizeOfOp != NULL);
     const SgExpression* sizeOfExpr = sizeOfOp->get_operand_expr();
     /* We only care if there's a pointer inside the sizeof */
@@ -97,11 +97,11 @@ bool EXP01_C( const SgNode *node ) {
   //	Type t1(sg_t1);
 
   const SgNode* parent = node->get_parent();
-  assert( parent != NULL);
-  const SgCastExp* typecast = isSgCastExp( parent->get_parent());
+  assert(parent != NULL);
+  const SgCastExp* typecast = isSgCastExp(parent->get_parent());
   if (typecast == NULL)
     return false;
-  //	Type t2_ptr_type( typecast->get_type());
+  //	Type t2_ptr_type(typecast->get_type());
   const SgType *t2_ptr_type = typecast->get_type();
   if (!isSgPointerType(t2_ptr_type) && !isSgArrayType(t2_ptr_type))
     return false; // memory not allocated for array
@@ -113,14 +113,14 @@ bool EXP01_C( const SgNode *node ) {
   if (t1 == t2) {
     return false;
   }
-  print_error( node, "EXP01-C", "Do not take the sizeof a pointer to determine the sizeof a type", true);
+  print_error(node, "EXP01-C", "Do not take the sizeof a pointer to determine the sizeof a type", true);
   return true;
 }
 
 /**
  * Do not perform byte-by-byte comparisons between structures
  */
-bool EXP04_C( const SgNode *node ) {
+bool EXP04_C(const SgNode *node ) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "memcmp")))
     return false;
@@ -150,14 +150,14 @@ bool EXP04_C( const SgNode *node ) {
  *
  * \see EXP32_C
  */
-bool EXP05_C( const SgNode *node ) {
+bool EXP05_C(const SgNode *node ) {
   const SgCastExp * cast = isSgCastExp(node);
-  if(!cast)
+  if (!cast)
     return false;
   /**
    * Ignore compiler generated casts
    */
-  if(isCompilerGeneratedNode(node))
+  if (isCompilerGeneratedNode(node))
     return false;
 
   const SgExpression *expr = cast->get_operand();
@@ -173,7 +173,7 @@ bool EXP05_C( const SgNode *node ) {
   bool castIsConst = isConstType(cast->get_type());
   bool exprIsConst = isConstType(expr->get_type()->dereference());
 
-  if(exprIsConst && !castIsConst) {
+  if (exprIsConst && !castIsConst) {
     print_error(node, "EXP05-C", "Do not cast away a const qualification", true);
     return true;
   }
@@ -184,14 +184,14 @@ bool EXP05_C( const SgNode *node ) {
 /**
  * Operands to the sizeof operator should not contain side effects 
  */
-bool EXP06_C( const SgNode *node ) {
+bool EXP06_C(const SgNode *node ) {
   const SgSizeOfOp *op = isSgSizeOfOp(node);
   if (!op)
     return false;
 
   bool violation = false;
   FOREACH_SUBNODE(op, nodes, i, V_SgExpression) {
-    if(isSgFunctionCallExp(*i)
+    if (isSgFunctionCallExp(*i)
        || isAnyAssignOp(*i)
        || isSgMinusMinusOp(*i)
        || isSgPlusPlusOp(*i)) {
@@ -208,7 +208,7 @@ bool EXP06_C( const SgNode *node ) {
  *
  * \todo Finish writing this
  */
-bool EXP08_C( const SgNode *node ) {
+bool EXP08_C(const SgNode *node ) {
   // get inside of a *alloc, [], or pointer arith
   const SgExpression *pntrMath = getAllocFunctionExpr(isSgFunctionRefExp(node));
   if (!pntrMath) {
@@ -228,23 +228,23 @@ bool EXP08_C( const SgNode *node ) {
  *
  * If this alloc expr is being cast to a type char* or char[], bail, it's OK
  */
-bool EXP09_C( const SgNode *node ) {
+bool EXP09_C(const SgNode *node ) {
   const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
   if (exp == NULL)
     return false;
 
   const SgNode* parent = node->get_parent();
-  assert( parent != NULL);
+  assert(parent != NULL);
 
-  const SgCastExp* typecast = isSgCastExp( parent->get_parent());
+  const SgCastExp* typecast = isSgCastExp(parent->get_parent());
   if (typecast != NULL) {
     const SgType *alloc_type = typecast->get_type()->stripType(
-							       SgType::STRIP_REFERENCE_TYPE
-							       |SgType::STRIP_POINTER_TYPE
-							       |SgType::STRIP_ARRAY_TYPE);
+                                                               SgType::STRIP_REFERENCE_TYPE
+                                                               |SgType::STRIP_POINTER_TYPE
+                                                               |SgType::STRIP_ARRAY_TYPE);
     if (isSgTypeChar(alloc_type)
-	||isSgTypeSignedChar(alloc_type)
-	||isSgTypeUnsignedChar(alloc_type))
+        ||isSgTypeSignedChar(alloc_type)
+        ||isSgTypeUnsignedChar(alloc_type))
       return false;
   }
 
@@ -274,21 +274,21 @@ bool EXP09_C( const SgNode *node ) {
  * \see FLP33_C
  * \see INT07_C
  */
-bool EXP11_C( const SgNode *node ) {
+bool EXP11_C(const SgNode *node ) {
   const SgBinaryOp *binOp = isSgBinaryOp(node);
   const SgInitializedName *var = isSgInitializedName(node);
   const SgType *lhsSgType;
   const SgExpression *rhs;
 
-  if(binOp) {
+  if (binOp) {
     if (!isSgAssignOp(binOp))
       return false;
     lhsSgType = binOp->get_lhs_operand()->get_type();
     rhs = removeImplicitPromotions(binOp->get_rhs_operand());
-  } else if(var) {
+  } else if (var) {
     lhsSgType = var->get_type();
     const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
-    if(!init)
+    if (!init)
       return false;
     rhs = removeImplicitPromotions(init->get_operand());
   } else return false;
@@ -305,19 +305,19 @@ bool EXP11_C( const SgNode *node ) {
   const SgExpression* castExpr = cast->get_operand();
 
   /// Exception b/c NULL is an int *
-    if (isZeroVal(castExpr))
-      return false;
+  if (isZeroVal(castExpr))
+    return false;
 
-    /// Exception b/c MEM02_C
-      if (isTypeVoidStar(castExpr->get_type()))
-	return false;
+  /// Exception b/c MEM02_C
+  if (isTypeVoidStar(castExpr->get_type()))
+    return false;
 
-      /// Exception b/c strings are not pointers but can be assigned to them
+  /// Exception b/c strings are not pointers but can be assigned to them
 	std::string castBase = stripModifiers(castExpr->get_type()->findBaseType())->unparseToString();
-	if(castBase == "char*") castBase = "char";
+	if (castBase == "char*") castBase = "char";
 
 
-	if(lhsBase != castBase) {
+	if (lhsBase != castBase) {
 	  print_error(cast, "EXP11-C", "Do not apply operators expecting one type to data of an incompatible type", true);
 	  return true;
 	}
@@ -328,7 +328,7 @@ bool EXP11_C( const SgNode *node ) {
 /**
  * Do not ignore values returned by functions
  */
-bool EXP12_C( const SgNode *node ) {
+bool EXP12_C(const SgNode *node ) {
   const SgFunctionRefExp *ref = isSgFunctionRefExp(node);
   /** WHITE LIST */
   if ((ref == NULL)
@@ -355,7 +355,7 @@ bool EXP12_C( const SgNode *node ) {
     return false;
 
   const SgNode *parent = fn;
-  while(1) {
+  while (1) {
     parent = parent->get_parent();
     assert(parent);
 
@@ -365,10 +365,10 @@ bool EXP12_C( const SgNode *node ) {
        * condition will always be false :(
        */
       if (isTypeVoid(isSgCastExp(parent)->get_type()))
-	return false;
+        return false;
     } else if (isSgExprStatement(parent)) {
       if (isSgSwitchStatement(parent->get_parent()))
-	return false;
+        return false;
 
 
       std::string msg = "Do not ignore values returned by functions: " + ref->unparseToString();
@@ -399,7 +399,7 @@ protected:
      * Set a flag when entering a different sequence point
      * \see C99 Annex C
      */
-    if(isSgConditionalExp(node)
+    if (isSgConditionalExp(node)
        || isSgFunctionCallExp(node)) {
       ignore_node = node;
       return;
@@ -445,20 +445,20 @@ public:
  * incorporate all of the sequence points from Annex C into the traversal
  * class above, right now many of them are implicit in the ExprStatement match
  */
-bool EXP30_C( const SgNode *node ) {
+bool EXP30_C(const SgNode *node ) {
   if (!isSgExprStatement(node) && !isSgForStatement(node))
     return false;
 
   traverseSequencePoints traversal;
 
-  if(isSgExprStatement(node))
+  if (isSgExprStatement(node))
     traversal.traverse(const_cast<SgNode *>(node));
-  else if(isSgForStatement(node)) {
+  else if (isSgForStatement(node)) {
     traversal.traverse(const_cast<SgExpression *>(isSgForStatement(node)->get_increment()));
   }
 
   if (traversal.violation) {
-    print_error(node, "EXP30-C", "Do not depend on order of evaluation between sequence points");
+    print_error(node, "EXP30-C", "Do not depend on order of evaluation for side effects");
     return true;
   } else {
     return false;
@@ -476,12 +476,12 @@ bool EXP30_C( const SgNode *node ) {
  *
  * \see EXP05_C
  */
-bool EXP32_C( const SgNode *node ) {
+bool EXP32_C(const SgNode *node ) {
   if (isCompilerGeneratedNode(node))
     return false;
 
   const SgCastExp * cast = isSgCastExp(node);
-  if(!cast)
+  if (!cast)
     return false;
 
   const SgExpression *expr = cast->get_operand();
@@ -490,8 +490,8 @@ bool EXP32_C( const SgNode *node ) {
   bool castIsVolatile = isVolatileType(cast->get_type());
   bool exprIsVolatile = isVolatileType(expr->get_type()->dereference());
 
-  if(exprIsVolatile && !castIsVolatile) {
-    print_error(node, "EXP32-C", "Do not cast away a volatile qualification");
+  if (exprIsVolatile && !castIsVolatile) {
+    print_error(node, "EXP32-C", "Do not access a volatile object through a nonvolatile reference");
     return true;
   }
 
@@ -507,7 +507,7 @@ bool EXP32_C( const SgNode *node ) {
  * First we get the var it is assigned to, which might be an assignment exp eg
  * x = malloc(...), or a decl initializer, eg char* x = malloc(...);
  */
-bool EXP34_C( const SgNode *node ) {
+bool EXP34_C(const SgNode *node ) {
   const SgExpression* exp = getAllocFunctionExpr(isSgFunctionRefExp(node));
   if (exp == NULL)
     return false;
@@ -519,16 +519,16 @@ bool EXP34_C( const SgNode *node ) {
   var = getVarAssignedTo(isSgFunctionRefExp(node), &ref);
   if (!var)
     return false;
-  if (ref && isTestForNullOp( ref))
+  if (ref && isTestForNullOp(ref))
     return false;
 
   // Find all var references in function after malloc
-  Rose_STL_Container<SgNode *> nodes = getNodesInFn( node);
+  Rose_STL_Container<SgNode *> nodes = getNodesInFn(node);
   Rose_STL_Container<SgNode *>::const_iterator i = nodes.begin();
   if (ref) {
     for (; i != nodes.end(); ++i ) {
       if (ref == *i) {
-	i++; break;
+        i++; break;
       } // var ref was malloc, start with next one
     }
   }
@@ -536,10 +536,10 @@ bool EXP34_C( const SgNode *node ) {
     return false;
 
   // Now to future variable references, find one with bad usage
-  for (; i != nodes.end(); i = nextVarRef( nodes, i, var)) {
+  for (; i != nodes.end(); i = nextVarRef(nodes, i, var)) {
     const SgVarRefExp* i_ref = isSgVarRefExp(*i);
-    assert( i_ref != NULL);
-    if (var != getRefDecl( i_ref))
+    assert(i_ref != NULL);
+    if (var != getRefDecl(i_ref))
       continue;
 
     /**
@@ -549,10 +549,10 @@ bool EXP34_C( const SgNode *node ) {
     if (findParentOfType(i_ref, SgSizeOfOp))
       continue;
 
-    if (isTestForNullOp( i_ref)) return false;
-    const SgAssignOp* next_assignment = findParentOfType( i_ref, SgAssignOp);
+    if (isTestForNullOp(i_ref)) return false;
+    const SgAssignOp* next_assignment = findParentOfType(i_ref, SgAssignOp);
     if (next_assignment == NULL) {
-      print_error( node, "EXP34-C", "Ensure pointer is valid before dereferencing it");
+      print_error(node, "EXP34-C", "Ensure pointer is valid before dereferencing it");
       return true;
     }
   }
@@ -564,9 +564,9 @@ bool EXP34_C( const SgNode *node ) {
 /**
  * Do not convert pointers into more strictly aligned pointer types
  */
-bool EXP36_C( const SgNode *node ) {
+bool EXP36_C(const SgNode *node ) {
   const SgCastExp *cast = isSgCastExp(node);
-  if(!cast)
+  if (!cast)
     return false;
   const SgPointerType *lhsP = isSgPointerType(cast->get_type());
   if (!lhsP)
@@ -597,10 +597,10 @@ bool EXP36_C( const SgNode *node ) {
   if (lhsSize == 1)
     return false;
 
-  Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgNode*>(node), V_SgFunctionRefExp );
+  Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast<SgNode*>(node), V_SgFunctionRefExp );
   Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
-  if(i != nodes.end()) {
-    if(isCallOfFunctionNamed(isSgFunctionRefExp(*i), "malloc"))
+  if (i != nodes.end()) {
+    if (isCallOfFunctionNamed(isSgFunctionRefExp(*i), "malloc"))
       return false;
   }
 
@@ -619,7 +619,7 @@ bool EXP36_C( const SgNode *node ) {
 /**
  * Call functions with the arguments intended by the API
  */
-bool EXP37_C( const SgNode *node ) {
+bool EXP37_C(const SgNode *node ) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "open")))
     return false;
@@ -643,11 +643,72 @@ bool EXP37_C( const SgNode *node ) {
       || (!o_creat && (numArgs == 2)))
     return false;
 
-  print_error(fnCall, "EXP37-C", "Call functions with the arguments intended by the API");
+  print_error(fnCall, "EXP37-C", "Call functions with the correct number and type of arguments");
   return true;
 }
 
-
+/**
+ * Do not call functions expecting real values with complex values
+ */
+bool EXP37_FLP31_C(const SgNode *node ) {
+	bool violation = false;;
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (!isSgFunctionCallExp(fnRef->get_parent()))
+		return false;
+	std::string str = fnRef->get_symbol()->get_name().getString();
+	/* one arg */
+	if ((str == "cbrt")
+	||  (str == "ceil")
+	||  (str == "erf")
+	||  (str == "erfc")
+	||  (str == "exp2")
+	||  (str == "expm1")
+	||  (str == "floor")
+	||  (str == "frexp")
+	||  (str == "ilogb")
+	||  (str == "ldexp")
+	||  (str == "lgamma")
+	||  (str == "llrint")
+	||  (str == "llround")
+	||  (str == "log10")
+	||  (str == "log1p")
+	||  (str == "log2")
+	||  (str == "logb")
+	||  (str == "lrint")
+	||  (str == "lround")
+	||  (str == "nearbyint")
+	||  (str == "rint")
+	||  (str == "round")
+	||  (str == "tgamma")
+	||  (str == "trunc")) {
+		violation = isSgTypeComplex(getFnArg(isSgFunctionRefExp(node), 0)->get_type());
+	} else
+	/* two args */
+	if ((str == "atan2")
+	||  (str == "copysign")
+	||  (str == "fdim")
+	||  (str == "fmax")
+	||  (str == "fmin")
+	||  (str == "fmod")
+	||  (str == "hypot")
+	||  (str == "nextafter")
+	||  (str == "nexttoward")
+	||  (str == "remainder")
+	||  (str == "remquo")
+	||  (str == "scalbn")
+	||  (str == "scalbln")) {
+	} else
+	/* three args */
+	if ((str == "fma")) {
+	}
+	if (violation) {
+		print_error(node, "EXP37-C", "Do not call functions expecting real values with complex values");
+		return true;
+	}
+	return false;
+}
 
 
 /*************
@@ -659,21 +720,21 @@ bool EXP37_C( const SgNode *node ) {
 //XXX other casting advice, not reint if const, etc.
 
 /* EXP05-CPP. Do not use C-style casts */
-bool EXP05_CPP( const SgNode *node ) { 
+bool EXP05_CPP(const SgNode *node ) { 
   //XXX This doesn't work when the type being casted to is a class. X(12) or (X)12, for instance.
   //XXX ROSE seems to recognize only reinterpret_cast as new; others are old.
   return false; //XXX Disabled due to false positives
   bool result = false;
-  if( const SgCastExp *cast = isSgCastExp( node ) ) {
-    switch( cast->get_cast_type() ) {
+  if (const SgCastExp *cast = isSgCastExp(node ) ) {
+    switch(cast->get_cast_type() ) {
     case SgCastExp::e_unknown:
     case SgCastExp::e_default:
       break;
     case SgCastExp::e_C_style_cast:
       // Note that a cast node might be an impicit promotion.
-      if( !isCompilerGeneratedNode( node ) ) {
-	print_error(node, "EXP05-CPP", "Avoid old-style casts.", true);
-	result = true;
+      if (!isCompilerGeneratedNode(node ) ) {
+        print_error(node, "EXP05-CPP", "Avoid old-style casts.", true);
+        result = true;
       }
       break;
     case SgCastExp::e_const_cast:
@@ -694,9 +755,9 @@ bool EXP05_CPP( const SgNode *node ) {
  * on the given line.
  *
  */
-bool EXP15_C( const SgNode *node ) {
+bool EXP15_C(const SgNode *node ) {
 	const SgExprStatement *exprStmt = isSgExprStatement(node);
-	char str[50];
+	//char str[50];
 	if (exprStmt) {
 		/**
 		 * Check for empty bodies
@@ -725,18 +786,18 @@ bool EXP15_C( const SgNode *node ) {
 }
 
 /* EXP17-CPP. Treat relational and equality operators as if they were nonassociative */
-bool EXP17_CPP( const SgNode *node ) {
+bool EXP17_CPP(const SgNode *node ) {
   // Here, we examine only predefined relational and equality operators, because who knows what an
   // overloaded operator might intend?
-  if( const SgBinaryOp *bop = isSgBinaryOp( node ) ) {
-    if( isEqRelop( bop ) ) {
+  if (const SgBinaryOp *bop = isSgBinaryOp(node ) ) {
+    if (isEqRelop(bop ) ) {
       const SgExpression *lhs = bop->get_lhs_operand();
-      lhs = removeImplicitIntegralOrFloatingPromotions( lhs );
+      lhs = removeImplicitIntegralOrFloatingPromotions(lhs );
       const SgExpression *rhs = bop->get_rhs_operand();
-      rhs = removeImplicitIntegralOrFloatingPromotions( rhs );
-      if( isEqRelop( lhs ) || isEqRelop( rhs ) ) {
-	print_error(node, "EXP17-CPP", "Associative treatment of equality or relational operators", true);
-	return true;
+      rhs = removeImplicitIntegralOrFloatingPromotions(rhs );
+      if (isEqRelop(lhs ) || isEqRelop(rhs ) ) {
+        print_error(node, "EXP17-CPP", "Associative treatment of equality or relational operators", true);
+        return true;
       }
     }
   }
@@ -744,20 +805,20 @@ bool EXP17_CPP( const SgNode *node ) {
 }
 
 /* EXP39-CPP. Do not cast or delete pointers to incomplete classes */
-bool EXP39_CPP( const SgNode *node ) {
+bool EXP39_CPP(const SgNode *node ) {
   //XXX problems with determingin whether a declaration is complete or incomplete.
   //XXX punt for now.
   return false; //XXX
-  if( const SgCastExp *cexp = isSgCastExp( node ) ) {
+  if (const SgCastExp *cexp = isSgCastExp(node ) ) {
     const SgExpression *expr = cexp->get_operand();
-    if( expressionIsPointerToIncompleteClass( expr ) ) {
+    if (expressionIsPointerToIncompleteClass(expr ) ) {
       print_error(node, "EXP39-CPP", "Cast involving pointer to incomplete class.", false);
       return true;
     }
   }
-  else if( const SgDeleteExp *dexp = isSgDeleteExp( node ) ) {
-    if( expressionIsPointerToIncompleteClass( dexp->get_variable() ) ) {
-      //if( isSgThisExp(dexp->get_variable()) ) return false; //XXX hack
+  else if (const SgDeleteExp *dexp = isSgDeleteExp(node ) ) {
+    if (expressionIsPointerToIncompleteClass(dexp->get_variable() ) ) {
+      //if (isSgThisExp(dexp->get_variable()) ) return false; //XXX hack
       print_error(node, "EXP39-CPP", "Deletion of pointer to incomplete class.", false);
       return true;
     }
@@ -786,6 +847,7 @@ bool EXP_C(const SgNode *node) {
   violation |= EXP34_C(node);
   violation |= EXP36_C(node);
   violation |= EXP37_C(node);
+  violation |= EXP37_FLP31_C(node);
   return violation;
 }
 

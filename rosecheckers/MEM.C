@@ -26,7 +26,7 @@
 /**
  * Store a new value in pointers immediately after free()
  */
-bool MEM01_C( const SgNode *node ) {
+bool MEM01_C(const SgNode *node) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
     return false;
@@ -72,7 +72,7 @@ bool MEM01_C( const SgNode *node ) {
   } else {
     // Assignments to the pointer are OK
     const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
-    if(nextExpr && isAssignToVar(nextExpr->get_expression(), argVarName))
+    if (nextExpr && isAssignToVar(nextExpr->get_expression(), argVarName))
       return false;
   }
 
@@ -86,14 +86,14 @@ bool MEM01_C( const SgNode *node ) {
  *
  * \see EXP36-C which catches this
  */
-bool MEM02_C( const SgNode *node ) {
+bool MEM02_C(const SgNode *node) {
   return false;
 }
 
 /**
  * Do not perform zero length allocations
  */
-bool MEM04_C( const SgNode *node ) {
+bool MEM04_C(const SgNode *node) {
   const SgExpression *allocArg = removeImplicitPromotions(getAllocFunctionExpr(isSgFunctionRefExp(node)));
   if (!allocArg)
     return false;
@@ -130,7 +130,7 @@ bool MEM04_C( const SgNode *node ) {
         return false;
     }
     const SgAssignInitializer *init = isSgAssignInitializer(var->get_initptr());
-    if(init && !isZeroVal(removeCasts(init->get_operand()))) {
+    if (init && !isZeroVal(removeCasts(init->get_operand()))) {
       return false;
     }
 
@@ -150,7 +150,7 @@ bool MEM04_C( const SgNode *node ) {
  * Ensure that the arguments to calloc() when multiplied can be represented as
  * a size_t
  */
-bool MEM07_C( const SgNode *node ) {
+bool MEM07_C(const SgNode *node) {
   const SgFunctionRefExp* fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "calloc")))
     return false;
@@ -183,7 +183,7 @@ bool MEM07_C( const SgNode *node ) {
           continue;
         const SgVarRefExp *lhs = isSgVarRefExp(binOp->get_lhs_operand());
         const SgVarRefExp *rhs = isSgVarRefExp(binOp->get_rhs_operand());
-        if((lhs && nmembRef && (getRefDecl(lhs)==getRefDecl(nmembRef)))
+        if ((lhs && nmembRef && (getRefDecl(lhs)==getRefDecl(nmembRef)))
            || (lhs && sizeRef  && (getRefDecl(lhs)==getRefDecl(sizeRef)))
            || (rhs && nmembRef && (getRefDecl(rhs)==getRefDecl(nmembRef)))
            || (rhs && sizeRef  && (getRefDecl(rhs)==getRefDecl(sizeRef))))
@@ -202,7 +202,7 @@ bool MEM07_C( const SgNode *node ) {
 /**
  * Use realloc() only to resize dynamically allocated arrays
  */
-bool MEM08_C( const SgNode *node ) {
+bool MEM08_C(const SgNode *node) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "realloc")))
     return false;
@@ -230,23 +230,23 @@ bool MEM08_C( const SgNode *node ) {
  *
  * \bug Throws errors in loops as well.
  */
-bool MEM30_C( const SgNode *node ) {
+bool MEM30_C(const SgNode *node) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!(fnRef && isCallOfFunctionNamed(fnRef, "free")))
     return false;
 
   // Get variable as first arg
-  const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp( node), 0));
+  const SgVarRefExp* ref = isSgVarRefExp(getFnArg(isSgFunctionRefExp(node), 0));
   if (ref == NULL) return false;
-  const SgInitializedName* var = getRefDecl( ref);
+  const SgInitializedName* var = getRefDecl(ref);
   assert(var != NULL);
 
-  Rose_STL_Container<const SgVarRefExp*> references = next_var_references( ref);
+  Rose_STL_Container<const SgVarRefExp*> references = next_var_references(ref);
   Rose_STL_Container<const SgVarRefExp*>::iterator i;
   for (i = references.begin(); i != references.end(); ++i) {
     if (isTestForNullOp(*i)) continue;
-    if (isAssignToVar( (*i)->get_parent(), var)) continue; // return false? ~DS 2010-03-15
-    print_error( node, "MEM30-C", "Do not access freed memory");
+    if (isAssignToVar((*i)->get_parent(), var)) continue; // return false? ~DS 2010-03-15
+    print_error(node, "MEM30-C", "Do not access freed memory");
     return true;
   }
 
@@ -300,8 +300,7 @@ bool MEM31_C(const SgNode *node) {
 			const SgInitializedName* ref2_var = getRefDecl(ref2);
 
 			if (ref_var == ref2_var) {
-				print_error(node, "MEM31-C",
-                    "Free dynamically allocated memory exactly once.");
+				print_error(node, "MEM31-C", "Free dynamically allocated memory when no longer needed");
 				return true;
 			}
 		} else if (isSgAssignOp(*i)) {
@@ -325,7 +324,7 @@ bool MEM31_C(const SgNode *node) {
  *
  * \bug Doesn't correctly ignore members inside struct fn arguments
  */
-bool MEM34_C( const SgNode *node ) {
+bool MEM34_C(const SgNode *node) {
   const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
   if (!fnRef)
     return false;
@@ -349,14 +348,14 @@ bool MEM34_C( const SgNode *node ) {
    */
   const SgFunctionDefinition *parent = findParentOfType(node, SgFunctionDefinition);
   FOREACH_INITNAME(parent->get_declaration()->get_args(), p) {
-    if(var == *p)
+    if (var == *p)
       return false;
   }
 
   assert(parent);
-  Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree( const_cast<SgFunctionDefinition*>(parent), V_SgNode );
+  Rose_STL_Container<SgNode *> nodes = NodeQuery::querySubTree(const_cast<SgFunctionDefinition*>(parent), V_SgNode);
   Rose_STL_Container<SgNode *>::iterator i = nodes.begin();
-  while(fnRef != isSgFunctionRefExp(*i)) {
+  while (fnRef != isSgFunctionRefExp(*i)) {
     assert(i != nodes.end());
     i++;
   }
@@ -385,13 +384,13 @@ bool MEM34_C( const SgNode *node ) {
             ||isCallOfFunctionNamed(iFn, "getline")))
         continue;
 
-      if(isCallOfFunctionNamed(iFn, "getline")) {
+      if (isCallOfFunctionNamed(iFn, "getline")) {
         const SgExpression *argExp = getFnArg(fnRef, 0);
         const SgVarRefExp *varRefExp = isSgVarRefExp(argExp);
-        if(!varRefExp)
+        if (!varRefExp)
           continue;
 
-        if(var == getRefDecl(varRefExp))
+        if (var == getRefDecl(varRefExp))
           return false;
       }
 
@@ -408,22 +407,62 @@ bool MEM34_C( const SgNode *node ) {
   return true;
 }
 
+/**
+ * Guarantee that copies are made into storage of sufficient size
+ *
+ * We make sure that the length argument to memcpy is at most the size
+ * of memcpy's first argument (destination). This rule fires if:
+ * * the destination is a fixed-length array
+ * * the last argument is N * sizeof(arraytype)
+ * * N is known at compile time
+ * * N > destination array index
+ */
+bool MEM35_C(const SgNode * node) {
+	const SgFunctionRefExp *fnRef = isMemoryBlockFunction(node);
+	if (!fnRef)
+		return false;
+	const SgExpression *dstExp = removeImplicitPromotions(getFnArg(fnRef, 0));
+	const SgExpression *lenExp = getFnArg(fnRef, 2);
+	assert(dstExp && lenExp);
+	if (isSgAddressOfOp(dstExp))
+		dstExp = isSgAddressOfOp(dstExp)->get_operand();
+	const SgArrayType *arrT = isSgArrayType(dstExp->get_type());
+	if (!arrT)
+		return false;
+	size_t len;
+	if (!getSizetVal(lenExp, &len))
+		return false;
+	const SgValueExp *dstVal = isSgValueExp(arrT->get_index());
+	if (!dstVal) // VLA or some such...
+		return false;
+	size_t dst_size;
+	if (!getSizetVal(dstVal, &dst_size))
+		return false;
+	dst_size *= sizeOfType(arrT->findBaseType());
+	if (dst_size == 0)
+		return false;
+	if (dst_size > len) {
+		print_error(node, "MEM35-C", "Allocate sufficient memory for an object");
+		return true;
+	}
+	return false;
+}
 
 /* MEM41-CPP. Declare a copy constructor, a copy assignment operator, and a destructor in a class that manages resources */
-bool MEM41_CPP( const SgNode *node ) {
+bool MEM41_CPP(const SgNode *node) {
   bool ret = false;
   const SgClassDefinition *cdef;
-  if ((cdef = isSgClassDefinition( node)) != NULL) {
+  if ((cdef = isSgClassDefinition(node)) != NULL) {
     // Skip the check if this is a POD (like a C struct).
-    if( !isPODClass( cdef ) ) {
+    if (!isPODClass(cdef)) {
       // First, see which of these three functions the class has.
-      size_t count = hasExplicitCopyCtor( cdef ) + hasExplicitCopyAssignment( cdef ) + hasExplicitDtor( cdef );
-      if( count > 0 && count < 3 ) {
+      size_t count = hasExplicitCopyCtor(cdef) + hasExplicitCopyAssignment(cdef) + hasExplicitDtor(cdef);
+      if (count > 0 && count < 3) {
         print_error(node, "MEM41-CPP", "If any of copy constructor, copy assignment, and destructor are declared, all three should be.", true);
         ret = true;
       }
       //XXX more...how do we know if a class manages resources?  Punt and just check for a pointer member?
-      if( hasPointerMember( cdef ) && count < 3 ) { //XXX should omit this check for unions
+      if (hasPointerMember(cdef) && count < 3) { //XXX should omit this check for unions
         print_error(node, "MEM41-CPP", "A class with a pointer data member should probably define a copy constructor, copy assignment, and destructor.", true);
         ret = true;
       }
@@ -442,6 +481,7 @@ bool MEM_C(const SgNode *node) {
   violation |= MEM30_C(node);
   violation |= MEM31_C(node);
   violation |= MEM34_C(node);
+	violation |= MEM35_C(node);
   return violation;
 }
 

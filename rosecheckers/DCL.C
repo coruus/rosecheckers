@@ -67,7 +67,7 @@
  *
  * \todo count assignments, if only one, report violation
  */
-bool DCL00_C( const SgNode *node ) {
+bool DCL00_C(const SgNode *node ) {
   const SgInitializedName *varName = isSgInitializedName(node);
   if (!varName)
     return false;
@@ -118,7 +118,7 @@ bool DCL00_C( const SgNode *node ) {
     if (!fnDecl->get_definition())
       return false;
     if (isSgPointerType(varName->get_type())
-	||  isSgArrayType(varName->get_type())) {
+        ||  isSgArrayType(varName->get_type())) {
       ruleStr = "DCL13-C";
       errStr = "Declare function parameters that are pointers to values not changed by the function as const: ";
     } else {
@@ -143,7 +143,7 @@ bool DCL00_C( const SgNode *node ) {
       continue;
 
     const SgNode *parent = iVar->get_parent();
-    while(isSgCastExp(parent)) {
+    while (isSgCastExp(parent)) {
       parent = parent->get_parent();
     }
     assert(parent);
@@ -154,8 +154,8 @@ bool DCL00_C( const SgNode *node ) {
      * dereferenced, who knows what's getting written there :/
      */
     if (varWrittenTo(iVar)
-	||  isSgArrowExp(parent)
-	||  findParentOfType(iVar, SgAddressOfOp))
+        ||  isSgArrowExp(parent)
+        ||  findParentOfType(iVar, SgAddressOfOp))
       return false;
 
     /**
@@ -164,13 +164,13 @@ bool DCL00_C( const SgNode *node ) {
      * somewhere, we can longer be sure it should be const
      */
     if ((isSgPointerType(varType) || isSgArrayType(varType))
-	&& (findParentOfType(iVar, SgFunctionCallExp)
-	    || isSgAddOp(parent)
-	    || isSgSubtractOp(parent)
-	    || isSgAssignOp(parent)
-	    || isSgPntrArrRefExp(parent)
-	    || isSgPointerDerefExp(parent)
-	    || isSgAssignInitializer(parent)))
+        && (findParentOfType(iVar, SgFunctionCallExp)
+            || isSgAddOp(parent)
+            || isSgSubtractOp(parent)
+            || isSgAssignOp(parent)
+            || isSgPntrArrRefExp(parent)
+            || isSgPointerDerefExp(parent)
+            || isSgAssignInitializer(parent)))
       return false;
   }
 
@@ -182,16 +182,16 @@ bool DCL00_C( const SgNode *node ) {
 /**
  * Do not reuse variable names in subscopes
  */
-bool DCL01_C( const SgNode *node ) {
+bool DCL01_C(const SgNode *node ) {
   const SgInitializedName *varInitName = isSgInitializedName(node);
   if (!varInitName)
     return false;
   const SgName varName = varInitName->get_name();
   const SgScopeStatement *varScope = varInitName->get_scope();
   assert(varScope);
-  while(!isSgGlobal(varScope)) {
+  while (!isSgGlobal(varScope)) {
     varScope = varScope->get_scope();
-    if(varScope->symbol_exists(varName)) {
+    if (varScope->symbol_exists(varName)) {
       print_error(node, "DCL01-C", ("Do not reuse variable names in subscopes: " + varName.getString()).c_str(), true);
       return true;
     }
@@ -203,17 +203,17 @@ bool DCL01_C( const SgNode *node ) {
 std::string normalize_string(std::string str, bool isExtern) {
   size_t found;
 
-  while((found = str.find_first_of("1")) != std::string::npos)
+  while ((found = str.find_first_of("1")) != std::string::npos)
     str[found] = 'l';
-  while((found = str.find_first_of("n")) != std::string::npos)
+  while ((found = str.find_first_of("n")) != std::string::npos)
     str[found] = 'h';
-  while((found = str.find_first_of("0")) != std::string::npos)
+  while ((found = str.find_first_of("0")) != std::string::npos)
     str[found] = 'O';
-  while((found = str.find_first_of("2")) != std::string::npos)
+  while ((found = str.find_first_of("2")) != std::string::npos)
     str[found] = 'Z';
-  while((found = str.find_first_of("5")) != std::string::npos)
+  while ((found = str.find_first_of("5")) != std::string::npos)
     str[found] = 'S';
-  while((found = str.find_first_of("8")) != std::string::npos)
+  while ((found = str.find_first_of("8")) != std::string::npos)
     str[found] = 'B';
 
   unsigned int len = isExtern ? 31 : 63;
@@ -231,7 +231,7 @@ void DCL02_report_error(const SgInitializedName *var) {
   std::string errStr;
   bool warning;
   if (varStr.size() > len) {
-    ruleStr = "DCL32-C";
+    ruleStr = "DCL23-C";
     errStr = "Guarantee that mutually visible identifiers are unique";
     warning = false;
   } else {
@@ -248,7 +248,7 @@ void DCL02_report_error(const SgInitializedName *var) {
  *
  * \note also checks DCL31-C
  */
-bool DCL02_C( const SgNode *node ) {
+bool DCL02_C(const SgNode *node ) {
   static std::map<const SgScopeStatement *, std::set<std::string> > scopeMap;
   static std::map<std::string, const SgInitializedName *> strVarMap;
 
@@ -266,33 +266,33 @@ bool DCL02_C( const SgNode *node ) {
       SgInitializedName *var = isSgInitializedName(*i);
       assert(var);
       if (isCompilerGeneratedNode(var)
-	  || !isSgDeclarationStatement(var->get_parent())
-	  || findParentOfType(var, SgCtorInitializerList)
-	  || findParentOfType(var, SgClassDeclaration) // Might be too strong
-	  || var->get_name().getString().empty()
-	  || (var->get_name().getString().substr(0,2) == "__"))
-	continue;
+          || !isSgDeclarationStatement(var->get_parent())
+          || findParentOfType(var, SgCtorInitializerList)
+          || findParentOfType(var, SgClassDeclaration) // Might be too strong
+          || var->get_name().getString().empty()
+          || (var->get_name().getString().substr(0,2) == "__"))
+        continue;
 
       /** Ignore function prototypes */
       const SgFunctionDeclaration * fnDecl = findParentOfType(var, SgFunctionDeclaration);
       if (fnDecl && !fnDecl->get_definition())
-	continue;
+        continue;
 
       if (isExternVar(var)) {
-	if (externNames.find(var->get_name().getString()) != externNames.end())
-	  continue;
+        if (externNames.find(var->get_name().getString()) != externNames.end())
+          continue;
 
-	externNames.insert(var->get_name().getString());
+        externNames.insert(var->get_name().getString());
       }
 
       const SgScopeStatement *varScope = var->get_scope();
       std::string str (normalize_string(var->get_name().str(), isExternVar(var)));
       if (scopeMap[varScope].find(str) != scopeMap[varScope].end()) {
-	DCL02_report_error(var);
-	violation = true;
+        DCL02_report_error(var);
+        violation = true;
       } else {
-	scopeMap[varScope].insert(str);
-	strVarMap[str] = var;
+        scopeMap[varScope].insert(str);
+        strVarMap[str] = var;
       }
     }
     return false;
@@ -304,10 +304,10 @@ bool DCL02_C( const SgNode *node ) {
       continue;
     for (std::set<std::string>::iterator i = scopeMap[scope].begin(); i != scopeMap[scope].end(); i++) {
       if (ids.find(*i) != ids.end()) {
-	DCL02_report_error(strVarMap[*i]);
-	violation = true;
+        DCL02_report_error(strVarMap[*i]);
+        violation = true;
       } else {
-	ids.insert(*i);
+        ids.insert(*i);
       }
     }
   } while (!isSgGlobal(scope) && (scope = scope->get_scope()));
@@ -318,7 +318,7 @@ bool DCL02_C( const SgNode *node ) {
 /**
  * Do not declare more than one variable per declaration
  */
-bool DCL04_C( const SgNode *node ) {
+bool DCL04_C(const SgNode *node ) {
   const SgVariableDeclaration *varDec = isSgVariableDeclaration(node);
   if (!varDec)
     return false;
@@ -352,7 +352,7 @@ static unsigned int DCL05_score(const SgType *t) {
     if (isSgFunctionType(t)) {
       SgTypePtrList &args = isSgFunctionType(t)->get_argument_list()->get_arguments();
       for (SgTypePtrList::iterator i = args.begin(); i != args.end(); i++) {
-	score += DCL05_score(*i);
+        score += DCL05_score(*i);
       }
       score+=2;
     }
@@ -376,7 +376,7 @@ static unsigned int DCL05_score(const SgType *t) {
 /**
  * Use typedefs to improve code readability
  */
-bool DCL05_C( const SgNode *node ) {
+bool DCL05_C(const SgNode *node ) {
   const SgInitializedName *var = isSgInitializedName(node);
   const SgFunctionDeclaration *fn = isSgFunctionDeclaration(node);
   if (!(var || fn))
@@ -404,7 +404,7 @@ bool DCL05_C( const SgNode *node ) {
 /**
  * Use the correct syntax for flexible array members
  */
-bool DCL38_C( const SgNode *node ) {
+bool DCL38_C(const SgNode *node ) {
 	const SgClassDefinition* def = isSgClassDefinition(node);
 	if (!def)
 		return false;
@@ -417,7 +417,7 @@ bool DCL38_C( const SgNode *node ) {
 	 */
 	if (!varDecl)
 		return false;
-//	assert(varDecl);
+  //	assert(varDecl);
 
 	if (varDecl->get_variables().size() != 1)
 		return false;
@@ -446,22 +446,22 @@ bool DCL38_C( const SgNode *node ) {
  *************/
 
 /* DCL10-CPP. Do not overload the ampersand, comma, logical AND or logical OR operators */
-bool DCL10_CPP( const SgNode *node ) {
-  if( const SgFunctionDeclaration *fd = isSgFunctionDeclaration( node ) ) {
+bool DCL10_CPP(const SgNode *node ) {
+  if (const SgFunctionDeclaration *fd = isSgFunctionDeclaration(node ) ) {
     const std::string n = fd->get_name().getString();
-    if( n == "operator&&" || n == "operator||" ) {
+    if (n == "operator&&" || n == "operator||" ) {
       print_error(fd, "DCL10-CPP", "Overloaded && or || operator", true);
       return true;
     }
-    else if( n == "operator&" ) {
-      int args = argCount( fd );
-      bool isMember = isSgMemberFunctionDeclaration( fd );
-      if( (isMember && args == 0) || (!isMember && args == 1) ) {
-	print_error(fd, "DCL10-CPP", "Overloaded unary & operator", true);
-	return true;
+    else if (n == "operator&" ) {
+      int args = argCount(fd );
+      bool isMember = isSgMemberFunctionDeclaration(fd );
+      if ((isMember && args == 0) || (!isMember && args == 1) ) {
+        print_error(fd, "DCL10-CPP", "Overloaded unary & operator", true);
+        return true;
       }
     }
-    if( n == "operator," ) {
+    if (n == "operator," ) {
       print_error(fd, "DCL10-CPP", "Overloaded , operator", true);
       return  true;
     }
@@ -471,56 +471,56 @@ bool DCL10_CPP( const SgNode *node ) {
 }
 
 /* DCL36-CPP. Do not declare an identifier with conflicting linkage classifications */
-bool DCL36_CPP( const SgNode *node ) {
-  if( const SgVariableDefinition *vdef = isSgVariableDefinition( node ) ) {
+bool DCL36_CPP(const SgNode *node ) {
+  if (const SgVariableDefinition *vdef = isSgVariableDefinition(node ) ) {
     //XXX get defining declaration?
     const SgDeclarationModifier &dm = vdef->get_declarationModifier();
     const SgStorageModifier &sm = const_cast<SgDeclarationModifier &>(dm).get_storageModifier();
-    if( sm.isExtern() || sm.isUnknown() || sm.isUnspecified() ) { //XXX not so sure this is right...
+    if (sm.isExtern() || sm.isUnknown() || sm.isUnspecified() ) { //XXX not so sure this is right...
       //XXX should also permit externs in anonymous namespaces
       const SgInitializedName *in = vdef->get_vardefn();
       const SgInitializer *init = in->get_initializer();
-      bool runtimeInit = isSgConstructorInitializer( init );
-      if( !runtimeInit ) {
-	if( const SgAssignInitializer *ai = isSgAssignInitializer( init ) ) {
-	  const SgExpression *e = ai->get_operand_i();
-	  runtimeInit = !isSgValueExp( e );
-	}
+      bool runtimeInit = isSgConstructorInitializer(init );
+      if (!runtimeInit ) {
+        if (const SgAssignInitializer *ai = isSgAssignInitializer(init ) ) {
+          const SgExpression *e = ai->get_operand_i();
+          runtimeInit = !isSgValueExp(e );
+        }
       }
-      if( !runtimeInit ) {
+      if (!runtimeInit ) {
 
-	/*
-	  if( const SgAggregateInitializer *ai = isSgAggregateInitializer( init ) ) {
-	  //XXX need to check aggregates
-	  }
-	*/
+        /*
+          if (const SgAggregateInitializer *ai = isSgAggregateInitializer(init ) ) {
+          //XXX need to check aggregates
+          }
+        */
       }
 
-      if( runtimeInit ) {
-	print_error(node, "DCL36-C", "Runtime static initialization of object with external linkage", false);
-	return true;
+      if (runtimeInit ) {
+        print_error(node, "DCL36-C", "Runtime static initialization of object with external linkage", false);
+        return true;
       }
       else {
-	// To avoid a plethora of messages, check for runtime static destruction
-	// only if there was no flagging of initialization.
-	// See if the type of the object being defined has a non-trivial dtor.
-	const SgType *t = in->get_type();
-	t = t->stripType( SgType::STRIP_TYPEDEF_TYPE );
-	if( const SgClassType * ct = isSgClassType( t ) ) {
-	  const SgDeclarationStatement *decl = ct->get_declaration();
-	  const SgClassDeclaration *cdecl = isSgClassDeclaration( decl );
-	  if( const SgClassDefinition *cdef = cdecl->get_definition() ) {
-	    const SgDeclarationStatementPtrList &members = cdef->get_members();
-	    for( SgDeclarationStatementPtrList::const_iterator i = members.begin(); i != members.end(); ++i ) {
-	      if( const SgFunctionDeclaration *fdec = isSgFunctionDeclaration( *i ) ) {
-		if( fdec->get_specialFunctionModifier().isDestructor() ) {
-		  print_error(node, "DCL36-C", "Runtime static initialization of object with external linkage.", false);
-		  return true;
-		}
-	      }
-	    }
-	  }
-	}
+        // To avoid a plethora of messages, check for runtime static destruction
+        // only if there was no flagging of initialization.
+        // See if the type of the object being defined has a non-trivial dtor.
+        const SgType *t = in->get_type();
+        t = t->stripType(SgType::STRIP_TYPEDEF_TYPE );
+        if (const SgClassType * ct = isSgClassType(t ) ) {
+          const SgDeclarationStatement *decl = ct->get_declaration();
+          const SgClassDeclaration *cdecl = isSgClassDeclaration(decl );
+          if (const SgClassDefinition *cdef = cdecl->get_definition() ) {
+            const SgDeclarationStatementPtrList &members = cdef->get_members();
+            for (SgDeclarationStatementPtrList::const_iterator i = members.begin(); i != members.end(); ++i ) {
+              if (const SgFunctionDeclaration *fdec = isSgFunctionDeclaration(*i ) ) {
+                if (fdec->get_specialFunctionModifier().isDestructor() ) {
+                  print_error(node, "DCL36-C", "Runtime static initialization of object with external linkage.", false);
+                  return true;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

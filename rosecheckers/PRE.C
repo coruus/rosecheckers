@@ -70,7 +70,7 @@
  */
 bool PRE_C(const SgNode *node) {
   bool violation = false;
-//  violation |= PRE04_C(node);
+  //  violation |= PRE04_C(node);
   return violation;
 }
 

@@ -57,11 +57,11 @@
 #include "utilities.h"
 
 static bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
-	if(isCallOfFunctionNamed(fnRef, "fread")) {
+	if (isCallOfFunctionNamed(fnRef, "fread")) {
 		*argNum = 3;
 		return true;
 	}
-	if(isCallOfFunctionNamed(fnRef, "read")) {
+	if (isCallOfFunctionNamed(fnRef, "read")) {
 		*argNum = 0;
 		return true;
 	}
@@ -69,11 +69,11 @@ static bool isReadFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 }
 
 static bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
-	if(isCallOfFunctionNamed(fnRef, "fwrite")) {
+	if (isCallOfFunctionNamed(fnRef, "fwrite")) {
 		*argNum = 3;
 		return true;
 	}
-	if(isCallOfFunctionNamed(fnRef, "write")) {
+	if (isCallOfFunctionNamed(fnRef, "write")) {
 		*argNum = 0;
 		return true;
 	}
@@ -83,13 +83,13 @@ static bool isWriteFn(const SgFunctionRefExp *fnRef, unsigned int * argNum) {
 /**
  * Be careful using functions that use file names for identification
  */
-bool FIO01_C( const SgNode *node ) {
+bool FIO01_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
 	if (!(isCallOfFunctionNamed(fnRef, "chown")
-	|| isCallOfFunctionNamed(fnRef, "stat")
-	|| isCallOfFunctionNamed(fnRef, "chmod"))) {
+        || isCallOfFunctionNamed(fnRef, "stat")
+        || isCallOfFunctionNamed(fnRef, "chmod"))) {
 		return false;
 	}
 
@@ -107,7 +107,7 @@ bool FIO01_C( const SgNode *node ) {
 		assert(iFn);
 
 		if (isCallOfFunctionNamed(iFn, "open")
-		||  isCallOfFunctionNamed(iFn, "fopen")) {
+        ||  isCallOfFunctionNamed(iFn, "fopen")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn,0));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(file_name))) {
 				print_error(node, "FIO01-C", "Be careful using functions that use file names for identification", true);
@@ -123,27 +123,27 @@ bool FIO01_C( const SgNode *node ) {
 /**
  * Prefer fseek() to rewind()
  */
-bool FIO07_C( const SgNode *node ) {
+bool FIO07_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "rewind")))
 		return false;
-	print_error( node, "FIO07-C", "Prefer fseek() to rewind()", true);
+	print_error(node, "FIO07-C", "Prefer fseek() to rewind()", true);
 	return true;
 }
 
 /**
  * Take care when calling remove() on an open file
  */
-bool FIO08_C( const SgNode *node ) {
+bool FIO08_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if(!(fnRef && isCallOfFunctionNamed(fnRef, "remove")))
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "remove")))
 		return false;
 
 	const SgExpression *fnExp = removeImplicitPromotions(getFnArg(fnRef,0));
 	assert(fnExp);
 
 	const SgVarRefExp *ref = isSgVarRefExp(fnExp);
-	if(!ref)
+	if (!ref)
 		return false;
 	const SgInitializedName *var = getRefDecl(ref);
 
@@ -160,12 +160,12 @@ bool FIO08_C( const SgNode *node ) {
 		iFn = isSgFunctionRefExp(*i);
 		assert(iFn);
 
-		if(iFn == fnRef)
+		if (iFn == fnRef)
 			break;
 
-		if(isCallOfFunctionNamed(iFn, "open")
-		|| isCallOfFunctionNamed(iFn, "fopen")
-		|| isCallOfFunctionNamed(iFn, "freopen")) {
+		if (isCallOfFunctionNamed(iFn, "open")
+        || isCallOfFunctionNamed(iFn, "fopen")
+        || isCallOfFunctionNamed(iFn, "freopen")) {
 			iVar = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
 			if (!iVar)
 				continue;
@@ -179,8 +179,8 @@ bool FIO08_C( const SgNode *node ) {
 		}
 
 		if (opened
-		&& ((isCallOfFunctionNamed(iFn, "close"))
-		|| isCallOfFunctionNamed(iFn, "fclose"))) {
+        && ((isCallOfFunctionNamed(iFn, "close"))
+            || isCallOfFunctionNamed(iFn, "fclose"))) {
 			if (getRefDecl(iVar) == fd) {
 				closed = true;
 				opened = false;
@@ -200,32 +200,32 @@ bool FIO08_C( const SgNode *node ) {
 /**
  * Take care when specifying the mode parameter of fopen()
  */
-bool FIO11_C( const SgNode *node ) {
+bool FIO11_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "fopen")))
 		return false;
 
 	const SgStringVal* mode = isSgStringVal(getFnArg(fnRef, 1));
-	if(!mode)
+	if (!mode)
 		return false;
 
 	const std::string str = mode->get_value();
 
-	if((str == "r")
-	|| (str == "w")
-	|| (str == "a")
-	|| (str == "rb")
-	|| (str == "wb")
-	|| (str == "ab")
-	|| (str == "r+")
-	|| (str == "w+")
-	|| (str == "a+")
-	|| (str == "r+b")
-	|| (str == "rb+")
-	|| (str == "w+b")
-	|| (str == "wb+")
-	|| (str == "a+b")
-	|| (str == "ab+"))
+	if ((str == "r")
+      || (str == "w")
+      || (str == "a")
+      || (str == "rb")
+      || (str == "wb")
+      || (str == "ab")
+      || (str == "r+")
+      || (str == "w+")
+      || (str == "a+")
+      || (str == "r+b")
+      || (str == "rb+")
+      || (str == "w+b")
+      || (str == "wb+")
+      || (str == "a+b")
+      || (str == "ab+"))
 		return false;
 
 	print_error(node, "FIO11-C", "Take care when specifying the mode parameter of fopen()", true);
@@ -235,25 +235,25 @@ bool FIO11_C( const SgNode *node ) {
 /**
  * Prefer setvbuf() to setbuf()
  */
-bool FIO12_C( const SgNode *node ) {
+bool FIO12_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "setbuf")))
 		return false;
 
-	print_error( node, "FIO12-C", "Prefer setvbuf() to setbuf()", true);
+	print_error(node, "FIO12-C", "Prefer setvbuf() to setbuf()", true);
 	return true;
 }
 
 /**
  * Never push back anything other than one read character
  */
-bool FIO13_C( const SgNode *node ) {
+bool FIO13_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
 
-	if(!(isCallOfFunctionNamed(fnRef, "ungetc"))
-	  ||(isCallOfFunctionNamed(fnRef, "ungetwc")))
+	if (!(isCallOfFunctionNamed(fnRef, "ungetc"))
+      ||(isCallOfFunctionNamed(fnRef, "ungetwc")))
 		return false;
 
 	std::string fn_str;
@@ -276,9 +276,9 @@ bool FIO13_C( const SgNode *node ) {
 
 		/* If we flushed the stream, we're done */
 		if (isCallOfFunctionNamed(iFn, "fflush")
-		||  isCallOfFunctionNamed(iFn, "fseek")
-		||  isCallOfFunctionNamed(iFn, "fsetpos")
-		||  isCallOfFunctionNamed(iFn, "rewind")) {
+        ||  isCallOfFunctionNamed(iFn, "fseek")
+        ||  isCallOfFunctionNamed(iFn, "fsetpos")
+        ||  isCallOfFunctionNamed(iFn, "rewind")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 0));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
 				return false;
@@ -298,7 +298,7 @@ bool FIO13_C( const SgNode *node ) {
 
 		/* Buf if it's another ungetc, that's no good */
 		if (isCallOfFunctionNamed(iFn, "ungetc")
-		||  isCallOfFunctionNamed(iFn, "ungetwc")) {
+        ||  isCallOfFunctionNamed(iFn, "ungetwc")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 1));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
 				print_error(node, "FIO13-C", "Never push back anything other than one read character", true);
@@ -311,19 +311,76 @@ bool FIO13_C( const SgNode *node ) {
 }
 
 /**
+ * Do not use tmpfile()
+ */
+bool FIO21_C(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpfile")))
+		return false;
+
+	print_error(node, "FIO21-C", "Do not use tmpfile()");
+	return true;
+}
+
+/**
+ * Do not use fopen() on the results of tmpnam()
+ */
+bool FIO21_C_2(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpnam")))
+		return false;
+
+	if (!isVarUsedByFunction("fopen", isSgVarRefExp(getFnArg(fnRef, 0))))
+		return false;
+
+	print_error(node, "FIO21-C", "Do not use fopen() on the results of tmpnam()");
+	return true;
+}
+
+/**
+ * Do not use open() on the results of mktemp()
+ */
+bool FIO21_C_3(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "mktemp")))
+		return false;
+
+	if (!isVarUsedByFunction("open", isSgVarRefExp(getFnArg(fnRef, 0))))
+		return false;
+
+	print_error(node, "FIO21-C", "Do not use open() on the results of mktemp()");
+	return true;
+}
+
+/**
+ * Do not use fopen_s() on the results of tmpnam_s()
+ */
+bool FIO21_C_4(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpnam_s")))
+		return false;
+
+	if (!isVarUsedByFunction("fopen_s", isSgVarRefExp(getFnArg(fnRef, 1))))
+		return false;
+
+	print_error(node, "FIO21-C", "Do not use fopen_s() on the results of tmpnam_s()");
+	return true;
+}
+
+/**
  * Exclude user input from format strings
  *
  * We make sure that the format argument to *printf family of functions is
  * either const or a string
  */
-bool FIO30_C( const SgNode *node) {
+bool FIO30_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if(!fnRef)
+	if (!fnRef)
 		return false;
 
 	int argNum;
-	if(((argNum = getScanfFormatString(fnRef)) == -1) &&
-		 ((argNum = getPrintfFormatString(fnRef)) == -1)) {
+	if (((argNum = getScanfFormatString(fnRef)) == -1) &&
+      ((argNum = getPrintfFormatString(fnRef)) == -1)) {
 		return false;
 	}
 
@@ -336,7 +393,7 @@ bool FIO30_C( const SgNode *node) {
 	 * for some reason we can't find the const version of dereference
 	 */
 	bool isConst = isConstType((const_cast<SgType *>(frmtType))->dereference());
-	if(!(isConst || isSgTypeString(frmtType))) {
+	if (!(isConst || isSgTypeString(frmtType))) {
 		print_error(node, "FIO30-C", "Exclude user input from format strings");
 		return true;
 	}
@@ -350,17 +407,17 @@ bool FIO30_C( const SgNode *node) {
  * \note We don't look through typedefs. That's ok though because
  * we're using a whitelist.
  */
-bool FIO34_C( const SgNode *node) {
+bool FIO34_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
 	if (!(isCallOfFunctionNamed(fnRef, "fputc")
-		||isCallOfFunctionNamed(fnRef, "putc")
-		||isCallOfFunctionNamed(fnRef, "putchar")
-		||isCallOfFunctionNamed(fnRef, "ungetc")
-		||isCallOfFunctionNamed(fnRef, "fgetc")
-		||isCallOfFunctionNamed(fnRef, "getc")
-		||isCallOfFunctionNamed(fnRef, "getchar")))
+        ||isCallOfFunctionNamed(fnRef, "putc")
+        ||isCallOfFunctionNamed(fnRef, "putchar")
+        ||isCallOfFunctionNamed(fnRef, "ungetc")
+        ||isCallOfFunctionNamed(fnRef, "fgetc")
+        ||isCallOfFunctionNamed(fnRef, "getc")
+        ||isCallOfFunctionNamed(fnRef, "getchar")))
 		return false;
 
 	assert(node->get_parent());
@@ -369,28 +426,28 @@ bool FIO34_C( const SgNode *node) {
 	SgNode const *parent = node->get_parent()->get_parent();
 
 	SgCastExp const *cast;
-	if(!(cast = isSgCastExp(parent)))
+	if (!(cast = isSgCastExp(parent)))
 		return false;
 
 	const SgType *t = cast->get_type();
 	if (isSgTypeInt(t)
-	  ||isSgTypeSignedInt(t)
-	  ||isSgTypeUnsignedInt(t)
-	  ||isSgTypeLong(t)
-	  ||isSgTypeSignedLong(t)
-	  ||isSgTypeUnsignedLong(t)
-	  ||isSgTypeLongLong(t)
-	  ||isSgTypeUnsignedLongLong(t))
+      ||isSgTypeSignedInt(t)
+      ||isSgTypeUnsignedInt(t)
+      ||isSgTypeLong(t)
+      ||isSgTypeSignedLong(t)
+      ||isSgTypeUnsignedLong(t)
+      ||isSgTypeLongLong(t)
+      ||isSgTypeUnsignedLongLong(t))
 		return false;
 
-	print_error( node, "FIO34-C", "Use int to capture the return value of character I/O functions");
+	print_error(node, "FIO34-C", "Use int to capture the return value of character I/O functions");
 	return true;
 }
 
 /**
  * Do not use a copy of a FILE object for input and output
  */
-bool FIO38_C( const SgNode *node) {
+bool FIO38_C(const SgNode *node) {
 	const SgExpression *rhs = NULL;
 	if (isAnyAssignOp(node)) {
 		rhs = isSgBinaryOp(node)->get_rhs_operand();
@@ -401,7 +458,7 @@ bool FIO38_C( const SgNode *node) {
 		return false;
 
 	if (isTypeFile(rhs->get_type())) {
-		print_error(node, "FIO38-C", "Do not use a copy of a FILE object for input and output");
+		print_error(node, "FIO38-C", "Do not copy a FILE object");
 		return true;
 	}
 
@@ -412,7 +469,7 @@ bool FIO38_C( const SgNode *node) {
  * Do not alternately input and output from a stream without an intervening
  * flush or positioning call
  */
-bool FIO39_C( const SgNode *node) {
+bool FIO39_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
@@ -431,7 +488,7 @@ bool FIO39_C( const SgNode *node) {
 	 */
 	if (!fd)
 		return false;
-//	assert(fd);
+  //	assert(fd);
 
 	bool before = true;
 
@@ -448,9 +505,9 @@ bool FIO39_C( const SgNode *node) {
 
 		/* If we flushed the stream, we're done */
 		if (isCallOfFunctionNamed(iFn, "fflush")
-		||  isCallOfFunctionNamed(iFn, "fseek")
-		||  isCallOfFunctionNamed(iFn, "fsetpos")
-		||  isCallOfFunctionNamed(iFn, "rewind")) {
+        ||  isCallOfFunctionNamed(iFn, "fseek")
+        ||  isCallOfFunctionNamed(iFn, "fsetpos")
+        ||  isCallOfFunctionNamed(iFn, "rewind")) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, 0));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
 				return false;
@@ -459,7 +516,7 @@ bool FIO39_C( const SgNode *node) {
 		}
 
 		if ((read1 && isWriteFn(iFn, &argNum))
-		|| (write1 && isReadFn(iFn, &argNum))) {
+        || (write1 && isReadFn(iFn, &argNum))) {
 			const SgVarRefExp *iVar = isSgVarRefExp(getFnArg(iFn, argNum));
 			if (iVar && (getRefDecl(iVar) == getRefDecl(fd))) {
 				print_error(node, "FIO39-C", "Do not alternately input and output from a stream without an intervening flush or positioning call");
@@ -476,13 +533,13 @@ bool FIO39_C( const SgNode *node) {
  *
  * \note This doesn't check across functions.
  */
-bool FIO42_C( const SgNode *node ) {
+bool FIO42_C(const SgNode *node) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
 	if (!fnRef)
 		return false;
 	if (!(isCallOfFunctionNamed(fnRef, "open")
-		||isCallOfFunctionNamed(fnRef, "fopen")
-		||isCallOfFunctionNamed(fnRef, "freopen")))
+        ||isCallOfFunctionNamed(fnRef, "fopen")
+        ||isCallOfFunctionNamed(fnRef, "freopen")))
 		return false;
 
 	const SgInitializedName *fd = getVarAssignedTo(fnRef, NULL);
@@ -497,7 +554,7 @@ bool FIO42_C( const SgNode *node ) {
 	bool before = true;
 
 	const SgNode *parent = findParentOfType(node, SgFunctionDefinition);
-	if(parent == NULL)
+	if (parent == NULL)
 	  return false;
 
 	FOREACH_SUBNODE(parent, nodes, i, V_SgFunctionRefExp) {
@@ -513,11 +570,11 @@ bool FIO42_C( const SgNode *node ) {
 		 * ERR04 allows using exit to close file descriptors
 		 */
 		if (isCallOfFunctionNamed(iFn, "exit")
-		  ||isCallOfFunctionNamed(iFn, "_Exit"))
+        ||isCallOfFunctionNamed(iFn, "_Exit"))
 			return false;
 		if (!(isCallOfFunctionNamed(iFn, "close")
-			||isCallOfFunctionNamed(iFn, "fclose")
-			||isCallOfFunctionNamed(iFn, "fcntl")))
+          ||isCallOfFunctionNamed(iFn, "fclose")
+          ||isCallOfFunctionNamed(iFn, "fcntl")))
 			continue;
 
 		const SgVarRefExp *iFd = isSgVarRefExp(removeImplicitPromotions(getFnArg(iFn,0)));
@@ -528,71 +585,14 @@ bool FIO42_C( const SgNode *node ) {
 			return false;
 	}
 
-	print_error(node, "FIO42-C", "Ensure files are properly closed when they are no longer needed");
-	return true;
-}
-
-/**
- * Do not use tmpfile()
- */
-bool FIO43_C( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpfile")))
-		return false;
-
-	print_error( node, "FIO43-C", "Do not use tmpfile()");
-	return true;
-}
-
-/**
- * Do not use fopen() on the results of tmpnam()
- */
-bool FIO43_C_2( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpnam")))
-		return false;
-
-	if (!isVarUsedByFunction("fopen", isSgVarRefExp(getFnArg(fnRef, 0))))
-		return false;
-
-	print_error( node, "FIO43-C", "Do not use fopen() on the results of tmpnam()");
-	return true;
-}
-
-/**
- * Do not use open() on the results of mktemp()
- */
-bool FIO43_C_3( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "mktemp")))
-		return false;
-
-	if (!isVarUsedByFunction("open", isSgVarRefExp( getFnArg(fnRef, 0))))
-		return false;
-
-	print_error( node, "FIO43-C", "Do not use open() on the results of mktemp()");
-	return true;
-}
-
-/**
- * Do not use fopen_s() on the results of tmpnam_s()
- */
-bool FIO43_C_4( const SgNode *node ) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!(fnRef && isCallOfFunctionNamed(fnRef, "tmpnam_s")))
-		return false;
-
-	if (!isVarUsedByFunction("fopen_s", isSgVarRefExp( getFnArg(fnRef, 1))))
-		return false;
-
-	print_error( node, "FIO43-C", "Do not use fopen_s() on the results of tmpnam_s()");
+	print_error(node, "FIO42-C", "Close files when they are no longer needed");
 	return true;
 }
 
 /**
  * Only use values for fsetpos() that are returned from fgetpos()
  */
-bool FIO44_C( const SgNode *node) {
+bool FIO44_C(const SgNode *node) {
 	const SgFunctionRefExp * setRef = isSgFunctionRefExp(node);
 	if (!(setRef && isCallOfFunctionNamed(setRef,"fsetpos")))
 		return false;
@@ -640,15 +640,15 @@ bool FIO_C(const SgNode *node) {
   violation |= FIO11_C(node);
   violation |= FIO12_C(node);
   violation |= FIO13_C(node);
+  violation |= FIO21_C(node);
+  violation |= FIO21_C_2(node);
+  violation |= FIO21_C_3(node);
+  violation |= FIO21_C_4(node);
   violation |= FIO30_C(node);
   violation |= FIO34_C(node);
   violation |= FIO38_C(node);
   violation |= FIO39_C(node);
   violation |= FIO42_C(node);
-  violation |= FIO43_C(node);
-  violation |= FIO43_C_2(node);
-  violation |= FIO43_C_3(node);
-  violation |= FIO43_C_4(node);
   violation |= FIO44_C(node);
   return violation;
 }

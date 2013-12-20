@@ -59,7 +59,7 @@
 /**
  * Use plain char for characters in the basic character set 
  */
-bool STR04_C( const SgNode *node ) {
+bool STR04_C(const SgNode *node ) {
 	const SgInitializedName *var = isSgInitializedName(node);
 	if (!var)
 		return false;
@@ -69,7 +69,7 @@ bool STR04_C( const SgNode *node ) {
 	if (!isSgTypeString(init->get_type()))
 		return false;
 	if (isSgTypeChar(var->get_type()->findBaseType())
-	||  isSgTypeWchar(var->get_type()->findBaseType()))
+      ||  isSgTypeWchar(var->get_type()->findBaseType()))
 		return false;
 
 	/**
@@ -85,9 +85,9 @@ bool STR04_C( const SgNode *node ) {
 /**
  * Use pointers to const when referring to string literals
  */
-bool STR05_C( const SgNode *node ) {
+bool STR05_C(const SgNode *node ) {
 	const SgInitializedName *var = isSgInitializedName(node);
-	if(!var)
+	if (!var)
 		return false;
 	const SgAssignInitializer *init = isSgAssignInitializer(var->get_initializer());
 	if (!init)
@@ -104,9 +104,9 @@ bool STR05_C( const SgNode *node ) {
 /**
  * Do not assume that strtok() leaves the parse string unchanged 
  */
-bool STR06_C( const SgNode *node ) {
+bool STR06_C(const SgNode *node ) {
 	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if(!(fnRef && isCallOfFunctionNamed(fnRef, "strtok")))
+	if (!(fnRef && isCallOfFunctionNamed(fnRef, "strtok")))
 		return false;
 
 	const SgVarRefExp* str = isSgVarRefExp(removeImplicitPromotions(getFnArg(fnRef, 0)));
@@ -143,8 +143,8 @@ bool STR06_C( const SgNode *node ) {
 			if (isCallOfFunctionNamed(iRef, "free"))
 				return false;
 			if (isCallOfFunctionNamed(iRef, "memcpy")
-			||  isCallOfFunctionNamed(iRef, "strcpy")
-			||  isCallOfFunctionNamed(iRef, "strncpy")) {
+          ||  isCallOfFunctionNamed(iRef, "strcpy")
+          ||  isCallOfFunctionNamed(iRef, "strncpy")) {
 				const SgVarRefExp* arg = isSgVarRefExp(getFnArg(iRef, 0));
 				assert(arg);
 				if (getRefDecl(arg) == getRefDecl(str))
@@ -154,6 +154,42 @@ bool STR06_C( const SgNode *node ) {
 
 		print_error(iVar, "STR06-C", "Do not assume that strtok() leaves the parse string unchanged", true);
 		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Do not specify the dimension of a character array initialized with a string
+ * literal
+ */
+bool STR11_C(const SgNode *node) {
+	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
+	if (!varDecl)
+		return false;
+
+	FOREACH_INITNAME(varDecl->get_variables(), i) {
+		assert(*i);
+		const SgArrayType *varType = isSgArrayType((*i)->get_type());
+		if (!varType)
+			continue;
+		if (!isAnyCharType(varType->get_base_type()))
+			continue;
+		const SgAssignInitializer *varInitializer = isSgAssignInitializer((*i)->get_initializer());
+		if (!varInitializer)
+			continue;
+		if (varType->get_index()) {
+
+		  const SgStringVal *stringVal = isSgStringVal(varInitializer->get_operand());
+		  if (!stringVal)
+		    continue;
+		  
+		  if (!stringVal->get_value().compare(""))
+		    continue;
+		  
+		  print_error(*i, "STR11-C", "Do not specify the dimension of a character array initialized with a string literal");
+      return true;
+		}
 	}
 
 	return false;
@@ -195,7 +231,7 @@ bool STR30_C(const SgNode *node ) {
 		/* is it getting derefenced? */
 		const SgNode *parent = iVar->get_parent();
 		if (!(isSgPntrArrRefExp(parent)
-		    ||isSgPointerDerefExp(parent))) {
+          ||isSgPointerDerefExp(parent))) {
 			continue;
 		}
 
@@ -218,7 +254,7 @@ bool STR31_C(const SgNode *node ) {
 	if (!(fnRef && isCallOfFunctionNamed(fnRef, "strcpy")))
 		return false;
 
-	const SgVarRefExp* ref = isSgVarRefExp( getFnArg( isSgFunctionRefExp(node), 0));
+	const SgVarRefExp* ref = isSgVarRefExp(getFnArg(isSgFunctionRefExp(node), 0));
  	// strcpy() not copying into simple var
 	if (ref == NULL)
 		return false;
@@ -227,8 +263,39 @@ bool STR31_C(const SgNode *node ) {
 	if (isSgArrayType(getFnArg(isSgFunctionRefExp(node), 1)->get_type()))
 		return false;
 
-	print_error( node, "STR31-C", "String copy destination must contain sufficient storage");
+	print_error(node, "STR31-C", "String copy destination must contain sufficient storage");
 	return true;
+}
+
+/**
+ * Check if there is a gets or if sscanf/scanf has a "%s"
+ */
+bool STR35_STR31_C(const SgNode *node) {
+	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
+	if (!fnRef)
+		return false;
+	if (isCallOfFunctionNamed(fnRef, "gets")) {
+		print_error(node, "STR31-C", "Do not copy data from an unbounded source to a fixed-length array");
+		return true;
+	}
+
+	int argNum;
+	if ((argNum = getScanfFormatString(fnRef)) == -1) {
+		return false;
+	}
+	const SgExpression *frmt = removeImplicitPromotions(getFnArg(fnRef,argNum));
+	assert(frmt);
+	const SgStringVal *frmt_s = isSgStringVal(frmt);
+	if (frmt_s == NULL) {
+		return false;
+	}
+	std::string s = frmt_s->get_value();
+	if (strstr(s.c_str(), "%s") != NULL) {
+		print_error(node, "STR31-C", "Do not copy data from an unbounded source to a fixed-length array");
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -248,12 +315,12 @@ bool STR32_C(const SgNode *node ) {
 	assert(dstExp && srcExp && lenExp);
 
 	const SgVarRefExp *srcRef = isSgVarRefExp(srcExp);
-	if(!srcRef) {
+	if (!srcRef) {
 		const SgCastExp *srcCast = isSgCastExp(srcExp);
-		if(!srcCast)
+		if (!srcCast)
 			return false;
 		srcRef = isSgVarRefExp(srcCast->get_operand());
-		if(!srcRef)
+		if (!srcRef)
 			return false;
 	}
 
@@ -281,10 +348,10 @@ bool STR32_C(const SgNode *node ) {
 			// strncpy()
 			const SgStatement * nextStat = findInBlockByOffset(node, 1);
 			// if all went well, it should be an expression
-			if(!nextStat)
+			if (!nextStat)
 				break;
 			const SgExprStatement *nextExpr = isSgExprStatement(nextStat);
-			if(!nextExpr)
+			if (!nextExpr)
 				break;
 			// To comply with the rule, it must be an assignment...
 			const SgAssignOp *assignOp = isSgAssignOp(nextExpr->get_expression());
@@ -309,80 +376,14 @@ bool STR32_C(const SgNode *node ) {
 			if (len > 0 && dst_idx == len ) {
 				return false;
 			}
-		} while(0);
-		print_error(node, "STR32-C", "Null-terminate byte strings as required");
+		} while (0);
+		print_error(node, "STR32-C", "Do not pass a non-null-terminated character sequence to a library function that expects a string");
 		return true;
 	} else {
 		return false;
 	}
 }
 
-/**
- * Check if there is a gets or if sscanf/scanf has a "%s"
- */
-bool STR35_C(const SgNode *node) {
-	const SgFunctionRefExp *fnRef = isSgFunctionRefExp(node);
-	if (!fnRef)
-		return false;
-	if(isCallOfFunctionNamed(fnRef, "gets")) {
-		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
-		return true;
-	}
-
-	int argNum;
-	if((argNum = getScanfFormatString(fnRef)) == -1) {
-		return false;
-	}
-	const SgExpression *frmt = removeImplicitPromotions(getFnArg(fnRef,argNum));
-	assert(frmt);
-	const SgStringVal *frmt_s = isSgStringVal( frmt);
-	if (frmt_s == NULL) {
-		return false;
-	}
-	std::string s = frmt_s->get_value();
-	if(strstr(s.c_str(), "%s") != NULL) {
-		print_error(node, "STR35-C", "Do not copy data from an unbounded source to a fixed-length array");
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Do not specify the dimension of a character array initialized with a string
- * literal
- */
-bool STR36_C(const SgNode *node) {
-	const SgVariableDeclaration *varDecl = isSgVariableDeclaration(node);
-	if (!varDecl)
-		return false;
-
-	FOREACH_INITNAME(varDecl->get_variables(), i) {
-		assert(*i);
-		const SgArrayType *varType = isSgArrayType((*i)->get_type());
-		if (!varType)
-			continue;
-		if (!isAnyCharType(varType->get_base_type()))
-			continue;
-		const SgAssignInitializer *varInitializer = isSgAssignInitializer((*i)->get_initializer());
-		if (!varInitializer)
-			continue;
-		if (varType->get_index()) {
-
-		  const SgStringVal *stringVal = isSgStringVal(varInitializer->get_operand());
-		  if(!stringVal)
-		    continue;
-		  
-		  if(!stringVal->get_value().compare(""))
-		    continue;
-		  
-		  print_error(*i, "STR36-C", "Do not specify the dimension of a character array initialized with a string literal");
-		return true;
-		}
-	}
-
-	return false;
-}
 
 /**
  * STR37-C. Arguments to character handling functions must be representable as
@@ -397,21 +398,21 @@ bool STR37_C(const SgNode *node) {
 		return false;
 
 	if (!(isCallOfFunctionNamed(fn, "isalnum")
-		||isCallOfFunctionNamed(fn, "isalpha")
-		||isCallOfFunctionNamed(fn, "isascii")
-		||isCallOfFunctionNamed(fn, "isblank")
-		||isCallOfFunctionNamed(fn, "iscntrl")
-		||isCallOfFunctionNamed(fn, "isdigit")
-		||isCallOfFunctionNamed(fn, "isgraph")
-		||isCallOfFunctionNamed(fn, "islower")
-		||isCallOfFunctionNamed(fn, "isprint")
-		||isCallOfFunctionNamed(fn, "ispunct")
-		||isCallOfFunctionNamed(fn, "isspace")
-		||isCallOfFunctionNamed(fn, "isupper")
-		||isCallOfFunctionNamed(fn, "isxdigit")
-		||isCallOfFunctionNamed(fn, "toascii")
-		||isCallOfFunctionNamed(fn, "toupper")
-		||isCallOfFunctionNamed(fn, "tolower"))) {
+        ||isCallOfFunctionNamed(fn, "isalpha")
+        ||isCallOfFunctionNamed(fn, "isascii")
+        ||isCallOfFunctionNamed(fn, "isblank")
+        ||isCallOfFunctionNamed(fn, "iscntrl")
+        ||isCallOfFunctionNamed(fn, "isdigit")
+        ||isCallOfFunctionNamed(fn, "isgraph")
+        ||isCallOfFunctionNamed(fn, "islower")
+        ||isCallOfFunctionNamed(fn, "isprint")
+        ||isCallOfFunctionNamed(fn, "ispunct")
+        ||isCallOfFunctionNamed(fn, "isspace")
+        ||isCallOfFunctionNamed(fn, "isupper")
+        ||isCallOfFunctionNamed(fn, "isxdigit")
+        ||isCallOfFunctionNamed(fn, "toascii")
+        ||isCallOfFunctionNamed(fn, "toupper")
+        ||isCallOfFunctionNamed(fn, "tolower"))) {
 		return false;
 	}
 
@@ -420,7 +421,7 @@ bool STR37_C(const SgNode *node) {
 	if (isSgTypeUnsignedChar(arg->get_type()))
 		return false;
 
-	print_error(node,"STR37-C", "Arguments to character handling functions must be representable as an unsigned char");
+	print_error(node,"STR37-C", "Arguments to character-handling functions must be representable as an unsigned char");
 	return true;
 }
 
@@ -429,11 +430,11 @@ bool STR_C(const SgNode *node) {
   violation |= STR04_C(node);
   violation |= STR05_C(node);
   violation |= STR06_C(node);
+  violation |= STR11_C(node);
   violation |= STR30_C(node);
   violation |= STR31_C(node);
+  violation |= STR35_STR31_C(node);
   violation |= STR32_C(node);
-  violation |= STR35_C(node);
-  violation |= STR36_C(node);
   violation |= STR37_C(node);
   return violation;
 }
